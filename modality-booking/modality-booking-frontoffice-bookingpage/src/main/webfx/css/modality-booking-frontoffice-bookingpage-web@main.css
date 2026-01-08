@@ -8,3 +8,12 @@
 .booking-form-event-header {
     overflow: hidden;
 }
+
+/* Sticky price header - stays fixed at top when scrolling */
+.sticky-price-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: linear-gradient(to bottom, #FFFFFF, #FAFBFC);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

@@ -58,6 +58,47 @@ public final class BookingPageUIBuilder {
     public static final String ICON_ENVELOPE = "M2 4h20a2 2 0 012 2v12a2 2 0 01-2 2H2a2 2 0 01-2-2V6a2 2 0 012-2z M22 6l-10 7L2 6";
     public static final String ICON_CREDIT_CARD = "M2 5h20a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V7a2 2 0 012-2z M2 10h20";
 
+    // Festival/Booking specific icons (from JSX mockup FestivalRegistrationV2.jsx)
+    /** Sun icon for lunch/daytime - 24x24 viewBox */
+    public static final String ICON_SUN = "M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41";
+    /** Sun circle (center part of sun icon) - use with ICON_SUN */
+    public static final String ICON_SUN_CIRCLE = "M12 8a4 4 0 100 8 4 4 0 000-8z";
+
+    /** Moon/crescent icon for dinner/evening - 24x24 viewBox */
+    public static final String ICON_MOON = "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z";
+
+    /** Plane/shuttle icon for transport - 24x24 viewBox */
+    public static final String ICON_PLANE = "M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z";
+
+    /** Home icon for accommodation - 24x24 viewBox */
+    public static final String ICON_HOME = "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z";
+    /** Home icon door part */
+    public static final String ICON_HOME_DOOR = "M9 22V12h6v10";
+
+    /** Info icon (circle with i) - 24x24 viewBox */
+    public static final String ICON_INFO_CIRCLE = "M12 2a10 10 0 100 20 10 10 0 000-20z";
+    /** Info icon (letter i inside) */
+    public static final String ICON_INFO_I = "M12 16v-4M12 8h.01";
+
+    /** Utensils/fork-knife icon for meals - 24x24 viewBox */
+    public static final String ICON_UTENSILS = "M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7";
+
+    /** Plus circle icon for additional options - 24x24 viewBox */
+    public static final String ICON_PLUS_CIRCLE = "M12 2a10 10 0 100 20 10 10 0 000-20zM12 8v8M8 12h8";
+
+    /** Calendar icon for dates - 24x24 viewBox */
+    public static final String ICON_CALENDAR = "M3 6h18v15a2 2 0 01-2 2H5a2 2 0 01-2-2V6zM3 10h18M7 3v4M17 3v4";
+
+    /** Location/map pin icon - 24x24 viewBox */
+    public static final String ICON_LOCATION = "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z";
+    /** Location pin inner circle */
+    public static final String ICON_LOCATION_DOT = "M12 7a3 3 0 100 6 3 3 0 000-6z";
+
+    /** Clock icon for time - 24x24 viewBox */
+    public static final String ICON_CLOCK = "M12 3a9 9 0 100 18 9 9 0 000-18z";
+    /** Clock hands */
+    public static final String ICON_CLOCK_HANDS = "M12 6v6l4 4";
+
     // =============================================
     // EFFECTS AND SHADOWS
     // =============================================
@@ -203,6 +244,140 @@ public final class BookingPageUIBuilder {
         icon.setScaleX(scale);
         icon.setScaleY(scale);
         return icon;
+    }
+
+    /**
+     * Creates a composite sun icon (rays + center circle) for lunch/daytime.
+     * Uses both ICON_SUN (rays) and ICON_SUN_CIRCLE (center) paths.
+     *
+     * @param strokeColor The stroke color for the icon
+     * @param scale       Scale factor
+     * @return A StackPane containing the composite sun icon
+     */
+    public static StackPane createSunIcon(Color strokeColor, double scale) {
+        SVGPath rays = new SVGPath();
+        rays.setContent(ICON_SUN);
+        rays.setStroke(strokeColor);
+        rays.setStrokeWidth(2);
+        rays.setFill(Color.TRANSPARENT);
+        rays.setScaleX(scale);
+        rays.setScaleY(scale);
+
+        SVGPath circle = new SVGPath();
+        circle.setContent(ICON_SUN_CIRCLE);
+        circle.setStroke(strokeColor);
+        circle.setStrokeWidth(2);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setScaleX(scale);
+        circle.setScaleY(scale);
+
+        StackPane container = new StackPane(rays, circle);
+        container.setAlignment(Pos.CENTER);
+        return container;
+    }
+
+    /**
+     * Creates a "SOLD OUT" corner ribbon for accommodation cards.
+     * Positioned in top-right corner with diagonal rotation.
+     * Uses warm gray color (#78716c) as per JSX mockup.
+     *
+     * <p>CSS class: {@code .bookingpage-ribbon-soldout}</p>
+     *
+     * @return A StackPane containing the rotated ribbon
+     */
+    public static StackPane createSoldOutRibbon() {
+        Label label = new Label("SOLD OUT");
+        label.getStyleClass().add("bookingpage-ribbon-soldout-text");
+        // Set in Java for GWT compatibility
+        label.setTextFill(Color.web("#fafaf9"));
+        label.setStyle("-fx-font-size: 11px; -fx-font-weight: 600; -fx-padding: 4 40 4 40;");
+
+        StackPane ribbon = new StackPane(label);
+        ribbon.getStyleClass().add("bookingpage-ribbon-soldout");
+        // Warm gray background
+        ribbon.setStyle("-fx-background-color: #78716c;");
+        // Rotate 45 degrees
+        ribbon.getTransforms().add(new javafx.scene.transform.Rotate(45, 0, 0));
+        ribbon.setAlignment(Pos.CENTER);
+
+        return ribbon;
+    }
+
+    /**
+     * Creates a constraint badge with info icon (e.g., "Full Festival Only", "Minimum 3 nights").
+     * Uses light blue background (#E3F2FD) and dark blue text (#0D47A1) per JSX mockup.
+     *
+     * <p>CSS class: {@code .bookingpage-badge-constraint}</p>
+     *
+     * @param text      The constraint text to display
+     * @param isSoldOut Whether the card is sold out (uses gray styling if true)
+     * @return An HBox containing the info icon and constraint text
+     */
+    public static HBox createConstraintBadge(String text, boolean isSoldOut) {
+        HBox badge = new HBox(5);
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setPadding(new Insets(4, 10, 4, 10));
+        badge.getStyleClass().add("bookingpage-badge-constraint");
+
+        // Info icon (small, 12x12)
+        SVGPath infoCircle = new SVGPath();
+        infoCircle.setContent("M12 2a10 10 0 100 20 10 10 0 000-20z");
+        infoCircle.setScaleX(0.5);
+        infoCircle.setScaleY(0.5);
+
+        SVGPath infoI = new SVGPath();
+        infoI.setContent("M12 16v-4M12 8h.01");
+        infoI.setScaleX(0.5);
+        infoI.setScaleY(0.5);
+
+        StackPane infoIcon = new StackPane(infoCircle, infoI);
+        infoIcon.setMinSize(12, 12);
+        infoIcon.setMaxSize(12, 12);
+
+        Label textLabel = new Label(text);
+        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+
+        // Apply colors based on sold out state
+        if (isSoldOut) {
+            badge.setStyle("-fx-background-color: #f0f0f0; -fx-background-radius: 6;");
+            infoCircle.setStroke(Color.web("#9ca3af"));
+            infoCircle.setFill(Color.TRANSPARENT);
+            infoCircle.setStrokeWidth(2.5);
+            infoI.setStroke(Color.web("#9ca3af"));
+            infoI.setFill(Color.TRANSPARENT);
+            infoI.setStrokeWidth(2.5);
+            textLabel.setTextFill(Color.web("#9ca3af"));
+        } else {
+            badge.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 6;");
+            infoCircle.setStroke(Color.web("#0D47A1"));
+            infoCircle.setFill(Color.TRANSPARENT);
+            infoCircle.setStrokeWidth(2.5);
+            infoI.setStroke(Color.web("#0D47A1"));
+            infoI.setFill(Color.TRANSPARENT);
+            infoI.setStrokeWidth(2.5);
+            textLabel.setTextFill(Color.web("#0D47A1"));
+        }
+        textLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
+
+        badge.getChildren().addAll(infoIcon, textLabel);
+        return badge;
+    }
+
+    /**
+     * Creates a "LIMITED" availability badge with yellow/amber styling.
+     * Uses yellow background (#fff3cd) and dark amber text (#856404) per JSX mockup.
+     *
+     * <p>CSS class: {@code .bookingpage-badge-limited}</p>
+     *
+     * @return A Label styled as a limited availability badge
+     */
+    public static Label createLimitedBadge() {
+        Label badge = new Label("LIMITED");
+        badge.getStyleClass().add("bookingpage-badge-limited");
+        badge.setPadding(new Insets(4, 8, 4, 8));
+        badge.setStyle("-fx-background-color: #fff3cd; -fx-background-radius: 6; -fx-font-size: 12px; -fx-font-weight: 500;");
+        badge.setTextFill(Color.web("#856404"));
+        return badge;
     }
 
     // =============================================
@@ -1066,6 +1241,74 @@ public final class BookingPageUIBuilder {
      * CSS class for past/disabled date cards.
      */
     public static final String CSS_DATE_CARD_PAST = "bookingpage-date-card-past";
+
+    // =============================================
+    // ACCOMMODATION INFO BOX
+    // =============================================
+
+    /**
+     * Creates a "Price includes" info box for accommodation sections.
+     * Uses the JSX mockup style: gray background, thin border, bold "Price includes:" label,
+     * followed by primary text and secondary muted text.
+     *
+     * <p>Styling per JSX mockup:</p>
+     * <ul>
+     *   <li>Padding: 14px 18px</li>
+     *   <li>Background: #F8F9FA</li>
+     *   <li>Border: 1px solid #E6E7E7</li>
+     *   <li>Border radius: 8px</li>
+     *   <li>Font size: 13px</li>
+     *   <li>Color: #495057</li>
+     * </ul>
+     *
+     * @param primaryText   The main text after "Price includes:" (e.g., "All teachings, accommodation, and meals for the full event.")
+     * @param secondaryText The secondary muted text in parentheses (e.g., "You can adjust dates and options like meals in the next step")
+     * @return A styled HBox containing the info text
+     */
+    public static HBox createPriceIncludesInfoBox(String primaryText, String secondaryText) {
+        HBox box = new HBox(0);
+        box.setAlignment(Pos.CENTER_LEFT);
+        box.setPadding(new Insets(14, 18, 14, 18));
+        // Style per JSX: background #F8F9FA, border #E6E7E7, border-radius 8px
+        box.setStyle("-fx-background-color: #F8F9FA; -fx-border-color: #E6E7E7; " +
+            "-fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+        // Create a TextFlow-like layout using HBox with wrapping label
+        // Since TextFlow may have GWT compatibility issues, use labels
+
+        // Bold "Price includes:" label
+        Label boldLabel = new Label("Price includes: ");
+        boldLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #495057;");
+
+        // Primary text
+        Label primaryLabel = new Label(primaryText);
+        primaryLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #495057;");
+        primaryLabel.setWrapText(true);
+
+        // VBox to stack the text properly for wrapping
+        VBox textContainer = new VBox(2);
+        textContainer.setAlignment(Pos.CENTER_LEFT);
+
+        // First line with bold + primary
+        HBox firstLine = new HBox(0);
+        firstLine.setAlignment(Pos.CENTER_LEFT);
+        firstLine.getChildren().addAll(boldLabel, primaryLabel);
+
+        textContainer.getChildren().add(firstLine);
+
+        // Secondary text (if provided)
+        if (secondaryText != null && !secondaryText.isEmpty()) {
+            Label secondaryLabel = new Label("(" + secondaryText + ")");
+            secondaryLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #6c757d;");
+            secondaryLabel.setWrapText(true);
+            textContainer.getChildren().add(secondaryLabel);
+        }
+
+        box.getChildren().add(textContainer);
+        HBox.setHgrow(textContainer, Priority.ALWAYS);
+
+        return box;
+    }
 
     /**
      * Applies past date styling to a card using pure CSS.

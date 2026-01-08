@@ -82,6 +82,23 @@ public interface StandardBookingFormCallbacks {
     }
 
     /**
+     * Called before the summary page is populated with price breakdown.
+     *
+     * <p>This hook is called immediately before updateSummaryWithAttendee(), which populates
+     * the price breakdown from WorkingBooking document lines. Override this to book
+     * form-specific items (accommodation, meals, options) into the WorkingBooking so they
+     * appear in the price breakdown.</p>
+     *
+     * <p>This is the recommended place for forms with custom option selection to call
+     * workingBooking.bookScheduledItems() for user-selected options.</p>
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    default void onBeforeSummary() {
+        // Default: no additional action needed
+    }
+
+    /**
      * Called after payment completes, before navigating to confirmation.
      *
      * <p>Override this to perform form-specific actions after payment.

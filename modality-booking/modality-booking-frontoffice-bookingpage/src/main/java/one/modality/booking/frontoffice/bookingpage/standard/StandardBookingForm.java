@@ -20,6 +20,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
@@ -119,6 +120,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Navigation configuration
     private final boolean navigationClickable;
 
+    // Sticky header (optional - appears at top of form)
+    private final Node stickyHeader;
+
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
      */
@@ -139,10 +143,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         StandardBookingFormCallbacks callbacks,
         boolean cardPaymentOnly,
         BookingFormEntryPoint entryPoint,
-        boolean navigationClickable) {
+        boolean navigationClickable,
+        Node stickyHeader) {
 
         super(activity, settings);
         this.navigationClickable = navigationClickable;
+        this.stickyHeader = stickyHeader;
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
@@ -278,6 +284,27 @@ public class StandardBookingForm extends MultiPageBookingForm {
             // node, and see the CSS file applying `-footer-logo-color: -booking-form-primary;`
             FXProperties.onPropertySet(node.sceneProperty(), scene -> scene.getRoot().getStyleClass().add(themeClass));
         }
+
+        // If a sticky header is provided, integrate it into the BorderPane's top section
+        // This keeps it fixed while the center content scrolls
+        if (stickyHeader != null && node != null) {
+            // Navigate through the structure: StackPane > BorderPane
+            if (node instanceof javafx.scene.layout.StackPane stackPane && !stackPane.getChildren().isEmpty()) {
+                Node firstChild = stackPane.getChildren().get(0);
+                if (firstChild instanceof javafx.scene.layout.BorderPane borderPane) {
+                    // Get the existing top (step progress header)
+                    Node existingTop = borderPane.getTop();
+                    // Create a VBox containing sticky header + existing header
+                    VBox topContainer = new VBox();
+                    topContainer.getChildren().add(stickyHeader);
+                    if (existingTop != null) {
+                        topContainer.getChildren().add(existingTop);
+                    }
+                    borderPane.setTop(topContainer);
+                }
+            }
+        }
+
         return node;
     }
 
@@ -1330,6 +1357,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection.clearPriceLines();
         defaultSummarySection.clearAdditionalOptions();
 
+        // Let callbacks book items into WorkingBooking before populating price lines
+        // This ensures form-specific items (accommodation, meals, options) appear in the breakdown
+        if (callbacks != null) {
+            callbacks.onBeforeSummary();
+        }
+
         // Add default price lines from WorkingBooking document lines
         addDefaultSummaryPriceLines();
 
@@ -1341,6 +1374,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     /**
      * Adds default price lines from WorkingBooking.
+     * Shows itemized breakdown from document lines (accommodation, meals, teaching, etc.)
      * Uses the PriceCalculator for proper price computation including any discounts.
      */
     private void addDefaultSummaryPriceLines() {
@@ -1371,18 +1405,84 @@ public class StandardBookingForm extends MultiPageBookingForm {
             Console.log("addDefaultSummaryPriceLines: after bookWholeEvent, attendances count = " + (attendances != null ? attendances.size() : 0));
         }
 
-        // Use PriceCalculator to compute the total price (handles complex pricing rules)
+        // Get the document lines to show itemized breakdown
+        List<DocumentLine> documentLines = documentAggregate.getDocumentLines();
+        Console.log("addDefaultSummaryPriceLines: documentLines count = " + (documentLines != null ? documentLines.size() : 0));
+
+        // Create PriceCalculator for computing line prices (needed for new bookings where prices aren't stored yet)
         PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-        int totalPrice = priceCalculator.calculateTotalPrice();
-        Console.log("addDefaultSummaryPriceLines: totalPrice = " + totalPrice);
 
-        // Get the event name for the price line description
-        Event event = getEvent();
-        String eventName = event != null && event.getName() != null ? event.getName() : "Event";
+        if (documentLines != null && !documentLines.isEmpty()) {
+            // Add itemized price lines from document lines
+            for (DocumentLine line : documentLines) {
+                Item item = line.getItem();
+                if (item == null) continue;
 
-        // Add a single price line for the total
-        if (totalPrice > 0) {
-            defaultSummarySection.addPriceLine(eventName, null, totalPrice);
+                ItemFamily family = item.getFamily();
+                // Skip items where family has summaryHidden = true (e.g., rounding)
+                if (family != null && Boolean.TRUE.equals(family.isSummaryHidden())) {
+                    continue;
+                }
+
+                // Build display name based on item family type:
+                // - Teaching: family name only (e.g., "Teaching")
+                // - Accommodation: "Family - Item" (e.g., "Accommodation - Single Room")
+                // - Meals: item name only (e.g., "Lunch", "Dinner")
+                // - Other: family name if available, else item name
+                String familyName = (family != null && family.getName() != null) ? family.getName() : null;
+                String itemName = item.getName() != null ? item.getName() : "Item";
+                String familyCode = family != null ? family.getCode() : "";
+                String displayName;
+
+                if (KnownItemFamily.TEACHING.getCode().equals(familyCode)) {
+                    // Teaching: show family name only
+                    displayName = familyName != null ? familyName : itemName;
+                } else if (KnownItemFamily.ACCOMMODATION.getCode().equals(familyCode)) {
+                    // Accommodation: show "Family - Item" (e.g., "Accommodation - Single Room")
+                    if (familyName != null) {
+                        displayName = familyName + " - " + itemName;
+                    } else {
+                        displayName = itemName;
+                    }
+                } else if (KnownItemFamily.MEALS.getCode().equals(familyCode)) {
+                    // Meals: show item name only (e.g., "Lunch", "Dinner")
+                    displayName = itemName;
+                } else {
+                    // Other items: prefer family name, fall back to item name
+                    displayName = familyName != null ? familyName : itemName;
+                }
+
+                // Get price: use stored price if available, otherwise calculate dynamically
+                Integer linePriceObj = line.getPriceNet();
+                int linePrice;
+                if (linePriceObj != null && linePriceObj != 0) {
+                    linePrice = linePriceObj;
+                } else {
+                    // Calculate price dynamically using PriceCalculator (for new bookings)
+                    linePrice = priceCalculator.calculateLinePrice(line);
+                }
+
+                // Compute dates from attendances for description
+                String lineDates = computeDatesFromAttendances(workingBooking, line);
+
+                Console.log("  Price line: " + displayName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
+
+                // Add the price line (skip zero-price items unless they're important)
+                if (linePrice != 0 || (family != null && !Boolean.TRUE.equals(family.isSummaryHidden()))) {
+                    defaultSummarySection.addPriceLine(displayName, lineDates, linePrice);
+                }
+            }
+        } else {
+            // Fallback: add a single price line with the total if no line items available
+            int totalPrice = priceCalculator.calculateTotalPrice();
+            Console.log("addDefaultSummaryPriceLines: totalPrice (fallback) = " + totalPrice);
+
+            Event event = getEvent();
+            String eventName = event != null && event.getName() != null ? event.getName() : "Event";
+
+            if (totalPrice > 0) {
+                defaultSummarySection.addPriceLine(eventName, null, totalPrice);
+            }
         }
     }
 

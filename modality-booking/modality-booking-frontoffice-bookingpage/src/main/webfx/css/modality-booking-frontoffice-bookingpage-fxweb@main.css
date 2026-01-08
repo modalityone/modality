@@ -1701,6 +1701,13 @@
     -fx-text-fill: -booking-form-primary;
 }
 
+/* Badge - coming soon (gray/muted) */
+.bookingpage-badge-coming-soon {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 12;
+    -fx-text-fill: #6c757d;
+}
+
 /* Primary-colored divider for emphasis (uses theme color) */
 .bookingpage-divider-top-primary {
     -fx-border-color: -booking-form-primary transparent transparent transparent;
@@ -2020,4 +2027,92 @@
 .booking-form-step-dot-completed {
     -fx-background-color: -booking-form-primary;
     -fx-background-radius: 5;
+}
+
+/* ==========================================
+   Registration Type Section (Festival Forms)
+   ========================================== */
+
+/* Registration type section container */
+.bookingpage-registration-type-section {
+    -fx-background-color: white;
+}
+
+/* Registration type card - base styling */
+.bookingpage-registration-type-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+/* Registration type card - hover state */
+.bookingpage-registration-type-card:hover {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 6);
+}
+
+/* Registration type card - selected state */
+.bookingpage-registration-type-card.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Registration type card - disabled state (Coming Soon) */
+.bookingpage-registration-type-card.disabled {
+    -fx-opacity: 0.7;
+    -fx-cursor: default;
+}
+
+.bookingpage-registration-type-card.disabled:hover {
+    -fx-border-color: #dee2e6;
+    -fx-background-color: white;
+    -fx-effect: none;
+}
+
+/* Circular icon container for registration type cards */
+.bookingpage-registration-type-icon-circle {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 32;
+}
+
+/* ==========================================
+   Festival Day Section - Change Date Buttons
+   ========================================== */
+
+/* Change Arrival Button - uses primary theme color */
+.bookingpage-change-arrival-btn {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-primary;
+    -fx-cursor: hand;
+}
+
+.bookingpage-change-arrival-btn:hover {
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Change Departure Button - uses dark text color */
+.bookingpage-change-departure-btn {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-text-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-text-primary;
+    -fx-cursor: hand;
+}
+
+.bookingpage-change-departure-btn:hover {
+    -fx-background-color: #f8f9fa;
 }

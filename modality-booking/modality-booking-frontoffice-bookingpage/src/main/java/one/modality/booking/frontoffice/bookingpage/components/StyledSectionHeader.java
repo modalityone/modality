@@ -47,6 +47,8 @@ public class StyledSectionHeader extends HBox {
     public static final String ICON_TICKET = "M2 9a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3a3 3 0 0 1-3 3a3 3 0 0 1 3 3a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3a3 3 0 0 1 3-3a3 3 0 0 1-3-3z";
     public static final String ICON_CREDIT_CARD = "M2 5h20a2 2 0 012 2v10a2 2 0 01-2 2H2a2 2 0 01-2-2V7a2 2 0 012-2z M2 10h20";
     public static final String ICON_CHECKLIST = "M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2 M9 3h6v4H9V3 M9 14l2 2 4-4";
+    public static final String ICON_HOME = "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10";
+    public static final String ICON_UTENSILS = "M3 2v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V2 M7 2v20 M21 15V2c-2.5 0-5 2-5 5v6c0 1.1.9 2 2 2h1 M18 22v-7";
 
     private final Label titleLabel;
     private final SVGPath iconPath;
