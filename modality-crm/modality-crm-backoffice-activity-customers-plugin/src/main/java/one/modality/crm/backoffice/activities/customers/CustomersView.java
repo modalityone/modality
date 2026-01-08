@@ -251,15 +251,15 @@ final class CustomersView {
                     : where("abcNames like ?",AbcNames.evaluate(s, true)))
             // Apply account type filter (null = show all, otherwise filter by type)
             .ifNotNull(pm.accountTypeFilterProperty(), accountType -> switch (accountType) {
-                case "frontoffice" -> where("frontendAccount!=null and !frontendAccount.backoffice");
-                case "backoffice" -> where("frontendAccount!=null and frontendAccount.backoffice");
-                case "owner" -> where("frontendAccount!=null and !frontendAccount.backoffice and owner");
-                case "non-owner" -> where("!owner or frontendAccount=null or frontendAccount.backoffice");
+                case "frontoffice" -> where("!frontendAccount.backoffice");
+                case "backoffice" -> where("frontendAccount.backoffice and owner");
+                case "owner" -> where("owner");
+                case "non-owner" -> where("!owner");
                 default -> where("true"); // Show all if unknown filter value
             })
             // Apply active status filter (null = show all, "active" = only active, "inactive" = disabled or removed)
             .ifNotNull(pm.activeStatusFilterProperty(), status ->
-                "active".equals(status) ? where("!removed and (frontendAccount=null or !frontendAccount.disabled)")
+                "active".equals(status) ? where("!removed and !frontendAccount.disabled")
                     : where("removed or frontendAccount.disabled"))
             // Apply limit - only when positive (checkbox checked = 100, unchecked = -1)
             .ifPositive(pm.limitProperty(), l -> limit(String.valueOf(l.intValue())))

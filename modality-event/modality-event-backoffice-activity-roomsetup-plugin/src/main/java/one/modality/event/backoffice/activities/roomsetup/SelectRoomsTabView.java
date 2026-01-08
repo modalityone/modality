@@ -69,9 +69,11 @@ final class SelectRoomsTabView {
     private final ScrollPane mainContainer;
     private final StackPane containerWithLoading;
     private final StackPane loadingOverlay;
+    private final StackPane noEventSelectedOverlay;
     private final HBox poolsContainer = new HBox(20);
     private final VBox sourcePoolsSection = new VBox(16);
     private final VBox categoryPoolsSection = new VBox(16);
+    private final HBox overAllocationWarning = new HBox(10); // Warning for over-allocated rooms
 
     // State
     private Event currentEvent;
@@ -97,8 +99,50 @@ final class SelectRoomsTabView {
         loadingBox.getChildren().addAll(spinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
-        // Container with loading overlay
-        containerWithLoading = new StackPane(mainContainer, loadingOverlay);
+        // Create "no event selected" overlay with styled message
+        noEventSelectedOverlay = createNoEventSelectedOverlay();
+        noEventSelectedOverlay.setVisible(false);
+        noEventSelectedOverlay.setManaged(false);
+
+        // Container with loading and no-event overlays
+        containerWithLoading = new StackPane(mainContainer, loadingOverlay, noEventSelectedOverlay);
+    }
+
+    /**
+     * Creates a styled overlay for when no event is selected.
+     * Uses Bootstrap alert-warning style with an icon and description.
+     */
+    private StackPane createNoEventSelectedOverlay() {
+        StackPane overlay = new StackPane();
+        overlay.getStyleClass().add("roomsetup-modal-overlay");
+
+        // Create message container
+        VBox messageBox = new VBox(16);
+        messageBox.setAlignment(Pos.CENTER);
+        messageBox.setMaxWidth(400);
+        messageBox.setPadding(new Insets(32));
+
+        // Apply warning alert style from Bootstrap
+        Bootstrap.alertWarning(messageBox);
+
+        // Warning icon (using Unicode warning triangle)
+        Label iconLabel = new Label("\u26A0"); // ⚠ symbol
+        iconLabel.setStyle("-fx-font-size: 48px; -fx-text-fill: #f59e0b;");
+
+        // Title
+        Label titleLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequired);
+        TextTheme.createPrimaryTextFacet(titleLabel).style();
+        Bootstrap.h4(titleLabel);
+
+        // Description
+        Label descLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.SelectEventRequiredDescription);
+        descLabel.setWrapText(true);
+        descLabel.setStyle("-fx-text-fill: #78716c; -fx-text-alignment: center;");
+
+        messageBox.getChildren().addAll(iconLabel, titleLabel, descLabel);
+        overlay.getChildren().add(messageBox);
+
+        return overlay;
     }
 
     Node buildContainer() {
@@ -118,16 +162,9 @@ final class SelectRoomsTabView {
 
         Console.log("SelectRoomsTabView: Starting logic with shared data model");
 
-        // Bind loading state to data model's loading properties
+        // Bind loading/overlay state to data model's loading properties and event selection
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            boolean allLoaded = dataModel.isAllDataLoaded();
-            loadingProperty.set(!allLoaded);
-            if (allLoaded) {
-                Platform.runLater(() -> {
-                    loadingOverlay.setVisible(false);
-                    loadingOverlay.setManaged(false);
-                });
-            }
+            Platform.runLater(this::updateOverlayState);
         }, dataModel.sourcePoolsLoadedProperty(),
            dataModel.categoryPoolsLoadedProperty(),
            dataModel.resourcesLoadedProperty(),
@@ -135,7 +172,8 @@ final class SelectRoomsTabView {
            dataModel.permanentConfigsLoadedProperty(),
            dataModel.eventConfigsLoadedProperty(),
            dataModel.defaultAllocationsLoadedProperty(),
-           dataModel.eventAllocationsLoadedProperty());
+           dataModel.eventAllocationsLoadedProperty(),
+           FXEvent.eventProperty());
 
         // Add list change listeners to trigger UI updates (referencing shared lists)
         dataModel.getSourcePools().addListener((ListChangeListener<Pool>) c -> Platform.runLater(this::refreshUI));
@@ -148,13 +186,56 @@ final class SelectRoomsTabView {
             Platform.runLater(this::refreshUI);
         });
 
+        // Listen for bed configuration changes from CustomizeTabView
+        FXProperties.runOnPropertyChange(() -> {
+            Console.log("SelectRoomsTabView: Bed configuration changed, refreshing UI");
+            Platform.runLater(this::refreshUI);
+        }, dataModel.bedConfigurationVersionProperty());
+
         // Listen for event changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             currentEvent = FXEvent.getEvent();
             if (currentEvent != null) {
                 Console.log("SelectRoomsTabView: Event changed to: " + currentEvent.getName() + " (id=" + currentEvent.getPrimaryKey() + ")");
             }
+            Platform.runLater(this::updateOverlayState);
         }, FXEvent.eventProperty());
+    }
+
+    /**
+     * Updates the overlay state based on event selection and data loading status.
+     * Shows:
+     * - "No event selected" overlay if no event is selected
+     * - Loading overlay if event is selected but data is still loading
+     * - Main content if event is selected and data is loaded
+     */
+    private void updateOverlayState() {
+        Event event = FXEvent.getEvent();
+        boolean hasEvent = event != null;
+        boolean allLoaded = dataModel != null && dataModel.isAllDataLoaded();
+
+        Console.log("SelectRoomsTabView: updateOverlayState - hasEvent=" + hasEvent + ", allLoaded=" + allLoaded);
+
+        if (!hasEvent) {
+            // No event selected - show "select event" message
+            noEventSelectedOverlay.setVisible(true);
+            noEventSelectedOverlay.setManaged(true);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+        } else if (!allLoaded) {
+            // Event selected but still loading - show spinner
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(true);
+            loadingOverlay.setManaged(true);
+        } else {
+            // Event selected and data loaded - show content
+            noEventSelectedOverlay.setVisible(false);
+            noEventSelectedOverlay.setManaged(false);
+            loadingOverlay.setVisible(false);
+            loadingOverlay.setManaged(false);
+            refreshUI();
+        }
     }
 
     void setActive(boolean active) {
@@ -189,6 +270,11 @@ final class SelectRoomsTabView {
         // Help tip
         HBox helpTip = createHelpTip();
 
+        // Over-allocation warning (initially hidden)
+        setupOverAllocationWarning();
+        overAllocationWarning.setVisible(false);
+        overAllocationWarning.setManaged(false);
+
         // Pools container - two columns
         poolsContainer.setFillHeight(true);
         HBox.setHgrow(sourcePoolsSection, Priority.ALWAYS);
@@ -199,7 +285,17 @@ final class SelectRoomsTabView {
         poolsContainer.getChildren().clear();
         poolsContainer.getChildren().addAll(sourcePoolsSection, categoryPoolsSection);
 
-        mainContent.getChildren().addAll(title, helpTip, poolsContainer);
+        mainContent.getChildren().addAll(title, helpTip, overAllocationWarning, poolsContainer);
+    }
+
+    /**
+     * Sets up the over-allocation warning container with red styling.
+     */
+    private void setupOverAllocationWarning() {
+        overAllocationWarning.setAlignment(Pos.CENTER_LEFT);
+        overAllocationWarning.setPadding(new Insets(12, 14, 12, 14));
+        // Apply red warning styling
+        applyDynamicBackgroundAndBorder(overAllocationWarning, "#fef2f2", "#ef4444", 1, new CornerRadii(8));
     }
 
     /**
@@ -233,6 +329,7 @@ final class SelectRoomsTabView {
      */
     private void refreshUI() {
         Console.log("refreshUI called - roomConfigs: " + getRoomConfigs().size() + ", eventAllocations: " + getEventAllocations().size());
+        refreshOverAllocationWarning();
         refreshSourcePoolsSection();
         refreshCategoryPoolsSection();
     }
@@ -2160,6 +2257,58 @@ final class SelectRoomsTabView {
                 Console.log("SUCCESS: Room unassigned");
                 dataModel.refreshEventData();
             });
+    }
+
+    // ============================================================================
+    // OVER-ALLOCATION DETECTION
+    // ============================================================================
+
+    /**
+     * Checks if a room is over-allocated (more beds allocated than capacity).
+     */
+    private boolean isOverAllocated(ResourceConfiguration rc) {
+        int capacity = getEffectiveBedCount(rc);
+        int allocated = getTotalBedsAllocated(rc);
+        return allocated > capacity;
+    }
+
+    /**
+     * Gets all over-allocated rooms.
+     */
+    private List<ResourceConfiguration> getOverAllocatedRooms() {
+        return getRoomConfigs().stream()
+            .filter(this::isOverAllocated)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Refreshes the over-allocation warning visibility and content.
+     */
+    private void refreshOverAllocationWarning() {
+        List<ResourceConfiguration> overAllocatedRooms = getOverAllocatedRooms();
+        if (overAllocatedRooms.isEmpty()) {
+            overAllocationWarning.setVisible(false);
+            overAllocationWarning.setManaged(false);
+        } else {
+            overAllocationWarning.getChildren().clear();
+
+            Label iconLabel = new Label("⚠️");
+
+            String roomNames = overAllocatedRooms.stream()
+                .map(rc -> rc.getResource() != null && rc.getResource().getName() != null
+                    ? rc.getResource().getName() : "Room")
+                .collect(Collectors.joining(", "));
+
+            Label textLabel = new Label(overAllocatedRooms.size() + " " +
+                I18nControls.newLabel(EventRoomSetupI18nKeys.OverAllocationWarning).getText() +
+                " (" + roomNames + ")");
+            applyDynamicTextFill(textLabel, "#dc2626");
+            textLabel.setWrapText(true);
+
+            overAllocationWarning.getChildren().addAll(iconLabel, textLabel);
+            overAllocationWarning.setVisible(true);
+            overAllocationWarning.setManaged(true);
+        }
     }
 
     // ============================================================================
