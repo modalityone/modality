@@ -4,6 +4,7 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
@@ -21,6 +22,7 @@ import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.CancelDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
@@ -251,13 +253,29 @@ public final class WorkingBooking {
         if (document == null || document.isNew()) {
             cancelChanges();
         } else {
-            integrateNewDocumentEvent(new CancelDocumentEvent(document, true), true);
-            lastestDocumentAggregate = null;
+            cancelBooking(true);
         }
     }
 
     public void uncancelBooking() {
-        integrateNewDocumentEvent(new CancelDocumentEvent(document, false), true);
+        cancelBooking(false);
+    }
+
+    private void cancelBooking(boolean cancel) {
+        integrateNewDocumentEvent(new CancelDocumentEvent(document, cancel, Meta.isBackoffice()), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void cancelDocumentLine(DocumentLine documentLine) {
+        cancelDocumentLine(documentLine, true);
+    }
+
+    public void uncancelDocumentLine(DocumentLine documentLine) {
+        cancelDocumentLine(documentLine, false);
+    }
+
+    private void cancelDocumentLine(DocumentLine documentLine, boolean cancel) {
+        integrateNewDocumentEvent(new CancelDocumentLineEvent(documentLine, cancel, Meta.isBackoffice()), true);
         lastestDocumentAggregate = null;
     }
 
