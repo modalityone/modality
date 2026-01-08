@@ -34,7 +34,7 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
         "select startScheduledItem,endScheduledItem,name,label" +
         " from BookablePeriod";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event),minDay" +
+        "select scope.(organization,site,eventType,event),item,minDay" +
         " from ItemPolicy";
 
     @Override
