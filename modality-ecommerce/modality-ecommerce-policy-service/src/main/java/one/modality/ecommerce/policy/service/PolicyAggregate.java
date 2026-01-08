@@ -92,6 +92,42 @@ public final class PolicyAggregate {
         return filterScheduledItemsOfFamily(KnownItemFamily.TEACHING);
     }
 
+    public List<ScheduledItem> filterAccommodationScheduledItems() {
+        return filterScheduledItemsOfFamily(KnownItemFamily.ACCOMMODATION);
+    }
+
+    /**
+     * Gets the ItemPolicy for a specific Item.
+     *
+     * @param item the Item to find the policy for
+     * @return the ItemPolicy for the item, or null if none exists
+     */
+    public ItemPolicy getItemPolicy(Item item) {
+        if (itemPolicies == null || item == null) {
+            return null;
+        }
+        return itemPolicies.stream()
+            .filter(ip -> Entities.samePrimaryKey(ip.getItem(), item))
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Gets the minimum guests availability across all days for an accommodation Item.
+     * This is useful for determining if an accommodation type is fully available
+     * for the entire event period.
+     *
+     * @param item the accommodation Item to check
+     * @return the minimum availability across all event days (0 if no availability data)
+     */
+    public int getMinAvailabilityForItem(Item item) {
+        return filterAccommodationScheduledItems().stream()
+            .filter(si -> Entities.samePrimaryKey(si.getItem(), item))
+            .mapToInt(si -> si.getGuestsAvailability() != null ? si.getGuestsAvailability() : 0)
+            .min()
+            .orElse(0);
+    }
+
     public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {
         return ScheduledItems.groupScheduledItemsByAudioRecordingItems(getScheduledItemsStream());
     }
