@@ -1459,7 +1459,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     linePrice = linePriceObj;
                 } else {
                     // Calculate price dynamically using PriceCalculator (for new bookings)
-                    linePrice = priceCalculator.calculateLinePrice(line);
+                    linePrice = priceCalculator.calculateDocumentLinePrice(line);
                 }
 
                 // Compute dates from attendances for description

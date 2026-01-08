@@ -69,16 +69,25 @@ public final class PriceCalculator {
         return calculateTotalPrice() - calculateDeposit();
     }
 
-    // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
-    // events with no complex pricing rules, and that needs to display the details for each day (ex: GP classes).
-
-    public int calculateLinePrice(DocumentLine line) {
+    public int calculateDocumentLinesPrice(Stream<DocumentLine> stream) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        return calculateLinePrice(line.getSite(), line.getItem(), documentAggregate.getLineAttendances(line));
+        return Kbs2PriceAlgorithm.computeBookingBill(documentAggregate, stream, false, false).getInvoiced();
     }
 
+    public int calculateDocumentLinesPrice(Collection<DocumentLine> lines) {
+        return calculateDocumentLinesPrice(lines.stream());
+    }
+
+    public int calculateDocumentLinePrice(DocumentLine line) {
+        return calculateDocumentLinesPrice(Stream.of(line));
+    }
+
+    // The remaining methods are not based on kbs2 price algorithm, they are simpler and meant to be used for simple
+    // events with no complex pricing rules, and that needs to display the details for each day (ex: GP classes).
+
+    @Deprecated
     public int calculateLinePrice(List<Attendance> attendances) {
         if (Collections.isEmpty(attendances))
             return 0;
@@ -86,7 +95,8 @@ public final class PriceCalculator {
         return calculateLinePrice(line.getSite(), line.getItem(), attendances);
     }
 
-    public int calculateLinePrice(Site site, Item item, List<Attendance> attendances) {
+    @Deprecated
+    private int calculateLinePrice(Site site, Item item, List<Attendance> attendances) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
@@ -117,11 +127,13 @@ public final class PriceCalculator {
         return dailyRatePrice; // otherwise the daily rate price
     }
 
+    @Deprecated
     private boolean isRateApplicable(Rate rate) {
         // TODO: check if the rate is applicable to this booking. For this first version, we just assume so.
         return true;
     }
 
+    @Deprecated
     private int getCheapestApplicableRatePrice(Rate rate) {
         int price = rate.getPrice();
         DocumentAggregate documentAggregate = getDocumentAggregate();
@@ -135,16 +147,8 @@ public final class PriceCalculator {
         return price;
     }
 
-    public int calculateAttendancePrice(Attendance attendance) {
-        DocumentLine line = attendance.getDocumentLine();
-        return calculateAttendancePrice(line);
-    }
-
-    public int calculateAttendancePrice(DocumentLine line) {
-        return calculateAttendancePrice(line.getSite(), line.getItem());
-    }
-
-    public int calculateAttendancePrice(Site site, Item item) {
+    @Deprecated
+    private int calculateAttendancePrice(Site site, Item item) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
@@ -156,11 +160,4 @@ public final class PriceCalculator {
             .orElse(0);
     }
 
-    public int calculateDocumentLinesPrice(Stream<DocumentLine> stream) {
-        return Kbs2PriceAlgorithm.computeBookingBill(getDocumentAggregate(), stream, false, false).getInvoiced();
-    }
-
-    public int calculateDocumentLinesPrice(Collection<DocumentLine> lines) {
-        return calculateDocumentLinesPrice(lines.stream());
-    }
 }
