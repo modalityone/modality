@@ -9,6 +9,7 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 /**
  * @author Bruno Salmon
  */
+@Deprecated // Replaced by ScheduledBoundary
 public interface BookablePeriod extends Entity,
     EntityHasEvent,
     EntityHasName,

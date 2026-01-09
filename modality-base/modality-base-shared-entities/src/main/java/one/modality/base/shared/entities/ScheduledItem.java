@@ -17,11 +17,11 @@ public interface ScheduledItem extends Entity,
     EntityHasLocalDate,
     EntityHasSiteAndItem,
     EntityHasStartAndEndTime,
+    EntityHasTimeline,
     EntityHasCancelled {
 
     String programScheduledItem = "programScheduledItem";
     String bookableScheduledItem = "bookableScheduledItem";
-    String timeline = "timeline";
     String expirationDate = "expirationDate";
     String comment = "comment";
     String commentLabel = "commentLabel";
@@ -55,18 +55,6 @@ public interface ScheduledItem extends Entity,
 
     default ScheduledItem getBookableScheduledItem() {
         return getForeignEntity(bookableScheduledItem);
-    }
-
-    default void setTimeLine(Object value) {
-        setForeignField(timeline, value);
-    }
-
-    default EntityId getTimelineId() {
-        return getForeignEntityId(timeline);
-    }
-
-    default Timeline getTimeline() {
-        return getForeignEntity(timeline);
     }
 
     default void setExpirationDate(LocalDateTime value) {

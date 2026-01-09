@@ -1,6 +1,5 @@
 package one.modality.base.shared.entities;
 
-import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
 
 import java.time.LocalDate;
@@ -13,7 +12,8 @@ public interface DocumentLine extends
     EntityHasCancelled,
     EntityHasRead,
     EntityHasArrivalSiteAndItem,
-    EntityHasResourceConfiguration {
+    EntityHasResourceConfiguration,
+    EntityHasTimeline {
     String startDate = "startDate";
     String endDate = "endDate";
     String hasAttendanceGap = "hasAttendanceGap";
@@ -22,7 +22,6 @@ public interface DocumentLine extends
     String price_minDeposit = "price_minDeposit";
     String price_custom = "price_custom";
     String price_discount = "price_discount";
-    String timeline = "timeline";
     String cleaned = "cleaned";
     String bedNumber = "bedNumber";
 
@@ -103,15 +102,4 @@ public interface DocumentLine extends
         setFieldValue(bedNumber, value);
     }
 
-    default void setTimeLine(Object value) {
-        setForeignField(timeline, value);
-    }
-
-    default EntityId getTimelineId() {
-        return getForeignEntityId(timeline);
-    }
-
-    default Timeline getTimeline() {
-        return getForeignEntity(timeline);
-    }
 }

@@ -12,6 +12,7 @@ public interface ItemPolicy extends Entity,
 
     String scope = "scope";
     String minDay = "minDay";
+    String _default = "default";
 
     default void setScope(Object value) {
         setForeignField(scope, value);
@@ -31,6 +32,14 @@ public interface ItemPolicy extends Entity,
 
     default Integer getMinDay() {
         return getIntegerFieldValue(minDay);
+    }
+
+    default void setDefault(Boolean value) {
+        setFieldValue(_default, value);
+    }
+
+    default Boolean isDefault() {
+        return getBooleanFieldValue(_default);
     }
 
 }

@@ -3,31 +3,20 @@ package one.modality.base.shared.entities;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasLocalDateTime;
+import one.modality.base.shared.entities.markers.EntityHasScheduledItem;
 
 /**
  * @author Bruno Salmon
  */
 public interface MediaConsumption extends Entity,
-    EntityHasLocalDateTime {
-    String scheduledItem = "scheduledItem";
+    EntityHasLocalDateTime,
+    EntityHasScheduledItem {
     String media = "media";
     String attendance = "attendance";
     String played = "played";
     String downloaded = "downloaded";
     String livestreamed = "livestreamed";
     String durationMillis = "durationMillis";
-
-    default void setScheduledItem(Object value) {
-        setForeignField(scheduledItem, value);
-    }
-
-    default EntityId getScheduledItemId() {
-        return getForeignEntityId(scheduledItem);
-    }
-
-    default ScheduledItem getScheduledItem() {
-        return getForeignEntity(scheduledItem);
-    }
 
     default void setMedia(Object value) {
         setForeignField(media, value);
