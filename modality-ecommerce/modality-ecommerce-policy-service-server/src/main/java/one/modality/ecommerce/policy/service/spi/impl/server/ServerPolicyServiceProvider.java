@@ -34,7 +34,7 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
         "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount" +
         " from Rate r";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event),minDay,default" +
+        "select scope.(organization,site,eventType,event),item,minDay,default" +
         " from ItemPolicy ip";
     private final static String BOOKABLE_PERIODS_QUERY_BASE =
         "select startScheduledItem,endScheduledItem,name,label" +
