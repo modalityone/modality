@@ -26,6 +26,8 @@ public final class PolicyAggregate {
     // Fields intended for serialisation
     private final String scheduledItemsQueryBase;
     private final QueryResult scheduledItemsQueryResult;
+    private final String scheduledBoundariesQueryBase;
+    private final QueryResult scheduledBoundariesQueryResult;
     private final String ratesQueryBase;
     private final QueryResult ratesQueryResult;
     private final String bookablePeriodsQueryBase;
@@ -37,23 +39,27 @@ public final class PolicyAggregate {
     private Event event;
     private EntityStore entityStore;
     private EntityList<ScheduledItem> scheduledItems;
+    private EntityList<ScheduledBoundary> scheduledBoundaries;
     private EntityList<Rate> rates;
     private EntityList<BookablePeriod> bookablePeriods;
     private EntityList<ItemPolicy> itemPolicies;
 
     public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult,
+                           String scheduledBoundariesQueryBase, QueryResult scheduledBoundariesQueryResult,
                            String ratesQueryBase, QueryResult ratesQueryResult,
-                           String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult,
-                           String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult
+                           String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
+                           String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult
     ) {
         this.scheduledItemsQueryBase = scheduledItemsQueryBase;
         this.scheduledItemsQueryResult = scheduledItemsQueryResult;
+        this.scheduledBoundariesQueryBase = scheduledBoundariesQueryBase;
+        this.scheduledBoundariesQueryResult = scheduledBoundariesQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
-        this.bookablePeriodsQueryBase = bookablePeriodsQueryBase;
-        this.bookablePeriodsQueryResult = bookablePeriodsQueryResult;
         this.itemPoliciesQueryBase = itemPoliciesQueryBase;
         this.itemPoliciesQueryResult = itemPoliciesQueryResult;
+        this.bookablePeriodsQueryBase = bookablePeriodsQueryBase;
+        this.bookablePeriodsQueryResult = bookablePeriodsQueryResult;
     }
 
     public void rebuildEntities(Event event) {
@@ -62,10 +68,14 @@ public final class PolicyAggregate {
         DataSourceModel dataSourceModel = entityStore.getDataSourceModel();
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
+        queryMapping = dataSourceModel.parseAndCompileSelect(scheduledBoundariesQueryBase).getQueryMapping();
+        scheduledBoundaries = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledBoundariesQueryResult, queryMapping, entityStore, "scheduledBoundaries");
         queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(itemPoliciesQueryBase).getQueryMapping();
         itemPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemPoliciesQueryResult, queryMapping, entityStore, "itemPolicies");
+        queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
+        bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
     }
 
     public EntityStore getEntityStore() {
@@ -96,6 +106,14 @@ public final class PolicyAggregate {
         return filterScheduledItemsOfFamily(KnownItemFamily.ACCOMMODATION);
     }
 
+    public EntityList<ScheduledBoundary> getScheduledBoundaries() {
+        return scheduledBoundaries;
+    }
+
+    public EntityList<ItemPolicy> getItemPolicies() {
+        return itemPolicies;
+    }
+
     /**
      * Gets the ItemPolicy for a specific Item.
      *
@@ -103,29 +121,10 @@ public final class PolicyAggregate {
      * @return the ItemPolicy for the item, or null if none exists
      */
     public ItemPolicy getItemPolicy(Item item) {
-        if (itemPolicies == null || item == null) {
-            return null;
-        }
-        return itemPolicies.stream()
+        return getItemPolicies().stream()
             .filter(ip -> Entities.samePrimaryKey(ip.getItem(), item))
             .findFirst()
             .orElse(null);
-    }
-
-    /**
-     * Gets the minimum guests availability across all days for an accommodation Item.
-     * This is useful for determining if an accommodation type is fully available
-     * for the entire event period.
-     *
-     * @param item the accommodation Item to check
-     * @return the minimum availability across all event days (0 if no availability data)
-     */
-    public int getMinAvailabilityForItem(Item item) {
-        return filterAccommodationScheduledItems().stream()
-            .filter(si -> Entities.samePrimaryKey(si.getItem(), item))
-            .mapToInt(si -> si.getGuestsAvailability() != null ? si.getGuestsAvailability() : 0)
-            .min()
-            .orElse(0);
     }
 
     public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {
@@ -182,20 +181,24 @@ public final class PolicyAggregate {
         return Rates.hasFacilityFees(getRatesStream());
     }
 
+    @Deprecated
     public List<BookablePeriod> getBookablePeriods() {
         return bookablePeriods;
     }
 
+    @Deprecated
     public List<BookablePeriod> getBookablePeriods(KnownItemFamily knownItemFamily) {
         return Collections.filter(getBookablePeriods(), bp -> Entities.samePrimaryKey(bp.getStartScheduledItem().getItem().getFamily(), knownItemFamily.getPrimaryKey()));
     }
 
+    @Deprecated
     public List<BookablePeriod> getBookablePeriods(KnownItemFamily knownItemFamily, Object wholePeriodI18nKey) {
         List<BookablePeriod> bookablePeriods = getBookablePeriods(knownItemFamily);
         bookablePeriods.add(createFamilyWholeBookablePeriod(knownItemFamily, wholePeriodI18nKey));
         return bookablePeriods;
     }
 
+    @Deprecated
     public BookablePeriod createFamilyWholeBookablePeriod(KnownItemFamily knownItemFamily, Object i18nKey) {
         List<ScheduledItem> familyScheduledItems = filterScheduledItemsOfFamily(knownItemFamily);
         BookablePeriod wholeBookablePeriod = entityStore.createEntity(BookablePeriod.class);
@@ -206,19 +209,7 @@ public final class PolicyAggregate {
         return wholeBookablePeriod;
     }
 
-    public EntityList<ItemPolicy> getItemPolicies() {
-        return itemPolicies;
-    }
-
     // The following methods are meant to be used for serialization, not by the application code
-
-    public String getRatesQueryBase() {
-        return ratesQueryBase;
-    }
-
-    public QueryResult getRatesQueryResult() {
-        return ratesQueryResult;
-    }
 
     public String getScheduledItemsQueryBase() {
         return scheduledItemsQueryBase;
@@ -228,12 +219,20 @@ public final class PolicyAggregate {
         return scheduledItemsQueryResult;
     }
 
-    public String getBookablePeriodsQueryBase() {
-        return bookablePeriodsQueryBase;
+    public String getScheduledBoundariesQueryBase() {
+        return scheduledBoundariesQueryBase;
     }
 
-    public QueryResult getBookablePeriodsQueryResult() {
-        return bookablePeriodsQueryResult;
+    public QueryResult getScheduledBoundariesQueryResult() {
+        return scheduledBoundariesQueryResult;
+    }
+
+    public String getRatesQueryBase() {
+        return ratesQueryBase;
+    }
+
+    public QueryResult getRatesQueryResult() {
+        return ratesQueryResult;
     }
 
     public String getItemPoliciesQueryBase() {
@@ -242,5 +241,13 @@ public final class PolicyAggregate {
 
     public QueryResult getItemPoliciesQueryResult() {
         return itemPoliciesQueryResult;
+    }
+
+    public String getBookablePeriodsQueryBase() {
+        return bookablePeriodsQueryBase;
+    }
+
+    public QueryResult getBookablePeriodsQueryResult() {
+        return bookablePeriodsQueryResult;
     }
 }

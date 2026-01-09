@@ -27,15 +27,18 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
             " group by scheduledItem)" +
         " as " + ScheduledItem.guestsAvailability +
         " from ScheduledItem si";
+    private final static String SCHEDULED_BOUNDARIES_QUERY_BASE =
+        "select event,scheduledItem,timeline.(startTime,endTime),date" +
+        " from ScheduledBoundary sb";
     private final static String RATES_QUERY_BASE =
         "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount" +
         " from Rate r";
+    private final static String ITEM_POLICIES_QUERY_BASE =
+        "select scope.(organization,site,eventType,event),minDay,default" +
+        " from ItemPolicy ip";
     private final static String BOOKABLE_PERIODS_QUERY_BASE =
         "select startScheduledItem,endScheduledItem,name,label" +
         " from BookablePeriod bp";
-    private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event),minDay" +
-        " from ItemPolicy ip";
 
     @Override
     public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
@@ -47,15 +50,15 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
                     DqlQueries.newQueryArgumentForDefaultDataSource(
                         SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and si.date >= e.startDate and si.date <= e.endDate from Event e where id=$1)" +
                         " order by site,item,date", eventPk)
+                    // Loading scheduled boundaries (of this event or of the repeated event if set)
+                    , DqlQueries.newQueryArgumentForDefaultDataSource(
+                    SCHEDULED_BOUNDARIES_QUERY_BASE + " where (select sb.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
+                    " order by scheduledItem.date", eventPk)
                     // Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     RATES_QUERY_BASE + " where (select r.site = coalesce(e.repeatedEvent.venue, e.venue) or r.site.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
                     " order by site,item,perDay desc,startDate,endDate,price", eventPk)
-                    // Loading bookable periods (of this event or of the repeated event if set)
-                    , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by startScheduledItem.date,endScheduledItem.date", eventPk)
                     // Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
@@ -65,12 +68,17 @@ public class ServerPolicyServiceProvider implements PolicyServiceProvider {
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
                     " order by id", eventPk)
+                    // Loading bookable periods (of this event or of the repeated event if set)
+                    , DqlQueries.newQueryArgumentForDefaultDataSource(
+                    BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
+                    " order by startScheduledItem.date,endScheduledItem.date", eventPk)
                 }))
             .map(batch -> new PolicyAggregate(
                 SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
-                RATES_QUERY_BASE, batch.get(1),
-                BOOKABLE_PERIODS_QUERY_BASE, batch.get(2),
-                ITEM_POLICIES_QUERY_BASE, batch.get(3)
+                SCHEDULED_BOUNDARIES_QUERY_BASE, batch.get(1),
+                RATES_QUERY_BASE, batch.get(2),
+                ITEM_POLICIES_QUERY_BASE, batch.get(3),
+                BOOKABLE_PERIODS_QUERY_BASE, batch.get(4)
             ));
     }
 }
