@@ -159,7 +159,9 @@ public final class BookingPageUIBuilder {
         /** Theme colored border, light background */
         INFO,
         /** Transparent background, theme colored border all around */
-        OUTLINE_PRIMARY
+        OUTLINE_PRIMARY,
+        /** Neutral gray background, gray border (for "Price includes" type messages) */
+        NEUTRAL
     }
 
     /**
@@ -281,21 +283,17 @@ public final class BookingPageUIBuilder {
      * Positioned in top-right corner with diagonal rotation.
      * Uses warm gray color (#78716c) as per JSX mockup.
      *
-     * <p>CSS class: {@code .bookingpage-ribbon-soldout}</p>
+     * <p>CSS classes: {@code .bookingpage-soldout-ribbon}, {@code .bookingpage-soldout-ribbon-text}</p>
      *
      * @return A StackPane containing the rotated ribbon
      */
     public static StackPane createSoldOutRibbon() {
         Label label = new Label("SOLD OUT");
-        label.getStyleClass().add("bookingpage-ribbon-soldout-text");
-        // Set in Java for GWT compatibility
-        label.setTextFill(Color.web("#fafaf9"));
-        label.setStyle("-fx-font-size: 11px; -fx-font-weight: 600; -fx-padding: 4 40 4 40;");
+        label.getStyleClass().add("bookingpage-soldout-ribbon-text");
+        label.setPadding(new Insets(4, 40, 4, 40));
 
         StackPane ribbon = new StackPane(label);
-        ribbon.getStyleClass().add("bookingpage-ribbon-soldout");
-        // Warm gray background
-        ribbon.setStyle("-fx-background-color: #78716c;");
+        ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
         // Rotate 45 degrees
         ribbon.getTransforms().add(new javafx.scene.transform.Rotate(45, 0, 0));
         ribbon.setAlignment(Pos.CENTER);
@@ -307,7 +305,8 @@ public final class BookingPageUIBuilder {
      * Creates a constraint badge with info icon (e.g., "Full Festival Only", "Minimum 3 nights").
      * Uses light blue background (#E3F2FD) and dark blue text (#0D47A1) per JSX mockup.
      *
-     * <p>CSS class: {@code .bookingpage-badge-constraint}</p>
+     * <p>CSS classes: {@code .bookingpage-badge-constraint}, {@code .bookingpage-badge-constraint-text},
+     * {@code .bookingpage-badge-constraint-icon}, with {@code .disabled} modifier for sold out state</p>
      *
      * @param text      The constraint text to display
      * @param isSoldOut Whether the card is sold out (uses gray styling if true)
@@ -319,16 +318,18 @@ public final class BookingPageUIBuilder {
         badge.setPadding(new Insets(4, 10, 4, 10));
         badge.getStyleClass().add("bookingpage-badge-constraint");
 
-        // Info icon (small, 12x12)
+        // Info icon (small, 12x12) - CSS handles colors
         SVGPath infoCircle = new SVGPath();
         infoCircle.setContent("M12 2a10 10 0 100 20 10 10 0 000-20z");
         infoCircle.setScaleX(0.5);
         infoCircle.setScaleY(0.5);
+        infoCircle.getStyleClass().add("bookingpage-badge-constraint-icon");
 
         SVGPath infoI = new SVGPath();
         infoI.setContent("M12 16v-4M12 8h.01");
         infoI.setScaleX(0.5);
         infoI.setScaleY(0.5);
+        infoI.getStyleClass().add("bookingpage-badge-constraint-icon");
 
         StackPane infoIcon = new StackPane(infoCircle, infoI);
         infoIcon.setMinSize(12, 12);
@@ -337,27 +338,10 @@ public final class BookingPageUIBuilder {
         Label textLabel = new Label(text);
         textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
 
-        // Apply colors based on sold out state
+        // Apply disabled class for sold out state - CSS handles colors
         if (isSoldOut) {
-            badge.setStyle("-fx-background-color: #f0f0f0; -fx-background-radius: 6;");
-            infoCircle.setStroke(Color.web("#9ca3af"));
-            infoCircle.setFill(Color.TRANSPARENT);
-            infoCircle.setStrokeWidth(2.5);
-            infoI.setStroke(Color.web("#9ca3af"));
-            infoI.setFill(Color.TRANSPARENT);
-            infoI.setStrokeWidth(2.5);
-            textLabel.setTextFill(Color.web("#9ca3af"));
-        } else {
-            badge.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 6;");
-            infoCircle.setStroke(Color.web("#0D47A1"));
-            infoCircle.setFill(Color.TRANSPARENT);
-            infoCircle.setStrokeWidth(2.5);
-            infoI.setStroke(Color.web("#0D47A1"));
-            infoI.setFill(Color.TRANSPARENT);
-            infoI.setStrokeWidth(2.5);
-            textLabel.setTextFill(Color.web("#0D47A1"));
+            badge.getStyleClass().add("disabled");
         }
-        textLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
 
         badge.getChildren().addAll(infoIcon, textLabel);
         return badge;
@@ -375,8 +359,6 @@ public final class BookingPageUIBuilder {
         Label badge = new Label("LIMITED");
         badge.getStyleClass().add("bookingpage-badge-limited");
         badge.setPadding(new Insets(4, 8, 4, 8));
-        badge.setStyle("-fx-background-color: #fff3cd; -fx-background-radius: 6; -fx-font-size: 12px; -fx-font-weight: 500;");
-        badge.setTextFill(Color.web("#856404"));
         return badge;
     }
 
@@ -957,19 +939,29 @@ public final class BookingPageUIBuilder {
 
     /**
      * Creates an info/warning/error box for displaying messages.
-     * Uses CSS classes based on the box type.
+     * Uses CSS classes for theming - colors come from CSS variables for theme compliance.
+     *
+     * <p>Style variants (styled via CSS):</p>
+     * <ul>
+     *   <li>{@code INFO} - Theme-colored background and border (uses CSS variables)</li>
+     *   <li>{@code SUCCESS} - Green background with left border</li>
+     *   <li>{@code WARNING} - Amber/yellow background with border</li>
+     *   <li>{@code ERROR} - Red background with border</li>
+     *   <li>{@code OUTLINE_PRIMARY} - Transparent background, primary color border</li>
+     * </ul>
      *
      * <p>CSS classes used:</p>
      * <ul>
-     *   <li>{@code .bookingpage-info-box} - base container styling</li>
-     *   <li>{@code .bookingpage-info-box-success} - green styling</li>
-     *   <li>{@code .bookingpage-info-box-warning} - yellow/amber styling</li>
-     *   <li>{@code .bookingpage-info-box-error} - red styling</li>
-     *   <li>{@code .bookingpage-info-box-info} - theme-colored styling</li>
+     *   <li>{@code .bookingpage-info-box} - base styling</li>
+     *   <li>{@code .bookingpage-info-box-success} - success variant</li>
+     *   <li>{@code .bookingpage-info-box-warning} - warning variant</li>
+     *   <li>{@code .bookingpage-info-box-error} - error variant</li>
+     *   <li>{@code .bookingpage-info-box-info} - info variant (theme colored)</li>
+     *   <li>{@code .bookingpage-info-box-outline-primary} - outline variant</li>
      * </ul>
      *
      * @param message The message text to display
-     * @param type    The type of info box (SUCCESS, WARNING, ERROR, INFO)
+     * @param type    The type of info box (SUCCESS, WARNING, ERROR, INFO, OUTLINE_PRIMARY)
      * @return A styled HBox containing an icon and message
      */
     public static HBox createInfoBox(String message, InfoBoxType type) {
@@ -978,41 +970,49 @@ public final class BookingPageUIBuilder {
         box.setPadding(new Insets(14, 16, 14, 16));
         box.getStyleClass().add("bookingpage-info-box");
 
-        // Icon based on type
+        // Icon based on type - CSS handles colors
         String iconUnicode;
         String typeClass = switch (type) {
             case SUCCESS -> {
-                iconUnicode = "✓"; // ✓
+                iconUnicode = "\u2713"; // ✓
                 yield "bookingpage-info-box-success";
             }
             case WARNING -> {
-                iconUnicode = "⚠"; // ⚠
+                iconUnicode = "\u26A0"; // ⚠
                 yield "bookingpage-info-box-warning";
             }
             case ERROR -> {
-                iconUnicode = "✖"; // ✖
+                iconUnicode = "\u2716"; // ✖
                 yield "bookingpage-info-box-error";
             }
             case OUTLINE_PRIMARY -> {
-                iconUnicode = "ℹ"; // ℹ
+                iconUnicode = "\u2139"; // ℹ
                 yield "bookingpage-info-box-outline-primary";
             }
-            default -> {
-                iconUnicode = "ℹ"; // ℹ
+            case NEUTRAL -> {
+                iconUnicode = ""; // No icon for neutral boxes
+                yield "bookingpage-info-box-neutral";
+            }
+            default -> { // INFO
+                iconUnicode = "\u2139"; // ℹ
                 yield "bookingpage-info-box-info";
             }
         };
 
         box.getStyleClass().add(typeClass);
 
-        Label iconLabel = new Label(iconUnicode);
-        iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+        // Only add icon if not empty (NEUTRAL type has no icon)
+        if (!iconUnicode.isEmpty()) {
+            Label iconLabel = new Label(iconUnicode);
+            iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+            box.getChildren().add(iconLabel);
+        }
 
         Label messageLabel = new Label(message);
         messageLabel.getStyleClass().add("bookingpage-info-box-message");
         messageLabel.setWrapText(true);
 
-        box.getChildren().addAll(iconLabel, messageLabel);
+        box.getChildren().add(messageLabel);
         return box;
     }
 
@@ -1029,41 +1029,50 @@ public final class BookingPageUIBuilder {
         box.setPadding(new Insets(14, 16, 14, 16));
         box.getStyleClass().add("bookingpage-info-box");
 
-        // Icon based on type
+        // Icon based on type - CSS handles colors
         String iconUnicode;
-        String typeClass = switch (type) {
+        String typeClass;
+        switch (type) {
             case SUCCESS -> {
-                iconUnicode = "✓"; // ✓
-                yield "bookingpage-info-box-success";
+                iconUnicode = "\u2713"; // ✓
+                typeClass = "bookingpage-info-box-success";
             }
             case WARNING -> {
-                iconUnicode = "⚠"; // ⚠
-                yield "bookingpage-info-box-warning";
+                iconUnicode = "\u26A0"; // ⚠
+                typeClass = "bookingpage-info-box-warning";
             }
             case ERROR -> {
-                iconUnicode = "✖"; // ✖
-                yield "bookingpage-info-box-error";
+                iconUnicode = "\u2716"; // ✖
+                typeClass = "bookingpage-info-box-error";
             }
             case OUTLINE_PRIMARY -> {
-                iconUnicode = "ℹ"; // ℹ
-                yield "bookingpage-info-box-outline-primary";
+                iconUnicode = "\u2139"; // ℹ
+                typeClass = "bookingpage-info-box-outline-primary";
             }
-            default -> {
-                iconUnicode = "ℹ"; // ℹ
-                yield "bookingpage-info-box-info";
+            case NEUTRAL -> {
+                iconUnicode = ""; // No icon for neutral boxes
+                typeClass = "bookingpage-info-box-neutral";
             }
-        };
+            default -> { // INFO
+                iconUnicode = "\u2139"; // ℹ
+                typeClass = "bookingpage-info-box-info";
+            }
+        }
 
         box.getStyleClass().add(typeClass);
 
-        Label iconLabel = new Label(iconUnicode);
-        iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+        // Only add icon if not empty (NEUTRAL type has no icon)
+        if (!iconUnicode.isEmpty()) {
+            Label iconLabel = new Label(iconUnicode);
+            iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+            box.getChildren().add(iconLabel);
+        }
 
         Label messageLabel = I18nControls.newLabel(i18nKey);
         messageLabel.getStyleClass().add("bookingpage-info-box-message");
         messageLabel.setWrapText(true);
 
-        box.getChildren().addAll(iconLabel, messageLabel);
+        box.getChildren().add(messageLabel);
         return box;
     }
 
@@ -1251,14 +1260,12 @@ public final class BookingPageUIBuilder {
      * Uses the JSX mockup style: gray background, thin border, bold "Price includes:" label,
      * followed by primary text and secondary muted text.
      *
-     * <p>Styling per JSX mockup:</p>
+     * <p>CSS classes used:</p>
      * <ul>
-     *   <li>Padding: 14px 18px</li>
-     *   <li>Background: #F8F9FA</li>
-     *   <li>Border: 1px solid #E6E7E7</li>
-     *   <li>Border radius: 8px</li>
-     *   <li>Font size: 13px</li>
-     *   <li>Color: #495057</li>
+     *   <li>{@code .bookingpage-price-includes-box} - container styling</li>
+     *   <li>{@code .bookingpage-price-includes-bold} - bold label styling</li>
+     *   <li>{@code .bookingpage-price-includes-primary} - primary text styling</li>
+     *   <li>{@code .bookingpage-price-includes-secondary} - secondary text styling</li>
      * </ul>
      *
      * @param primaryText   The main text after "Price includes:" (e.g., "All teachings, accommodation, and meals for the full event.")
@@ -1269,20 +1276,18 @@ public final class BookingPageUIBuilder {
         HBox box = new HBox(0);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setPadding(new Insets(14, 18, 14, 18));
-        // Style per JSX: background #F8F9FA, border #E6E7E7, border-radius 8px
-        box.setStyle("-fx-background-color: #F8F9FA; -fx-border-color: #E6E7E7; " +
-            "-fx-border-width: 1; -fx-border-radius: 8; -fx-background-radius: 8;");
+        box.getStyleClass().add("bookingpage-price-includes-box");
 
         // Create a TextFlow-like layout using HBox with wrapping label
         // Since TextFlow may have GWT compatibility issues, use labels
 
         // Bold "Price includes:" label
         Label boldLabel = new Label("Price includes: ");
-        boldLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: #495057;");
+        boldLabel.getStyleClass().add("bookingpage-price-includes-bold");
 
         // Primary text
         Label primaryLabel = new Label(primaryText);
-        primaryLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #495057;");
+        primaryLabel.getStyleClass().add("bookingpage-price-includes-primary");
         primaryLabel.setWrapText(true);
 
         // VBox to stack the text properly for wrapping
@@ -1299,7 +1304,7 @@ public final class BookingPageUIBuilder {
         // Secondary text (if provided)
         if (secondaryText != null && !secondaryText.isEmpty()) {
             Label secondaryLabel = new Label("(" + secondaryText + ")");
-            secondaryLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #6c757d;");
+            secondaryLabel.getStyleClass().add("bookingpage-price-includes-secondary");
             secondaryLabel.setWrapText(true);
             textContainer.getChildren().add(secondaryLabel);
         }

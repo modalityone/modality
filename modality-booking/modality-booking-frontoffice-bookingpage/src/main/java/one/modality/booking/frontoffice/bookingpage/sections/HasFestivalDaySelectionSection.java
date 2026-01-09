@@ -111,6 +111,20 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection {
      */
     void setMinNightsConstraint(int minNights);
 
+    /**
+     * Sets whether this is a Day Visitor booking (no overnight stay).
+     * When true, arrival and departure can be the same day (0 nights).
+     * When false, at least 1 night is required.
+     * @param isDayVisitor true for day visitor, false for overnight accommodation
+     */
+    void setIsDayVisitor(boolean isDayVisitor);
+
+    /**
+     * Resets the section to initial state.
+     * Clears selected dates, times, and any other selection state.
+     */
+    void reset();
+
     // === Selection ===
 
     /**

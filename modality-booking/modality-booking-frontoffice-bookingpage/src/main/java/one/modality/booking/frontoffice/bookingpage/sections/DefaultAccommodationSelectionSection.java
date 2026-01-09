@@ -12,11 +12,9 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
@@ -113,8 +111,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AccommodationOptions, StyledSectionHeader.ICON_HOME);
 
         // Info box explaining what price includes (per JSX mockup)
+        // Note: Price shown is teachings + accommodation only (meals are selected in the next step)
         priceIncludesInfoBox = BookingPageUIBuilder.createPriceIncludesInfoBox(
-            "All teachings, accommodation, and meals for the full event.",
+            "All teachings and accommodation for the full event.",
             "You can adjust dates and options like meals in the next step"
         );
 
@@ -200,55 +199,13 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         VBox card = new VBox(8);
         card.setMaxWidth(Double.MAX_VALUE);  // Full width cards
         card.setPadding(new Insets(20));
-        card.setCursor(isAvailable ? Cursor.HAND : Cursor.DEFAULT);
         card.getStyleClass().add("bookingpage-selectable-card");
 
-        // Apply borders in Java per project conventions (sizing in Java, not CSS)
-        BookingFormColorScheme scheme = colorScheme.get();
-        if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
-
-        // Base style without hover effects
-        final String defaultStyle = "-fx-border-color: #dee2e6; -fx-border-width: 2; " +
-            "-fx-border-radius: 12; -fx-background-radius: 12; -fx-background-color: white;";
-        final String selectedStyle = "-fx-border-color: " + toHex(scheme.getPrimary()) + "; -fx-border-width: 2; " +
-            "-fx-border-radius: 12; -fx-background-radius: 12; -fx-background-color: " + toHex(scheme.getSelectedBg()) + ";";
-        final String hoverStyle = "-fx-border-color: " + toHex(scheme.getHoverBorder()) + "; -fx-border-width: 2; " +
-            "-fx-border-radius: 12; -fx-background-radius: 12; -fx-background-color: " + toHex(scheme.getSelectedBg()) + ";";
-        final String soldOutStyle = "-fx-border-color: #d1d5db; -fx-border-style: dashed; -fx-border-width: 2; " +
-            "-fx-border-radius: 12; -fx-background-radius: 12; -fx-background-color: #fafafa;";
-
+        // Apply CSS classes for different states (styling handled in CSS)
         if (isSoldOut) {
-            // Dashed border for sold out
-            card.setStyle(soldOutStyle);
-            card.getStyleClass().add("soldout");
-            card.getStyleClass().add("disabled");
+            card.getStyleClass().addAll("soldout", "disabled");
         } else if (isSelected) {
-            // Primary color solid border for selected
-            card.setStyle(selectedStyle);
             card.getStyleClass().add("selected");
-        } else {
-            // Default gray border
-            card.setStyle(defaultStyle);
-        }
-
-        // Add hover effects for available cards (per JSX mockup)
-        if (isAvailable && !isSelected) {
-            card.setOnMouseEntered(e -> {
-                AccommodationOption selected = selectedOptionProperty.get();
-                if (selected == null || !selected.equals(option)) {
-                    card.setStyle(hoverStyle);
-                    card.setTranslateY(-2);  // translateY(-2px) per JSX
-                    card.setEffect(BookingPageUIBuilder.createDropShadow(12, 0.1, 0, 4));  // boxShadow per JSX
-                }
-            });
-            card.setOnMouseExited(e -> {
-                AccommodationOption selected = selectedOptionProperty.get();
-                if (selected == null || !selected.equals(option)) {
-                    card.setStyle(defaultStyle);
-                    card.setTranslateY(0);
-                    card.setEffect(null);
-                }
-            });
         }
 
         // Content container
@@ -265,11 +222,11 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
         // Room name (left side) - 16px, semibold
         Label nameLabel = new Label(option.getName());
-        nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: 600;");
+        nameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
         if (isSoldOut) {
-            nameLabel.setStyle(nameLabel.getStyle() + " -fx-text-fill: #9ca3af;");
+            nameLabel.getStyleClass().add("bookingpage-text-muted-light");
         } else {
-            nameLabel.setStyle(nameLabel.getStyle() + " -fx-text-fill: #212529;");
+            nameLabel.getStyleClass().add("bookingpage-text-dark");
         }
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(200); // Prevent name from pushing price off
@@ -282,26 +239,19 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         priceContainer.setAlignment(Pos.TOP_RIGHT);
 
         Label priceLabel = new Label(formatPrice(totalPrice));
-        priceLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: 700;");
+        priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold");
         if (isSoldOut) {
-            priceLabel.setStyle(priceLabel.getStyle() + " -fx-text-fill: #9ca3af; -fx-strikethrough: true;");
+            priceLabel.getStyleClass().addAll("bookingpage-text-muted-light", "bookingpage-text-strikethrough");
         } else {
-            priceLabel.setStyle(priceLabel.getStyle() + " -fx-text-fill: #2C3E50;");
+            priceLabel.getStyleClass().add("bookingpage-text-dark");
         }
 
         // Per person / Per room indicator (skip for Day Visitor and Share Accommodation)
         if (!option.isDayVisitor()) {
             String pricingType = option.isPerPerson() ? "Per person" : "Per room";
             Label pricingTypeLabel = new Label(pricingType);
-            pricingTypeLabel.setStyle("-fx-font-size: 11px; -fx-text-fill: #6c757d;");
+            pricingTypeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
             priceContainer.getChildren().addAll(priceLabel, pricingTypeLabel);
-
-            // For "Per room" accommodations, add a note about sharing
-            if (!option.isPerPerson()) {
-                Label sharingNote = new Label("Others choose 'Share Accommodation'");
-                sharingNote.setStyle("-fx-font-size: 10px; -fx-text-fill: #9ca3af; -fx-font-style: italic;");
-                priceContainer.getChildren().add(sharingNote);
-            }
         } else {
             priceContainer.getChildren().add(priceLabel);
         }
@@ -326,14 +276,28 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         // === DESCRIPTION (at bottom, 13px muted) ===
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label descLabel = new Label(option.getDescription());
-            descLabel.setStyle("-fx-font-size: 13px;");
+            descLabel.getStyleClass().add("bookingpage-text-sm");
             if (isSoldOut) {
-                descLabel.setStyle(descLabel.getStyle() + " -fx-text-fill: #b0b0b0;");
+                descLabel.getStyleClass().add("bookingpage-text-muted-disabled");
             } else {
-                descLabel.setStyle(descLabel.getStyle() + " -fx-text-fill: #6c757d;");
+                descLabel.getStyleClass().add("bookingpage-text-muted");
             }
             descLabel.setWrapText(true);
             contentBox.getChildren().add(descLabel);
+        }
+
+        // === SHARING NOTE for "Per room" accommodations ===
+        // Explains that one person books the room, roommates use "Share Accommodation"
+        if (!option.isDayVisitor() && !option.isPerPerson()) {
+            Label sharingNote = new Label("One person books the room, roommate(s) select 'Share Accommodation'");
+            sharingNote.getStyleClass().add("bookingpage-text-sm");
+            if (isSoldOut) {
+                sharingNote.getStyleClass().add("bookingpage-text-muted-disabled");
+            } else {
+                sharingNote.getStyleClass().add("bookingpage-text-muted");
+            }
+            sharingNote.setWrapText(true);
+            contentBox.getChildren().add(sharingNote);
         }
 
         // Wrap content with checkmark badge or sold out ribbon
@@ -406,26 +370,20 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         badge.setAlignment(Pos.CENTER_LEFT);
         badge.setPadding(new Insets(4, 10, 4, 10));
         badge.setMaxWidth(Region.USE_PREF_SIZE);
+        badge.getStyleClass().add("bookingpage-badge-constraint");
 
-        // Style the badge based on sold out state
+        // Apply disabled class for sold out state - CSS handles colors
         if (isSoldOut) {
-            badge.setStyle("-fx-background-color: #f0f0f0; -fx-background-radius: 6;");
-        } else {
-            // Wisdom Blue theme - light blue background
-            badge.setStyle("-fx-background-color: #E3F2FD; -fx-background-radius: 6;");
+            badge.getStyleClass().add("disabled");
         }
 
-        // Info icon (circle with "i" - using SVG path)
+        // Info icon (circle with "i" - using SVG path) - CSS handles colors
         SVGPath infoIcon = new SVGPath();
         // Circle with 'i' icon path
         infoIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
         infoIcon.setScaleX(0.5);
         infoIcon.setScaleY(0.5);
-        if (isSoldOut) {
-            infoIcon.setFill(Color.web("#9ca3af"));
-        } else {
-            infoIcon.setFill(Color.web("#0D47A1")); // Wisdom Blue dark
-        }
+        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
 
         // Text
         String constraintText = option.getConstraintLabel();
@@ -435,12 +393,7 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
                 : I18n.getI18nText(BookingPageI18nKeys.MinNights, option.getMinNights());
         }
         Label textLabel = new Label(constraintText);
-        textLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: 500;");
-        if (isSoldOut) {
-            textLabel.setStyle(textLabel.getStyle() + " -fx-text-fill: #9ca3af;");
-        } else {
-            textLabel.setStyle(textLabel.getStyle() + " -fx-text-fill: #0D47A1;"); // Wisdom Blue dark
-        }
+        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
 
         badge.getChildren().addAll(infoIcon, textLabel);
         return badge;
@@ -466,20 +419,15 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         // Create a diagonal corner ribbon in the top-right corner (per JSX mockup)
         // Style: warm gray background (#78716c), light text (#fafaf9), rotated 45deg
         StackPane ribbon = new StackPane();
-        ribbon.getStyleClass().add("bookingpage-ribbon-soldout");
+        ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
 
-        // Text styling - 11px, bold, uppercase
+        // Text styling - CSS handles font and color
         Label ribbonText = new Label("SOLD OUT");
-        ribbonText.setStyle("-fx-font-size: 11px; -fx-font-weight: 600; -fx-text-fill: #fafaf9;");
+        ribbonText.getStyleClass().add("bookingpage-soldout-ribbon-text");
 
         ribbon.getChildren().add(ribbonText);
-        // Per JSX: padding: 4px 40px - wider padding for diagonal ribbon
-        ribbon.setPadding(new Insets(4, 40, 4, 40));
         ribbon.setMaxWidth(Region.USE_PREF_SIZE);
         ribbon.setMaxHeight(Region.USE_PREF_SIZE);
-
-        // Warm gray background per JSX mockup (#78716c) - fully opaque, no transparency
-        ribbon.setStyle("-fx-background-color: #78716c; -fx-opacity: 1;");
         ribbon.setOpacity(1.0);  // Ensure no transparency
 
         // Rotate for diagonal effect (45deg per JSX)
@@ -717,22 +665,5 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
             addAccommodationOption(option);
         }
-    }
-
-    // ========================================
-    // UTILITY METHODS
-    // ========================================
-
-    /**
-     * Converts a JavaFX Color to a CSS hex string.
-     * @param color the Color to convert
-     * @return hex string like "#RRGGBB"
-     */
-    protected static String toHex(Color color) {
-        if (color == null) return "#000000";
-        return String.format("#%02X%02X%02X",
-            (int)(color.getRed() * 255),
-            (int)(color.getGreen() * 255),
-            (int)(color.getBlue() * 255));
     }
 }

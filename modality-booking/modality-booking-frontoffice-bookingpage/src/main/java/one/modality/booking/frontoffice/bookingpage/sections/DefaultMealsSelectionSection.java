@@ -23,7 +23,11 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -43,10 +47,10 @@ import java.util.stream.Collectors;
  * <p>CSS classes used:</p>
  * <ul>
  *   <li>{@code .bookingpage-meals-section} - section container</li>
- *   <li>{@code .bookingpage-meal-toggle} - meal toggle card</li>
- *   <li>{@code .bookingpage-meal-toggle.selected} - selected state</li>
- *   <li>{@code .bookingpage-dietary-option} - dietary preference option</li>
- *   <li>{@code .bookingpage-dietary-option.selected} - selected dietary preference</li>
+ *   <li>{@code .bookingpage-checkbox-card} - meal toggle card</li>
+ *   <li>{@code .bookingpage-checkbox-card.selected} - selected state</li>
+ *   <li>{@code .bookingpage-pill-option} - dietary preference option</li>
+ *   <li>{@code .bookingpage-pill-option.selected} - selected dietary preference</li>
  * </ul>
  *
  * @author Bruno Salmon
@@ -60,13 +64,17 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     // === ACCOMMODATION STATE ===
     // When true, breakfast is included automatically
     protected boolean hasAccommodation = true;  // Default to true (assume staying overnight)
+    // When true, shows a note about different meal pricing outside event dates
+    protected boolean hasExtendedStay = false;
 
     // === MEAL SELECTION ===
     // Meals are selected by default since accommodation price includes meals
     protected final BooleanProperty wantsBreakfast = new SimpleBooleanProperty(true);  // Auto-included with accommodation
     protected final BooleanProperty wantsLunch = new SimpleBooleanProperty(true);
     protected final BooleanProperty wantsDinner = new SimpleBooleanProperty(true);
+    @Deprecated
     protected final ObjectProperty<DietaryPreference> dietaryPreference = new SimpleObjectProperty<>(DietaryPreference.VEGETARIAN);
+    protected final ObjectProperty<Item> selectedDietaryItem = new SimpleObjectProperty<>();  // API-driven dietary option
 
     // === PRICING ===
     protected int breakfastPricePerDay = 0;  // Included with accommodation
@@ -81,7 +89,22 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     protected HBox dinnerCard;
     protected HBox dietarySection;
     protected Label infoLabel;
+    protected Label extendedStayLabel;  // Secondary label for extended stay note
+    protected VBox infoBox;  // Combined info box for both messages
     protected VBox mealsContainer;
+
+    // === DIETARY OPTIONS FROM API ===
+    protected List<Item> dietaryOptions = new ArrayList<>();  // Dietary options loaded from API
+
+    // === DATE/TIME CONTEXT ===
+    // These are set from the festival day section to calculate meal counts
+    protected LocalDate arrivalDate;
+    protected LocalDate departureDate;
+    protected HasFestivalDaySelectionSection.ArrivalDepartureTime arrivalTime = HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
+    protected HasFestivalDaySelectionSection.ArrivalDepartureTime departureTime = HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
+
+    // === SUMMARY UI ===
+    protected VBox summaryBox;  // Summary info box showing meal counts
 
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
@@ -99,9 +122,8 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Section header
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.Meals, StyledSectionHeader.ICON_UTENSILS);
 
-        // Info box
-        infoLabel = I18nControls.newLabel(BookingPageI18nKeys.AllMealsVegetarian);
-        HBox infoBox = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.AllMealsVegetarian, BookingPageUIBuilder.InfoBoxType.INFO);
+        // Combined info box with main info text and optional extended stay note
+        infoBox = createCombinedInfoBox();
 
         // Meal toggles container
         mealsContainer = new VBox(12);
@@ -125,8 +147,317 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         dietarySection.setVisible(true);
         dietarySection.setManaged(true);
 
-        container.getChildren().addAll(sectionHeader, infoBox, mealsContainer, dietarySection);
+        // Summary box showing meal counts (initially hidden until dates are set)
+        summaryBox = createSummaryBox();
+        summaryBox.setVisible(false);
+        summaryBox.setManaged(false);
+
+        container.getChildren().addAll(sectionHeader, infoBox, mealsContainer, dietarySection, summaryBox);
         VBox.setMargin(infoBox, new Insets(0, 0, 8, 0));
+        VBox.setMargin(summaryBox, new Insets(8, 0, 0, 0));
+    }
+
+    /**
+     * Creates a combined info box that shows the main info text and optionally the extended stay note.
+     * Uses BookingPageUIBuilder.createInfoBox() for consistent styling via CSS.
+     */
+    protected VBox createCombinedInfoBox() {
+        VBox box = new VBox(8);
+        box.setAlignment(Pos.CENTER_LEFT);
+
+        // Main info box using helper (CSS-styled, matches "Price includes" boxes)
+        HBox mainInfoBox = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.AllMealsVegetarian, BookingPageUIBuilder.InfoBoxType.NEUTRAL);
+
+        // Get the label from the info box for potential updates (first child since NEUTRAL has no icon)
+        if (!mainInfoBox.getChildren().isEmpty() && mainInfoBox.getChildren().get(0) instanceof Label) {
+            infoLabel = (Label) mainInfoBox.getChildren().get(0);
+        }
+
+        // Extended stay label (hidden by default) - shown below main info box when needed
+        extendedStayLabel = I18nControls.newLabel(BookingPageI18nKeys.ExtendedStayMealsNote);
+        extendedStayLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-primary");
+        extendedStayLabel.setPadding(new Insets(4, 0, 0, 28)); // Indent to align with text after icon
+        extendedStayLabel.setVisible(false);
+        extendedStayLabel.setManaged(false);
+
+        box.getChildren().addAll(mainInfoBox, extendedStayLabel);
+        return box;
+    }
+
+    /**
+     * Creates the summary box that shows meal counts based on dates and selections.
+     */
+    protected VBox createSummaryBox() {
+        VBox box = new VBox(6);
+        box.setPadding(new Insets(12, 16, 12, 16));
+        // Neutral style matching other info boxes - using CSS class
+        box.getStyleClass().addAll("bookingpage-info-box", "bookingpage-info-box-neutral");
+        return box;
+    }
+
+    /**
+     * Updates the summary box content based on current meal selections and dates.
+     */
+    protected void updateSummary() {
+        if (summaryBox == null) return;
+
+        // Clear previous content
+        summaryBox.getChildren().clear();
+
+        // Check if we have valid dates
+        if (arrivalDate == null || departureDate == null) {
+            summaryBox.setVisible(false);
+            summaryBox.setManaged(false);
+            return;
+        }
+
+        // Check if any meals are selected
+        boolean hasBreakfast = wantsBreakfast.get() && hasAccommodation;
+        boolean hasLunch = wantsLunch.get();
+        boolean hasDinner = wantsDinner.get();
+
+        if (!hasBreakfast && !hasLunch && !hasDinner) {
+            summaryBox.setVisible(false);
+            summaryBox.setManaged(false);
+            return;
+        }
+
+        // Title
+        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.YourMeals);
+        titleLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        summaryBox.getChildren().add(titleLabel);
+
+        // Calculate and display meal counts
+        DateTimeFormatter dayMonthFormat = DateTimeFormatter.ofPattern("EEE d MMM", Locale.ENGLISH);
+
+        if (hasBreakfast) {
+            int count = calculateBreakfastCount();
+            if (count > 0) {
+                String text = formatMealSummaryLine("Breakfast", count, getBreakfastDateRange(), dayMonthFormat);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+        }
+
+        if (hasLunch) {
+            int count = calculateLunchCount();
+            if (count > 0) {
+                String text = formatMealSummaryLine("Lunch", count, getLunchDateRange(), dayMonthFormat);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+        }
+
+        if (hasDinner) {
+            int count = calculateDinnerCount();
+            if (count > 0) {
+                String text = formatMealSummaryLine("Dinner", count, getDinnerDateRange(), dayMonthFormat);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+        }
+
+        // Only show if we have at least one meal line
+        boolean hasContent = summaryBox.getChildren().size() > 1;  // More than just title
+        summaryBox.setVisible(hasContent);
+        summaryBox.setManaged(hasContent);
+    }
+
+    /**
+     * Formats a meal summary line like "4 Breakfasts: Fri 25 Apr - Mon 28 Apr" or "1 Lunch: Fri 25 Apr"
+     */
+    protected String formatMealSummaryLine(String mealName, int count, LocalDate[] dateRange, DateTimeFormatter formatter) {
+        String plural = count == 1 ? "" : "s";
+        if (dateRange == null || dateRange[0] == null) {
+            return count + " " + mealName + plural;
+        }
+
+        String fromDate = dateRange[0].format(formatter);
+        if (dateRange[1] == null || dateRange[0].equals(dateRange[1])) {
+            // Single day
+            return count + " " + mealName + plural + ": " + fromDate;
+        } else {
+            // Date range
+            String toDate = dateRange[1].format(formatter);
+            return count + " " + mealName + plural + ": " + fromDate + " - " + toDate;
+        }
+    }
+
+    /**
+     * Calculates the number of breakfasts based on dates.
+     * Breakfast is available each morning after an overnight stay.
+     * First breakfast: Day after arrival
+     * Last breakfast: Departure day (if departing Afternoon or Evening, not Morning)
+     */
+    protected int calculateBreakfastCount() {
+        if (arrivalDate == null || departureDate == null || !hasAccommodation) return 0;
+
+        // Day visitor (same day) = no breakfast
+        if (arrivalDate.equals(departureDate)) return 0;
+
+        long nights = java.time.temporal.ChronoUnit.DAYS.between(arrivalDate, departureDate);
+        int count = (int) nights;
+
+        // If departing in the morning (before breakfast), subtract one
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
+            count--;
+        }
+
+        return Math.max(0, count);
+    }
+
+    /**
+     * Returns the date range for breakfasts [firstDate, lastDate].
+     */
+    protected LocalDate[] getBreakfastDateRange() {
+        if (arrivalDate == null || departureDate == null || !hasAccommodation) return null;
+        if (arrivalDate.equals(departureDate)) return null;
+
+        LocalDate firstBreakfast = arrivalDate.plusDays(1);
+        LocalDate lastBreakfast = departureDate;
+
+        // If departing in the morning, last breakfast is day before departure
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
+            lastBreakfast = departureDate.minusDays(1);
+        }
+
+        if (firstBreakfast.isAfter(lastBreakfast)) return null;
+        return new LocalDate[] { firstBreakfast, lastBreakfast };
+    }
+
+    /**
+     * Calculates the number of lunches based on dates and times.
+     * Arrival day: Lunch if arriving Morning (before lunch)
+     * Middle days: All lunches
+     * Departure day: Lunch if departing Afternoon or Evening (after lunch)
+     */
+    protected int calculateLunchCount() {
+        if (arrivalDate == null || departureDate == null) return 0;
+
+        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(arrivalDate, departureDate) + 1;
+        int count = (int) totalDays;
+
+        // Arrival day: No lunch if arriving Afternoon or Evening (after lunch time)
+        if (arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON ||
+            arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            count--;
+        }
+
+        // Departure day: No lunch if departing Morning (before lunch)
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
+            count--;
+        }
+
+        return Math.max(0, count);
+    }
+
+    /**
+     * Returns the date range for lunches [firstDate, lastDate].
+     */
+    protected LocalDate[] getLunchDateRange() {
+        if (arrivalDate == null || departureDate == null) return null;
+
+        LocalDate firstLunch = arrivalDate;
+        LocalDate lastLunch = departureDate;
+
+        // Arrival day: Skip if arriving Afternoon or Evening
+        if (arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON ||
+            arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            firstLunch = arrivalDate.plusDays(1);
+        }
+
+        // Departure day: Skip if departing Morning
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
+            lastLunch = departureDate.minusDays(1);
+        }
+
+        if (firstLunch.isAfter(lastLunch)) return null;
+        return new LocalDate[] { firstLunch, lastLunch };
+    }
+
+    /**
+     * Calculates the number of dinners based on dates and times.
+     * Arrival day: Dinner if arriving Morning or Afternoon (before dinner)
+     * Middle days: All dinners
+     * Departure day: Dinner only if departing Evening (after dinner)
+     */
+    protected int calculateDinnerCount() {
+        if (arrivalDate == null || departureDate == null) return 0;
+
+        long totalDays = java.time.temporal.ChronoUnit.DAYS.between(arrivalDate, departureDate) + 1;
+        int count = (int) totalDays;
+
+        // Arrival day: No dinner if arriving Evening (after dinner time)
+        if (arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            count--;
+        }
+
+        // Departure day: No dinner if departing Morning or Afternoon (before dinner)
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING ||
+            departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON) {
+            count--;
+        }
+
+        return Math.max(0, count);
+    }
+
+    /**
+     * Returns the date range for dinners [firstDate, lastDate].
+     */
+    protected LocalDate[] getDinnerDateRange() {
+        if (arrivalDate == null || departureDate == null) return null;
+
+        LocalDate firstDinner = arrivalDate;
+        LocalDate lastDinner = departureDate;
+
+        // Arrival day: Skip if arriving Evening
+        if (arrivalTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            firstDinner = arrivalDate.plusDays(1);
+        }
+
+        // Departure day: Skip if departing Morning or Afternoon
+        if (departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING ||
+            departureTime == HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON) {
+            lastDinner = departureDate.minusDays(1);
+        }
+
+        if (firstDinner.isAfter(lastDinner)) return null;
+        return new LocalDate[] { firstDinner, lastDinner };
+    }
+
+    /**
+     * Sets the arrival date and updates the summary.
+     */
+    public void setArrivalDate(LocalDate date) {
+        this.arrivalDate = date;
+        updateSummary();
+    }
+
+    /**
+     * Sets the departure date and updates the summary.
+     */
+    public void setDepartureDate(LocalDate date) {
+        this.departureDate = date;
+        updateSummary();
+    }
+
+    /**
+     * Sets the arrival time and updates the summary.
+     */
+    public void setArrivalTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
+        this.arrivalTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
+        updateSummary();
+    }
+
+    /**
+     * Sets the departure time and updates the summary.
+     */
+    public void setDepartureTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
+        this.departureTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
+        updateSummary();
     }
 
     protected HBox createMealToggle(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty, int pricePerDay) {
@@ -134,32 +465,34 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-meal-toggle");
+        card.getStyleClass().add("bookingpage-checkbox-card");
 
         // Apply border styling in Java per project conventions
         BookingFormColorScheme scheme = colorScheme.get();
         if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
         final BookingFormColorScheme finalScheme = scheme;
 
-        // Initial border style
-        updateCardStyle(card, selectedProperty.get(), finalScheme);
+        // Initial selection state - CSS handles styling via .selected class
+        if (selectedProperty.get()) {
+            card.getStyleClass().add("selected");
+        }
 
         // Checkbox indicator
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(selectedProperty, colorScheme);
 
-        // SVG Icon (sun for lunch, moon for dinner)
+        // SVG Icon (sun for lunch, moon for dinner) - flat gray non-colored style
         Node iconNode;
         boolean isLunch = titleKey == BookingPageI18nKeys.Lunch;
         if (isLunch) {
-            // Sun icon for lunch (composite with rays and circle)
-            iconNode = BookingPageUIBuilder.createSunIcon(Color.web("#f59e0b"), 0.85);
+            // Sun icon for lunch (composite with rays and circle) - flat gray
+            iconNode = BookingPageUIBuilder.createSunIcon(Color.web("#64748b"), 0.85);
         } else {
-            // Moon icon for dinner
+            // Moon icon for dinner - flat gray
             SVGPath moonIcon = new SVGPath();
             moonIcon.setContent(BookingPageUIBuilder.ICON_MOON);
-            moonIcon.setStroke(Color.web("#6366f1"));
+            moonIcon.setStroke(Color.web("#64748b"));
             moonIcon.setStrokeWidth(2);
-            moonIcon.setFill(Color.web("#6366f1").deriveColor(0, 1, 1, 0.2));
+            moonIcon.setFill(Color.TRANSPARENT);
             moonIcon.setScaleX(0.85);
             moonIcon.setScaleY(0.85);
             iconNode = moonIcon;
@@ -171,22 +504,21 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel(titleKey);
-        title.setStyle("-fx-font-size: 15px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        title.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         Label subtitle = I18nControls.newLabel(subtitleKey);
-        subtitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #6c757d;");
+        subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
 
         textContent.getChildren().addAll(title, subtitle);
 
         // Price
         Label price = new Label(formatPrice(pricePerDay) + "/day");
-        price.setStyle("-fx-font-size: 15px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        price.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         card.getChildren().addAll(checkbox, iconNode, textContent, price);
 
-        // Selection handling - update styling and CSS class
+        // Selection handling - CSS handles visual styling via .selected class
         selectedProperty.addListener((obs, old, newVal) -> {
-            updateCardStyle(card, newVal, finalScheme);
             if (newVal) {
                 if (!card.getStyleClass().contains("selected")) {
                     card.getStyleClass().add("selected");
@@ -202,19 +534,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
-     * Updates the card style based on selection state.
-     */
-    private void updateCardStyle(HBox card, boolean selected, BookingFormColorScheme scheme) {
-        if (selected) {
-            card.setStyle("-fx-border-color: " + toHex(scheme.getPrimary()) + "; -fx-border-width: 2; " +
-                "-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: " + toHex(scheme.getSelectedBg()) + ";");
-        } else {
-            card.setStyle("-fx-border-color: #dee2e6; -fx-border-width: 2; " +
-                "-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;");
-        }
-    }
-
-    /**
      * Creates the breakfast toggle card.
      * Breakfast is automatically included with accommodation and shows as "Included" rather than a price.
      */
@@ -222,7 +541,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         HBox card = new HBox(12);
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
-        card.getStyleClass().add("bookingpage-meal-toggle");
+        card.getStyleClass().add("bookingpage-checkbox-card");
 
         // Apply border styling in Java per project conventions
         BookingFormColorScheme scheme = colorScheme.get();
@@ -230,16 +549,19 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         final BookingFormColorScheme finalScheme = scheme;
 
         // Always selected style when accommodation is selected (breakfast is auto-included)
-        updateCardStyle(card, wantsBreakfast.get(), finalScheme);
+        // CSS handles styling via .selected class
+        if (wantsBreakfast.get()) {
+            card.getStyleClass().add("selected");
+        }
 
         // Checkbox indicator (always checked when has accommodation)
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(wantsBreakfast, colorScheme);
 
-        // Coffee cup icon for breakfast (using simple path)
+        // Coffee cup icon for breakfast (using simple path) - flat gray non-colored style
         SVGPath coffeeIcon = new SVGPath();
         // Coffee cup SVG path
         coffeeIcon.setContent("M18 8h1a4 4 0 0 1 0 8h-1M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8zM6 1v3M10 1v3M14 1v3");
-        coffeeIcon.setStroke(Color.web("#92400e"));  // Amber/brown color for breakfast
+        coffeeIcon.setStroke(Color.web("#64748b"));  // Flat gray color
         coffeeIcon.setStrokeWidth(2);
         coffeeIcon.setFill(Color.TRANSPARENT);
         coffeeIcon.setScaleX(0.85);
@@ -250,17 +572,17 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         textContent.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
-        Label title = new Label("Breakfast");  // Hardcoded for now, can be i18n later
-        title.setStyle("-fx-font-size: 15px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        Label title = I18nControls.newLabel(BookingPageI18nKeys.Breakfast);
+        title.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        Label subtitle = new Label("Included with accommodation");
-        subtitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #6c757d;");
+        Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.IncludedWithAccommodation);
+        subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
 
         textContent.getChildren().addAll(title, subtitle);
 
         // Price/status label
-        Label priceLabel = new Label("Included");
-        priceLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: 600; -fx-text-fill: #059669;");  // Green for "included"
+        Label priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
+        priceLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         card.getChildren().addAll(checkbox, coffeeIcon, textContent, priceLabel);
 
@@ -288,40 +610,89 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         section.setPadding(new Insets(16, 0, 0, 0));
 
         Label label = I18nControls.newLabel(BookingPageI18nKeys.DietaryPreference);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        // Vegetarian option
-        HBox vegetarianOption = createDietaryOption(BookingPageI18nKeys.Vegetarian, DietaryPreference.VEGETARIAN);
+        section.getChildren().add(label);
 
-        // Vegan option
-        HBox veganOption = createDietaryOption(BookingPageI18nKeys.Vegan, DietaryPreference.VEGAN);
+        // If dietary options from API are loaded, use them; otherwise fallback to hardcoded
+        if (!dietaryOptions.isEmpty()) {
+            for (Item dietItem : dietaryOptions) {
+                HBox option = createDietaryOptionFromItem(dietItem);
+                section.getChildren().add(option);
+            }
+        } else {
+            // Fallback to hardcoded options
+            HBox vegetarianOption = createDietaryOption(BookingPageI18nKeys.Vegetarian, DietaryPreference.VEGETARIAN);
+            HBox veganOption = createDietaryOption(BookingPageI18nKeys.Vegan, DietaryPreference.VEGAN);
+            section.getChildren().addAll(vegetarianOption, veganOption);
+        }
 
-        section.getChildren().addAll(label, vegetarianOption, veganOption);
         return section;
     }
 
+    /**
+     * Creates a dietary option button from an Item loaded from API.
+     */
+    protected HBox createDietaryOptionFromItem(Item dietItem) {
+        HBox option = new HBox(8);
+        option.setAlignment(Pos.CENTER_LEFT);
+        option.setPadding(new Insets(8, 16, 8, 16));
+        option.setCursor(Cursor.HAND);
+        option.getStyleClass().add("bookingpage-pill-option");
+
+        // Use the item name for the label
+        String itemName = dietItem.getName() != null ? dietItem.getName() : "Unknown";
+        Label label = new Label(itemName);
+        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+
+        option.getChildren().add(label);
+
+        // Initial selection state
+        updateDietaryOptionStyle(option, dietItem.equals(selectedDietaryItem.get()));
+
+        // Listen for selection changes
+        selectedDietaryItem.addListener((obs, old, newVal) -> {
+            updateDietaryOptionStyle(option, dietItem.equals(newVal));
+        });
+
+        option.setOnMouseClicked(e -> selectedDietaryItem.set(dietItem));
+
+        return option;
+    }
+
+    /**
+     * Updates the style of a dietary option based on selection state.
+     * CSS handles visual styling via .selected class.
+     */
+    protected void updateDietaryOptionStyle(HBox option, boolean selected) {
+        if (selected) {
+            if (!option.getStyleClass().contains("selected")) {
+                option.getStyleClass().add("selected");
+            }
+        } else {
+            option.getStyleClass().remove("selected");
+        }
+    }
+
+    @Deprecated
     protected HBox createDietaryOption(Object labelKey, DietaryPreference preference) {
         HBox option = new HBox(8);
         option.setAlignment(Pos.CENTER_LEFT);
         option.setPadding(new Insets(8, 16, 8, 16));
         option.setCursor(Cursor.HAND);
-        option.getStyleClass().add("bookingpage-dietary-option");
+        option.getStyleClass().add("bookingpage-pill-option");
 
         Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
 
         option.getChildren().add(label);
 
+        // Initial style
+        updateDietaryOptionStyleLegacy(option, dietaryPreference.get() == preference);
+
         // Selection handling
-        if (dietaryPreference.get() == preference) {
-            option.getStyleClass().add("selected");
-        }
         dietaryPreference.addListener((obs, old, newVal) -> {
-            if (newVal == preference) {
-                option.getStyleClass().add("selected");
-            } else {
-                option.getStyleClass().remove("selected");
-            }
+            updateDietaryOptionStyleLegacy(option, newVal == preference);
         });
 
         option.setOnMouseClicked(e -> dietaryPreference.set(preference));
@@ -329,11 +700,32 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         return option;
     }
 
+    @Deprecated
+    private void updateDietaryOptionStyleLegacy(HBox option, boolean selected) {
+        // CSS handles visual styling via .selected class
+        if (selected) {
+            if (!option.getStyleClass().contains("selected")) {
+                option.getStyleClass().add("selected");
+            }
+        } else {
+            option.getStyleClass().remove("selected");
+        }
+    }
+
     protected void setupBindings() {
-        // Show/hide dietary section based on meal selection
-        wantsBreakfast.addListener((obs, old, newVal) -> updateDietarySectionVisibility());
-        wantsLunch.addListener((obs, old, newVal) -> updateDietarySectionVisibility());
-        wantsDinner.addListener((obs, old, newVal) -> updateDietarySectionVisibility());
+        // Show/hide dietary section based on meal selection and update summary
+        wantsBreakfast.addListener((obs, old, newVal) -> {
+            updateDietarySectionVisibility();
+            updateSummary();
+        });
+        wantsLunch.addListener((obs, old, newVal) -> {
+            updateDietarySectionVisibility();
+            updateSummary();
+        });
+        wantsDinner.addListener((obs, old, newVal) -> {
+            updateDietarySectionVisibility();
+            updateSummary();
+        });
     }
 
     protected void updateDietarySectionVisibility() {
@@ -410,11 +802,27 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     public void setHasAccommodation(boolean hasAccommodation) {
         this.hasAccommodation = hasAccommodation;
         updateBreakfastVisibility();
+        updateSummary();
     }
 
     @Override
     public boolean hasAccommodation() {
         return hasAccommodation;
+    }
+
+    @Override
+    public void setHasExtendedStay(boolean hasExtendedStay) {
+        this.hasExtendedStay = hasExtendedStay;
+        // Show/hide the extended stay label within the combined info box
+        if (extendedStayLabel != null) {
+            extendedStayLabel.setVisible(hasExtendedStay);
+            extendedStayLabel.setManaged(hasExtendedStay);
+        }
+    }
+
+    @Override
+    public boolean hasExtendedStay() {
+        return hasExtendedStay;
     }
 
     @Override
@@ -435,6 +843,11 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     @Override
     public ObjectProperty<DietaryPreference> dietaryPreferenceProperty() {
         return dietaryPreference;
+    }
+
+    @Override
+    public ObjectProperty<Item> selectedDietaryItemProperty() {
+        return selectedDietaryItem;
     }
 
     @Override
@@ -520,8 +933,59 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             }
         }
 
-        // Rebuild UI to reflect new prices
+        // Load dietary options from DIET item family
+        loadDietaryOptions(policyAggregate);
+
+        // Rebuild UI to reflect new prices and dietary options
         rebuildMealCards();
+        rebuildDietarySection();
+    }
+
+    /**
+     * Loads dietary options from the DIET item family in PolicyAggregate.
+     * Auto-selects the first option.
+     */
+    protected void loadDietaryOptions(PolicyAggregate policyAggregate) {
+        if (policyAggregate == null) return;
+
+        // Get all DIET scheduled items
+        List<ScheduledItem> dietItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.DIET);
+        Console.log("DefaultMealsSelectionSection: Found " + dietItems.size() + " diet scheduled items");
+
+        // Extract unique Items
+        dietaryOptions.clear();
+        dietItems.stream()
+            .map(ScheduledItem::getItem)
+            .filter(item -> item != null)
+            .distinct()
+            .forEach(dietaryOptions::add);
+
+        Console.log("DefaultMealsSelectionSection: Loaded " + dietaryOptions.size() + " unique dietary options");
+        for (Item item : dietaryOptions) {
+            Console.log("DefaultMealsSelectionSection: Dietary option: " + item.getName());
+        }
+
+        // Auto-select the first dietary option
+        if (!dietaryOptions.isEmpty() && selectedDietaryItem.get() == null) {
+            selectedDietaryItem.set(dietaryOptions.get(0));
+            Console.log("DefaultMealsSelectionSection: Auto-selected dietary option: " + dietaryOptions.get(0).getName());
+        }
+    }
+
+    /**
+     * Rebuilds the dietary preference section with loaded options.
+     */
+    protected void rebuildDietarySection() {
+        if (container == null || dietarySection == null) return;
+
+        int index = container.getChildren().indexOf(dietarySection);
+        if (index >= 0) {
+            container.getChildren().remove(dietarySection);
+            dietarySection = buildDietaryPreferenceSection();
+            dietarySection.setVisible(wantsBreakfast.get() || wantsLunch.get() || wantsDinner.get());
+            dietarySection.setManaged(dietarySection.isVisible());
+            container.getChildren().add(index, dietarySection);
+        }
     }
 
     /**
@@ -544,20 +1008,4 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         updateBreakfastVisibility();
     }
 
-    // ========================================
-    // UTILITY METHODS
-    // ========================================
-
-    /**
-     * Converts a JavaFX Color to a CSS hex string.
-     * @param color the Color to convert
-     * @return hex string like "#RRGGBB"
-     */
-    protected static String toHex(Color color) {
-        if (color == null) return "#000000";
-        return String.format("#%02X%02X%02X",
-            (int)(color.getRed() * 255),
-            (int)(color.getGreen() * 255),
-            (int)(color.getBlue() * 255));
-    }
 }

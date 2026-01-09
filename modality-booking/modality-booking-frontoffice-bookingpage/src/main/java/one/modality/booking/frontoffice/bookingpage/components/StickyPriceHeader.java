@@ -6,7 +6,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -41,16 +40,9 @@ public class StickyPriceHeader extends HBox {
         setSpacing(16);
         setMaxWidth(Double.MAX_VALUE);
 
-        // Add CSS class for sticky positioning (works in browser via GWT)
+        // Add CSS class for sticky positioning and styling (works in browser via GWT)
+        // Styling defined in modality-booking-frontoffice-bookingpage-fxweb@main.css
         getStyleClass().add("sticky-price-header");
-
-        // Style the header
-        setStyle(
-            "-fx-background-color: linear-gradient(to bottom, #FFFFFF, #FAFBFC); " +
-            "-fx-border-color: #E5E7EB; " +
-            "-fx-border-width: 0 0 1 0; " +
-            "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 3, 0, 0, 1);"
-        );
 
         // Inner container with max width
         HBox innerContainer = new HBox(16);
@@ -75,13 +67,13 @@ public class StickyPriceHeader extends HBox {
         textRow.setAlignment(Pos.CENTER_LEFT);
 
         roomNameLabel = new Label();
-        roomNameLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 500; -fx-text-fill: #374151;");
+        roomNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-secondary");
 
         Label separator = new Label(" · ");
-        separator.setStyle("-fx-font-size: 13px; -fx-text-fill: #9CA3AF;");
+        separator.getStyleClass().add("sticky-price-header-separator");
 
         daysLabel = new Label();
-        daysLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 400; -fx-text-fill: #6B7280;");
+        daysLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
 
         textRow.getChildren().addAll(roomNameLabel, separator, daysLabel);
         textContainer.getChildren().add(textRow);
@@ -92,14 +84,11 @@ public class StickyPriceHeader extends HBox {
         HBox rightSide = new HBox(8);
         rightSide.setAlignment(Pos.CENTER_RIGHT);
 
-        Label totalLabel = new Label("TOTAL");
-        totalLabel.setStyle(
-            "-fx-font-size: 11px; -fx-font-weight: 500; -fx-text-fill: #9CA3AF; " +
-            "-fx-letter-spacing: 0.3;"
-        );
+        Label totalLabel = new Label("TOTAL");  // TODO: i18n
+        totalLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium", "bookingpage-text-muted");
 
         priceLabel = new Label();
-        priceLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: 700; -fx-line-height: 1;");
+        priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-primary");
 
         rightSide.getChildren().addAll(totalLabel, priceLabel);
 
@@ -119,33 +108,27 @@ public class StickyPriceHeader extends HBox {
         container.setMinSize(32, 32);
         container.setMaxSize(32, 32);
 
+        // Use CSS class for styling - theme colors applied via CSS variables
+        container.getStyleClass().add("sticky-price-header-icon-container");
+
         // Calendar icon using SVG path
         SVGPath calendarIcon = new SVGPath();
-        // Calendar icon path
         calendarIcon.setContent("M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z");
         calendarIcon.setScaleX(0.6);
         calendarIcon.setScaleY(0.6);
+        calendarIcon.getStyleClass().add("bookingpage-icon-primary");
 
         container.getChildren().add(calendarIcon);
 
-        // Update colors when color scheme changes
+        // Icon fill needs programmatic update for theme color changes (SVGPath fill not supported via CSS)
         colorScheme.addListener((obs, old, newScheme) -> {
             if (newScheme != null) {
-                container.setStyle(
-                    "-fx-background-color: " + colorToHex(newScheme.getSelectedBg()) + "; " +
-                    "-fx-background-radius: 8;"
-                );
                 calendarIcon.setFill(newScheme.getPrimary());
             }
         });
 
-        // Set initial colors
-        BookingFormColorScheme scheme = colorScheme.get();
-        container.setStyle(
-            "-fx-background-color: " + colorToHex(scheme.getSelectedBg()) + "; " +
-            "-fx-background-radius: 8;"
-        );
-        calendarIcon.setFill(scheme.getPrimary());
+        // Set initial icon fill
+        calendarIcon.setFill(colorScheme.get().getPrimary());
 
         return container;
     }
@@ -167,34 +150,25 @@ public class StickyPriceHeader extends HBox {
         totalPrice.addListener((obs, old, newPrice) -> updatePriceLabel());
         colorScheme.addListener((obs, old, newScheme) -> updatePriceLabel());
 
-        // Visibility binding
+        // Visibility binding - only toggle visible, keep managed=false always
+        // This allows CSS position:fixed to work (unmanaged nodes don't affect parent layout)
         showHeader.addListener((obs, old, newVisible) -> {
-            setManaged(newVisible);
+            // Keep managed=false always for fixed positioning to work
+            // setManaged(newVisible);  // DON'T toggle managed
             setVisible(newVisible);
         });
     }
 
     private void updatePriceLabel() {
         int price = totalPrice.get();
-        BookingFormColorScheme scheme = colorScheme.get();
         priceLabel.setText("$" + (price / 100));
-        priceLabel.setStyle(
-            "-fx-font-size: 24px; -fx-font-weight: 700; -fx-line-height: 1; " +
-            "-fx-text-fill: " + colorToHex(scheme.getPrimary()) + ";"
-        );
+        // Price color uses CSS class "bookingpage-text-primary" which uses theme variable
     }
 
     private void updateVisibility() {
         // Show header when room name is set
         boolean shouldShow = roomName.get() != null && !roomName.get().isEmpty();
         showHeader.set(shouldShow);
-    }
-
-    private String colorToHex(Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
     }
 
     // === PUBLIC API ===

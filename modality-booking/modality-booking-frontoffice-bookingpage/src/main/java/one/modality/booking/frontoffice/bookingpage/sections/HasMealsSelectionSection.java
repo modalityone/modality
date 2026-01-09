@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import one.modality.base.shared.entities.Item;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -82,6 +83,17 @@ public interface HasMealsSelectionSection extends BookingFormSection {
      */
     boolean hasAccommodation();
 
+    /**
+     * Sets whether the user has an extended stay (early arrival or late departure).
+     * When true, shows a note about different meal pricing outside event dates.
+     */
+    void setHasExtendedStay(boolean hasExtendedStay);
+
+    /**
+     * Returns whether the user has an extended stay.
+     */
+    boolean hasExtendedStay();
+
     // === Selection ===
 
     /**
@@ -144,21 +156,48 @@ public interface HasMealsSelectionSection extends BookingFormSection {
 
     /**
      * Property for dietary preference.
+     * @deprecated Use selectedDietaryItemProperty() instead for API-driven options.
      */
+    @Deprecated
     ObjectProperty<DietaryPreference> dietaryPreferenceProperty();
 
     /**
      * Gets the dietary preference.
+     * @deprecated Use getSelectedDietaryItem() instead for API-driven options.
      */
+    @Deprecated
     default DietaryPreference getDietaryPreference() {
         return dietaryPreferenceProperty().get();
     }
 
     /**
      * Sets the dietary preference.
+     * @deprecated Use setSelectedDietaryItem() instead for API-driven options.
      */
+    @Deprecated
     default void setDietaryPreference(DietaryPreference preference) {
         dietaryPreferenceProperty().set(preference);
+    }
+
+    // === Dietary Options (API-driven) ===
+
+    /**
+     * Property for the selected dietary item (from API).
+     */
+    ObjectProperty<Item> selectedDietaryItemProperty();
+
+    /**
+     * Gets the selected dietary item.
+     */
+    default Item getSelectedDietaryItem() {
+        return selectedDietaryItemProperty().get();
+    }
+
+    /**
+     * Sets the selected dietary item.
+     */
+    default void setSelectedDietaryItem(Item item) {
+        selectedDietaryItemProperty().set(item);
     }
 
     // === Calculated Values ===

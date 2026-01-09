@@ -15,8 +15,12 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
@@ -25,6 +29,7 @@ import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.booking.frontoffice.bookingpage.*;
+import one.modality.booking.frontoffice.bookingpage.components.StickyPriceHeader;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
@@ -285,22 +290,44 @@ public class StandardBookingForm extends MultiPageBookingForm {
             FXProperties.onPropertySet(node.sceneProperty(), scene -> scene.getRoot().getStyleClass().add(themeClass));
         }
 
-        // If a sticky header is provided, integrate it into the BorderPane's top section
-        // This keeps it fixed while the center content scrolls
+        // If a sticky header is provided, add it as an unmanaged overlay
+        // For web: CSS position:fixed makes it stick to viewport top
+        // For JavaFX: positioned at top of StackPane via layoutY=0
         if (stickyHeader != null && node != null) {
             // Navigate through the structure: StackPane > BorderPane
-            if (node instanceof javafx.scene.layout.StackPane stackPane && !stackPane.getChildren().isEmpty()) {
+            if (node instanceof StackPane stackPane && !stackPane.getChildren().isEmpty()) {
                 Node firstChild = stackPane.getChildren().get(0);
-                if (firstChild instanceof javafx.scene.layout.BorderPane borderPane) {
-                    // Get the existing top (step progress header)
-                    Node existingTop = borderPane.getTop();
-                    // Create a VBox containing sticky header + existing header
-                    VBox topContainer = new VBox();
-                    topContainer.getChildren().add(stickyHeader);
-                    if (existingTop != null) {
-                        topContainer.getChildren().add(existingTop);
+                if (firstChild instanceof BorderPane borderPane) {
+                    // Add sticky header to StackPane as an overlay (not to BorderPane)
+                    // It will float above all other content
+                    stackPane.getChildren().add(stickyHeader);
+
+                    // Ensure header stays unmanaged (doesn't affect StackPane layout)
+                    stickyHeader.setManaged(false);
+
+                    // Position at top for JavaFX (CSS position:fixed handles web)
+                    stickyHeader.setLayoutY(0);
+
+                    // Center horizontally and set max width
+                    if (stickyHeader instanceof Region stickyRegion) {
+                        stickyRegion.setMaxWidth(800);
+                        // Bind width to match BorderPane width (capped at max)
+                        stickyRegion.prefWidthProperty().bind(borderPane.widthProperty());
+                        // Center horizontally using listener (GWT-compatible, avoids DoubleBinding.divide)
+                        FXProperties.runNowAndOnPropertiesChange(() -> {
+                            double centerX = (stackPane.getWidth() - stickyRegion.getWidth()) / 2;
+                            stickyRegion.setLayoutX(Math.max(0, centerX));
+                        }, stackPane.widthProperty(), stickyRegion.widthProperty());
                     }
-                    borderPane.setTop(topContainer);
+
+                    // Add padding to BorderPane when sticky header is visible
+                    // This prevents content from being hidden under the fixed header
+                    if (stickyHeader instanceof StickyPriceHeader sph) {
+                        // GWT-compatible listener (Bindings.when() not available in GWT)
+                        FXProperties.runNowAndOnPropertyChange(showHeader -> {
+                            borderPane.setPadding(showHeader ? new Insets(60, 0, 0, 0) : Insets.EMPTY);
+                        }, sph.showHeaderProperty());
+                    }
                 }
             }
         }

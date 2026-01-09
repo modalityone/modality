@@ -9,11 +9,14 @@
     overflow: hidden;
 }
 
-/* Sticky price header - stays fixed at top when scrolling */
+/* Sticky price header - fixed to viewport top when scrolling */
 .sticky-price-header {
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 1000;
     background: linear-gradient(to bottom, #FFFFFF, #FAFBFC);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }

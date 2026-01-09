@@ -110,15 +110,8 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     protected VBox createOptionCard(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty,
                                     Object priceKey, String priceText) {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-option-checkbox");
-
-        // Apply border styling in Java per project conventions
-        BookingFormColorScheme scheme = colorScheme.get();
-        if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
-        final BookingFormColorScheme finalScheme = scheme;
-
-        // Initial style
-        updateOptionCardStyle(card, selectedProperty.get(), finalScheme);
+        // Use checkbox-card CSS class - handles all states via CSS
+        card.getStyleClass().add("bookingpage-checkbox-card");
 
         HBox mainRow = new HBox(12);
         mainRow.setAlignment(Pos.CENTER_LEFT);
@@ -134,10 +127,10 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel(titleKey);
-        title.setStyle("-fx-font-size: 14px; -fx-font-weight: 500; -fx-text-fill: #212529;");
+        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
 
         Label subtitle = I18nControls.newLabel(subtitleKey);
-        subtitle.setStyle("-fx-font-size: 12px; -fx-text-fill: #6c757d;");
+        subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
 
         textContent.getChildren().addAll(title, subtitle);
 
@@ -148,14 +141,18 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         } else {
             price = I18nControls.newLabel(priceKey);
         }
-        price.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        price.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         mainRow.getChildren().addAll(checkbox, textContent, price);
         card.getChildren().add(mainRow);
 
-        // Selection handling - update styling and CSS class
+        // Initial selection state
+        if (selectedProperty.get()) {
+            card.getStyleClass().add("selected");
+        }
+
+        // Selection handling - CSS handles styling via .selected class
         selectedProperty.addListener((obs, old, newVal) -> {
-            updateOptionCardStyle(card, newVal, finalScheme);
             if (newVal) {
                 if (!card.getStyleClass().contains("selected")) {
                     card.getStyleClass().add("selected");
@@ -170,22 +167,9 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         return card;
     }
 
-    /**
-     * Updates the option card style based on selection state.
-     */
-    private void updateOptionCardStyle(VBox card, boolean selected, BookingFormColorScheme scheme) {
-        if (selected) {
-            card.setStyle("-fx-border-color: " + toHex(scheme.getPrimary()) + "; -fx-border-width: 2; " +
-                "-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: " + toHex(scheme.getSelectedBg()) + ";");
-        } else {
-            card.setStyle("-fx-border-color: #dee2e6; -fx-border-width: 2; " +
-                "-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;");
-        }
-    }
-
     protected VBox createParkingCard() {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-option-checkbox");
+        card.getStyleClass().add("bookingpage-checkbox-card");
 
         // Main parking checkbox row
         HBox mainRow = new HBox(12);
@@ -286,25 +270,24 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     protected VBox createShuttleCard() {
         VBox card = new VBox(12);
         card.setPadding(new Insets(16));
-        card.setStyle("-fx-border-color: #dee2e6; -fx-border-width: 2; " +
-            "-fx-border-radius: 10; -fx-background-radius: 10; -fx-background-color: white;");
+        // CSS class handles border/background styling
         card.getStyleClass().add("bookingpage-shuttle-section");
 
         // Header with plane icon
         HBox headerRow = new HBox(8);
         headerRow.setAlignment(Pos.CENTER_LEFT);
 
-        // Plane SVG icon
+        // Plane SVG icon - flat gray non-colored style
         SVGPath planeIcon = new SVGPath();
         planeIcon.setContent(BookingPageUIBuilder.ICON_PLANE);
-        planeIcon.setStroke(Color.web("#3b82f6"));
+        planeIcon.setStroke(Color.web("#64748b"));  // Flat gray color
         planeIcon.setStrokeWidth(2);
         planeIcon.setFill(Color.TRANSPARENT);
         planeIcon.setScaleX(0.85);
         planeIcon.setScaleY(0.85);
 
         Label header = I18nControls.newLabel(BookingPageI18nKeys.AirportShuttle);
-        header.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        header.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         headerRow.getChildren().addAll(planeIcon, header);
 
@@ -336,31 +319,29 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(12, 16, 12, 16));
         row.setCursor(Cursor.HAND);
-        row.getStyleClass().add("bookingpage-option-checkbox");
-
-        // Apply border styling in Java
-        BookingFormColorScheme scheme = colorScheme.get();
-        if (scheme == null) scheme = BookingFormColorScheme.DEFAULT;
-        final BookingFormColorScheme finalScheme = scheme;
-
-        updateShuttleRowStyle(row, selectedProperty.get(), finalScheme);
+        // CSS class handles border/background styling
+        row.getStyleClass().add("bookingpage-shuttle-row");
 
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(selectedProperty, colorScheme);
 
         // Label with flex grow
         Label label = I18nControls.newLabel(labelKey);
-        label.setStyle("-fx-font-size: 13px; -fx-text-fill: #212529;");
+        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
         HBox.setHgrow(label, Priority.ALWAYS);
 
         // Price label
         Label priceLabel = new Label(priceText);
-        priceLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 600; -fx-text-fill: #212529;");
+        priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         row.getChildren().addAll(checkbox, label, priceLabel);
 
-        // Selection handling - update styling
+        // Initial selection state
+        if (selectedProperty.get()) {
+            row.getStyleClass().add("selected");
+        }
+
+        // Selection handling - CSS handles styling via .selected class
         selectedProperty.addListener((obs, old, newVal) -> {
-            updateShuttleRowStyle(row, newVal, finalScheme);
             if (newVal) {
                 if (!row.getStyleClass().contains("selected")) {
                     row.getStyleClass().add("selected");
@@ -373,19 +354,6 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         row.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
 
         return row;
-    }
-
-    /**
-     * Updates the shuttle row style based on selection state.
-     */
-    private void updateShuttleRowStyle(HBox row, boolean selected, BookingFormColorScheme scheme) {
-        if (selected) {
-            row.setStyle("-fx-border-color: " + toHex(scheme.getPrimary()) + "; -fx-border-width: 1; " +
-                "-fx-border-radius: 8; -fx-background-radius: 8; -fx-background-color: " + toHex(scheme.getSelectedBg()) + ";");
-        } else {
-            row.setStyle("-fx-border-color: #e5e7eb; -fx-border-width: 1; " +
-                "-fx-border-radius: 8; -fx-background-radius: 8; -fx-background-color: #f9fafb;");
-        }
     }
 
     protected void setupBindings() {
@@ -569,20 +537,4 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         buildUI();
     }
 
-    // ========================================
-    // UTILITY METHODS
-    // ========================================
-
-    /**
-     * Converts a JavaFX Color to a CSS hex string.
-     * @param color the Color to convert
-     * @return hex string like "#RRGGBB"
-     */
-    protected static String toHex(Color color) {
-        if (color == null) return "#000000";
-        return String.format("#%02X%02X%02X",
-            (int)(color.getRed() * 255),
-            (int)(color.getGreen() * 255),
-            (int)(color.getBlue() * 255));
-    }
 }

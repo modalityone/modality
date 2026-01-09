@@ -7,6 +7,7 @@ public interface BookingPageI18nKeys {
     Object AcceptTermsHtml = "AcceptTermsHtml";
     Object AcceptTermsText = "AcceptTermsText";
     Object AccommodationOptions = "AccommodationOptions";
+    Object AccommodationRequiredWarning = "AccommodationRequiredWarning";
     Object AccountFound = "AccountFound";
     Object AccountInfoMessage = "AccountInfoMessage";
     Object AccountOwner = "AccountOwner";
@@ -65,6 +66,7 @@ public interface BookingPageI18nKeys {
     Object BookingSummary = "BookingSummary";
     Object BookingTotal = "BookingTotal";
     Object BookingsClosed = "BookingsClosed";
+    Object Breakfast = "Breakfast";
     Object BrowseMoreEvents = "BrowseMoreEvents";
     Object CancelBooking = "CancelBooking";
     Object CardDeclinedDesc = "CardDeclinedDesc";
@@ -140,10 +142,12 @@ public interface BookingPageI18nKeys {
     Object ExpiredCardSuggestion1 = "ExpiredCardSuggestion1";
     Object ExpiredCardSuggestion2 = "ExpiredCardSuggestion2";
     Object ExpiredCardTitle = "ExpiredCardTitle";
+    Object ExtendedStayMealsNote = "ExtendedStayMealsNote";
     Object FamilyMember = "FamilyMember";
     Object FestivalDaysChangingArrival = "FestivalDaysChangingArrival";
     Object FestivalDaysChangingDeparture = "FestivalDaysChangingDeparture";
     Object FestivalDaysInstructions = "FestivalDaysInstructions";
+    Object FestivalDaysMinNightsWarning = "FestivalDaysMinNightsWarning";
     Object FestivalDaysSelectDeparture = "FestivalDaysSelectDeparture";
     Object FirstName = "FirstName";
     Object FirstNamePlaceholder = "FirstNamePlaceholder";
@@ -162,6 +166,7 @@ public interface BookingPageI18nKeys {
     Object InPersonDescription = "InPersonDescription";
     Object InPersonRegistration = "InPersonRegistration";
     Object Included = "Included";
+    Object IncludedWithAccommodation = "IncludedWithAccommodation";
     Object IncorrectPassword = "IncorrectPassword";
     Object IncorrectPriceFormat = "IncorrectPriceFormat";
     Object InsufficientFundsDesc = "InsufficientFundsDesc";
@@ -252,6 +257,8 @@ public interface BookingPageI18nKeys {
     Object ReadyToSubmitMessage = "ReadyToSubmitMessage";
     Object RefPrefix = "RefPrefix";
     Object RegisterAnotherPerson = "RegisterAnotherPerson";
+    Object RegistrationNumber = "RegistrationNumber";
+    Object RegistrationNumberPlaceholder = "RegistrationNumberPlaceholder";
     Object RegistrationSubmitted = "RegistrationSubmitted";
     Object Remove = "Remove";
     Object ResendCode = "ResendCode";
@@ -262,6 +269,10 @@ public interface BookingPageI18nKeys {
     Object ReviewDetailsSubtitle = "ReviewDetailsSubtitle";
     Object ReviewRegistrationsSubtitle = "ReviewRegistrationsSubtitle";
     Object ReviewYourBooking = "ReviewYourBooking";
+    Object RoommateInformation = "RoommateInformation";
+    Object RoommateName = "RoommateName";
+    Object RoommateNamePlaceholder = "RoommateNamePlaceholder";
+    Object RoommateRequiredWarning = "RoommateRequiredWarning";
     Object Select = "Select";
     Object SelectInPerson = "SelectInPerson";
     Object SelectParkingType = "SelectParkingType";
@@ -331,6 +342,7 @@ public interface BookingPageI18nKeys {
     Object YourCurrentBooking = "YourCurrentBooking";
     Object YourDetails = "YourDetails";
     Object YourInformation = "YourInformation";
+    Object YourMeals = "YourMeals";
     Object YourPricingTier = "YourPricingTier";
     Object YourRegisteredAttendees = "YourRegisteredAttendees";
     Object YourRoom = "YourRoom";

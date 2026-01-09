@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -14,7 +15,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -23,6 +27,7 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -69,16 +74,25 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected final ObjectProperty<LocalDate> arrivalDateProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<LocalDate> departureDateProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<ArrivalDepartureTime> arrivalTimeProperty = new SimpleObjectProperty<>(ArrivalDepartureTime.AFTERNOON);
-    protected final ObjectProperty<ArrivalDepartureTime> departureTimeProperty = new SimpleObjectProperty<>(ArrivalDepartureTime.MORNING);
+    protected final ObjectProperty<ArrivalDepartureTime> departureTimeProperty = new SimpleObjectProperty<>(ArrivalDepartureTime.AFTERNOON);  // Default to afternoon per JSX
 
     // === CONSTRAINT ===
     protected int minNightsConstraint = 0; // 0 means no constraint
+    protected boolean isDayVisitor = false; // true for day visitor (0 nights allowed)
     protected String changingDateMode = null; // null, "arrival", or "departure"
 
     // === DATA ===
     protected List<FestivalDay> festivalDays = new ArrayList<>();
     protected LocalDate earliestArrivalDate;
     protected LocalDate latestDepartureDate;
+    protected LocalDate defaultArrivalDate;  // First festival/teaching day
+    protected LocalDate defaultDepartureDate;  // Last festival/teaching day
+
+    // === MEAL TIMES FROM API ===
+    // Times are loaded from ScheduledItems - null if not available in database
+    // Only lunch and dinner times are used for arrival/departure time selection
+    protected LocalTime lunchStartTime;
+    protected LocalTime dinnerStartTime;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -88,6 +102,8 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected HBox changeDateButtonsBox;
     protected VBox arrivalTimeSection;
     protected VBox departureTimeSection;
+    protected Label arrivalTimeTitleLabel;  // Title label for arrival time section
+    protected Label departureTimeTitleLabel;  // Title label for departure time section
 
     // === CALLBACKS ===
     protected BiConsumer<LocalDate, LocalDate> onDatesChanged;
@@ -137,12 +153,12 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     protected HBox buildInstructionBox() {
-        // Use the standard info box helper
-        HBox box = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.FestivalDaysInstructions, BookingPageUIBuilder.InfoBoxType.INFO);
+        // Use the standard info box helper with neutral style (matches "Price includes" boxes)
+        HBox box = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.FestivalDaysInstructions, BookingPageUIBuilder.InfoBoxType.NEUTRAL);
 
-        // Get the message label from the box (second child after icon) for dynamic updates
-        if (box.getChildren().size() > 1 && box.getChildren().get(1) instanceof Label) {
-            instructionLabel = (Label) box.getChildren().get(1);
+        // Get the message label from the box (first child since NEUTRAL has no icon)
+        if (!box.getChildren().isEmpty() && box.getChildren().get(0) instanceof Label) {
+            instructionLabel = (Label) box.getChildren().get(0);
         }
 
         return box;
@@ -183,23 +199,38 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
     protected VBox buildTimeSelectionSection(boolean isArrival) {
         VBox section = new VBox(12);
-        section.setPadding(new Insets(16));
-        section.getStyleClass().add("bookingpage-time-section");
+        section.setPadding(new Insets(16, 20, 16, 20));
+        // Use CSS classes for theming - arrival uses primary color, departure uses dark text
+        section.getStyleClass().add(isArrival ? "bookingpage-time-section-arrival" : "bookingpage-time-section-departure");
 
-        // Header
+        // Header with clock icon and title with date
         HBox header = new HBox(8);
         header.setAlignment(Pos.CENTER_LEFT);
 
-        Label clockIcon = new Label("\u23F0"); // Clock icon
-        clockIcon.getStyleClass().addAll("bookingpage-text-base");
+        // Clock SVG icon - uses CSS class for theming
+        javafx.scene.shape.SVGPath clockIcon = new javafx.scene.shape.SVGPath();
+        clockIcon.setContent("M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z");
+        clockIcon.getStyleClass().add(isArrival ? "bookingpage-time-section-icon-arrival" : "bookingpage-time-section-icon-departure");
+        clockIcon.setScaleX(0.7);
+        clockIcon.setScaleY(0.7);
 
-        Label titleLabel = I18nControls.newLabel(isArrival ? BookingPageI18nKeys.ArrivalTime : BookingPageI18nKeys.DepartureTime);
-        titleLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold", "bookingpage-text-dark");
+        // Title label - uses CSS class for styling
+        Label titleLabel = new Label();
+        titleLabel.getStyleClass().add("bookingpage-time-section-title");
 
         header.getChildren().addAll(clockIcon, titleLabel);
 
-        // Time options row
-        HBox optionsRow = new HBox(12);
+        // Store reference for dynamic update
+        if (isArrival) {
+            arrivalTimeTitleLabel = titleLabel;
+        } else {
+            departureTimeTitleLabel = titleLabel;
+        }
+
+        // Time options row (FlowPane for wrapping on small screens)
+        FlowPane optionsRow = new FlowPane();
+        optionsRow.setHgap(10);
+        optionsRow.setVgap(10);
         optionsRow.setAlignment(Pos.CENTER_LEFT);
 
         ObjectProperty<ArrivalDepartureTime> timeProperty = isArrival ? arrivalTimeProperty : departureTimeProperty;
@@ -214,39 +245,52 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     protected VBox createTimeOptionCard(ArrivalDepartureTime time, ObjectProperty<ArrivalDepartureTime> timeProperty, boolean isArrival) {
+        String contextClass = isArrival ? "bookingpage-time-option-arrival" : "bookingpage-time-option-departure";
+
         VBox card = new VBox(4);
         card.setAlignment(Pos.TOP_LEFT);
-        card.setPadding(new Insets(12, 16, 12, 16));
+        card.setPadding(new Insets(14, 16, 14, 16));
         card.setMinWidth(140);
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-time-option");
+        card.getStyleClass().addAll("bookingpage-time-option", contextClass);
 
-        // Time label
+        boolean isSelected = timeProperty.get() == time;
+
+        // Apply initial selected state via CSS class
+        if (isSelected) {
+            card.getStyleClass().add("selected");
+        }
+
+        // Time label - uses CSS class for styling
         Label timeLabel = new Label(getTimeLabel(time));
-        timeLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold");
+        timeLabel.getStyleClass().add("bookingpage-time-option-label");
 
-        // Time range
-        Label rangeLabel = new Label(getTimeRange(time));
-        rangeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        // Time range - uses CSS class for styling
+        Label rangeLabel = new Label(getTimeRange(time, isArrival));
+        rangeLabel.getStyleClass().add("bookingpage-time-option-range");
 
-        // Meal note
-        Label mealLabel = new Label(getMealNote(time, isArrival));
-        mealLabel.getStyleClass().addAll("bookingpage-text-xs");
+        // Meal note - uses CSS class based on meal availability
+        String mealText = getMealNote(time, isArrival);
+        boolean hasNoMeals = mealText.contains("\u2717");
+        Label mealLabel = new Label(mealText);
+        mealLabel.getStyleClass().addAll("bookingpage-time-option-meal",
+            hasNoMeals ? "bookingpage-time-option-meal-negative" : "bookingpage-time-option-meal-positive");
 
         card.getChildren().addAll(timeLabel, rangeLabel, mealLabel);
 
-        // Selection handling
-        if (timeProperty.get() == time) {
-            card.getStyleClass().add("selected");
-        }
+        // Selection handling - toggle CSS class
         timeProperty.addListener((obs, old, newVal) -> {
-            if (newVal == time) {
-                card.getStyleClass().add("selected");
+            boolean selected = newVal == time;
+            if (selected) {
+                if (!card.getStyleClass().contains("selected")) {
+                    card.getStyleClass().add("selected");
+                }
             } else {
                 card.getStyleClass().remove("selected");
             }
         });
 
+        // Click handler to select this option
         card.setOnMouseClicked(e -> timeProperty.set(time));
 
         return card;
@@ -260,20 +304,72 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         };
     }
 
-    protected String getTimeRange(ArrivalDepartureTime time) {
-        return switch (time) {
-            case MORNING -> "Before 11:00";
-            case AFTERNOON -> "11:00 - 14:00";
-            case EVENING -> "After 14:00";
-        };
+    protected String getTimeRange(ArrivalDepartureTime time, boolean isArrival) {
+        if (isArrival) {
+            // Arrival times based on meal schedule - uses API meal times
+            // Morning: arrive before lunch starts → get lunch + dinner
+            // Afternoon: arrive after lunch starts but before dinner → get dinner only
+            // Evening: arrive after dinner starts → no meals that day
+            return switch (time) {
+                case MORNING -> formatBefore(lunchStartTime);
+                case AFTERNOON -> formatRange(lunchStartTime, dinnerStartTime);
+                case EVENING -> formatAfter(dinnerStartTime);
+            };
+        } else {
+            // Departure times based on meal schedule - uses API meal times
+            // Morning: leave before lunch starts → breakfast only
+            // Afternoon: leave after lunch starts but before dinner → breakfast + lunch
+            // Evening: leave after dinner starts → all meals
+            return switch (time) {
+                case MORNING -> formatBefore(lunchStartTime);
+                case AFTERNOON -> formatRange(lunchStartTime, dinnerStartTime);
+                case EVENING -> formatAfter(dinnerStartTime);
+            };
+        }
+    }
+
+    /**
+     * Formats a LocalTime for display (e.g., "13:00").
+     * Returns empty string if time is null.
+     */
+    protected String formatTime(LocalTime time) {
+        if (time == null) return "";
+        // GWT-compatible time formatting (String.format not available in GWT)
+        int hour = time.getHour();
+        int minute = time.getMinute();
+        return (hour < 10 ? "0" : "") + hour + ":" + (minute < 10 ? "0" : "") + minute;
+    }
+
+    /**
+     * Formats "Before HH:MM" or empty if time is null.
+     */
+    protected String formatBefore(LocalTime time) {
+        if (time == null) return "";
+        return "Before " + formatTime(time);
+    }
+
+    /**
+     * Formats "After HH:MM" or empty if time is null.
+     */
+    protected String formatAfter(LocalTime time) {
+        if (time == null) return "";
+        return "After " + formatTime(time);
+    }
+
+    /**
+     * Formats "HH:MM - HH:MM" or empty if either time is null.
+     */
+    protected String formatRange(LocalTime start, LocalTime end) {
+        if (start == null || end == null) return "";
+        return formatTime(start) + " - " + formatTime(end);
     }
 
     protected String getMealNote(ArrivalDepartureTime time, boolean isArrival) {
         if (isArrival) {
             return switch (time) {
-                case MORNING -> "\u2713 All meals"; // Checkmark
-                case AFTERNOON -> "\u2713 Lunch + Dinner";
-                case EVENING -> "\u2713 Dinner only";
+                case MORNING -> "\u2713 Lunch + Dinner"; // Checkmark
+                case AFTERNOON -> "\u2713 Dinner only";
+                case EVENING -> "\u2717 No meals"; // X mark
             };
         } else {
             return switch (time) {
@@ -296,17 +392,72 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         // Show/hide time sections and change date buttons based on date selection
         arrivalDateProperty.addListener((obs, old, newVal) -> updateSectionVisibility());
         departureDateProperty.addListener((obs, old, newVal) -> updateSectionVisibility());
+
+        // Rebuild time sections when color scheme changes to apply new colors
+        colorScheme.addListener((obs, old, newVal) -> rebuildTimeSections());
+    }
+
+    /**
+     * Rebuilds the time selection sections with current color scheme.
+     * Called when color scheme changes to apply new theme colors.
+     */
+    protected void rebuildTimeSections() {
+        if (container == null || arrivalTimeSection == null || departureTimeSection == null) return;
+
+        // Store visibility state
+        boolean arrivalVisible = arrivalTimeSection.isVisible();
+        boolean departureVisible = departureTimeSection.isVisible();
+
+        // Find indices in container
+        int arrivalIndex = container.getChildren().indexOf(arrivalTimeSection);
+        int departureIndex = container.getChildren().indexOf(departureTimeSection);
+
+        if (arrivalIndex >= 0) {
+            container.getChildren().remove(arrivalTimeSection);
+            arrivalTimeSection = buildTimeSelectionSection(true);
+            arrivalTimeSection.setVisible(arrivalVisible);
+            arrivalTimeSection.setManaged(arrivalVisible);
+            container.getChildren().add(arrivalIndex, arrivalTimeSection);
+        }
+
+        if (departureIndex >= 0) {
+            // Adjust index if arrival was before departure
+            int adjustedIndex = arrivalIndex >= 0 && arrivalIndex < departureIndex ? departureIndex : departureIndex;
+            container.getChildren().remove(departureTimeSection);
+            departureTimeSection = buildTimeSelectionSection(false);
+            departureTimeSection.setVisible(departureVisible);
+            departureTimeSection.setManaged(departureVisible);
+            container.getChildren().add(adjustedIndex, departureTimeSection);
+        }
+
+        // Update titles with current dates
+        updateSectionVisibility();
     }
 
     protected void updateSectionVisibility() {
-        boolean hasArrival = arrivalDateProperty.get() != null;
-        boolean hasDeparture = departureDateProperty.get() != null;
+        LocalDate arrival = arrivalDateProperty.get();
+        LocalDate departure = departureDateProperty.get();
+        boolean hasArrival = arrival != null;
+        boolean hasDeparture = departure != null;
         boolean hasBothDates = hasArrival && hasDeparture;
 
-        arrivalTimeSection.setVisible(hasArrival);
-        arrivalTimeSection.setManaged(hasArrival);
-        departureTimeSection.setVisible(hasDeparture);
-        departureTimeSection.setManaged(hasDeparture);
+        // Hide time sections if arrival and departure are the same day (Day Visitor with 0 nights)
+        boolean isSameDay = hasBothDates && arrival.equals(departure);
+        boolean showArrivalTime = hasArrival && !isSameDay;
+        boolean showDepartureTime = hasDeparture && !isSameDay;
+
+        arrivalTimeSection.setVisible(showArrivalTime);
+        arrivalTimeSection.setManaged(showArrivalTime);
+        departureTimeSection.setVisible(showDepartureTime);
+        departureTimeSection.setManaged(showDepartureTime);
+
+        // Update time section titles with dates
+        if (arrivalTimeTitleLabel != null && hasArrival) {
+            arrivalTimeTitleLabel.setText("Arrival Time on " + formatDateForTitle(arrival));
+        }
+        if (departureTimeTitleLabel != null && hasDeparture) {
+            departureTimeTitleLabel.setText("Departure Time on " + formatDateForTitle(departure));
+        }
 
         // Show change date buttons only when both dates are set and not in changing mode
         boolean showChangeButtons = hasBothDates && changingDateMode == null;
@@ -317,25 +468,75 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         updateInstructionText();
     }
 
+    /**
+     * Formats a date for display in time section title.
+     * Example: "Mon, 23 Jun"
+     */
+    protected String formatDateForTitle(LocalDate date) {
+        if (date == null) return "";
+        String weekday = date.getDayOfWeek().name().substring(0, 3);
+        weekday = weekday.substring(0, 1).toUpperCase() + weekday.substring(1).toLowerCase();
+        String month = date.getMonth().name().substring(0, 3);
+        month = month.substring(0, 1).toUpperCase() + month.substring(1).toLowerCase();
+        return weekday + ", " + date.getDayOfMonth() + " " + month;
+    }
+
     protected void updateInstructionText() {
         if (instructionLabel == null || instructionBox == null) return;
 
         boolean hasArrival = arrivalDateProperty.get() != null;
         boolean hasDeparture = departureDateProperty.get() != null;
+        boolean isChangingMode = "arrival".equals(changingDateMode) || "departure".equals(changingDateMode);
+        boolean hasMinNightsConstraint = minNightsConstraint > 0;
 
-        Object i18nKey;
-        if ("arrival".equals(changingDateMode)) {
-            i18nKey = BookingPageI18nKeys.FestivalDaysChangingArrival;
-        } else if ("departure".equals(changingDateMode)) {
-            i18nKey = BookingPageI18nKeys.FestivalDaysChangingDeparture;
-        } else if (hasArrival && !hasDeparture) {
-            i18nKey = BookingPageI18nKeys.FestivalDaysSelectDeparture;
+        // Determine if we should show warning style (changing dates with min nights constraint)
+        boolean showWarning = isChangingMode && hasMinNightsConstraint;
+
+        // Update box style based on warning state - CSS handles styling
+        instructionBox.getStyleClass().removeAll("bookingpage-info-box-warning", "bookingpage-info-box-neutral");
+        if (showWarning) {
+            instructionBox.getStyleClass().add("bookingpage-info-box-warning");
         } else {
-            // Always show instructions (explains prices are for teachings)
-            i18nKey = BookingPageI18nKeys.FestivalDaysInstructions;
+            instructionBox.getStyleClass().add("bookingpage-info-box-neutral");
         }
 
-        I18nControls.bindI18nTextProperty(instructionLabel, i18nKey);
+        // Determine the base instruction text
+        Object baseI18nKey;
+        if ("arrival".equals(changingDateMode)) {
+            baseI18nKey = BookingPageI18nKeys.FestivalDaysChangingArrival;
+        } else if ("departure".equals(changingDateMode)) {
+            baseI18nKey = BookingPageI18nKeys.FestivalDaysChangingDeparture;
+        } else if (hasArrival && !hasDeparture) {
+            baseI18nKey = BookingPageI18nKeys.FestivalDaysSelectDeparture;
+        } else {
+            // Default instructions
+            baseI18nKey = BookingPageI18nKeys.FestivalDaysInstructions;
+        }
+
+        // Unbind first (label was created with I18nControls.newLabel which binds the text property)
+        instructionLabel.textProperty().unbind();
+
+        // Build the final text and apply style via CSS classes
+        String finalText;
+
+        // Update CSS classes for text color based on warning state
+        instructionLabel.getStyleClass().removeAll("bookingpage-text-warning", "bookingpage-text-dark");
+        instructionLabel.getStyleClass().add("bookingpage-text-base");
+
+        if (isChangingMode && hasMinNightsConstraint) {
+            // Warning mode: concatenate instruction + warning about min nights
+            instructionLabel.getStyleClass().add("bookingpage-text-warning");
+            String baseText = I18n.getI18nText(baseI18nKey);
+            String warningText = I18n.getI18nText("FestivalDaysMinNightsWarning", minNightsConstraint);
+            finalText = baseText + " " + warningText;
+        } else {
+            // Normal mode: just the instruction text
+            instructionLabel.getStyleClass().add("bookingpage-text-dark");
+            finalText = I18n.getI18nText(baseI18nKey);
+        }
+
+        // Update the label text
+        instructionLabel.setText(finalText);
 
         // Always keep the instruction box visible
         instructionBox.setVisible(true);
@@ -345,7 +546,16 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected void updateValidity() {
         LocalDate arrival = arrivalDateProperty.get();
         LocalDate departure = departureDateProperty.get();
-        boolean isValid = arrival != null && departure != null && !departure.isBefore(arrival);
+        // For day visitors: arrival can equal departure (0 nights)
+        // For all others: departure must be after arrival (at least 1 night)
+        boolean isValid;
+        if (arrival == null || departure == null) {
+            isValid = false;
+        } else if (isDayVisitor) {
+            isValid = !departure.isBefore(arrival);  // departure >= arrival
+        } else {
+            isValid = departure.isAfter(arrival);  // departure > arrival
+        }
         validProperty.set(isValid);
         rebuildDayCards();
     }
@@ -380,15 +590,10 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
                           date.isAfter(arrival) && date.isBefore(departure);
         boolean isFestival = day.isFestivalDay();
 
-        BookingFormColorScheme colors = colorScheme.get();
-        String primaryHex = colorToHex(colors.getPrimary());
-        String selectedBgHex = colorToHex(colors.getSelectedBg());
-        String darkTextHex = colorToHex(colors.getDarkText());
-        String hoverBorderHex = colorToHex(colors.getHoverBorder());
-
         // Determine if date is disabled based on constraints
         boolean isDisabled = isDateDisabled(date, arrival, departure);
         boolean isClickable = isDateClickable(date, arrival, departure);
+        boolean isChangingMode = changingDateMode != null && isClickable;
 
         // Card container (VBox inside StackPane for badge positioning)
         VBox card = new VBox(2);
@@ -398,57 +603,33 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         card.setPrefWidth(100);
         card.setCursor(isDisabled ? Cursor.DEFAULT : (isClickable ? Cursor.HAND : Cursor.DEFAULT));
 
-        // Determine border and background colors based on state
-        String borderColor;
-        String bgColor;
+        // Apply CSS classes based on state - CSS handles styling
+        card.getStyleClass().add("bookingpage-festival-day-card");
         if (isDisabled) {
-            borderColor = "#D1D1D1";
-            bgColor = "#F5F5F5";
+            card.getStyleClass().add("disabled");
         } else if (isArrival) {
-            borderColor = primaryHex;
-            bgColor = selectedBgHex;
+            card.getStyleClass().add("arrival");
         } else if (isDeparture) {
-            borderColor = darkTextHex;
-            bgColor = selectedBgHex;
-        } else if (changingDateMode != null && isClickable) {
-            borderColor = "#FF6B35";
-            bgColor = "#FFF4ED";
+            card.getStyleClass().add("departure");
+        } else if (isChangingMode) {
+            card.getStyleClass().add("changing");
         } else if (isInStay) {
-            borderColor = hoverBorderHex;
-            bgColor = selectedBgHex;
+            card.getStyleClass().add("in-stay");
         } else if (isFestival) {
-            borderColor = "#E6E7E7";
-            bgColor = "#FAFBFC";
-        } else {
-            borderColor = "#E6E7E7";
-            bgColor = "white";
+            card.getStyleClass().add("festival");
         }
 
-        card.setStyle(
-            "-fx-background-color: " + bgColor + "; " +
-            "-fx-border-color: " + borderColor + "; " +
-            "-fx-border-width: 2; " +
-            "-fx-border-radius: 10; " +
-            "-fx-background-radius: 10; " +
-            (isDisabled ? "-fx-opacity: 0.4;" : "")
-        );
-
-        // Text colors based on state
-        String weekdayColor = isArrival ? primaryHex : (isDeparture ? darkTextHex : "#838788");
-        String dayColor = isArrival ? primaryHex : (isDeparture ? darkTextHex : "#292A33");
-        String monthColor = weekdayColor;
-
-        // Weekday (10px, uppercase, semibold)
+        // Weekday (10px, uppercase, semibold) - CSS handles text color based on card state
         Label weekdayLabel = new Label(day.getWeekday().toUpperCase());
-        weekdayLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: 600; -fx-text-fill: " + weekdayColor + ";");
+        weekdayLabel.getStyleClass().add("bookingpage-festival-day-weekday");
 
-        // Day number (22px, bold)
+        // Day number (22px, bold) - CSS handles text color based on card state
         Label dayLabel = new Label(String.valueOf(day.getDayOfMonth()));
-        dayLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: 700; -fx-text-fill: " + dayColor + "; -fx-line-height: 1;");
+        dayLabel.getStyleClass().add("bookingpage-festival-day-number");
 
-        // Month (9px, uppercase, semibold)
+        // Month (9px, uppercase, semibold) - CSS handles text color based on card state
         Label monthLabel = new Label(day.getMonthShort().toUpperCase());
-        monthLabel.setStyle("-fx-font-size: 9px; -fx-font-weight: 600; -fx-text-fill: " + monthColor + ";");
+        monthLabel.getStyleClass().add("bookingpage-festival-day-month");
 
         card.getChildren().addAll(weekdayLabel, dayLabel, monthLabel);
 
@@ -456,27 +637,24 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         if (isFestival) {
             VBox.setMargin(monthLabel, new Insets(0, 0, 8, 0));
 
-            // Separator line
+            // Separator line - CSS handles color based on card state
             Region separator = new Region();
             separator.setMinHeight(1);
             separator.setMaxHeight(1);
-            String separatorColor = (isInStay || isArrival || isDeparture) ? hoverBorderHex : "#E6E7E7";
-            separator.setStyle("-fx-background-color: " + separatorColor + ";");
+            separator.getStyleClass().add("bookingpage-festival-day-separator");
             VBox.setMargin(separator, new Insets(4, 0, 6, 0));
 
-            // Teaching title (10px, semibold)
-            String titleColor = (isInStay || isArrival || isDeparture) ? primaryHex : "#495057";
+            // Teaching title - CSS handles text color based on card state
             Label titleLabel = new Label(day.getTitle() != null ? day.getTitle() : "");
-            titleLabel.setStyle("-fx-font-size: 10px; -fx-font-weight: 600; -fx-text-fill: " + titleColor + "; -fx-line-height: 1.2;");
+            titleLabel.getStyleClass().add("bookingpage-festival-day-title");
             titleLabel.setWrapText(true);
             titleLabel.setMaxWidth(88);
             titleLabel.setMinHeight(24);
             titleLabel.setAlignment(Pos.CENTER);
 
-            // Price (13px, bold)
-            String priceColor = (isInStay || isArrival || isDeparture) ? primaryHex : "#2C3E50";
+            // Price - CSS handles text color based on card state
             Label priceLabel = new Label(formatPrice(day.getTeachingPrice()));
-            priceLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: 700; -fx-text-fill: " + priceColor + ";");
+            priceLabel.getStyleClass().add("bookingpage-festival-day-price");
 
             card.getChildren().addAll(separator, titleLabel, priceLabel);
         }
@@ -489,18 +667,17 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         if (isFestival && (isArrival || isDeparture)) {
             // For festival days, badge goes at top-right or top-left
             Label badge = new Label(isArrival ? "ARRIVAL" : "DEPARTURE");
-            String badgeColor = isArrival ? primaryHex : darkTextHex;
-            if (changingDateMode != null && changingDateMode.equals(isArrival ? "arrival" : "departure")) {
-                badgeColor = "#FF6B35"; // Orange when changing
+            badge.getStyleClass().add("bookingpage-festival-day-badge");
+            badge.setPadding(new Insets(2, 6, 2, 6));
+            // Add state class for color
+            boolean isChangingThisDate = changingDateMode != null && changingDateMode.equals(isArrival ? "arrival" : "departure");
+            if (isChangingThisDate) {
+                badge.getStyleClass().add("changing");
+            } else if (isArrival) {
+                badge.getStyleClass().add("arrival");
+            } else {
+                badge.getStyleClass().add("departure");
             }
-            badge.setStyle(
-                "-fx-background-color: " + badgeColor + "; " +
-                "-fx-text-fill: white; " +
-                "-fx-padding: 2 6; " +
-                "-fx-background-radius: 4; " +
-                "-fx-font-size: 8px; " +
-                "-fx-font-weight: 700;"
-            );
             StackPane.setAlignment(badge, isArrival ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
             StackPane.setMargin(badge, new Insets(-8, isArrival ? -4 : 0, 0, isDeparture ? -4 : 0));
             wrapper.getChildren().add(badge);
@@ -508,15 +685,18 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             // For non-festival days, badge at bottom
             String badgeText = isSameDay ? "DAY VISIT" : (isArrival ? "→ ARRIVAL" : "← DEPARTURE");
             Label badge = new Label(badgeText);
-            String badgeColor = isSameDay ? primaryHex : (isArrival ? primaryHex : darkTextHex);
-            badge.setStyle(
-                "-fx-background-color: " + badgeColor + "; " +
-                "-fx-text-fill: white; " +
-                "-fx-padding: 4 " + (isSameDay ? "10" : "8") + "; " +
-                "-fx-background-radius: 6; " +
-                "-fx-font-size: 9px; " +
-                "-fx-font-weight: 700;"
-            );
+            badge.getStyleClass().add("bookingpage-festival-day-badge-large");
+            // Add state class for color - also determines padding
+            if (isSameDay) {
+                badge.getStyleClass().add("day-visit");
+                badge.setPadding(new Insets(4, 10, 4, 10)); // Wider padding for DAY VISIT
+            } else if (isArrival) {
+                badge.getStyleClass().add("arrival");
+                badge.setPadding(new Insets(4, 8, 4, 8));
+            } else {
+                badge.getStyleClass().add("departure");
+                badge.setPadding(new Insets(4, 8, 4, 8));
+            }
             StackPane.setAlignment(badge, Pos.BOTTOM_CENTER);
             StackPane.setMargin(badge, new Insets(0, 0, -10, 0));
             wrapper.getChildren().add(badge);
@@ -533,29 +713,34 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected boolean isDateDisabled(LocalDate date, LocalDate arrival, LocalDate departure) {
         if (changingDateMode == null) return false;
 
+        // Day visitors have no minimum nights (can arrive and depart same day)
+        // All other accommodations require at least 1 night
+        int effectiveMinNights = isDayVisitor ? 0 : Math.max(1, minNightsConstraint);
+
         if (changingDateMode.equals("arrival") && departure != null) {
             // Can't arrive after departure
             if (date.isAfter(departure)) return true;
             // Check min nights constraint
-            if (minNightsConstraint > 0) {
-                long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(date, departure);
-                if (nightsIfSelected < minNightsConstraint) return true;
-            }
+            long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(date, departure);
+            if (nightsIfSelected < effectiveMinNights) return true;
         } else if (changingDateMode.equals("departure") && arrival != null) {
             // Can't depart before arrival
             if (date.isBefore(arrival)) return true;
             // Check min nights constraint
-            if (minNightsConstraint > 0) {
-                long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(arrival, date);
-                if (nightsIfSelected < minNightsConstraint) return true;
-            }
+            long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(arrival, date);
+            if (nightsIfSelected < effectiveMinNights) return true;
         }
         return false;
     }
 
     protected boolean isDateClickable(LocalDate date, LocalDate arrival, LocalDate departure) {
         if (arrival == null) return true;
-        if (departure == null) return !date.isBefore(arrival);
+        // When selecting departure:
+        // - Day visitors can depart same day as arrival (0 nights)
+        // - All others must depart at least 1 day after arrival
+        if (departure == null) {
+            return isDayVisitor ? !date.isBefore(arrival) : date.isAfter(arrival);
+        }
         if (changingDateMode != null) return true;
         return false;
     }
@@ -583,22 +768,18 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             arrivalDateProperty.set(date);
             arrivalTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
         } else if (departure == null) {
-            if (!date.isBefore(arrival)) {
+            // Day visitors can depart same day as arrival (0 nights)
+            // All others must depart at least 1 day after arrival
+            boolean validDeparture = isDayVisitor ? !date.isBefore(arrival) : date.isAfter(arrival);
+            if (validDeparture) {
                 departureDateProperty.set(date);
-                departureTimeProperty.set(ArrivalDepartureTime.MORNING);
+                departureTimeProperty.set(ArrivalDepartureTime.AFTERNOON);  // Default to afternoon per user request
             }
         }
     }
 
     protected String formatPrice(int priceInCents) {
         return "$" + (priceInCents / 100);
-    }
-
-    protected String colorToHex(javafx.scene.paint.Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
     }
 
     // ========================================
@@ -660,6 +841,30 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         this.minNightsConstraint = minNights;
         // Rebuild cards to reflect constraint changes
         rebuildDayCards();
+    }
+
+    @Override
+    public void setIsDayVisitor(boolean isDayVisitor) {
+        this.isDayVisitor = isDayVisitor;
+        // Update validity and rebuild cards when day visitor status changes
+        updateValidity();
+    }
+
+    @Override
+    public void reset() {
+        // Reset date selections to event defaults (first and last festival days)
+        arrivalDateProperty.set(defaultArrivalDate);
+        departureDateProperty.set(defaultDepartureDate);
+        // Reset times to defaults
+        arrivalTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
+        departureTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
+        // Clear changing mode
+        changingDateMode = null;
+        // Update UI
+        updateSectionVisibility();
+        rebuildDayCards();
+        // Notify listeners of the date change
+        notifyDatesChanged();
     }
 
     @Override
@@ -779,8 +984,8 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
         Console.log("DefaultFestivalDaySelectionSection: Populating days from " + startDate + " to " + endDate);
 
-        // Get daily teaching price from PolicyAggregate
-        int dailyTeachingPrice = policyAggregate.getDailyRatePrice();
+        // Get fallback daily teaching price from PolicyAggregate (used when no date-specific rate found)
+        int fallbackDailyPrice = policyAggregate.getDailyRatePrice();
 
         // Create FestivalDay objects for each day from startDate to endDate
         List<FestivalDay> days = new ArrayList<>();
@@ -793,12 +998,33 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
             // Get teaching title from ScheduledItem.getItem().getName() if available
             String title = null;
+            Item teachingItem = null;
             if (teaching != null && teaching.getItem() != null) {
-                title = teaching.getItem().getName();
+                teachingItem = teaching.getItem();
+                title = teachingItem.getName();
             }
 
-            // Teaching price is only for festival days (days with teachings)
-            int teachingPrice = isFestivalDay ? dailyTeachingPrice : 0;
+            // Calculate teaching price for this specific date
+            // Matches rate by item AND date range (startDate <= date <= endDate)
+            int teachingPrice = 0;
+            if (isFestivalDay && teachingItem != null) {
+                final Item finalItem = teachingItem;
+                final LocalDate finalDate = currentDate;
+                teachingPrice = policyAggregate.getDailyRatesStream()
+                    .filter(r -> r.getItem() != null && r.getItem().getPrimaryKey() != null
+                        && r.getItem().getPrimaryKey().equals(finalItem.getPrimaryKey()))
+                    .filter(r -> {
+                        LocalDate rateStartDate = r.getStartDate();
+                        LocalDate rateEndDate = r.getEndDate();
+                        // Rate applies if no date restriction or date falls within range
+                        boolean startOk = rateStartDate == null || !finalDate.isBefore(rateStartDate);
+                        boolean endOk = rateEndDate == null || !finalDate.isAfter(rateEndDate);
+                        return startOk && endOk;
+                    })
+                    .findFirst()
+                    .map(r -> r.getPrice() != null ? r.getPrice() : 0)
+                    .orElse(fallbackDailyPrice);
+            }
 
             FestivalDay day = new FestivalDay(dayIndex, currentDate, title, teachingPrice, isFestivalDay);
             days.add(day);
@@ -814,6 +1040,10 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         setEarliestArrivalDate(startDate);
         setLatestDepartureDate(endDate);
 
+        // Store default dates (used by reset() to restore to event dates)
+        this.defaultArrivalDate = firstTeachingDate;
+        this.defaultDepartureDate = lastTeachingDate;
+
         // Set the festival days (this will trigger UI rebuild)
         setFestivalDays(days);
 
@@ -821,6 +1051,55 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         setArrivalDate(firstTeachingDate);
         setDepartureDate(lastTeachingDate);
 
+        // Load meal times from API to update time selection ranges
+        loadMealTimesFromPolicyAggregate(policyAggregate);
+
         Console.log("DefaultFestivalDaySelectionSection: Populated " + days.size() + " festival days, default arrival: " + firstTeachingDate + ", departure: " + lastTeachingDate);
+    }
+
+    /**
+     * Loads meal times from MEALS ScheduledItems in PolicyAggregate.
+     * Updates lunch and dinner start time fields based on API data.
+     * These times are used to determine arrival/departure time slot boundaries.
+     */
+    protected void loadMealTimesFromPolicyAggregate(PolicyAggregate policyAggregate) {
+        if (policyAggregate == null) return;
+
+        // Get all MEALS scheduled items
+        List<ScheduledItem> mealItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.MEALS);
+        Console.log("DefaultFestivalDaySelectionSection: Found " + mealItems.size() + " meal scheduled items for time lookup");
+
+        for (ScheduledItem mealSi : mealItems) {
+            Item item = mealSi.getItem();
+            if (item == null) continue;
+
+            String itemName = item.getName();
+            if (itemName == null) itemName = "";
+            itemName = itemName.toLowerCase();
+
+            // Try to get start time from ScheduledItem first, then from Timeline
+            LocalTime startTime = mealSi.getStartTime();
+            if (startTime == null && mealSi.getTimeline() != null) {
+                startTime = mealSi.getTimeline().getStartTime();
+            }
+
+            Console.log("DefaultFestivalDaySelectionSection: Meal '" + itemName + "' startTime=" + startTime);
+
+            // Match meal type and update corresponding time fields (only need start times)
+            if (itemName.contains("lunch") || itemName.contains("midday") || itemName.contains("noon")) {
+                if (startTime != null) {
+                    lunchStartTime = startTime;
+                    Console.log("DefaultFestivalDaySelectionSection: Set lunchStartTime to " + lunchStartTime);
+                }
+            } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
+                if (startTime != null) {
+                    dinnerStartTime = startTime;
+                    Console.log("DefaultFestivalDaySelectionSection: Set dinnerStartTime to " + dinnerStartTime);
+                }
+            }
+        }
+
+        // Rebuild time sections to reflect new time values
+        rebuildTimeSections();
     }
 }
