@@ -39,23 +39,25 @@ public final class PriceCalculator {
         return price;
     }
 
-    public int calculateTotalPrice() {
+    public DocumentBill computeDocumentBill() {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
+            return null;
+        return Kbs2PriceAlgorithm.computeDocumentBill(documentAggregate, ignoreLongStayDiscounts, false);
+    }
+
+    public int calculateTotalPrice() {
+        DocumentBill documentBill = computeDocumentBill();
+        if (documentBill == null)
             return 0;
-        return Kbs2PriceAlgorithm.computeBookingPrice(getDocumentAggregate(), ignoreLongStayDiscounts, false);
-        /* Old commented code (now using KBS2 price algorithm instead
-        return documentAggregate.getDocumentLinesStream()
-            .mapToInt(this::calculateLinePrice)
-            .sum();
-         */
+        return documentBill.getTotalPrice();
     }
 
     public int calculateMinDeposit() {
-        DocumentAggregate documentAggregate = getDocumentAggregate();
-        if (documentAggregate == null)
+        DocumentBill documentBill = computeDocumentBill();
+        if (documentBill == null)
             return 0;
-        return Kbs2PriceAlgorithm.computeBookingMinDeposit(getDocumentAggregate(), ignoreLongStayDiscounts, false);
+        return documentBill.getMinDeposit();
     }
 
     public int calculateDeposit() {
@@ -73,7 +75,7 @@ public final class PriceCalculator {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)
             return 0;
-        return Kbs2PriceAlgorithm.computeBookingBill(documentAggregate, stream, false, false).getInvoiced();
+        return Kbs2PriceAlgorithm.computeDocumentBill(documentAggregate, stream, false, false).getTotalPrice();
     }
 
     public int calculateDocumentLinesPrice(Collection<DocumentLine> lines) {
