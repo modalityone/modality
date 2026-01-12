@@ -28,32 +28,59 @@ public final class PolicyAggregate {
     private final QueryResult scheduledItemsQueryResult;
     private final String scheduledBoundariesQueryBase;
     private final QueryResult scheduledBoundariesQueryResult;
-    private final String ratesQueryBase;
-    private final QueryResult ratesQueryResult;
-    private final String bookablePeriodsQueryBase;
-    private final QueryResult bookablePeriodsQueryResult;
+    private final String eventPartsQueryBase;
+    private final QueryResult eventPartsQueryResult;
+    private final String eventSelectionsQueryBase;
+    private final QueryResult eventSelectionsQueryResult;
+    private final String eventPhasesQueryBase;
+    private final QueryResult eventPhasesQueryResult;
+    private final String phaseCoveragesQueryBase;
+    private final QueryResult phaseCoveragesQueryResult;
     private final String itemPoliciesQueryBase;
     private final QueryResult itemPoliciesQueryResult;
+    private final String ratesQueryBase;
+    private final QueryResult ratesQueryResult;
+    @Deprecated
+    private final String bookablePeriodsQueryBase;
+    @Deprecated
+    private final QueryResult bookablePeriodsQueryResult;
 
     // Fields intended for application code
     private Event event;
     private EntityStore entityStore;
     private EntityList<ScheduledItem> scheduledItems;
     private EntityList<ScheduledBoundary> scheduledBoundaries;
-    private EntityList<Rate> rates;
-    private EntityList<BookablePeriod> bookablePeriods;
+    private EntityList<EventPart> eventParts;
+    private EntityList<EventSelection> eventSelections;
+    private EntityList<EventPhase> eventPhases;
+    private EntityList<PhaseCoverage> phaseCoverages;
     private EntityList<ItemPolicy> itemPolicies;
+    private EntityList<Rate> rates;
+    @Deprecated
+    private EntityList<BookablePeriod> bookablePeriods;
 
     public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult,
                            String scheduledBoundariesQueryBase, QueryResult scheduledBoundariesQueryResult,
-                           String ratesQueryBase, QueryResult ratesQueryResult,
+                           String eventPartsQueryBase, QueryResult eventPartsQueryResult,
+                           String eventSelectionsQueryBase, QueryResult eventSelectionsQueryResult,
+                           String eventPhasesQueryBase, QueryResult eventPhasesQueryResult,
+                           String phaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
                            String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
+                           String ratesQueryBase, QueryResult ratesQueryResult,
                            String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult
     ) {
         this.scheduledItemsQueryBase = scheduledItemsQueryBase;
         this.scheduledItemsQueryResult = scheduledItemsQueryResult;
         this.scheduledBoundariesQueryBase = scheduledBoundariesQueryBase;
         this.scheduledBoundariesQueryResult = scheduledBoundariesQueryResult;
+        this.eventPartsQueryBase = eventPartsQueryBase;
+        this.eventPartsQueryResult = eventPartsQueryResult;
+        this.eventSelectionsQueryBase = eventSelectionsQueryBase;
+        this.eventSelectionsQueryResult = eventSelectionsQueryResult;
+        this.eventPhasesQueryBase = eventPhasesQueryBase;
+        this.eventPhasesQueryResult = eventPhasesQueryResult;
+        this.phaseCoveragesQueryBase = phaseCoveragesQueryBase;
+        this.phaseCoveragesQueryResult = phaseCoveragesQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
         this.itemPoliciesQueryBase = itemPoliciesQueryBase;
@@ -70,10 +97,18 @@ public final class PolicyAggregate {
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledBoundariesQueryBase).getQueryMapping();
         scheduledBoundaries = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledBoundariesQueryResult, queryMapping, entityStore, "scheduledBoundaries");
-        queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
-        rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
+        queryMapping = dataSourceModel.parseAndCompileSelect(eventPartsQueryBase).getQueryMapping();
+        eventParts = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventPartsQueryResult, queryMapping, entityStore, "eventParts");
+        queryMapping = dataSourceModel.parseAndCompileSelect(eventSelectionsQueryBase).getQueryMapping();
+        eventSelections = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventSelectionsQueryResult, queryMapping, entityStore, "eventSelections");
+        queryMapping = dataSourceModel.parseAndCompileSelect(eventPhasesQueryBase).getQueryMapping();
+        eventPhases = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventPhasesQueryResult, queryMapping, entityStore, "eventPhases");
+        queryMapping = dataSourceModel.parseAndCompileSelect(phaseCoveragesQueryBase).getQueryMapping();
+        phaseCoverages = QueryResultToEntitiesMapper.mapQueryResultToEntities(phaseCoveragesQueryResult, queryMapping, entityStore, "phaseCoverages");
         queryMapping = dataSourceModel.parseAndCompileSelect(itemPoliciesQueryBase).getQueryMapping();
         itemPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemPoliciesQueryResult, queryMapping, entityStore, "itemPolicies");
+        queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
+        rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
     }
@@ -108,6 +143,22 @@ public final class PolicyAggregate {
 
     public EntityList<ScheduledBoundary> getScheduledBoundaries() {
         return scheduledBoundaries;
+    }
+
+    public EntityList<EventPart> getEventParts() {
+        return eventParts;
+    }
+
+    public EntityList<EventSelection> getEventSelections() {
+        return eventSelections;
+    }
+
+    public EntityList<EventPhase> getEventPhases() {
+        return eventPhases;
+    }
+
+    public EntityList<PhaseCoverage> getPhaseCoverages() {
+        return phaseCoverages;
     }
 
     public EntityList<ItemPolicy> getItemPolicies() {
@@ -227,12 +278,36 @@ public final class PolicyAggregate {
         return scheduledBoundariesQueryResult;
     }
 
-    public String getRatesQueryBase() {
-        return ratesQueryBase;
+    public String getEventPartsQueryBase() {
+        return eventPartsQueryBase;
     }
 
-    public QueryResult getRatesQueryResult() {
-        return ratesQueryResult;
+    public QueryResult getEventPartsQueryResult() {
+        return eventPartsQueryResult;
+    }
+
+    public String getEventSelectionsQueryBase() {
+        return eventSelectionsQueryBase;
+    }
+
+    public QueryResult getEventSelectionsQueryResult() {
+        return eventSelectionsQueryResult;
+    }
+
+    public String getEventPhasesQueryBase() {
+        return eventPhasesQueryBase;
+    }
+
+    public QueryResult getEventPhasesQueryResult() {
+        return eventPhasesQueryResult;
+    }
+
+    public String getPhaseCoveragesQueryBase() {
+        return phaseCoveragesQueryBase;
+    }
+
+    public QueryResult getPhaseCoveragesQueryResult() {
+        return phaseCoveragesQueryResult;
     }
 
     public String getItemPoliciesQueryBase() {
@@ -241,6 +316,14 @@ public final class PolicyAggregate {
 
     public QueryResult getItemPoliciesQueryResult() {
         return itemPoliciesQueryResult;
+    }
+
+    public String getRatesQueryBase() {
+        return ratesQueryBase;
+    }
+
+    public QueryResult getRatesQueryResult() {
+        return ratesQueryResult;
     }
 
     public String getBookablePeriodsQueryBase() {
