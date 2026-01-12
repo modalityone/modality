@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasEvent;
@@ -14,7 +15,8 @@ import java.util.List;
 public interface EventSelection extends Entity,
     EntityHasEvent,
     EntityHasName,
-    EntityHasLabel
+    EntityHasLabel,
+    BoundaryPeriod // Can be used as a BoundaryPeriod, when all parts are consecutive (no discontinuity)
 {
     String inPerson = "inPerson";
     String online = "online";
@@ -78,4 +80,13 @@ public interface EventSelection extends Entity,
 
     void setParts(List<EventPart> parts); // implemented in EventSelectionImpl
 
+    @Override
+    default ScheduledBoundary getStartBoundary() {
+        return getPart1().getStartBoundary();
+    }
+
+    @Override
+    default ScheduledBoundary getEndBoundary() {
+        return Collections.last(getParts()).getEndBoundary();
+    }
 }
