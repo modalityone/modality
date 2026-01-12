@@ -223,6 +223,20 @@ public final class WorkingBooking {
         removeAttendances(Collections.filter(getAttendancesAdded(false), a -> scheduledItems.contains(a.getScheduledItem())));
     }
 
+    public void bookSiteItemsOverPeriod(List<SiteItem> siteItems, Period period) {
+        for (SiteItem siteItem : siteItems)
+            bookSiteItemOverPeriod(siteItem, period);
+    }
+
+    public void bookSiteItemOverPeriod(SiteItem siteItem, Period period) {
+        bookSiteItemOverPeriod(siteItem.getSite(), siteItem.getItem(), period);
+    }
+
+    public void bookSiteItemOverPeriod(Site site, Item item, Period period) {
+        List<ScheduledItem> scheduledItemsToBook = ScheduledItems.filterSiteItemOverPeriod(getPolicyScheduledItems(), site, item, period);
+        bookScheduledItems(scheduledItemsToBook, true);
+    }
+
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
         if (scheduledItems.isEmpty())
             return false;
@@ -506,6 +520,12 @@ public final class WorkingBooking {
                 DocumentAggregate existingBooking = policyAndDocumentAggregates.documentAggregate(); // might be null
                 return new WorkingBooking(policyAggregate, existingBooking);
             });
+    }
+
+    public static WorkingBooking ofSiteItemsOverPeriod(PolicyAggregate policyAggregate, List<SiteItem> siteItems, Period period) {
+        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
+        workingBooking.bookSiteItemsOverPeriod(siteItems, period);
+        return workingBooking;
     }
 
 }

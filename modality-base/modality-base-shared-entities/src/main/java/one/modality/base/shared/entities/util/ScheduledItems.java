@@ -2,18 +2,15 @@ package one.modality.base.shared.entities.util;
 
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ScheduledItem;
+import dev.webfx.platform.util.time.Times;
+import dev.webfx.stack.orm.entity.Entities;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +39,32 @@ public final class ScheduledItems {
         return Collections.filter(scheduledItems, scheduledItem -> Booleans.isNotTrue(scheduledItem.isCancelled()));
     }
 
+    public static List<ScheduledItem> filterSiteItem(List<ScheduledItem> scheduledItems, Site site, Item item) {
+        return Collections.filter(scheduledItems, scheduledItem -> Entities.sameId(scheduledItem.getSite(), site) && Entities.sameId(scheduledItem.getItem(), item));
+    }
+
+    public static List<ScheduledItem> filterOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
+        return Collections.filter(scheduledItems, scheduledItem -> {
+            LocalDate date = scheduledItem.getDate();
+            if (!Times.isBetween(date, period.getStartDate(), period.getEndDate()))
+                return false;
+            if (Objects.equals(date, period.getStartDate())) {
+                LocalTime sessionStartTime = getSessionStartTime(scheduledItem);
+                if (sessionStartTime.isBefore(period.getStartTime()))
+                    return false;
+            }
+            if (Objects.equals(date, period.getEndDate())) {
+                LocalTime sessionEndTime = getSessionEndTime(scheduledItem);
+                if (sessionEndTime.isAfter(period.getEndTime()))
+                    return false;
+            }
+            return true;
+        });
+    }
+
+    public static List<ScheduledItem> filterSiteItemOverPeriod(List<ScheduledItem> scheduledItems, Site site, Item item, Period period) {
+        return filterOverPeriod(filterSiteItem(scheduledItems, site, item), period);
+    }
 
     public static Map<Item, List<ScheduledItem>> groupScheduledItemsByItems(Stream<ScheduledItem> scheduledItems) {
         return scheduledItems
