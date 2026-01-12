@@ -166,6 +166,32 @@ public final class PolicyAggregate {
         return itemPolicies;
     }
 
+    public EventPart getEarlyArrivalPart() {
+        // Should be listed first
+        EventPart firstPart = Collections.first(getEventParts());
+        if (firstPart == null) return null;
+        if (firstPart.getStartDate().isBefore(getEvent().getStartDate()))
+            return firstPart;
+        for (EventSelection eventSelection : getEventSelections()) {
+            if (eventSelection.getParts().contains(firstPart))
+                return null;
+        }
+        return firstPart;
+    }
+
+    public EventPart getLateDeparturePart() {
+        // Should be listed last
+        EventPart lastPart = Collections.last(getEventParts());
+        if (lastPart == null) return null;
+        if (lastPart.getEndDate().isAfter(getEvent().getEndDate()))
+            return lastPart;
+        for (EventSelection eventSelection : getEventSelections()) {
+            if (eventSelection.getParts().contains(lastPart))
+                return null;
+        }
+        return lastPart;
+    }
+
     /**
      * Gets the ItemPolicy for a specific Item.
      *
