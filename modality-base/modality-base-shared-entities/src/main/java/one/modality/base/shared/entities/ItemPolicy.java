@@ -13,6 +13,8 @@ public interface ItemPolicy extends Entity,
 {
 
     String scope = "scope";
+    String descriptionLabel = "descriptionLabel";
+    String noticeLabel = "noticeLabel";
     String minDay = "minDay";
     String _default = "default";
     String earlyAccommodationAllowed = "earlyAccommodationAllowed";
@@ -32,6 +34,30 @@ public interface ItemPolicy extends Entity,
 
     default PolicyScope getScope() {
         return getForeignEntity(scope);
+    }
+
+    default void setDescriptionLabel(Object value) {
+        setForeignField(descriptionLabel, value);
+    }
+
+    default EntityId getDescriptionLabelId() {
+        return getForeignEntityId(descriptionLabel);
+    }
+
+    default Label getDescriptionLabel() {
+        return getForeignEntity(noticeLabel);
+    }
+
+    default void setNoticeLabel(Object value) {
+        setForeignField(noticeLabel, value);
+    }
+
+    default EntityId getNoticeLabelId() {
+        return getForeignEntityId(noticeLabel);
+    }
+
+    default Label getNoticeLabel() {
+        return getForeignEntity(descriptionLabel);
     }
 
     default void setMinDay(Integer value) {
