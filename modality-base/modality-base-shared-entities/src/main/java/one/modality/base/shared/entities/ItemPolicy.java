@@ -19,6 +19,7 @@ public interface ItemPolicy extends Entity,
     String _default = "default";
     String earlyAccommodationAllowed = "earlyAccommodationAllowed";
     String lateAccommodationAllowed = "lateAccommodationAllowed";
+    String genderInfoRequired = "genderRequired";
     String phaseCoverage1 = "phaseCoverage1";
     String phaseCoverage2 = "phaseCoverage2";
     String phaseCoverage3 = "phaseCoverage3";
@@ -74,6 +75,14 @@ public interface ItemPolicy extends Entity,
 
     default Boolean isDefault() {
         return getBooleanFieldValue(_default);
+    }
+
+    default void setGenderInfoRequired(Boolean value) {
+        setFieldValue(genderInfoRequired, value);
+    }
+
+    default Boolean isGenderInfoRequired() {
+        return getBooleanFieldValue(genderInfoRequired);
     }
 
     default void setEarlyAccommodationAllowed(Boolean value) {
