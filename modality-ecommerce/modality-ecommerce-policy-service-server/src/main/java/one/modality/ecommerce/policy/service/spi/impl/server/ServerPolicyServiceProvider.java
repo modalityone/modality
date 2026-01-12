@@ -73,7 +73,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     // 3 - Loading event selections (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_SELECTIONS_QUERY_BASE + " where (select es.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by part1.id,part2.id,part3.id", eventPk)
+                    " order by part1.id,part2..id,part3..id", eventPk)
                     // 4 - Loading event phases (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_PHASES_QUERY_BASE + " where (select eph.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
