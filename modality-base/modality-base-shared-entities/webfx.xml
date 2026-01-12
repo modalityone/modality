@@ -29,7 +29,7 @@
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.ErrorImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventPartImpl$ProvidedFactory</provider>
-        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventPhase$ProvidedFactory</provider>
+        <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventPhaseImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventSelectionImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.EventTypeImpl$ProvidedFactory</provider>
         <provider interface="dev.webfx.stack.orm.entity.EntityFactoryProvider">one.modality.base.shared.entities.impl.FilterImpl$ProvidedFactory</provider>

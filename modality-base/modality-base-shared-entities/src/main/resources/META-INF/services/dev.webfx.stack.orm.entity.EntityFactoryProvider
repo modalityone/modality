@@ -19,7 +19,7 @@ one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ErrorImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventPartImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.EventPhase$ProvidedFactory
+one.modality.base.shared.entities.impl.EventPhaseImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventSelectionImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.FilterImpl$ProvidedFactory
