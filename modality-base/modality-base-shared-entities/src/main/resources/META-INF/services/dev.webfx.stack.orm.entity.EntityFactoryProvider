@@ -18,6 +18,9 @@ one.modality.base.shared.entities.impl.DocumentImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.DocumentLineImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ErrorImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.EventPartImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.EventPhase$ProvidedFactory
+one.modality.base.shared.entities.impl.EventSelectionImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.EventTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.FilterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.FrontendAccountImpl$ProvidedFactory
@@ -48,6 +51,7 @@ one.modality.base.shared.entities.impl.OperationGroupImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.OrganizationTypeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PersonImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.PhaseCoverageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PodcastImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PolicyScopeImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.PoolImpl$ProvidedFactory

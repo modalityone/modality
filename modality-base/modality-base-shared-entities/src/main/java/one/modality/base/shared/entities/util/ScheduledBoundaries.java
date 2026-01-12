@@ -26,6 +26,12 @@ public final class ScheduledBoundaries {
         return null;
     }
 
+    public static LocalTime getTime(ScheduledBoundary scheduledBoundary) {
+        if (scheduledBoundary.isAtStartTime())
+            return getStartTime(scheduledBoundary);
+        return getEndTime(scheduledBoundary);
+    }
+
     public static EntityHasStartAndEndTime getStartAndEndDateHolder(ScheduledBoundary scheduledBoundary) {
         ScheduledItem scheduledItem = scheduledBoundary.getScheduledItem();
         if (scheduledItem != null)

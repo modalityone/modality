@@ -16,4 +16,14 @@ public interface ScheduledBoundary extends Entity,
     EntityHasLocalDate
 {
 
+    String atStartTime = "atStartTime";
+
+    default void setAtStartTime(Boolean value) {
+        setFieldValue(atStartTime, value);
+    }
+
+    default Boolean isAtStartTime() {
+        return getBooleanFieldValue(atStartTime);
+    }
+
 }
