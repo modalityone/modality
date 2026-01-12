@@ -166,6 +166,15 @@ public final class WorkingBooking {
         this.memberExplicitlySelected = memberExplicitlySelected;
     }
 
+    public void copyChanges(WorkingBooking workingBooking, boolean clearPreviousChanges) {
+        if (workingBooking.getPolicyAggregate() != policyAggregate)
+            throw new IllegalArgumentException("WorkingBooking must be from the same policy");
+        lastestDocumentAggregate = null;
+        if (clearPreviousChanges)
+            documentChanges.clear();
+        documentChanges.addAll(workingBooking.documentChanges);
+    }
+
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
