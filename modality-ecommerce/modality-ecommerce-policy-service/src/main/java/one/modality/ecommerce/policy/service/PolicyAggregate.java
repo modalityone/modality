@@ -14,6 +14,7 @@ import one.modality.base.shared.entities.util.Rates;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -180,6 +181,33 @@ public final class PolicyAggregate {
 
     public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {
         return ScheduledItems.groupScheduledItemsByAudioRecordingItems(getScheduledItemsStream());
+    }
+
+    private Timeline findMealsTimeline(LocalTime startsAfter, LocalTime startsBefore) {
+        return scheduledItems.stream()
+            .map(ScheduledItem::getTimeline)
+            .distinct()
+            .filter(timeline -> {
+                if (timeline == null) return false;
+                Item item = timeline.getItem();
+                if (item == null || !Entities.samePrimaryKey(item.getFamily(), KnownItemFamily.MEALS.getPrimaryKey()))
+                    return false;
+                LocalTime startTime = timeline.getStartTime();
+                return startTime != null && (startsBefore == null || startTime.isBefore(startsBefore)) && (startsAfter == null || startTime.isAfter(startsAfter));
+            }).findFirst()
+            .orElse(null);
+    }
+
+    public Timeline getBreakfastTimeline() {
+        return findMealsTimeline(null, LocalTime.of(10, 0));
+    }
+
+    public Timeline getLunchTimeline() {
+        return findMealsTimeline(LocalTime.of(10, 0), LocalTime.of(15, 0));
+    }
+
+    public Timeline getDinnerTimeline() {
+        return findMealsTimeline(LocalTime.of(15, 0), null);
     }
 
     public List<Rate> getRates() {
