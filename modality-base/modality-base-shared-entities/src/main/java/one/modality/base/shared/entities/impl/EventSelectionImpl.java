@@ -28,6 +28,14 @@ public final class EventSelectionImpl extends DynamicEntity implements EventSele
         return parts;
     }
 
+    @Override
+    public void setParts(List<EventPart> parts) {
+        this.parts = parts;
+        setPart1(Collections.get(parts, 0));
+        setPart2(Collections.get(parts, 1));
+        setPart3(Collections.get(parts, 2));
+    }
+
     public static final class ProvidedFactory extends EntityFactoryProviderImpl<EventSelection> {
         public ProvidedFactory() {
             super(EventSelection.class, EventSelectionImpl::new);

@@ -76,4 +76,6 @@ public interface EventSelection extends Entity,
 
     List<EventPart> getParts(); // implemented in EventSelectionImpl
 
+    void setParts(List<EventPart> parts); // implemented in EventSelectionImpl
+
 }
