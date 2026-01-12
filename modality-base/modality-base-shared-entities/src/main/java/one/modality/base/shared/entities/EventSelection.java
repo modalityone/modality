@@ -6,6 +6,8 @@ import one.modality.base.shared.entities.markers.EntityHasEvent;
 import one.modality.base.shared.entities.markers.EntityHasLabel;
 import one.modality.base.shared.entities.markers.EntityHasName;
 
+import java.util.List;
+
 /**
  * @author Bruno Salmon
  */
@@ -71,5 +73,7 @@ public interface EventSelection extends Entity,
     default EventPart getPart3() {
         return getForeignEntity(part3);
     }
+
+    List<EventPart> getParts(); // implemented in EventSelectionImpl
 
 }
