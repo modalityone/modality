@@ -1,9 +1,11 @@
 package one.modality.booking.backoffice.activities.registration;
 
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -11,9 +13,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleCancelDocumentRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -509,7 +513,24 @@ final class RegistrationRenderers {
                 }
             });
 
-            HBox container = new HBox(viewBtn);
+            // Cancel/Uncancel button
+            boolean isCancelled = Booleans.isTrue(doc.isCancelled());
+            Button cancelBtn = new Button(isCancelled ? "↩ Uncancel" : "✕ Cancel");
+            cancelBtn.setFont(FONT_12);
+            cancelBtn.setTextFill(isCancelled ? SUCCESS : DANGER);
+            cancelBtn.setPadding(new Insets(6, 12, 6, 12));
+            cancelBtn.setBackground(new Background(new BackgroundFill(BG, new CornerRadii(6), null)));
+            cancelBtn.setBorder(new Border(new BorderStroke(
+                isCancelled ? SUCCESS : DANGER,
+                BorderStrokeStyle.SOLID, new CornerRadii(6), BorderWidths.DEFAULT)));
+
+            cancelBtn.setOnAction(e -> {
+                // Use FXMainFrameDialogArea for the confirmation dialog
+                ToggleCancelDocumentRequest request = new ToggleCancelDocumentRequest(doc, FXMainFrameDialogArea.getDialogArea());
+                request.getOperationExecutor().apply(request);
+            });
+
+            HBox container = new HBox(8, viewBtn, cancelBtn);
             container.setAlignment(Pos.CENTER);
             return container;
         });

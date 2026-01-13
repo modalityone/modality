@@ -150,6 +150,24 @@ public final class RegistrationStyles {
     public static final Color PARKING_ICON = Color.web("#8b5cf6");
     public static final Color PARKING_FG = Color.web("#8b5cf6");
 
+    // Tax category (financial adjustments like rounding)
+    public static final Color TAX_BG = Color.web("#fef2f2");
+    public static final Color TAX_TEXT = Color.web("#991b1b");
+    public static final Color TAX_ICON = Color.web("#dc2626");
+    public static final Color TAX_FG = Color.web("#dc2626");
+
+    // Recording category (audio recordings)
+    public static final Color RECORDING_BG = Color.web("#eef2ff");
+    public static final Color RECORDING_TEXT = Color.web("#4338ca");
+    public static final Color RECORDING_ICON = Color.web("#6366f1");
+    public static final Color RECORDING_FG = Color.web("#6366f1");
+
+    // Other/Unknown category (items not matching known families)
+    public static final Color OTHER_BG = Color.web("#f3f4f6");
+    public static final Color OTHER_TEXT = Color.web("#4b5563");
+    public static final Color OTHER_ICON = Color.web("#6b7280");
+    public static final Color OTHER_FG = Color.web("#6b7280");
+
     // Timeline Period Bars
     public static final Color EVENT_PERIOD_BG = Color.web("#c4b5fd");    // violetLight
     public static final Color EVENT_PERIOD_TEXT = Color.web("#6d28d9");  // violet
@@ -303,6 +321,17 @@ public final class RegistrationStyles {
     }
 
     /**
+     * Applies success button styling.
+     */
+    public static void applySuccessButtonStyle(Button button) {
+        button.setBackground(createBackground(SUCCESS, BORDER_RADIUS));
+        button.setTextFill(Color.WHITE);
+        button.setFont(FONT_LABEL);
+        button.setPadding(new Insets(10, 20, 10, 20));
+        button.setCursor(Cursor.HAND);
+    }
+
+    /**
      * Applies search text field styling.
      */
     public static void applySearchFieldStyle(TextField field) {
@@ -421,15 +450,16 @@ public final class RegistrationStyles {
     }
 
     /**
-     * Formats a price amount for display.
+     * Formats a price amount for display with 2 decimal places.
+     * Note: amount is in pounds/dollars, not cents.
      */
     public static String formatPrice(double amount) {
-        if (amount == (int) amount) {
-            return "£" + (int) amount;
-        }
-        // GWT-compatible: avoid String.format
+        // GWT-compatible: avoid String.format, always show 2 decimal places
         long pence = Math.round(amount * 100);
-        return "£" + (pence / 100) + "." + String.valueOf(100 + (pence % 100)).substring(1);
+        long pounds = pence / 100;
+        long cents = Math.abs(pence % 100);
+        String sign = pence < 0 ? "-" : "";
+        return sign + "£" + Math.abs(pounds) + "." + (cents < 10 ? "0" : "") + cents;
     }
 
     /**
@@ -496,6 +526,9 @@ public final class RegistrationStyles {
             case "parking" -> PARKING_BG;
             case "course" -> COURSE_BG;
             case "services" -> SERVICES_BG;
+            case "tax" -> TAX_BG;
+            case "recording" -> RECORDING_BG;
+            case "other", "other_temporal" -> OTHER_BG;
             default -> BG;
         };
     }
@@ -514,6 +547,9 @@ public final class RegistrationStyles {
             case "parking" -> PARKING_TEXT;
             case "course" -> COURSE_TEXT;
             case "services" -> SERVICES_TEXT;
+            case "tax" -> TAX_TEXT;
+            case "recording" -> RECORDING_TEXT;
+            case "other", "other_temporal" -> OTHER_TEXT;
             default -> TEXT_MUTED;
         };
     }
@@ -532,6 +568,9 @@ public final class RegistrationStyles {
             case "parking" -> PARKING_ICON;
             case "course" -> COURSE_ICON;
             case "services" -> SERVICES_ICON;
+            case "tax" -> TAX_ICON;
+            case "recording" -> RECORDING_ICON;
+            case "other", "other_temporal" -> OTHER_ICON;
             default -> TEXT_MUTED;
         };
     }
@@ -550,6 +589,9 @@ public final class RegistrationStyles {
             case "parking" -> "🅿️";
             case "course" -> "🎓";
             case "services" -> "🔧";
+            case "tax" -> "💰";
+            case "recording" -> "🎵";
+            case "other", "other_temporal" -> "📦";
             default -> "📦";
         };
     }

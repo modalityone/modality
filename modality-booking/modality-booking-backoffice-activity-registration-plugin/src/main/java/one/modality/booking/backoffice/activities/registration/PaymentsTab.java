@@ -1,38 +1,55 @@
 package one.modality.booking.backoffice.activities.registration;
 
-import dev.webfx.extras.visual.controls.grid.VisualGrid;
+import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
+import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.History;
 import one.modality.base.shared.entities.Method;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.crm.shared.services.authn.fx.FXUserName;
+
+import javafx.application.Platform;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import static dev.webfx.stack.orm.dql.DqlStatement.where;
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
 /**
  * Payments tab for the Registration Edit Modal.
  * <p>
  * Features:
- * - Display payment history (money_transfer records)
+ * - Display payment history (money_transfer records) as styled list
  * - Add new payment form
  * - Edit existing payment (with permission check)
  * <p>
- * Based on RegistrationDashboardFull.jsx PaymentsTab section.
+ * Based on RegistrationDashboardFull.jsx PaymentsTab section (lines 9086-9327).
  *
  * @author Claude Code
  */
@@ -45,17 +62,29 @@ public class PaymentsTab {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(false);
 
+    // Document ID property for reactive binding (stores primary key value, not entity)
+    private final ObjectProperty<Object> documentIdProperty = new SimpleObjectProperty<>();
+
+    // Loaded payments from database
+    private final ObservableList<MoneyTransfer> loadedPayments = FXCollections.observableArrayList();
+    private ReactiveEntitiesMapper<MoneyTransfer> paymentsMapper;
+
     // UI Components
-    private VisualGrid paymentsGrid;
-    private ReactiveVisualMapper<MoneyTransfer> paymentsMapper;
+    private VBox paymentsListContainer;
+    private Label emptyStateLabel;
+
+    // Summary card labels (for updating after payment)
+    private Label paidAmountLabel;
+    private Label outstandingLabel;
+    private VBox outstandingCard;
+    private int totalAmount; // Cache total for recalculation
 
     // Cache for payment methods
     private final Map<String, Method> methodsByName = new HashMap<>();
 
     // New payment form fields
-    private dev.webfx.extras.time.pickers.DatePicker datePicker; // WebFX DatePicker (GWT-compatible)
+    private javafx.scene.control.DatePicker datePicker;
     private TextField amountField;
-    // Payment method using ToggleButtons (GWT-compatible replacement for ComboBox)
     private ToggleGroup methodToggleGroup;
     private ToggleButton cashToggle;
     private ToggleButton cardToggle;
@@ -69,6 +98,11 @@ public class PaymentsTab {
         this.pm = pm;
         this.document = document;
         this.updateStore = updateStore;
+
+        // Store the document's primary key value for reactive binding
+        if (document.getId() != null) {
+            this.documentIdProperty.set(document.getId().getPrimaryKey());
+        }
     }
 
     /**
@@ -81,92 +115,283 @@ public class PaymentsTab {
         // Summary section
         Node summarySection = createSummarySection();
 
-        // Payment history grid
+        // Payment history section (styled list)
         Node historySection = createHistorySection();
-        VBox.setVgrow(historySection, Priority.ALWAYS);
 
         // Add payment form
         Node addPaymentSection = createAddPaymentSection();
 
         container.getChildren().addAll(summarySection, historySection, addPaymentSection);
 
-        return container;
+        // Wrap entire content in ScrollPane (like GuestDetailsTab)
+        ScrollPane scrollPane = new ScrollPane(container);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+        return scrollPane;
     }
 
     /**
-     * Creates the payment summary section.
+     * Creates the payment summary section with 3 cards.
      */
     private Node createSummarySection() {
         HBox summary = new HBox(SPACING_XLARGE);
         summary.setPadding(PADDING_LARGE);
-        summary.setBackground(createBackground(BG, BORDER_RADIUS_MEDIUM));
-        summary.setBorder(createBorder(BORDER, BORDER_RADIUS_MEDIUM));
 
-        // Total price
+        // Total price card
         Integer priceNet = document.getPriceNet();
-        int total = priceNet != null ? priceNet : 0;
+        totalAmount = priceNet != null ? priceNet : 0;
+        VBox totalBox = createSummaryCard("Total Amount", formatPrice(totalAmount), CREAM, WARM_BROWN, CREAM_BORDER, null);
 
-        VBox totalBox = createSummaryItem("Total Price", formatPrice(total), TEXT);
-
-        // Total paid
+        // Total paid card - store reference to label for updating
         Integer deposit = document.getPriceDeposit();
         int paid = deposit != null ? deposit : 0;
+        paidAmountLabel = new Label(formatPrice(paid));
+        VBox paidBox = createSummaryCard("Paid Amount", null, SUCCESS_BG, SUCCESS, SUCCESS_BORDER, paidAmountLabel);
 
-        VBox paidBox = createSummaryItem("Paid", formatPrice(paid), SUCCESS);
+        // Balance card - store reference to label and card for updating
+        int balance = totalAmount - paid;
+        outstandingLabel = new Label(formatPrice(balance));
+        javafx.scene.paint.Color balanceBg = balance > 0 ? RED_LIGHT : SUCCESS_BG;
+        javafx.scene.paint.Color balanceColor = balance > 0 ? DANGER : SUCCESS;
+        javafx.scene.paint.Color balanceBorder = balance > 0 ? DANGER_BORDER : SUCCESS_BORDER;
+        outstandingCard = createSummaryCard("Outstanding", null, balanceBg, balanceColor, balanceBorder, outstandingLabel);
 
-        // Balance
-        int balance = total - paid;
-        VBox balanceBox = createSummaryItem("Balance Due", formatPrice(balance), balance > 0 ? WARNING : SUCCESS);
-
-        summary.getChildren().addAll(totalBox, paidBox, balanceBox);
+        summary.getChildren().addAll(totalBox, paidBox, outstandingCard);
         return summary;
     }
 
     /**
-     * Creates a summary item card.
+     * Creates a summary card with styled background and values.
+     * @param existingValueLabel if not null, use this label instead of creating a new one
      */
-    private VBox createSummaryItem(String label, String value, javafx.scene.paint.Color valueColor) {
-        VBox item = new VBox(4);
-        item.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(item, Priority.ALWAYS);
+    private VBox createSummaryCard(String label, String value, javafx.scene.paint.Color bg, javafx.scene.paint.Color textColor, javafx.scene.paint.Color borderColor, Label existingValueLabel) {
+        VBox card = new VBox(8);
+        card.setPadding(new Insets(20));
+        card.setBackground(createBackground(bg, BORDER_RADIUS_MEDIUM));
+        card.setBorder(createBorder(borderColor, BORDER_RADIUS_MEDIUM));
+        card.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(card, Priority.ALWAYS);
 
-        Label labelText = new Label(label);
-        labelText.setFont(FONT_SMALL);
-        labelText.setTextFill(TEXT_MUTED);
+        // Convert Color to CSS hex for WebFX compatibility
+        String textColorHex = toHexColor(textColor);
+        String labelColorHex = toHexColor(textColor.deriveColor(0, 1, 0.8, 1));
 
-        Label valueText = new Label(value);
-        valueText.setFont(FONT_TITLE);
-        valueText.setTextFill(valueColor);
+        Label labelText = new Label(label.toUpperCase());
+        labelText.setFont(Font.font("System", FontWeight.SEMI_BOLD, 12));
+        labelText.setStyle("-fx-text-fill: " + labelColorHex + ";");
 
-        item.getChildren().addAll(labelText, valueText);
-        return item;
+        Label valueText = existingValueLabel != null ? existingValueLabel : new Label(value);
+        valueText.setFont(Font.font("System", FontWeight.BOLD, 28));
+        valueText.setStyle("-fx-text-fill: " + textColorHex + ";");
+
+        card.getChildren().addAll(labelText, valueText);
+        return card;
     }
 
     /**
-     * Creates the payment history section.
+     * Converts a Color to CSS hex string for WebFX compatibility.
+     * Uses manual hex conversion since String.format is not available in GWT.
+     */
+    private String toHexColor(javafx.scene.paint.Color color) {
+        int r = (int) (color.getRed() * 255);
+        int g = (int) (color.getGreen() * 255);
+        int b = (int) (color.getBlue() * 255);
+        return "#" + toHex(r) + toHex(g) + toHex(b);
+    }
+
+    /**
+     * Converts an integer (0-255) to a two-digit hex string.
+     */
+    private String toHex(int value) {
+        String hex = Integer.toHexString(value);
+        return hex.length() == 1 ? "0" + hex : hex;
+    }
+
+    /**
+     * Creates the payment history section with styled list.
      */
     private Node createHistorySection() {
         VBox section = new VBox(8);
 
+        // Header with icon badge
+        HBox header = new HBox(10);
+        header.setPadding(new Insets(12, 16, 12, 16));
+        CornerRadii topRoundedCorners = new CornerRadii(BORDER_RADIUS_MEDIUM, BORDER_RADIUS_MEDIUM, 0, 0, false);
+        header.setBackground(new Background(new BackgroundFill(CREAM, topRoundedCorners, null)));
+        header.setBorder(new Border(new BorderStroke(BORDER, BorderStrokeStyle.SOLID,
+            topRoundedCorners, new BorderWidths(1, 1, 1, 1))));
+        header.setAlignment(Pos.CENTER_LEFT);
+
+        // Icon badge
+        StackPane iconBadge = new StackPane();
+        iconBadge.setMinSize(28, 28);
+        iconBadge.setMaxSize(28, 28);
+        iconBadge.setBackground(createBackground(WARM_BROWN, 14));
+        Label iconLabel = new Label("\uD83D\uDCB3"); // Credit card emoji
+        iconLabel.setFont(Font.font(14));
+        iconBadge.getChildren().add(iconLabel);
+
         Label titleLabel = new Label("Payment History");
-        titleLabel.setFont(FONT_SUBTITLE);
-        titleLabel.setTextFill(TEXT);
+        titleLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, 14));
+        titleLabel.setStyle("-fx-text-fill: #5c4033;"); // WARM_TEXT color
 
-        // Create payments grid
-        paymentsGrid = new VisualGrid();
-        paymentsGrid.setFullHeight(true);
-        paymentsGrid.setMinHeight(150);
-        paymentsGrid.setPrefHeight(200);
+        header.getChildren().addAll(iconBadge, titleLabel);
 
-        VBox gridContainer = new VBox(paymentsGrid);
-        gridContainer.setBackground(createBackground(BG_CARD, BORDER_RADIUS_MEDIUM));
-        gridContainer.setBorder(createBorder(BORDER, BORDER_RADIUS_MEDIUM));
-        VBox.setVgrow(gridContainer, Priority.ALWAYS);
+        // Payments list container
+        paymentsListContainer = new VBox();
+        paymentsListContainer.setBackground(createBackground(BG_CARD, 0));
 
-        section.getChildren().addAll(titleLabel, gridContainer);
-        VBox.setVgrow(section, Priority.ALWAYS);
+        // Empty state
+        emptyStateLabel = new Label("No payments recorded yet");
+        emptyStateLabel.setFont(FONT_SMALL);
+        emptyStateLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
+        emptyStateLabel.setAlignment(Pos.CENTER);
+        emptyStateLabel.setMaxWidth(Double.MAX_VALUE);
+        emptyStateLabel.setPadding(new Insets(30));
+
+        // Wrap list in container with rounded bottom corners
+        VBox listWrapper = new VBox(paymentsListContainer);
+        CornerRadii bottomRoundedCorners = new CornerRadii(0, 0, BORDER_RADIUS_MEDIUM, BORDER_RADIUS_MEDIUM, false);
+        listWrapper.setBackground(new Background(new BackgroundFill(BG_CARD, bottomRoundedCorners, null)));
+        listWrapper.setBorder(new Border(new BorderStroke(BORDER, BorderStrokeStyle.SOLID,
+            bottomRoundedCorners, new BorderWidths(0, 1, 1, 1))));
+
+        // Outer container
+        VBox container = new VBox();
+        container.getChildren().addAll(header, listWrapper);
+
+        section.getChildren().add(container);
 
         return section;
+    }
+
+    /**
+     * Refreshes the payment list from loaded data.
+     */
+    private void refreshPaymentsList() {
+        paymentsListContainer.getChildren().clear();
+
+        if (loadedPayments.isEmpty()) {
+            paymentsListContainer.getChildren().add(emptyStateLabel);
+        } else {
+            for (int i = 0; i < loadedPayments.size(); i++) {
+                MoneyTransfer payment = loadedPayments.get(i);
+                Node row = createPaymentRow(payment, i < loadedPayments.size() - 1);
+                paymentsListContainer.getChildren().add(row);
+            }
+        }
+
+        // Update summary cards with new totals
+        updateSummaryCards();
+    }
+
+    /**
+     * Updates the summary cards based on the current payments list.
+     */
+    private void updateSummaryCards() {
+        // Calculate total paid from all payments in the list
+        int paidAmount = 0;
+        for (MoneyTransfer payment : loadedPayments) {
+            Integer amount = payment.getAmount();
+            if (amount != null) {
+                paidAmount += amount;
+            }
+        }
+
+        // Update paid amount label
+        if (paidAmountLabel != null) {
+            paidAmountLabel.setText(formatPrice(paidAmount));
+        }
+
+        // Update outstanding label and card styling
+        int outstanding = totalAmount - paidAmount;
+        if (outstandingLabel != null) {
+            outstandingLabel.setText(formatPrice(outstanding));
+        }
+
+        // Update outstanding card background/border color based on balance
+        if (outstandingCard != null) {
+            javafx.scene.paint.Color balanceBg = outstanding > 0 ? RED_LIGHT : SUCCESS_BG;
+            javafx.scene.paint.Color balanceBorder = outstanding > 0 ? DANGER_BORDER : SUCCESS_BORDER;
+            javafx.scene.paint.Color textColor = outstanding > 0 ? DANGER : SUCCESS;
+            outstandingCard.setBackground(createBackground(balanceBg, BORDER_RADIUS_MEDIUM));
+            outstandingCard.setBorder(createBorder(balanceBorder, BORDER_RADIUS_MEDIUM));
+            outstandingLabel.setStyle("-fx-text-fill: " + toHexColor(textColor) + ";");
+        }
+    }
+
+    /**
+     * Creates a styled payment row matching JSX design.
+     */
+    private Node createPaymentRow(MoneyTransfer payment, boolean showBorder) {
+        HBox row = new HBox(16);
+        row.setPadding(new Insets(16, 20, 16, 20));
+        row.setAlignment(Pos.CENTER_LEFT);
+        if (showBorder) {
+            row.setBorder(new Border(new BorderStroke(
+                BORDER_LIGHT, BorderStrokeStyle.SOLID, CornerRadii.EMPTY,
+                new BorderWidths(0, 0, 1, 0))));
+        }
+
+        // Left section: Date and method info
+        VBox leftSection = new VBox(4);
+        leftSection.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(leftSection, Priority.ALWAYS);
+
+        // Date (bold, 14px)
+        String dateStr = formatPaymentDate(payment.getDate());
+        Label dateLabel = new Label(dateStr);
+        dateLabel.setFont(Font.font("System", FontWeight.MEDIUM, 14));
+        dateLabel.setStyle("-fx-text-fill: #3d3530;"); // TEXT color
+
+        // Method and reference (13px, muted)
+        String methodName = payment.getMethod() != null ? payment.getMethod().getName() : "Unknown";
+        String reference = payment.getTransactionRef();
+        String methodText = reference != null && !reference.isEmpty()
+            ? methodName + " \u2022 " + reference
+            : methodName;
+        Label methodLabel = new Label(methodText);
+        methodLabel.setFont(Font.font("System", 13));
+        methodLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
+
+        leftSection.getChildren().addAll(dateLabel, methodLabel);
+
+        // Right section: Amount and status badge
+        VBox rightSection = new VBox(4);
+        rightSection.setAlignment(Pos.CENTER_RIGHT);
+
+        // Amount (large, green, bold)
+        Integer amount = payment.getAmount();
+        String amountStr = formatPrice(amount != null ? amount : 0);
+        Label amountLabel = new Label(amountStr);
+        amountLabel.setFont(Font.font("System", FontWeight.BOLD, 20));
+        amountLabel.setStyle("-fx-text-fill: #16a34a;"); // SUCCESS color
+
+        // Status badge
+        Label statusBadge = new Label("PAID");
+        statusBadge.setFont(Font.font("System", FontWeight.SEMI_BOLD, 11));
+        statusBadge.setStyle("-fx-text-fill: #16a34a;"); // SUCCESS color
+        statusBadge.setBackground(createBackground(SUCCESS_BG, BORDER_RADIUS_SMALL));
+        statusBadge.setPadding(new Insets(3, 10, 3, 10));
+
+        rightSection.getChildren().addAll(amountLabel, statusBadge);
+
+        row.getChildren().addAll(leftSection, rightSection);
+
+        return row;
+    }
+
+    /**
+     * Formats a payment date in a friendly format.
+     */
+    private String formatPaymentDate(LocalDateTime dateTime) {
+        if (dateTime == null) return "Unknown date";
+        // Format: "Mon, 15 February 2025"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEE, d MMMM yyyy", Locale.ENGLISH);
+        return dateTime.format(formatter);
     }
 
     /**
@@ -174,82 +399,123 @@ public class PaymentsTab {
      */
     private Node createAddPaymentSection() {
         VBox section = new VBox(12);
-        section.setPadding(PADDING_LARGE);
-        section.setBackground(createBackground(BG, BORDER_RADIUS_MEDIUM));
-        section.setBorder(createBorder(PRIMARY_BORDER, BORDER_RADIUS_MEDIUM));
 
-        Label titleLabel = new Label("Add Payment");
-        titleLabel.setFont(FONT_SUBTITLE);
-        titleLabel.setTextFill(TEXT);
+        // Header with icon badge
+        HBox header = new HBox(10);
+        header.setPadding(new Insets(12, 16, 12, 16));
+        CornerRadii topCorners = new CornerRadii(BORDER_RADIUS_MEDIUM, BORDER_RADIUS_MEDIUM, 0, 0, false);
+        header.setBackground(new Background(new BackgroundFill(SAND, topCorners, null)));
+        header.setBorder(new Border(new BorderStroke(BORDER, BorderStrokeStyle.SOLID,
+            topCorners, new BorderWidths(1, 1, 0, 1))));
+        header.setAlignment(Pos.CENTER_LEFT);
 
-        // Form row
-        HBox formRow = new HBox(12);
+        // Icon badge (orange plus)
+        StackPane iconBadge = new StackPane();
+        iconBadge.setMinSize(28, 28);
+        iconBadge.setMaxSize(28, 28);
+        iconBadge.setBackground(createBackground(WARM_ORANGE, 14));
+        Label iconLabel = new Label("+");
+        iconLabel.setFont(Font.font("System", FontWeight.BOLD, 14));
+        iconLabel.setStyle("-fx-text-fill: white;");
+        iconBadge.getChildren().add(iconLabel);
+
+        Label titleLabel = new Label("Record New Payment");
+        titleLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, 14));
+        titleLabel.setStyle("-fx-text-fill: #5c4033;"); // WARM_TEXT color
+
+        header.getChildren().addAll(iconBadge, titleLabel);
+
+        // Form content
+        VBox formContent = new VBox(16);
+        formContent.setPadding(new Insets(20));
+        CornerRadii bottomCorners = new CornerRadii(0, 0, BORDER_RADIUS_MEDIUM, BORDER_RADIUS_MEDIUM, false);
+        formContent.setBackground(new Background(new BackgroundFill(BG_CARD, bottomCorners, null)));
+        formContent.setBorder(new Border(new BorderStroke(BORDER, BorderStrokeStyle.SOLID,
+            bottomCorners, new BorderWidths(0, 1, 1, 1))));
+
+        // Form row (4 columns)
+        HBox formRow = new HBox(16);
         formRow.setAlignment(Pos.CENTER_LEFT);
 
-        // Date picker (WebFX DatePicker - GWT-compatible)
-        VBox dateField = new VBox(4);
+        // Date picker (compact JavaFX DatePicker with dropdown)
+        VBox dateField = new VBox(6);
         Label dateLabel = new Label("Date");
-        dateLabel.setFont(FONT_SMALL);
-        dateLabel.setTextFill(TEXT_MUTED);
-        datePicker = new dev.webfx.extras.time.pickers.DatePicker();
-        datePicker.setSelectedDate(LocalDate.now()); // Set default date after construction
-        javafx.scene.Node datePickerView = datePicker.getView();
-        dateField.getChildren().addAll(dateLabel, datePickerView);
+        dateLabel.setFont(Font.font("System", FontWeight.MEDIUM, 12));
+        dateLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
+        datePicker = new javafx.scene.control.DatePicker();
+        datePicker.setValue(LocalDate.now());
+        datePicker.setPrefWidth(140);
+        datePicker.setStyle("-fx-font-size: 14px;");
+        dateField.getChildren().addAll(dateLabel, datePicker);
 
         // Amount
-        VBox amountFieldContainer = new VBox(4);
-        Label amountLabel = new Label("Amount");
-        amountLabel.setFont(FONT_SMALL);
-        amountLabel.setTextFill(TEXT_MUTED);
+        VBox amountFieldContainer = new VBox(6);
+        Label amountLabel = new Label("Amount (\u00A3)");
+        amountLabel.setFont(Font.font("System", FontWeight.MEDIUM, 12));
+        amountLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
         amountField = new TextField();
         amountField.setPromptText("0.00");
         amountField.setPrefWidth(120);
         applyInputFieldStyle(amountField);
         amountFieldContainer.getChildren().addAll(amountLabel, amountField);
 
-        // Payment method (using ToggleButtons - GWT-compatible)
-        VBox methodField = new VBox(4);
+        // Payment method (ToggleButtons - GWT-compatible)
+        VBox methodField = new VBox(6);
         Label methodLabel = new Label("Method");
-        methodLabel.setFont(FONT_SMALL);
-        methodLabel.setTextFill(TEXT_MUTED);
+        methodLabel.setFont(Font.font("System", FontWeight.MEDIUM, 12));
+        methodLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
 
         methodToggleGroup = new ToggleGroup();
-        cashToggle = new ToggleButton("Cash");
-        cashToggle.setToggleGroup(methodToggleGroup);
-        cardToggle = new ToggleButton("Card");
-        cardToggle.setToggleGroup(methodToggleGroup);
-        cardToggle.setSelected(true); // Default selection
-        bankToggle = new ToggleButton("Bank");
-        bankToggle.setToggleGroup(methodToggleGroup);
-        checkToggle = new ToggleButton("Check");
-        checkToggle.setToggleGroup(methodToggleGroup);
-        otherToggle = new ToggleButton("Other");
-        otherToggle.setToggleGroup(methodToggleGroup);
+        cashToggle = createMethodToggleButton("Cash");
+        cardToggle = createMethodToggleButton("Card");
+        cardToggle.setSelected(true);
+        // Apply selected style to Card button initially
+        cardToggle.setBackground(createBackground(WARM_BROWN, BORDER_RADIUS_SMALL));
+        cardToggle.setStyle("-fx-text-fill: white;");
+        bankToggle = createMethodToggleButton("Bank");
+        checkToggle = createMethodToggleButton("Check");
+        otherToggle = createMethodToggleButton("Other");
 
         HBox methodButtons = new HBox(4);
         methodButtons.getChildren().addAll(cashToggle, cardToggle, bankToggle, checkToggle, otherToggle);
         methodField.getChildren().addAll(methodLabel, methodButtons);
 
         // Reference
-        VBox referenceFieldContainer = new VBox(4);
-        Label referenceLabel = new Label("Reference");
-        referenceLabel.setFont(FONT_SMALL);
-        referenceLabel.setTextFill(TEXT_MUTED);
+        VBox referenceFieldContainer = new VBox(6);
+        Label referenceLabel = new Label("Comment");
+        referenceLabel.setFont(Font.font("System", FontWeight.MEDIUM, 12));
+        referenceLabel.setStyle("-fx-text-fill: #8a857f;"); // TEXT_MUTED color
         referenceField = new TextField();
-        referenceField.setPromptText("Transaction ID or note");
+        referenceField.setPromptText("Optional note...");
         referenceField.setPrefWidth(200);
         applyInputFieldStyle(referenceField);
         HBox.setHgrow(referenceFieldContainer, Priority.ALWAYS);
         referenceFieldContainer.getChildren().addAll(referenceLabel, referenceField);
 
-        // Add button
-        Button addButton = new Button("Add Payment");
-        applyPrimaryButtonStyle(addButton);
+        formRow.getChildren().addAll(dateField, amountFieldContainer, methodField, referenceFieldContainer);
+
+        // Add button - styled per JSX design (warmBrown background)
+        Button addButton = new Button();
+        HBox buttonContent = new HBox(8);
+        buttonContent.setAlignment(Pos.CENTER);
+        Label plusIcon = new Label("+");
+        plusIcon.setFont(Font.font("System", FontWeight.BOLD, 16));
+        plusIcon.setStyle("-fx-text-fill: white;");
+        Label buttonText = new Label("Add Payment");
+        buttonText.setFont(Font.font("System", FontWeight.SEMI_BOLD, 14));
+        buttonText.setStyle("-fx-text-fill: white;");
+        buttonContent.getChildren().addAll(plusIcon, buttonText);
+        addButton.setGraphic(buttonContent);
+        addButton.setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        // Apply JSX-matching style: warmBrown background, 10px 20px padding, 8px border radius
+        addButton.setBackground(createBackground(WARM_BROWN, BORDER_RADIUS_MEDIUM));
+        addButton.setPadding(new Insets(10, 20, 10, 20));
+        addButton.setCursor(javafx.scene.Cursor.HAND);
         addButton.setOnAction(e -> handleAddPayment());
 
-        formRow.getChildren().addAll(dateField, amountFieldContainer, methodField, referenceFieldContainer, addButton);
+        formContent.getChildren().addAll(formRow, addButton);
 
-        section.getChildren().addAll(titleLabel, formRow);
+        section.getChildren().addAll(header, formContent);
         return section;
     }
 
@@ -268,11 +534,11 @@ public class PaymentsTab {
                 return;
             }
 
-            LocalDate date = datePicker.getSelectedDate();
+            LocalDate date = datePicker.getValue();
             String methodName = getSelectedPaymentMethod();
             String reference = referenceField.getText();
 
-            // Create a new UpdateStore for this payment (separate from the modal's updateStore)
+            // Create a new UpdateStore for this payment
             UpdateStore paymentStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
 
             // Create new MoneyTransfer entity
@@ -290,25 +556,34 @@ public class PaymentsTab {
             if (method != null) {
                 payment.setMethod(method);
             } else {
-                // Try alternative lookups
-                method = methodsByName.get("card"); // Default fallback
+                method = methodsByName.get("card");
                 if (method != null) {
                     payment.setMethod(method);
                 }
             }
 
+            // Create History record for this payment
+            History history = paymentStore.insertEntity(History.class);
+            history.setDocument(document);
+            history.setMoneyTransfer(payment);
+            history.setUsername(FXUserName.getUserName());
+            history.setComment("Payment recorded: " + formatPrice((int)(amount * 100)) + " via " + methodName);
+
             // Submit changes to database
             paymentStore.submitChanges()
                 .onSuccess(batch -> {
                     Console.log("Payment added successfully: " + amount + " via " + methodName);
-                    // Clear form
-                    amountField.clear();
-                    referenceField.clear();
-                    datePicker.setSelectedDate(LocalDate.now());
-                    // Refresh the grid
-                    if (paymentsMapper != null) {
-                        paymentsMapper.refreshWhenActive();
-                    }
+                    // UI updates must run on FX application thread
+                    Platform.runLater(() -> {
+                        // Clear form
+                        amountField.clear();
+                        referenceField.clear();
+                        datePicker.setValue(LocalDate.now());
+                        // Refresh the mapper to load new data
+                        if (paymentsMapper != null) {
+                            paymentsMapper.refreshWhenActive();
+                        }
+                    });
                 })
                 .onFailure(e -> {
                     Console.log("Failed to add payment: " + e.getMessage());
@@ -319,25 +594,25 @@ public class PaymentsTab {
         }
     }
 
-    private static final String PAYMENTS_DQL =
-        "{class: 'MoneyTransfer', columns: 'date,method,transactionRef,comment,amount', where: 'document=${selectedDocument}', orderBy: 'date desc'}";
-
     /**
      * Sets up the reactive payments mapper.
-     * Should be called when the tab becomes active.
+     * Uses ReactiveEntitiesMapper pattern from BookingTab.
      */
     public void setupPaymentsMapper() {
-        if (paymentsMapper == null && document.getId() != null) {
-            // Use BookingDetailsPanel pattern: createPushReactiveChain + visualizeResultInto
-            paymentsMapper = ReactiveVisualMapper.<MoneyTransfer>createPushReactiveChain()
-                .always("{class: 'MoneyTransfer'}")
-                .ifNotNullOtherwiseEmptyString(pm.selectedDocumentProperty(), doc ->
-                    Strings.replaceAll(PAYMENTS_DQL, "${selectedDocument}", doc.getPrimaryKey()))
-                .bindActivePropertyTo(activeProperty)
-                .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
-                .applyDomainModelRowStyle()
-                .visualizeResultInto(paymentsGrid)
+        if (paymentsMapper == null && documentIdProperty.get() != null) {
+            Console.log("PaymentsTab: Setting up payments mapper for document " + documentIdProperty.get());
+
+            paymentsMapper = ReactiveEntitiesMapper.<MoneyTransfer>createPushReactiveChain(activity)
+                .always("{class: 'MoneyTransfer', fields: 'date,method.name,transactionRef,comment,amount,pending,successful', orderBy: 'date desc'}")
+                .always(documentIdProperty, docId -> where("document=?", docId))
+                .storeEntitiesInto(loadedPayments)
                 .start();
+
+            // Listen for changes and refresh the list
+            ObservableLists.runNowAndOnListChange(change -> {
+                Console.log("PaymentsTab: Loaded " + loadedPayments.size() + " payments");
+                refreshPaymentsList();
+            }, loadedPayments);
 
             // Load payment methods for the add payment form
             loadPaymentMethods();
@@ -345,7 +620,7 @@ public class PaymentsTab {
     }
 
     /**
-     * Loads payment methods from the database for the add payment form.
+     * Loads payment methods from the database.
      */
     private void loadPaymentMethods() {
         if (methodsByName.isEmpty()) {
@@ -384,24 +659,13 @@ public class PaymentsTab {
     }
 
     /**
-     * Formats a price value.
-     * GWT-compatible: avoids String.format
+     * Formats a price value (amount in cents) with 2 decimal places.
      */
-    private String formatPrice(int amount) {
-        // TODO: Get currency from document/organization
-        return "£" + formatWithCommas(amount);
-    }
-
-    private String formatWithCommas(int amount) {
-        if (amount < 1000) return String.valueOf(amount);
-        StringBuilder sb = new StringBuilder();
-        String str = String.valueOf(Math.abs(amount));
-        int len = str.length();
-        for (int i = 0; i < len; i++) {
-            if (i > 0 && (len - i) % 3 == 0) sb.append(',');
-            sb.append(str.charAt(i));
-        }
-        return amount < 0 ? "-" + sb : sb.toString();
+    private String formatPrice(int amountInCents) {
+        Event event = document.getEvent();
+        String currencySymbol = EventPriceFormatter.getEventCurrencySymbol(event);
+        // Use PriceFormatter with show00cents=true to always show 2 decimal places
+        return PriceFormatter.formatWithCurrency(amountInCents, currencySymbol, true);
     }
 
     /**
@@ -414,14 +678,42 @@ public class PaymentsTab {
         if (selected == bankToggle) return "Bank Transfer";
         if (selected == checkToggle) return "Check";
         if (selected == otherToggle) return "Other";
-        return "Card"; // Default
+        return "Card";
     }
 
     /**
      * Applies consistent styling to input fields.
      */
     private void applyInputFieldStyle(TextField field) {
-        field.setBackground(createBackground(BG_CARD, BORDER_RADIUS_SMALL));
+        field.setBackground(createBackground(WARM_BROWN_LIGHT, BORDER_RADIUS_SMALL));
         field.setBorder(createBorder(BORDER, BORDER_RADIUS_SMALL));
+    }
+
+    /**
+     * Creates a styled toggle button for payment method selection.
+     */
+    private ToggleButton createMethodToggleButton(String text) {
+        ToggleButton button = new ToggleButton(text);
+        button.setToggleGroup(methodToggleGroup);
+        button.setMinWidth(55);
+        button.setPrefWidth(55);
+        button.setFont(Font.font("System", FontWeight.MEDIUM, 12));
+        // Style with rounded corners and warm colors
+        button.setBackground(createBackground(WARM_BROWN_LIGHT, BORDER_RADIUS_SMALL));
+        button.setBorder(createBorder(BORDER, BORDER_RADIUS_SMALL));
+        button.setPadding(new Insets(8, 10, 8, 10));
+        // Update style when selected changes
+        button.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
+            if (isSelected) {
+                button.setBackground(createBackground(WARM_BROWN, BORDER_RADIUS_SMALL));
+                button.setStyle("-fx-text-fill: white;");
+            } else {
+                button.setBackground(createBackground(WARM_BROWN_LIGHT, BORDER_RADIUS_SMALL));
+                button.setStyle("-fx-text-fill: #5c4033;");
+            }
+        });
+        // Set initial style
+        button.setStyle("-fx-text-fill: #5c4033;");
+        return button;
     }
 }

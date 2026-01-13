@@ -6,6 +6,7 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
@@ -15,10 +16,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Document;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.History;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.crm.shared.services.authn.fx.FXUserName;
+import one.modality.ecommerce.backoffice.operations.entities.document.registration.ToggleCancelDocumentRequest;
 
 import static one.modality.booking.backoffice.activities.registration.RegistrationStyles.*;
 
@@ -60,6 +68,10 @@ public class RegistrationEditModal {
 
     private TabPane tabPane;
     private DialogCallback dialogCallback;
+
+    // Save button and state
+    private Button saveBtn;
+    private final BooleanProperty savingProperty = new SimpleBooleanProperty(false);
 
     // Active state for each tab
     private final BooleanProperty bookingTabActive = new SimpleBooleanProperty(false);
@@ -315,35 +327,199 @@ public class RegistrationEditModal {
 
         priceSummary.getChildren().addAll(totalRow, balanceRow);
 
-        // Action buttons
-        Button cancelBtn = new Button("Cancel");
-        applySecondaryButtonStyle(cancelBtn);
-        cancelBtn.setOnAction(e -> closeDialog());
+        // Cancel/Uncancel Booking button
+        boolean isCancelled = Booleans.isTrue(document.isCancelled());
+        Button cancelBookingBtn = new Button(isCancelled ? "Uncancel Booking" : "Cancel Booking");
+        if (isCancelled) {
+            applySuccessButtonStyle(cancelBookingBtn);
+        } else {
+            applyDangerButtonStyle(cancelBookingBtn);
+        }
+        cancelBookingBtn.setOnAction(e -> handleCancelBooking());
 
-        Button saveBtn = Bootstrap.primaryButton(new Button("Save Changes"));
+        // Close dialog button
+        Button closeBtn = new Button("Close");
+        applySecondaryButtonStyle(closeBtn);
+        closeBtn.setOnAction(e -> closeDialog());
+
+        // Save changes button with spinner support
+        saveBtn = Bootstrap.primaryButton(new Button("Save Changes"));
         applyPrimaryButtonStyle(saveBtn);
 
-        // Bind save button to changes
-        saveBtn.disableProperty().bind(EntityBindings.hasChangesProperty(updateStore).not());
+        // Bind save button disabled state to: no changes OR currently saving
+        // Combine UpdateStore changes with WorkingBooking changes
+        javafx.beans.binding.BooleanBinding noChangesBinding = javafx.beans.binding.Bindings.createBooleanBinding(
+            () -> {
+                boolean hasUpdateStoreChanges = updateStore.hasChanges();
+                boolean hasWorkingBookingChanges = bookingTab != null && bookingTab.hasChanges();
+                return !hasUpdateStoreChanges && !hasWorkingBookingChanges;
+            },
+            EntityBindings.hasChangesProperty(updateStore),
+            bookingTab.hasChangesProperty()  // Listen to WorkingBooking changes via BookingTab
+        );
+
+        // Disable when no changes OR when saving
+        saveBtn.disableProperty().bind(noChangesBinding.or(savingProperty));
 
         saveBtn.setOnAction(e -> handleSave());
 
-        footer.getChildren().addAll(priceSummary, cancelBtn, saveBtn);
+        footer.getChildren().addAll(priceSummary, cancelBookingBtn, closeBtn, saveBtn);
         return footer;
     }
 
     /**
+     * Handles the cancel/uncancel booking action.
+     */
+    private void handleCancelBooking() {
+        ToggleCancelDocumentRequest request = new ToggleCancelDocumentRequest(document, FXMainFrameDialogArea.getDialogArea());
+        request.getOperationExecutor().apply(request)
+            .onSuccess(v -> javafx.application.Platform.runLater(this::closeDialog));
+    }
+
+    /**
      * Handles the save action.
+     * Submits changes via both UpdateStore (guest details) and WorkingBooking (attendance, cancel/delete).
      */
     private void handleSave() {
-        updateStore.submitChanges()
+        // Note: Cancel/delete operations now go through WorkingBooking API directly
+        // (called in BookingTab.handleCancelClicked/handleDeleteClicked)
+        // No need to apply pending statuses to UpdateStore anymore
+
+        // Collect change descriptions from all tabs
+        StringBuilder allChanges = new StringBuilder();
+
+        // Get change description from GuestDetailsTab
+        if (guestDetailsTab != null) {
+            String guestChanges = guestDetailsTab.getChangedFieldsDescription();
+            if (guestChanges != null && !guestChanges.isEmpty()) {
+                allChanges.append(guestChanges);
+            }
+        }
+
+        // Get attendance changes from BookingTab
+        String attendanceChanges = null;
+        if (bookingTab != null) {
+            attendanceChanges = bookingTab.getPendingAttendanceChangesDescription();
+            if (attendanceChanges != null && !attendanceChanges.isEmpty()) {
+                if (allChanges.length() > 0) {
+                    allChanges.append("; ");
+                }
+                allChanges.append(attendanceChanges);
+            }
+        }
+
+        String changeDescription = allChanges.toString();
+
+        // Check if we have attendance changes to submit via WorkingBooking
+        // Note: Only check WorkingBooking changes, not pending statuses (those are now in UpdateStore)
+        final boolean hasWorkingBookingChanges = bookingTab != null &&
+            bookingTab.getWorkingBooking() != null && bookingTab.getWorkingBooking().hasChanges();
+        final boolean hasUpdateStoreChanges = updateStore.hasChanges();
+        final String finalAttendanceChanges = attendanceChanges;
+
+        // Show saving state with spinner
+        startSaving();
+
+        // Submit UpdateStore changes (guest details, etc.)
+        if (hasUpdateStoreChanges) {
+            // Create History record for UpdateStore changes
+            if (!changeDescription.isEmpty()) {
+                History history = updateStore.insertEntity(History.class);
+                history.setDocument(document);
+                history.setUsername(FXUserName.getUserName());
+                history.setComment(changeDescription);
+            }
+
+            updateStore.submitChanges()
+                .onSuccess(result -> {
+                    // UI updates must be on FX thread
+                    javafx.application.Platform.runLater(() -> {
+                        // Now submit WorkingBooking changes if any
+                        if (hasWorkingBookingChanges) {
+                            submitWorkingBookingChanges(finalAttendanceChanges);
+                        } else {
+                            onSaveComplete();
+                        }
+                    });
+                })
+                .onFailure(error -> {
+                    // UI updates must be on FX thread
+                    javafx.application.Platform.runLater(() -> {
+                        stopSaving();
+                        showErrorDialog("Failed to save guest details: " + error.getMessage());
+                    });
+                });
+        } else if (hasWorkingBookingChanges) {
+            // Only WorkingBooking changes to submit
+            submitWorkingBookingChanges(finalAttendanceChanges);
+        } else {
+            // No changes to save
+            stopSaving();
+            System.out.println("No changes to save");
+        }
+    }
+
+    /**
+     * Submits attendance changes via WorkingBooking.
+     */
+    private void submitWorkingBookingChanges(String historyComment) {
+        if (bookingTab == null || bookingTab.getWorkingBooking() == null) {
+            onSaveComplete();
+            return;
+        }
+
+        bookingTab.getWorkingBooking().submitChanges(historyComment != null ? historyComment : "Attendance changes")
             .onSuccess(result -> {
-                closeDialog();
+                System.out.println("WorkingBooking changes submitted successfully");
+                // UI updates must be on FX thread
+                javafx.application.Platform.runLater(this::onSaveComplete);
             })
             .onFailure(error -> {
-                // Show error dialog
-                showErrorDialog("Failed to save changes: " + error.getMessage());
+                // UI updates must be on FX thread
+                javafx.application.Platform.runLater(() -> {
+                    stopSaving();
+                    showErrorDialog("Failed to save attendance changes: " + error.getMessage());
+                });
             });
+    }
+
+    /**
+     * Called when save is complete.
+     */
+    private void onSaveComplete() {
+        stopSaving();
+        // Clear pending attendance changes after successful save
+        if (bookingTab != null) {
+            bookingTab.clearPendingAttendanceChanges();
+        }
+        // Refresh history tab to show the new history entry
+        if (historyTab != null) {
+            historyTab.refresh();
+        }
+    }
+
+    /**
+     * Shows the saving spinner on the save button.
+     */
+    private void startSaving() {
+        savingProperty.set(true);
+        if (saveBtn != null) {
+            ProgressIndicator spinner = new ProgressIndicator();
+            spinner.setMaxSize(16, 16);
+            saveBtn.setGraphic(spinner);
+            saveBtn.setText("Saving...");
+        }
+    }
+
+    /**
+     * Hides the saving spinner and restores the save button.
+     */
+    private void stopSaving() {
+        savingProperty.set(false);
+        if (saveBtn != null) {
+            saveBtn.setGraphic(null);
+            saveBtn.setText("Save Changes");
+        }
     }
 
     /**
@@ -374,27 +550,13 @@ public class RegistrationEditModal {
     }
 
     /**
-     * Formats a price value.
+     * Formats a price value with 2 decimal places.
      */
     private String formatPrice(int amount) {
-        // TODO: Get currency from document/organization
-        // GWT-compatible: avoid String.format
-        return "£" + formatWithCommas(amount);
-    }
-
-    /**
-     * Formats a number with thousand separators (GWT-compatible).
-     */
-    private String formatWithCommas(int amount) {
-        if (amount < 1000) return String.valueOf(amount);
-        StringBuilder sb = new StringBuilder();
-        String str = String.valueOf(Math.abs(amount));
-        int len = str.length();
-        for (int i = 0; i < len; i++) {
-            if (i > 0 && (len - i) % 3 == 0) sb.append(',');
-            sb.append(str.charAt(i));
-        }
-        return amount < 0 ? "-" + sb.toString() : sb.toString();
+        Event event = document.getEvent();
+        String currencySymbol = EventPriceFormatter.getEventCurrencySymbol(event);
+        // Use PriceFormatter with show00cents=true to always show 2 decimal places
+        return PriceFormatter.formatWithCurrency(amount, currencySymbol, true);
     }
 
     /**

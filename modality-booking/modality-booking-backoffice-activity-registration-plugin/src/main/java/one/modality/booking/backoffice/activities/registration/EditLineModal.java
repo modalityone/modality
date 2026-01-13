@@ -1,11 +1,18 @@
 package one.modality.booking.backoffice.activities.registration;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -17,8 +24,19 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.History;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
+import one.modality.base.shared.knownitems.KnownItemFamily;
+import one.modality.booking.client.workingbooking.WorkingBooking;
+import one.modality.crm.shared.services.authn.fx.FXUserName;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -44,6 +62,8 @@ public class EditLineModal {
 
     private final DocumentLine line;
     private final UpdateStore updateStore;
+    private final WorkingBooking workingBooking;
+    private final Event event;
     private final String category;
     private final Runnable onSave;
     private final Runnable onCancel;
@@ -56,7 +76,6 @@ public class EditLineModal {
     private final BooleanProperty lockSittingProperty = new SimpleBooleanProperty(false);
 
     // Form fields
-    private TextField allocationField;
     private TextField pickupLocationField;
     private TextField pickupTimeField;
     private TextField flightNumberField;
@@ -65,33 +84,104 @@ public class EditLineModal {
     private TextField customPriceField;
     private TextArea commentArea;
 
+    // Entity selectors for accommodation
+    private EntityButtonSelector<Item> accommodationTypeSelector;
+    private EntityButtonSelector<ResourceConfiguration> roomSelector;
+    private final ObjectProperty<Item> selectedAccommodationType = new SimpleObjectProperty<>();
+    private final ObjectProperty<ResourceConfiguration> selectedRoom = new SimpleObjectProperty<>();
+
+    // Dialog pane reference (needed for entity selector dropdowns)
+    private BorderPane dialogPane;
+
+    // Button factory mixin for entity selectors
+    private final ButtonFactoryMixin buttonMixin = new ButtonFactoryMixin() {};
+
+    // Labels for reactive updates
+    private Label totalValueLabel;
+
+    // Cached price data
+    private int standardPricePerUnit = 0;
+    private int currentTotal = 0;
+
     // Date formatter
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d MMM");
 
+    /**
+     * Constructor for legacy UpdateStore-based editing.
+     * @deprecated Use constructor with WorkingBooking instead
+     */
     public EditLineModal(DocumentLine line, UpdateStore updateStore, Runnable onSave, Runnable onCancel) {
         this.line = line;
         this.updateStore = updateStore;
+        this.workingBooking = null;
+        this.event = line.getDocument() != null ? line.getDocument().getEvent() : null;
         this.category = getCategoryFromLine(line);
         this.onSave = onSave;
         this.onCancel = onCancel;
 
+        initializeFromLine();
+    }
+
+    /**
+     * Constructor for WorkingBooking-based editing.
+     * Uses the event-sourcing API for proper price calculation and updates.
+     */
+    public EditLineModal(DocumentLine line, WorkingBooking workingBooking, Event event, Runnable onSave, Runnable onCancel) {
+        this.line = line;
+        this.updateStore = null;
+        this.workingBooking = workingBooking;
+        this.event = event;
+        this.category = getCategoryFromLine(line);
+        this.onSave = onSave;
+        this.onCancel = onCancel;
+
+        initializeFromLine();
+    }
+
+    /**
+     * Initializes properties from the document line.
+     */
+    private void initializeFromLine() {
         // Initialize properties from line
-        // TODO: isRead field not yet in database schema
-        isReadProperty.set(false);
-        hasCustomPriceProperty.set(Boolean.TRUE.equals(line.getFieldValue("price_isCustom")));
+        isReadProperty.set(Boolean.TRUE.equals(line.getFieldValue("read")));
+        hasCustomPriceProperty.set(line.getPriceCustom() != null && line.getPriceCustom() > 0);
         // TODO: lockSittingAllocation field not yet in database schema
         lockSittingProperty.set(false);
+
+        // Calculate standard price per unit from PolicyAggregate
+        if (workingBooking != null) {
+            PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+            if (policyAggregate != null) {
+                Site site = line.getSite();
+                Item item = line.getItem();
+                standardPricePerUnit = policyAggregate.filterDailyRatesStreamOfSiteAndItem(site, item)
+                    .findFirst()
+                    .map(rate -> rate.getPrice() != null ? rate.getPrice() : 0)
+                    .orElse(0);
+            }
+        }
+
+        // Get current total from line
+        currentTotal = line.getPriceNet() != null ? line.getPriceNet() : 0;
+    }
+
+    /**
+     * Formats a price in cents using the event's currency.
+     */
+    private String formatPrice(int priceInCents) {
+        String currencySymbol = EventPriceFormatter.getEventCurrencySymbol(event);
+        return PriceFormatter.formatWithCurrency(priceInCents, currencySymbol, true);
     }
 
     /**
      * Shows the edit line modal.
      */
     public void show() {
-        BorderPane dialogPane = new BorderPane();
+        dialogPane = new BorderPane();
         dialogPane.setBackground(createBackground(BG, 12));
-        dialogPane.setPrefWidth(420);
-        dialogPane.setMaxWidth(450);
-        dialogPane.setMaxHeight(600);
+        dialogPane.setPrefWidth(450);
+        dialogPane.setMaxWidth(500);
+        dialogPane.setMaxHeight(650);
 
         // Header
         dialogPane.setTop(createHeader());
@@ -293,31 +383,156 @@ public class EditLineModal {
 
     /**
      * Creates the accommodation-specific fields section.
+     * Includes:
+     * - Accommodation Type selector (Item entity) to change room type - uses PolicyAggregate rates
+     * - Room Allocation selector (ResourceConfiguration entity) to assign specific room - queries by globalSite
      */
     private Node createAccommodationSection() {
-        VBox section = new VBox(8);
+        VBox section = new VBox(12);
 
-        Label titleLabel = createSectionTitle("Room Allocation");
+        // Get the organization's globalSite for room queries
+        Site globalSite = null;
+        if (event != null && event.getOrganization() != null) {
+            globalSite = event.getOrganization().getGlobalSite();
+        }
+        final Site finalGlobalSite = globalSite;
 
-        HBox fieldRow = new HBox(8);
-        fieldRow.setAlignment(Pos.CENTER_LEFT);
+        // ═══════════════════════════════════════════════════════════════════════════════
+        // ACCOMMODATION TYPE SELECTOR - Uses EntityButtonSelector (GWT-compatible)
+        // ═══════════════════════════════════════════════════════════════════════════════
 
-        allocationField = new TextField();
-        allocationField.setPromptText("Room / bed assignment");
-        String resourceConfig = line.getResourceConfiguration() != null ?
-            line.getResourceConfiguration().getName() : "";
-        allocationField.setText(resourceConfig);
-        applyInputFieldStyle(allocationField);
-        HBox.setHgrow(allocationField, Priority.ALWAYS);
+        VBox typeSection = new VBox(6);
+        Label typeLabel = createSectionTitle("Accommodation Type");
 
-        fieldRow.getChildren().add(allocationField);
-        section.getChildren().addAll(titleLabel, fieldRow);
+        // Initialize the selected accommodation type from current line
+        selectedAccommodationType.set(line.getItem());
 
-        // Sold out warning (if applicable)
-        // TODO: Check if item is sold out from availability data
-        // if (isSoldOut) { section.getChildren().add(createSoldOutWarning()); }
+        // Create EntityButtonSelector for accommodation type (Item entity)
+        // Query accommodation items scheduled for this event
+        accommodationTypeSelector = new EntityButtonSelector<>(
+            "{class: 'Item', alias: 'i', columns: 'name', orderBy: 'name'}",
+            buttonMixin,
+            dialogPane,
+            DataSourceModelService.getDefaultDataSourceModel()
+        );
+
+        // Filter by accommodation family and items available for this event
+        if (event != null) {
+            // Get items scheduled for this event with accommodation family
+            accommodationTypeSelector.always(DqlStatement.where(
+                "family=1 and exists(select 1 from ScheduledItem si where si.item=i and si.event=?)",
+                Entities.getPrimaryKey(event)));
+        } else {
+            // Fallback: just filter by accommodation family
+            accommodationTypeSelector.always(DqlStatement.where("family=1"));
+        }
+
+        accommodationTypeSelector.setAutoOpenOnMouseEntered(true);
+        accommodationTypeSelector.selectedItemProperty().bindBidirectional(selectedAccommodationType);
+
+        // Recalculate price when accommodation type changes
+        selectedAccommodationType.addListener((obs, oldItem, newItem) -> {
+            if (newItem != null && !newItem.equals(oldItem)) {
+                recalculatePriceForNewItem();
+            }
+        });
+
+        // Style the selector button
+        Button typeButton = accommodationTypeSelector.getButton();
+        styleEntitySelectorButton(typeButton);
+
+        typeSection.getChildren().addAll(typeLabel, typeButton);
+
+        // ═══════════════════════════════════════════════════════════════════════════════
+        // ROOM ALLOCATION SELECTOR - Queries by organization's globalSite
+        // ═══════════════════════════════════════════════════════════════════════════════
+
+        VBox roomSection = new VBox(6);
+        Label roomLabel = createSectionTitle("Room Assignment");
+
+        // Initialize the selected room from current line
+        selectedRoom.set(line.getResourceConfiguration());
+
+        // Create entity selector for room allocation (ResourceConfiguration)
+        // Query rooms where the resource belongs to the organization's globalSite
+        roomSelector = new EntityButtonSelector<>(
+            "{class: 'ResourceConfiguration', alias: 'rc', columns: 'name,resource.name', orderBy: 'name'}",
+            buttonMixin,
+            dialogPane,
+            DataSourceModelService.getDefaultDataSourceModel()
+        );
+
+        // Filter rooms by globalSite and selected accommodation type
+        if (finalGlobalSite != null) {
+            FXProperties.runNowAndOnPropertiesChange(() -> {
+                Item selectedItem = selectedAccommodationType.get();
+                if (selectedItem != null) {
+                    // Filter by globalSite and selected item type
+                    roomSelector.always(DqlStatement.where("item=? and resource.site=?",
+                        Entities.getPrimaryKey(selectedItem),
+                        Entities.getPrimaryKey(finalGlobalSite)));
+                } else {
+                    // Just filter by globalSite
+                    roomSelector.always(DqlStatement.where("resource.site=?",
+                        Entities.getPrimaryKey(finalGlobalSite)));
+                }
+            }, selectedAccommodationType);
+        }
+
+        roomSelector.setAutoOpenOnMouseEntered(true);
+        roomSelector.appendNullEntity(true); // Allow "No room assigned" option
+        roomSelector.selectedItemProperty().bindBidirectional(selectedRoom);
+
+        // Style the selector button
+        Button roomButton = roomSelector.getButton();
+        styleEntitySelectorButton(roomButton);
+
+        // Room info display (shows bed count when room selected)
+        HBox roomInfoBox = new HBox(8);
+        roomInfoBox.setAlignment(Pos.CENTER_LEFT);
+
+        Label roomInfoLabel = new Label();
+        roomInfoLabel.setFont(Font.font("System", 11));
+        roomInfoLabel.setTextFill(TEXT_MUTED);
+
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            ResourceConfiguration rc = selectedRoom.get();
+            if (rc != null && rc.getMax() != null) {
+                roomInfoLabel.setText("Capacity: " + rc.getMax() + " bed" + (rc.getMax() > 1 ? "s" : ""));
+                roomInfoLabel.setVisible(true);
+            } else {
+                roomInfoLabel.setVisible(false);
+            }
+        }, selectedRoom);
+
+        roomInfoBox.getChildren().addAll(roomButton, roomInfoLabel);
+        roomSection.getChildren().addAll(roomLabel, roomInfoBox);
+
+        section.getChildren().addAll(typeSection, roomSection);
 
         return section;
+    }
+
+    /**
+     * Applies consistent styling to entity selector buttons.
+     */
+    private void styleEntitySelectorButton(Button button) {
+        button.setFont(Font.font("System", 13));
+        button.setPadding(new Insets(10, 14, 10, 14));
+        button.setBackground(createBackground(Color.WHITE, 8));
+        button.setBorder(createBorder(BORDER, 8));
+        button.setCursor(Cursor.HAND);
+        button.setMaxWidth(Double.MAX_VALUE);
+
+        // Hover effect
+        button.setOnMouseEntered(e -> {
+            button.setBackground(createBackground(Color.web("#f8f7f5"), 8));
+            button.setBorder(createBorder(Color.web("#c5bfb6"), 8));
+        });
+        button.setOnMouseExited(e -> {
+            button.setBackground(createBackground(Color.WHITE, 8));
+            button.setBorder(createBorder(BORDER, 8));
+        });
     }
 
     /**
@@ -529,11 +744,12 @@ public class EditLineModal {
         standardLabel.setFont(Font.font(9));
         standardLabel.setTextFill(TEXT_MUTED);
 
-        Integer pricePerUnit = line.getItem() != null ? line.getItem().getOrd() : 0; // TODO: Get actual price per unit
+        // Use the daily rate from PolicyAggregate
+        int pricePerUnit = standardPricePerUnit;
         int quantity = getDurationDays();
-        int standardPrice = (pricePerUnit != null ? pricePerUnit : 0) * quantity;
+        int standardPrice = pricePerUnit * quantity;
 
-        Label standardValue = new Label("£" + pricePerUnit + " × " + quantity + " = £" + standardPrice);
+        Label standardValue = new Label(formatPrice(pricePerUnit) + " × " + quantity + " = " + formatPrice(standardPrice));
         standardValue.setFont(Font.font("System", FontWeight.MEDIUM, 12));
         standardValue.setTextFill(TEXT_SECONDARY);
 
@@ -578,13 +794,17 @@ public class EditLineModal {
         fixedInputBox.setBorder(createBorder(Color.web("#fbbf24"), 6));
         fixedInputBox.setBackground(createBackground(Color.web("#fffbeb"), 6));
 
-        Label currencyLabel = new Label("£");
+        String currencySymbol = EventPriceFormatter.getEventCurrencySymbol(event);
+        Label currencyLabel = new Label(currencySymbol);
         currencyLabel.setFont(Font.font("System", FontWeight.SEMI_BOLD, 12));
         currencyLabel.setTextFill(Color.web("#92400e"));
         currencyLabel.setPadding(new Insets(6, 8, 6, 8));
         currencyLabel.setBackground(createBackground(Color.web("#fef3c7"), 6, 0, 0, 6));
 
-        customPriceField = new TextField(String.valueOf(line.getPriceNet() != null ? line.getPriceNet() : 0));
+        // Show price in major units (e.g., pounds/dollars) for user entry
+        int currentPriceInCents = line.getPriceCustom() != null ? line.getPriceCustom() :
+            (line.getPriceNet() != null ? line.getPriceNet() : 0);
+        customPriceField = new TextField(String.valueOf(currentPriceInCents / 100));
         customPriceField.setFont(Font.font("System", FontWeight.SEMI_BOLD, 13));
         customPriceField.setBackground(Background.EMPTY);
         customPriceField.setBorder(Border.EMPTY);
@@ -604,12 +824,12 @@ public class EditLineModal {
         totalLabel.setFont(Font.font(9));
         totalLabel.setTextFill(Color.web("#15803d"));
 
-        Label totalValue = new Label("£" + (line.getPriceNet() != null ? line.getPriceNet() : 0));
-        totalValue.setFont(Font.font("System", FontWeight.BOLD, 15));
-        totalValue.setTextFill(Color.web("#166534"));
+        totalValueLabel = new Label(formatPrice(currentTotal));
+        totalValueLabel.setFont(Font.font("System", FontWeight.BOLD, 15));
+        totalValueLabel.setTextFill(Color.web("#166534"));
 
         totalBox.setBackground(createBackground(Color.web("#f0fdf4"), 6));
-        totalBox.getChildren().addAll(totalLabel, totalValue);
+        totalBox.getChildren().addAll(totalLabel, totalValueLabel);
 
         // Spacer to push total to right
         Region spacer = new Region();
@@ -629,7 +849,7 @@ public class EditLineModal {
                 totalBox.setBackground(createBackground(Color.web("#fef3c7"), 6));
                 totalLabel.setTextFill(Color.web("#92400e"));
                 totalLabel.setText("Fixed");
-                totalValue.setTextFill(Color.web("#92400e"));
+                totalValueLabel.setTextFill(Color.web("#92400e"));
             } else {
                 standardValue.setStyle("");
                 standardBox.setOpacity(1.0);
@@ -637,7 +857,7 @@ public class EditLineModal {
                 totalBox.setBackground(createBackground(Color.web("#f0fdf4"), 6));
                 totalLabel.setTextFill(Color.web("#15803d"));
                 totalLabel.setText("Total");
-                totalValue.setTextFill(Color.web("#166534"));
+                totalValueLabel.setTextFill(Color.web("#166534"));
             }
         }, hasCustomPriceProperty);
 
@@ -733,32 +953,144 @@ public class EditLineModal {
     }
 
     /**
+     * Recalculates and displays the price preview when the accommodation type (Item) is changed.
+     * Uses PolicyAggregate to get the daily rate for the new item.
+     * Note: This only updates the UI preview - actual price change is done in handleSave()
+     * through the WorkingBooking API.
+     */
+    private void recalculatePriceForNewItem() {
+        if (workingBooking == null) return;
+
+        PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
+        if (policyAggregate == null) return;
+
+        Item newItem = selectedAccommodationType.get();
+        Site site = line.getSite();
+
+        if (newItem != null && site != null) {
+            // Get the new daily rate for this item/site combination
+            int newDailyRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(site, newItem)
+                .findFirst()
+                .map(rate -> rate.getPrice() != null ? rate.getPrice() : 0)
+                .orElse(0);
+
+            // Calculate new total price
+            int days = getDurationDays();
+            int newTotal = newDailyRate * days;
+
+            // Update cached values for UI display
+            standardPricePerUnit = newDailyRate;
+            currentTotal = newTotal;
+
+            // Update UI to show new price (unless custom price is set)
+            if (!hasCustomPriceProperty.get() && totalValueLabel != null) {
+                totalValueLabel.setText(formatPrice(newTotal));
+            }
+        }
+    }
+
+    /**
      * Handles the save action.
+     * Uses WorkingBooking API when available, falls back to UpdateStore otherwise.
      */
     private void handleSave() {
-        // Update line from form fields
-        if (allocationField != null && !allocationField.getText().isEmpty()) {
-            // TODO: Update resource configuration
-        }
+        if (workingBooking != null) {
+            // ═══════════════════════════════════════════════════════════════════════════════
+            // WORKINGBOOKING API - Proper event sourcing for database persistence
+            // ═══════════════════════════════════════════════════════════════════════════════
 
-        if (commentArea != null) {
-            line.setFieldValue("comment", commentArea.getText());
-        }
+            // Update accommodation type and room assignment using WorkingBooking API
+            Item newItem = selectedAccommodationType.get();
+            ResourceConfiguration newRoom = selectedRoom.get();
 
-        if (hasCustomPriceProperty.get()) {
-            line.setFieldValue("price_isCustom", true);
-            try {
-                int customPrice = Integer.parseInt(customPriceField.getText());
-                line.setPriceNet(customPrice);
-            } catch (NumberFormatException e) {
-                // Keep existing price
+            // Check if item changed
+            boolean itemChanged = newItem != null && !dev.webfx.stack.orm.entity.Entities.sameId(newItem, line.getItem());
+            // Check if room changed
+            boolean roomChanged = newRoom != line.getResourceConfiguration() &&
+                (newRoom == null || !dev.webfx.stack.orm.entity.Entities.sameId(newRoom, line.getResourceConfiguration()));
+
+            if (itemChanged || roomChanged) {
+                workingBooking.updateDocumentLine(line, itemChanged ? newItem : null, roomChanged ? newRoom : null);
             }
-        } else {
-            line.setFieldValue("price_isCustom", false);
-            // TODO: Calculate price from discount
-        }
 
-        // TODO: Check if sold out and show confirmation dialog
+            // Handle pricing changes using WorkingBooking API
+            if (hasCustomPriceProperty.get()) {
+                // Custom price mode
+                try {
+                    int customPriceMajorUnits = Integer.parseInt(customPriceField.getText());
+                    int customPriceInCents = customPriceMajorUnits * 100;
+
+                    // Use WorkingBooking API for price update
+                    workingBooking.updateDocumentLinePrice(line, customPriceInCents, customPriceInCents, null);
+
+                } catch (NumberFormatException e) {
+                    System.err.println("Invalid custom price: " + customPriceField.getText());
+                }
+            } else if (discountField != null) {
+                // Discount mode - calculate discounted price
+                try {
+                    int discountPercent = Integer.parseInt(discountField.getText());
+                    if (discountPercent >= 0 && discountPercent <= 100) {
+                        int standardPrice = standardPricePerUnit * getDurationDays();
+                        int discountAmount = standardPrice * discountPercent / 100;
+                        int newPrice = standardPrice - discountAmount;
+
+                        // Use WorkingBooking API for price update
+                        workingBooking.updateDocumentLinePrice(line, newPrice, null, discountAmount);
+                    }
+                } catch (NumberFormatException e) {
+                    // Keep existing discount
+                }
+            }
+
+            // Update comment (direct property update - will be tracked by entity store)
+            if (commentArea != null) {
+                line.setFieldValue("comment", commentArea.getText());
+            }
+
+            // Update read status (direct property update)
+            if (isReadProperty.get() != Boolean.TRUE.equals(line.getFieldValue("read"))) {
+                line.setFieldValue("read", isReadProperty.get());
+            }
+
+        } else if (updateStore != null) {
+            // Legacy UpdateStore-based save
+            if (hasCustomPriceProperty.get()) {
+                line.setFieldValue("price_isCustom", true);
+                try {
+                    int customPriceMajorUnits = Integer.parseInt(customPriceField.getText());
+                    line.setPriceCustom(customPriceMajorUnits * 100);
+                    line.setPriceNet(customPriceMajorUnits * 100);
+                } catch (NumberFormatException e) {
+                    // Keep existing price
+                }
+            } else {
+                line.setFieldValue("price_isCustom", false);
+                // Calculate price from discount
+                if (discountField != null) {
+                    try {
+                        int discountPercent = Integer.parseInt(discountField.getText());
+                        int standardPrice = standardPricePerUnit * getDurationDays();
+                        int discountAmount = standardPrice * discountPercent / 100;
+                        line.setPriceNet(standardPrice - discountAmount);
+                        line.setPriceDiscount(discountAmount);
+                    } catch (NumberFormatException e) {
+                        // Keep existing price
+                    }
+                }
+            }
+
+            // Create History record for this edit (only for UpdateStore mode)
+            String optionName = line.getSite() != null ? line.getSite().getName() :
+                (line.getItem() != null ? line.getItem().getName() : "Option");
+            Document document = line.getDocument();
+            if (document != null) {
+                History history = updateStore.createEntity(History.class);
+                history.setDocument(document);
+                history.setUsername(FXUserName.getUserName());
+                history.setComment("Option edited: " + optionName);
+            }
+        }
 
         closeDialog(true);
     }

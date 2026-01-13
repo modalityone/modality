@@ -16,6 +16,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -50,6 +52,7 @@ public class ConfirmActionModal {
 
     private final ActionType actionType;
     private final DocumentLine line;
+    private final Event event;
     private final Consumer<String> onConfirm; // Consumer receives the comment
     private final Runnable onCancel;
 
@@ -59,11 +62,19 @@ public class ConfirmActionModal {
     // Date formatter
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("d MMM yyyy");
 
-    public ConfirmActionModal(ActionType actionType, DocumentLine line, Consumer<String> onConfirm, Runnable onCancel) {
+    public ConfirmActionModal(ActionType actionType, DocumentLine line, Event event, Consumer<String> onConfirm, Runnable onCancel) {
         this.actionType = actionType;
         this.line = line;
+        this.event = event;
         this.onConfirm = onConfirm;
         this.onCancel = onCancel;
+    }
+
+    /**
+     * Formats a price (in cents) using the event's currency.
+     */
+    private String formatPrice(int priceInCents) {
+        return EventPriceFormatter.formatWithCurrency(priceInCents, event);
     }
 
     /**
@@ -252,8 +263,8 @@ public class ConfirmActionModal {
 
         Label desc;
         if (deposit > 0) {
-            desc = new Label("£" + deposit + " will be kept as minimum deposit\n" +
-                "Original: £" + price);
+            desc = new Label(formatPrice(deposit) + " will be kept as minimum deposit\n" +
+                "Original: " + formatPrice(price));
             desc.setStyle("-fx-strikethrough: false;");
         } else {
             desc = new Label("No deposit required – full refund");
@@ -328,9 +339,9 @@ public class ConfirmActionModal {
         boolean isCancelled = Boolean.TRUE.equals(line.isCancelled());
         String descText;
         if (isCancelled) {
-            descText = "The full price of £" + price + " will be charged again.";
+            descText = "The full price of " + formatPrice(price) + " will be charged again.";
         } else {
-            descText = "This option will be visible again and charged at £" + price + ".";
+            descText = "This option will be visible again and charged at " + formatPrice(price) + ".";
         }
 
         Label desc = new Label(descText);
@@ -536,30 +547,69 @@ public class ConfirmActionModal {
     // ═══════════════════════════════════════════════════════════════════════════════
 
     /**
+     * Gets the Event from a DocumentLine (via Document).
+     */
+    private static Event getEventFromLine(DocumentLine line) {
+        if (line == null) return null;
+        if (line.getDocument() != null) {
+            return line.getDocument().getEvent();
+        }
+        return null;
+    }
+
+    /**
      * Shows a cancel confirmation dialog.
      */
     public static void showCancelConfirmation(DocumentLine line, Consumer<String> onConfirm) {
-        new ConfirmActionModal(ActionType.CANCEL, line, onConfirm, null).show();
+        showCancelConfirmation(line, getEventFromLine(line), onConfirm);
+    }
+
+    /**
+     * Shows a cancel confirmation dialog with explicit Event for currency formatting.
+     */
+    public static void showCancelConfirmation(DocumentLine line, Event event, Consumer<String> onConfirm) {
+        new ConfirmActionModal(ActionType.CANCEL, line, event, onConfirm, null).show();
     }
 
     /**
      * Shows a delete confirmation dialog.
      */
     public static void showDeleteConfirmation(DocumentLine line, Consumer<String> onConfirm) {
-        new ConfirmActionModal(ActionType.DELETE, line, onConfirm, null).show();
+        showDeleteConfirmation(line, getEventFromLine(line), onConfirm);
+    }
+
+    /**
+     * Shows a delete confirmation dialog with explicit Event for currency formatting.
+     */
+    public static void showDeleteConfirmation(DocumentLine line, Event event, Consumer<String> onConfirm) {
+        new ConfirmActionModal(ActionType.DELETE, line, event, onConfirm, null).show();
     }
 
     /**
      * Shows a restore confirmation dialog.
      */
     public static void showRestoreConfirmation(DocumentLine line, Consumer<String> onConfirm) {
-        new ConfirmActionModal(ActionType.RESTORE, line, onConfirm, null).show();
+        showRestoreConfirmation(line, getEventFromLine(line), onConfirm);
+    }
+
+    /**
+     * Shows a restore confirmation dialog with explicit Event for currency formatting.
+     */
+    public static void showRestoreConfirmation(DocumentLine line, Event event, Consumer<String> onConfirm) {
+        new ConfirmActionModal(ActionType.RESTORE, line, event, onConfirm, null).show();
     }
 
     /**
      * Shows a sold out force booking confirmation dialog.
      */
     public static void showSoldOutConfirmation(DocumentLine line, Runnable onConfirm) {
-        new ConfirmActionModal(ActionType.SOLD_OUT, line, comment -> onConfirm.run(), null).show();
+        showSoldOutConfirmation(line, getEventFromLine(line), onConfirm);
+    }
+
+    /**
+     * Shows a sold out force booking confirmation dialog with explicit Event.
+     */
+    public static void showSoldOutConfirmation(DocumentLine line, Event event, Runnable onConfirm) {
+        new ConfirmActionModal(ActionType.SOLD_OUT, line, event, comment -> onConfirm.run(), null).show();
     }
 }

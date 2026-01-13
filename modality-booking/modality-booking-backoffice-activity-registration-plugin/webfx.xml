@@ -8,6 +8,14 @@
 
     <dependencies>
         <used-by-source-modules/>
+        <!-- Additional dependencies for WorkingBooking integration -->
+        <source-modules>
+            <source-module>modality-booking-client-workingbooking</source-module>
+            <source-module>modality-ecommerce-document-service</source-module>
+            <source-module>modality-ecommerce-policy-service</source-module>
+            <source-module>modality-ecommerce-shared-pricecalculator</source-module>
+            <source-module>modality-base-shared-knownitems</source-module>
+        </source-modules>
     </dependencies>
 
     <providers>

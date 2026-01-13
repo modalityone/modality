@@ -72,7 +72,7 @@ public class RegistrationListView {
                 {expression: 'this', label: 'Status', renderer: 'regStatus', prefWidth: 100, textAlign: 'center'},
                 {expression: 'this', label: 'Payment', renderer: 'regPayment', prefWidth: 120, textAlign: 'center'},
                 {expression: 'this', label: 'Accommodation', renderer: 'regAccommodation', prefWidth: 150},
-                {expression: 'this', label: 'Actions', renderer: 'regActions', prefWidth: 80, textAlign: 'center'},
+                {expression: 'this', label: 'Actions', renderer: 'regActions', prefWidth: 180, textAlign: 'center'},
                 {expression: '!confirmed and !cancelled ? `registration-pending` : null', role: 'style'}
             ]""";
 

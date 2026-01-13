@@ -40,6 +40,10 @@ public class GuestDetailsTab {
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(false);
     private final BooleanProperty editingProperty = new SimpleBooleanProperty(false);
 
+    // Track original values for change detection
+    private final java.util.Map<String, String> originalValues = new java.util.HashMap<>();
+    private Boolean originalGender;
+
     // UI Components - Form Fields
     private TextField firstNameField;
     private TextField lastNameField;
@@ -211,11 +215,11 @@ public class GuestDetailsTab {
         grid.setVgap(12);
 
         // First Name
-        firstNameField = createFormField("First Name", document.getStringFieldValue("person_firstName"));
+        firstNameField = createFormField("First Name", document.getStringFieldValue("person_firstName"), "person_firstName");
         addFormRow(grid, 0, "First Name", firstNameField);
 
         // Last Name
-        lastNameField = createFormField("Last Name", document.getStringFieldValue("person_lastName"));
+        lastNameField = createFormField("Last Name", document.getStringFieldValue("person_lastName"), "person_lastName");
         addFormRow(grid, 1, "Last Name", lastNameField);
 
         // Gender (using ToggleButtons - GWT-compatible)
@@ -228,11 +232,19 @@ public class GuestDetailsTab {
         femaleToggle.disableProperty().bind(editingProperty.not());
 
         Object isMale = document.getFieldValue("person_male");
+        originalGender = Boolean.TRUE.equals(isMale);
         if (Boolean.TRUE.equals(isMale)) {
             maleToggle.setSelected(true);
         } else {
             femaleToggle.setSelected(true);
         }
+
+        // Add listener to update document when gender is changed
+        genderToggleGroup.selectedToggleProperty().addListener((obs, oldToggle, newToggle) -> {
+            if (editingProperty.get() && newToggle != null) {
+                document.setFieldValue("person_male", newToggle == maleToggle);
+            }
+        });
 
         HBox genderButtons = new HBox(8);
         genderButtons.getChildren().addAll(maleToggle, femaleToggle);
@@ -266,15 +278,15 @@ public class GuestDetailsTab {
         grid.setVgap(12);
 
         // Email
-        emailField = createFormField("Email", document.getStringFieldValue("person_email"));
+        emailField = createFormField("Email", document.getStringFieldValue("person_email"), "person_email");
         addFormRow(grid, 0, "Email", emailField);
 
         // Phone
-        phoneField = createFormField("Phone", document.getStringFieldValue("person_phone"));
+        phoneField = createFormField("Phone", document.getStringFieldValue("person_phone"), "person_phone");
         addFormRow(grid, 1, "Phone", phoneField);
 
         // Language
-        languageField = createFormField("Language", document.getStringFieldValue("person_lang"));
+        languageField = createFormField("Language", document.getStringFieldValue("person_lang"), "person_lang");
         addFormRow(grid, 2, "Language", languageField);
 
         section.getChildren().addAll(titleLabel, grid);
@@ -299,19 +311,19 @@ public class GuestDetailsTab {
         grid.setVgap(12);
 
         // Street
-        streetField = createFormField("Street", document.getStringFieldValue("person_street"));
+        streetField = createFormField("Street", document.getStringFieldValue("person_street"), "person_street");
         addFormRow(grid, 0, "Street", streetField);
 
         // City
-        cityField = createFormField("City", document.getStringFieldValue("person_cityName"));
+        cityField = createFormField("City", document.getStringFieldValue("person_cityName"), "person_cityName");
         addFormRow(grid, 1, "City", cityField);
 
         // Post Code
-        postCodeField = createFormField("Post Code", document.getStringFieldValue("person_postCode"));
+        postCodeField = createFormField("Post Code", document.getStringFieldValue("person_postCode"), "person_postCode");
         addFormRow(grid, 2, "Post Code", postCodeField);
 
         // Country
-        countryField = createFormField("Country", document.getStringFieldValue("person_country"));
+        countryField = createFormField("Country", document.getStringFieldValue("person_country"), "person_country");
         addFormRow(grid, 3, "Country", countryField);
 
         section.getChildren().addAll(titleLabel, grid);
@@ -319,12 +331,24 @@ public class GuestDetailsTab {
     }
 
     /**
-     * Creates a form text field.
+     * Creates a form text field bound to a document field.
+     * Changes to the text field will update the document through the updateStore.
      */
-    private TextField createFormField(String prompt, String value) {
+    private TextField createFormField(String prompt, String value, String documentFieldName) {
         TextField field = new TextField(value != null ? value : "");
         field.setPromptText(prompt);
         field.disableProperty().bind(editingProperty.not());
+
+        // Store original value for change detection
+        originalValues.put(documentFieldName, value != null ? value : "");
+
+        // Add listener to update document when field value changes
+        field.textProperty().addListener((obs, oldValue, newValue) -> {
+            if (editingProperty.get()) {
+                document.setFieldValue(documentFieldName, newValue);
+            }
+        });
+
         return field;
     }
 
@@ -405,5 +429,54 @@ public class GuestDetailsTab {
      */
     public BooleanProperty editingProperty() {
         return editingProperty;
+    }
+
+    /**
+     * Gets a description of changed fields for history logging.
+     * Returns null if no changes were made.
+     */
+    public String getChangedFieldsDescription() {
+        java.util.List<String> changes = new java.util.ArrayList<>();
+
+        // Check text fields
+        checkFieldChanged(changes, "person_firstName", "First Name", firstNameField);
+        checkFieldChanged(changes, "person_lastName", "Last Name", lastNameField);
+        checkFieldChanged(changes, "person_email", "Email", emailField);
+        checkFieldChanged(changes, "person_phone", "Phone", phoneField);
+        checkFieldChanged(changes, "person_street", "Street", streetField);
+        checkFieldChanged(changes, "person_cityName", "City", cityField);
+        checkFieldChanged(changes, "person_postCode", "Post Code", postCodeField);
+        checkFieldChanged(changes, "person_country", "Country", countryField);
+        checkFieldChanged(changes, "person_lang", "Language", languageField);
+
+        // Check gender
+        boolean currentGender = maleToggle.isSelected();
+        if (originalGender != null && currentGender != originalGender) {
+            String oldGender = originalGender ? "Male" : "Female";
+            String newGender = currentGender ? "Male" : "Female";
+            changes.add("Gender: " + oldGender + " → " + newGender);
+        }
+
+        if (changes.isEmpty()) {
+            return null;
+        }
+        return "Updated guest details: " + String.join("; ", changes);
+    }
+
+    /**
+     * Helper to check if a text field value changed from original.
+     * Includes both old and new values in the change description.
+     */
+    private void checkFieldChanged(java.util.List<String> changes, String fieldName, String displayName, TextField field) {
+        if (field == null) return;
+        String original = originalValues.get(fieldName);
+        String current = field.getText();
+        if (original == null) original = "";
+        if (current == null) current = "";
+        if (!original.equals(current)) {
+            String oldVal = original.isEmpty() ? "(empty)" : original;
+            String newVal = current.isEmpty() ? "(empty)" : current;
+            changes.add(displayName + ": " + oldVal + " → " + newVal);
+        }
     }
 }

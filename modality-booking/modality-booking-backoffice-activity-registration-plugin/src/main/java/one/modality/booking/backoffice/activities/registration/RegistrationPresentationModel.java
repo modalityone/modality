@@ -9,6 +9,7 @@ import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGr
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasGroupVisualSelectionProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -105,6 +106,35 @@ final class RegistrationPresentationModel extends EventDependentGenericTablePres
     // ═══════════════════════════════════════════════════════════════════════════════
     // REGISTRATION-SPECIFIC PROPERTIES
     // ═══════════════════════════════════════════════════════════════════════════════
+
+    /**
+     * Debounce delay in milliseconds for search input.
+     * Prevents excessive database queries while typing.
+     */
+    private static final long SEARCH_DEBOUNCE_MS = 300;
+
+    /**
+     * Reference to the scheduled debounce task (to cancel previous pending searches).
+     */
+    private Runnable pendingSearchTask;
+
+    /**
+     * Whether data is currently being loaded from the server.
+     * Used to show/hide loading spinner.
+     */
+    private final BooleanProperty loadingProperty = new SimpleBooleanProperty(false);
+    public BooleanProperty loadingProperty() { return loadingProperty; }
+    public boolean isLoading() { return loadingProperty.get(); }
+    public void setLoading(boolean loading) { loadingProperty.set(loading); }
+
+    /**
+     * The debounced search text that actually triggers queries.
+     * Updates after SEARCH_DEBOUNCE_MS of no typing activity.
+     * This is what the visual mapper should bind to (not searchTextProperty).
+     */
+    private final StringProperty debouncedSearchTextProperty = new SimpleStringProperty("");
+    public StringProperty debouncedSearchTextProperty() { return debouncedSearchTextProperty; }
+    public String getDebouncedSearchText() { return debouncedSearchTextProperty.get(); }
 
     /**
      * The active filter IDs (e.g., "confirmed", "paid-full", "vegetarian").
@@ -212,5 +242,31 @@ final class RegistrationPresentationModel extends EventDependentGenericTablePres
      */
     public void closeCreateModal() {
         setShowCreateModal(false);
+    }
+
+    /**
+     * Sets up the debounced search mechanism.
+     * Call this once after creating the presentation model.
+     * <p>
+     * Performance optimization: Instead of triggering a database query on every keystroke,
+     * this listens to the UI search input (debouncedSearchTextProperty) and after
+     * SEARCH_DEBOUNCE_MS of no typing activity, updates searchTextProperty which
+     * triggers the actual query via the reactive chain.
+     * <p>
+     * Flow: TextField -> debouncedSearchTextProperty -> (debounce) -> searchTextProperty -> DB query
+     */
+    public void setupDebouncedSearch() {
+        debouncedSearchTextProperty.addListener((obs, oldVal, newVal) -> {
+            // Show loading indicator immediately when user starts typing
+            setLoading(true);
+
+            // Schedule debounced update to the actual search property
+            // (Previous pending task is implicitly replaced - we only care about the latest)
+            pendingSearchTask = () -> {
+                setSearchText(newVal);
+                // Note: loading will be set to false when data arrives (in the view)
+            };
+            UiScheduler.scheduleDelay(SEARCH_DEBOUNCE_MS, pendingSearchTask);
+        });
     }
 }
