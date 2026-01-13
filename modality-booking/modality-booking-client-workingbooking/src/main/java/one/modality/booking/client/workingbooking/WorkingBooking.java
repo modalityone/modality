@@ -321,6 +321,11 @@ public final class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
+    public void allocateDocumentLine(DocumentLine documentLine, ResourceConfiguration resourceConfiguration) {
+        integrateNewDocumentEvent(new AllocateDocumentLineEvent(documentLine, resourceConfiguration), true);
+        lastestDocumentAggregate = null;
+    }
+
     public void applyFacilityFeeRate(boolean apply) {
         integrateNewDocumentEvent(new ApplyFacilityFeeEvent(document, apply), true);
     }
