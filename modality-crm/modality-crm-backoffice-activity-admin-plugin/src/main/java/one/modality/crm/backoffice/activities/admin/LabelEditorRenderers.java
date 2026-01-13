@@ -13,7 +13,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -86,9 +85,7 @@ public class LabelEditorRenderers {
                 text = label.getEn(); // Fallback to English
             }
             Text textNode = new Text(text != null ? truncateText(text, 80) : "");
-            if (text != null && text.length() > 80) {
-                Tooltip.install(textNode, new Tooltip(text));
-            }
+            // Note: Tooltip not available on GWT - users can click to edit to see full text
             return textNode;
         });
 
@@ -204,6 +201,7 @@ public class LabelEditorRenderers {
 
     /**
      * Adds a language flag badge to the container.
+     * Badge styling indicates status: warning=reference, success=filled, gray=empty
      */
     private static void addLanguageFlag(HBox container, String code, String text, boolean isReference) {
         boolean isFilled = text != null && !text.trim().isEmpty();
@@ -213,21 +211,19 @@ public class LabelEditorRenderers {
         flag.getStyleClass().add("labeleditor-lang-flag");
 
         if (isReference) {
-            // Reference language - show with special styling
+            // Reference language - show with special styling (yellow/warning badge with asterisk)
             flag = ModalityStyle.badgeLightWarning(flag);
             flag.setText(code + "*");
         } else if (isFilled) {
-            // Filled translation
+            // Filled translation - green success badge
             flag = Bootstrap.successBadge(flag);
         } else {
-            // Empty translation
+            // Empty translation - gray badge with reduced opacity
             flag = ModalityStyle.badgeGray(flag);
             flag.setOpacity(0.5);
         }
 
-        String tooltip = getLanguageName(code) + (isReference ? " (Reference)" : (isFilled ? " - Filled" : " - Empty"));
-        Tooltip.install(flag, new Tooltip(tooltip));
-
+        // Note: Tooltip not available on GWT - badge color indicates status
         container.getChildren().add(flag);
     }
 
