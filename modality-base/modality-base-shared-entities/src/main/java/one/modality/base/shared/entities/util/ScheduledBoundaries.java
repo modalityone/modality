@@ -42,12 +42,14 @@ public final class ScheduledBoundaries {
 
     public static LocalTime getStartTime(ScheduledBoundary scheduledBoundary) {
         EntityHasStartAndEndTime startAndEndDateHolder = getStartAndEndDateHolder(scheduledBoundary);
-        return startAndEndDateHolder != null ? startAndEndDateHolder.getStartTime() : null;
+        LocalTime startTime = startAndEndDateHolder != null ? startAndEndDateHolder.getStartTime() : null;
+        return startTime != null ? startTime : LocalTime.MIN;
     }
 
     public static LocalTime getEndTime(ScheduledBoundary scheduledBoundary) {
         EntityHasStartAndEndTime startAndEndDateHolder = getStartAndEndDateHolder(scheduledBoundary);
-        return startAndEndDateHolder != null ? startAndEndDateHolder.getEndTime() : null;
+        LocalTime endTime = startAndEndDateHolder != null ? startAndEndDateHolder.getEndTime() : null;
+        return endTime != null ? endTime : LocalTime.MAX;
     }
 
     public ItemFamily getItemFamily(ScheduledBoundary scheduledBoundary) {
