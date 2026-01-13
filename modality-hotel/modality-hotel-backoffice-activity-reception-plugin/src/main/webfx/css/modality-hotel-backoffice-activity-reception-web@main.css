@@ -1,0 +1,418 @@
+/*
+ * Reception Dashboard - Web CSS
+ * Bootstrap-inspired theme for Buddhist center environment
+ *
+ * Note: Sizing (padding, widths, heights) is set in Java code per KBS3 guidelines.
+ * This CSS only handles colors, fonts, and visual decorations.
+ */
+
+/* ==========================================
+   Root Variables (Web/CSS3 syntax)
+   ========================================== */
+
+:root {
+    /* Primary */
+    --reception-primary: #0d6efd;
+    --reception-primary-hover: #0b5ed7;
+    --reception-primary-light: #e7f1ff;
+    --reception-primary-border: #b6d4fe;
+    --reception-primary-text: #084298;
+
+    /* Success */
+    --reception-success: #198754;
+    --reception-success-hover: #157347;
+    --reception-success-light: #e8f5e9;
+    --reception-success-border: #c3e6cb;
+    --reception-success-text: #0f5132;
+
+    /* Warning */
+    --reception-warning: #fd7e14;
+    --reception-warning-hover: #e96b02;
+    --reception-warning-light: #fff3cd;
+    --reception-warning-border: #ffecb5;
+    --reception-warning-text: #5c4503;
+
+    /* Danger */
+    --reception-danger: #dc3545;
+    --reception-danger-hover: #bb2d3b;
+    --reception-danger-light: #f8d7da;
+    --reception-danger-border: #f5c2c7;
+    --reception-danger-text: #842029;
+
+    /* Purple */
+    --reception-purple: #6f42c1;
+    --reception-purple-hover: #5a32a3;
+    --reception-purple-light: #f3e8ff;
+    --reception-purple-border: #e2d9f3;
+    --reception-purple-text: #59359a;
+
+    /* Teal */
+    --reception-teal: #20c997;
+    --reception-teal-hover: #1aa179;
+    --reception-teal-light: #d2f4ea;
+
+    /* Text colors */
+    --reception-text: #212529;
+    --reception-text-secondary: #495057;
+    --reception-text-muted: #5c636a;
+    --reception-text-light: #8c959d;
+
+    /* Backgrounds */
+    --reception-bg: #f8f9fa;
+    --reception-bg-card: #ffffff;
+    --reception-border: #dee2e6;
+    --reception-border-light: #e9ecef;
+}
+
+/* ==========================================
+   Dashboard Layout
+   ========================================== */
+
+.reception-dashboard {
+    background-color: var(--reception-bg);
+}
+
+.reception-header {
+    background-color: var(--reception-bg-card);
+    border-bottom: 1px solid var(--reception-border);
+}
+
+.reception-content {
+    background-color: transparent;
+}
+
+.reception-sidebar {
+    background-color: transparent;
+}
+
+/* ==========================================
+   Cards
+   ========================================== */
+
+.reception-card {
+    background-color: var(--reception-bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--reception-border);
+}
+
+.reception-card-header {
+    border-bottom: 1px solid var(--reception-border-light);
+}
+
+.reception-card-title {
+    color: var(--reception-text);
+    font-weight: 600;
+    font-size: 12px;
+}
+
+/* ==========================================
+   Stat Cards
+   ========================================== */
+
+.stat-card {
+    background-color: var(--reception-bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--reception-border);
+    transition: all 0.15s ease;
+}
+
+.stat-card-clickable {
+    cursor: pointer;
+}
+
+.stat-card-clickable:hover {
+    background-color: var(--reception-bg);
+    border-color: var(--reception-text-muted);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: translateY(-2px);
+}
+
+.stat-card-selected {
+    background-color: var(--reception-primary-light);
+    border-color: var(--reception-primary);
+    border-width: 2px;
+}
+
+.stat-card-value {
+    color: var(--reception-text);
+    font-weight: 700;
+    font-size: 28px;
+}
+
+.stat-card-label {
+    color: var(--reception-text-muted);
+    font-size: 11px;
+}
+
+/* ==========================================
+   Guest List & Rows
+   ========================================== */
+
+.guest-list {
+    background-color: var(--reception-bg-card);
+    border-radius: 12px;
+    border: 1px solid var(--reception-border);
+}
+
+.guest-row {
+    background-color: transparent;
+    border-bottom: 1px solid var(--reception-border-light);
+    transition: background-color 0.1s ease;
+}
+
+.guest-row:hover {
+    background-color: var(--reception-bg);
+}
+
+.guest-row-selected {
+    background-color: var(--reception-primary-light);
+}
+
+/* ==========================================
+   Status Badges
+   ========================================== */
+
+.status-badge {
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.status-expected {
+    background-color: var(--reception-primary-light);
+    color: var(--reception-primary);
+}
+
+.status-checked-in {
+    background-color: var(--reception-success-light);
+    color: var(--reception-success);
+}
+
+.status-checked-out {
+    background-color: var(--reception-purple-light);
+    color: var(--reception-purple);
+}
+
+.status-no-show {
+    background-color: var(--reception-danger-light);
+    color: var(--reception-danger);
+}
+
+.status-pre-booked {
+    background-color: var(--reception-warning-light);
+    color: var(--reception-warning-text);
+}
+
+.status-cancelled {
+    background-color: #e9ecef;
+    color: var(--reception-text-muted);
+}
+
+/* ==========================================
+   Tab Bar
+   ========================================== */
+
+.reception-tab-bar {
+    background-color: var(--reception-bg-card);
+    border-bottom: 1px solid var(--reception-border-light);
+}
+
+.reception-tab-item {
+    background-color: transparent;
+    color: var(--reception-text-muted);
+    font-size: 13px;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    border: none;
+}
+
+.reception-tab-item:hover {
+    color: var(--reception-text);
+}
+
+.reception-tab-item-active {
+    color: var(--reception-primary);
+    font-weight: 600;
+    border-bottom: 2px solid var(--reception-primary);
+}
+
+.reception-tab-count {
+    background-color: var(--reception-bg);
+    border-radius: 10px;
+    color: var(--reception-text-muted);
+    font-size: 11px;
+}
+
+/* ==========================================
+   Search Box
+   ========================================== */
+
+.reception-search-box {
+    background-color: var(--reception-bg);
+    border-radius: 8px;
+    border: 1px solid var(--reception-border);
+    transition: all 0.15s ease;
+}
+
+.reception-search-box:focus {
+    border-color: var(--reception-primary);
+    background-color: var(--reception-bg-card);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--reception-primary-light);
+}
+
+/* ==========================================
+   Event Filter Dropdown
+   ========================================== */
+
+.reception-event-filter {
+    background-color: var(--reception-bg-card);
+    border-radius: 8px;
+    border: 1px solid var(--reception-border);
+    color: var(--reception-text);
+    transition: all 0.15s ease;
+}
+
+.reception-event-filter:hover {
+    border-color: var(--reception-primary);
+}
+
+.reception-event-filter:focus {
+    border-color: var(--reception-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--reception-primary-light);
+}
+
+/* ==========================================
+   Icon Buttons
+   ========================================== */
+
+.btn-icon {
+    background-color: transparent;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btn-icon:hover {
+    background-color: var(--reception-bg);
+}
+
+/* ==========================================
+   Quick Action Buttons
+   ========================================== */
+
+.btn-quick-action {
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    transition: all 0.15s ease;
+}
+
+/* ==========================================
+   Empty State
+   ========================================== */
+
+.empty-state {
+    background-color: transparent;
+}
+
+.empty-state-icon {
+    color: var(--reception-text-light);
+    font-size: 48px;
+}
+
+.empty-state-text {
+    color: var(--reception-text-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ==========================================
+   Teal Buttons (Messages)
+   ========================================== */
+
+.btn-teal {
+    background-color: var(--reception-teal);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.15s ease;
+}
+
+.btn-teal:hover {
+    background-color: var(--reception-teal-hover);
+}
+
+/* ==========================================
+   Purple Buttons (Shift Notes)
+   ========================================== */
+
+.btn-purple {
+    background-color: var(--reception-purple);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    transition: background-color 0.15s ease;
+}
+
+.btn-purple:hover {
+    background-color: var(--reception-purple-hover);
+}
+
+/* ==========================================
+   Button Icon Styling
+   ========================================== */
+
+.button-icon {
+    fill: currentColor;
+}
+
+/* ==========================================
+   Register Status Badge
+   ========================================== */
+
+.register-open {
+    background-color: var(--reception-success-light);
+    color: var(--reception-success);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.register-closed {
+    background-color: var(--reception-danger-light);
+    color: var(--reception-danger);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   Animations (Web-only)
+   ========================================== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-backdrop {
+    animation: fadeIn 0.15s ease-out;
+}
+
+.modal-content {
+    animation: slideUp 0.2s ease-out;
+}

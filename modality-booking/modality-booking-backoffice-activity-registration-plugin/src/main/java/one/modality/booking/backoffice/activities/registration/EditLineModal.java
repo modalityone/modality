@@ -1010,7 +1010,7 @@ public class EditLineModal {
                 (newRoom == null || !dev.webfx.stack.orm.entity.Entities.sameId(newRoom, line.getResourceConfiguration()));
 
             if (itemChanged || roomChanged) {
-                workingBooking.updateDocumentLine(line, itemChanged ? newItem : null, roomChanged ? newRoom : null);
+                //workingBooking.updateDocumentLine(line, itemChanged ? newItem : null, roomChanged ? newRoom : null);
             }
 
             // Handle pricing changes using WorkingBooking API
@@ -1021,7 +1021,7 @@ public class EditLineModal {
                     int customPriceInCents = customPriceMajorUnits * 100;
 
                     // Use WorkingBooking API for price update
-                    workingBooking.updateDocumentLinePrice(line, customPriceInCents, customPriceInCents, null);
+                   // workingBooking.updateDocumentLinePrice(line, customPriceInCents, customPriceInCents, null);
 
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid custom price: " + customPriceField.getText());
@@ -1036,7 +1036,7 @@ public class EditLineModal {
                         int newPrice = standardPrice - discountAmount;
 
                         // Use WorkingBooking API for price update
-                        workingBooking.updateDocumentLinePrice(line, newPrice, null, discountAmount);
+                      //  workingBooking.updateDocumentLinePrice(line, newPrice, null, discountAmount);
                     }
                 } catch (NumberFormatException e) {
                     // Keep existing discount

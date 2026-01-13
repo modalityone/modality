@@ -589,7 +589,7 @@ public class BookingTab {
         if (workingBooking == null) {
             return null;
         }
-        return workingBooking.findScheduledItem(date, line.getItem(), line.getSite());
+        return null;//workingBooking.findScheduledItem(date, line.getItem(), line.getSite());
     }
 
     /**
@@ -788,7 +788,7 @@ public class BookingTab {
         ConfirmActionModal.showCancelConfirmation(line, comment -> {
             // Call WorkingBooking API to cancel the line
             if (workingBooking != null) {
-                workingBooking.cancelDocumentLine(line);
+                //workingBooking.cancelDocumentLine(line);
             }
 
             // Set visual pending status on canvas
@@ -820,7 +820,7 @@ public class BookingTab {
         ConfirmActionModal.showDeleteConfirmation(line, comment -> {
             // Call WorkingBooking API to remove the line (hard delete)
             if (workingBooking != null) {
-                workingBooking.removeDocumentLine(line);
+                //workingBooking.removeDocumentLine(line);
             }
 
             // Set visual pending status on canvas
@@ -859,7 +859,7 @@ public class BookingTab {
             ConfirmActionModal.showRestoreConfirmation(line, comment -> {
                 // Uncancel via WorkingBooking API
                 if (workingBooking != null) {
-                    workingBooking.uncancelDocumentLine(line);
+                    //workingBooking.uncancelDocumentLine(line);
                 }
                 timelineCanvas.setPendingStatus(line, null);
 
@@ -1677,7 +1677,7 @@ public class BookingTab {
         // Set up the cancellation checker to use WorkingBooking's proper cancellation detection
         // This ensures cancelled lines are properly identified using the event-based API
         if (timelineCanvas != null) {
-            timelineCanvas.setCancellationChecker(workingBooking::isDocumentLineCancelled);
+            //timelineCanvas.setCancellationChecker(workingBooking::isDocumentLineCancelled);
         }
 
         DocumentAggregate aggregate = workingBooking.getLastestDocumentAggregate();

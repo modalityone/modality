@@ -1,0 +1,387 @@
+/*
+ * Reception Dashboard - JavaFX CSS
+ * Bootstrap-inspired theme for Buddhist center environment
+ *
+ * Note: Sizing (padding, widths, heights) is set in Java code per KBS3 guidelines.
+ * This CSS only handles colors, fonts, and visual decorations.
+ */
+
+/* ==========================================
+   Root Variables (JavaFX syntax)
+   ========================================== */
+
+.root {
+    /* Primary */
+    -reception-primary: #0d6efd;
+    -reception-primary-hover: #0b5ed7;
+    -reception-primary-light: #e7f1ff;
+    -reception-primary-border: #b6d4fe;
+    -reception-primary-text: #084298;
+
+    /* Success */
+    -reception-success: #198754;
+    -reception-success-hover: #157347;
+    -reception-success-light: #e8f5e9;
+    -reception-success-border: #c3e6cb;
+    -reception-success-text: #0f5132;
+
+    /* Warning */
+    -reception-warning: #fd7e14;
+    -reception-warning-hover: #e96b02;
+    -reception-warning-light: #fff3cd;
+    -reception-warning-border: #ffecb5;
+    -reception-warning-text: #5c4503;
+
+    /* Danger */
+    -reception-danger: #dc3545;
+    -reception-danger-hover: #bb2d3b;
+    -reception-danger-light: #f8d7da;
+    -reception-danger-border: #f5c2c7;
+    -reception-danger-text: #842029;
+
+    /* Purple */
+    -reception-purple: #6f42c1;
+    -reception-purple-hover: #5a32a3;
+    -reception-purple-light: #f3e8ff;
+    -reception-purple-border: #e2d9f3;
+    -reception-purple-text: #59359a;
+
+    /* Teal */
+    -reception-teal: #20c997;
+    -reception-teal-hover: #1aa179;
+    -reception-teal-light: #d2f4ea;
+
+    /* Text colors */
+    -reception-text: #212529;
+    -reception-text-secondary: #495057;
+    -reception-text-muted: #5c636a;
+    -reception-text-light: #8c959d;
+
+    /* Backgrounds */
+    -reception-bg: #f8f9fa;
+    -reception-bg-card: #ffffff;
+    -reception-border: #dee2e6;
+    -reception-border-light: #e9ecef;
+}
+
+/* ==========================================
+   Dashboard Layout
+   ========================================== */
+
+.reception-dashboard {
+    -fx-background-color: -reception-bg;
+}
+
+.reception-header {
+    -fx-background-color: -reception-bg-card;
+    -fx-border-color: -reception-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+.reception-content {
+    -fx-background-color: transparent;
+}
+
+.reception-sidebar {
+    -fx-background-color: transparent;
+}
+
+/* ==========================================
+   Cards
+   ========================================== */
+
+.reception-card {
+    -fx-background-color: -reception-bg-card;
+    -fx-background-radius: 12;
+    -fx-border-color: -reception-border;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.reception-card-header {
+    -fx-border-color: -reception-border-light;
+    -fx-border-width: 0 0 1 0;
+}
+
+.reception-card-title {
+    -fx-text-fill: -reception-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+/* ==========================================
+   Stat Cards
+   ========================================== */
+
+.stat-card {
+    -fx-background-color: -reception-bg-card;
+    -fx-background-radius: 12;
+    -fx-border-color: -reception-border;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.stat-card-clickable {
+    -fx-cursor: hand;
+}
+
+.stat-card-clickable:hover {
+    -fx-background-color: -reception-bg;
+    -fx-border-color: -reception-text-muted;
+}
+
+.stat-card-selected {
+    -fx-background-color: -reception-primary-light;
+    -fx-border-color: -reception-primary;
+    -fx-border-width: 2;
+}
+
+.stat-card-value {
+    -fx-text-fill: -reception-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 28px;
+}
+
+.stat-card-label {
+    -fx-text-fill: -reception-text-muted;
+    -fx-font-size: 11px;
+}
+
+/* ==========================================
+   Guest List & Rows
+   ========================================== */
+
+.guest-list {
+    -fx-background-color: -reception-bg-card;
+    -fx-background-radius: 12;
+    -fx-border-color: -reception-border;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.guest-row {
+    -fx-background-color: transparent;
+    -fx-border-color: -reception-border-light;
+    -fx-border-width: 0 0 1 0;
+}
+
+.guest-row:hover {
+    -fx-background-color: -reception-bg;
+}
+
+.guest-row-selected {
+    -fx-background-color: -reception-primary-light;
+}
+
+/* ==========================================
+   Status Badges
+   ========================================== */
+
+.status-badge {
+    -fx-background-radius: 6;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.status-expected {
+    -fx-background-color: -reception-primary-light;
+    -fx-text-fill: -reception-primary;
+}
+
+.status-checked-in {
+    -fx-background-color: -reception-success-light;
+    -fx-text-fill: -reception-success;
+}
+
+.status-checked-out {
+    -fx-background-color: -reception-purple-light;
+    -fx-text-fill: -reception-purple;
+}
+
+.status-no-show {
+    -fx-background-color: -reception-danger-light;
+    -fx-text-fill: -reception-danger;
+}
+
+.status-pre-booked {
+    -fx-background-color: -reception-warning-light;
+    -fx-text-fill: -reception-warning-text;
+}
+
+.status-cancelled {
+    -fx-background-color: #e9ecef;
+    -fx-text-fill: -reception-text-muted;
+}
+
+/* ==========================================
+   Tab Bar
+   ========================================== */
+
+.reception-tab-bar {
+    -fx-background-color: -reception-bg-card;
+    -fx-border-color: -reception-border-light;
+    -fx-border-width: 0 0 1 0;
+}
+
+.reception-tab-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: -reception-text-muted;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+}
+
+.reception-tab-item:hover {
+    -fx-text-fill: -reception-text;
+}
+
+.reception-tab-item-active {
+    -fx-text-fill: -reception-primary;
+    -fx-font-weight: bold;
+    -fx-border-color: -reception-primary;
+    -fx-border-width: 0 0 2 0;
+}
+
+.reception-tab-count {
+    -fx-background-color: -reception-bg;
+    -fx-background-radius: 10;
+    -fx-text-fill: -reception-text-muted;
+    -fx-font-size: 11px;
+}
+
+/* ==========================================
+   Search Box
+   ========================================== */
+
+.reception-search-box {
+    -fx-background-color: -reception-bg;
+    -fx-background-radius: 8;
+    -fx-border-color: -reception-border;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+.reception-search-box:focused {
+    -fx-border-color: -reception-primary;
+    -fx-background-color: -reception-bg-card;
+}
+
+/* ==========================================
+   Event Filter Dropdown
+   ========================================== */
+
+.reception-event-filter {
+    -fx-background-color: -reception-bg-card;
+    -fx-background-radius: 8;
+    -fx-border-color: -reception-border;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-text-fill: -reception-text;
+}
+
+.reception-event-filter:hover {
+    -fx-border-color: -reception-primary;
+}
+
+.reception-event-filter:focused {
+    -fx-border-color: -reception-primary;
+}
+
+/* ==========================================
+   Icon Buttons
+   ========================================== */
+
+.btn-icon {
+    -fx-background-color: transparent;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-cursor: hand;
+}
+
+.btn-icon:hover {
+    -fx-background-color: -reception-bg;
+}
+
+/* ==========================================
+   Quick Action Buttons
+   ========================================== */
+
+.btn-quick-action {
+    -fx-background-radius: 8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================
+   Empty State
+   ========================================== */
+
+.empty-state {
+    -fx-background-color: transparent;
+}
+
+.empty-state-icon {
+    -fx-text-fill: -reception-text-light;
+    -fx-font-size: 48px;
+}
+
+.empty-state-text {
+    -fx-text-fill: -reception-text-muted;
+    -fx-font-size: 13px;
+    -fx-text-alignment: center;
+}
+
+/* ==========================================
+   Teal Buttons (Messages)
+   ========================================== */
+
+.btn-teal {
+    -fx-background-color: -reception-teal;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.btn-teal:hover {
+    -fx-background-color: -reception-teal-hover;
+}
+
+/* ==========================================
+   Purple Buttons (Shift Notes)
+   ========================================== */
+
+.btn-purple {
+    -fx-background-color: -reception-purple;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+}
+
+.btn-purple:hover {
+    -fx-background-color: -reception-purple-hover;
+}
+
+/* ==========================================
+   Button Icon Styling
+   ========================================== */
+
+.button-icon {
+    -fx-fill: -fx-text-fill;
+}
+
+/* ==========================================
+   Register Status Badge
+   ========================================== */
+
+.register-open {
+    -fx-background-color: -reception-success-light;
+    -fx-text-fill: -reception-success;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.register-closed {
+    -fx-background-color: -reception-danger-light;
+    -fx-text-fill: -reception-danger;
+    -fx-background-radius: 12;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
