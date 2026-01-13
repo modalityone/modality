@@ -40,7 +40,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         "select event,name,label,startBoundary,endBoundary" +
         " from EventPhase eph";
     private final static String PHASE_COVERAGES_QUERY_BASE =
-        "select event,name,label,phase1,phase2,phase3" +
+        "select event,name,label,phase1,phase2,phase3,phase4" +
         " from PhaseCoverage pc";
     private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event),itemFamily,phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
@@ -84,7 +84,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     // 5 - Loading phase coverages (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     PHASE_COVERAGES_QUERY_BASE + " where (select pc.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by phase1.id,phase2.id,phase3.id", eventPk)
+                    " order by phase1.id,phase2..id,phase3..id,phase4..id", eventPk)
                     // 6 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_FAMILY_POLICIES_QUERY_BASE + " where (select ifp.scope.(" +
