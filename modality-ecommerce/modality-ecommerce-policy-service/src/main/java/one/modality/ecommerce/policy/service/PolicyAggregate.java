@@ -18,6 +18,7 @@ import one.modality.base.shared.knownitems.KnownItemFamily;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -215,6 +216,12 @@ public final class PolicyAggregate {
         return getItemPolicies().stream()
             .filter(ip -> Entities.samePrimaryKey(ip.getItem(), item))
             .findFirst().orElse(null);
+    }
+
+    public List<ItemPolicy> getDietItemPolicies() {
+        return getItemPolicies().stream()
+            .filter(ip -> ip.getItem().getItemFamilyType() == KnownItemFamily.DIET)
+            .collect(Collectors.toList());
     }
 
     public ItemPolicy getSharingAccommodationItemPolicy() {
