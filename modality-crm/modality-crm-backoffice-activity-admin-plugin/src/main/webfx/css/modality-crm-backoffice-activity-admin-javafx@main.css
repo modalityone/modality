@@ -148,3 +148,200 @@
     -fx-text-fill: #495057;
 }
 
+/* ===== Label Editor Styles ===== */
+
+/* Main view styles */
+.labeleditor-title {
+    -fx-font-size: 24;
+    -fx-font-weight: bold;
+}
+
+.labeleditor-subtitle {
+    -fx-font-size: 18;
+    -fx-text-fill: #666;
+}
+
+.labeleditor-card {
+    -fx-background-color: white;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.labeleditor-card-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+/* Grid cell styles */
+.labeleditor-id-cell {
+    -fx-font-size: 12;
+}
+
+.labeleditor-lang-flag {
+    -fx-font-size: 9;
+}
+
+.labeleditor-lang-toggle {
+    -fx-font-size: 11;
+}
+
+/* Dialog styles */
+.labeleditor-dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: bold;
+}
+
+.labeleditor-ref-lang-highlight {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 5;
+}
+
+.labeleditor-error-dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: 600;
+    -fx-text-fill: #dc3545;
+}
+
+.labeleditor-error-dialog-header {
+    -fx-font-size: 16;
+    -fx-font-weight: 500;
+}
+
+.labeleditor-error-dialog-content {
+    -fx-font-size: 14;
+    -fx-text-fill: #666;
+}
+
+/* Delete dialog styles */
+.labeleditor-delete-dialog-title {
+    -fx-font-size: 20;
+    -fx-font-weight: 600;
+}
+
+.labeleditor-delete-dialog-message {
+    -fx-font-size: 14;
+}
+
+.labeleditor-delete-dialog-confirm {
+    -fx-font-size: 14;
+    -fx-text-fill: #666;
+}
+
+.labeleditor-warning-message {
+    -fx-font-size: 14;
+}
+
+/* Usage panel styles (light theme - for dialogs) */
+.labeleditor-usage-panel {
+    -fx-background-color: #fff8e1;
+    -fx-background-radius: 6;
+    -fx-border-color: #ffe082;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+}
+
+.labeleditor-usage-warning-icon {
+    -fx-font-size: 14;
+    -fx-text-fill: #ff8f00;
+}
+
+.labeleditor-usage-title {
+    -fx-font-size: 12;
+    -fx-text-fill: #5d4037;
+}
+
+.labeleditor-usage-type-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #5d4037;
+}
+
+.labeleditor-usage-more-label {
+    -fx-font-size: 10;
+    -fx-font-style: italic;
+    -fx-text-fill: #795548;
+}
+
+/* Reference row styles (light theme) */
+.labeleditor-ref-bullet {
+    -fx-text-fill: #795548;
+}
+
+.labeleditor-ref-id-badge {
+    -fx-background-color: #e3f2fd;
+    -fx-text-fill: #1565c0;
+    -fx-background-radius: 3;
+    -fx-font-size: 10;
+    -fx-font-weight: bold;
+}
+
+.labeleditor-ref-name {
+    -fx-font-size: 11;
+    -fx-text-fill: #37474f;
+}
+
+.labeleditor-ref-field {
+    -fx-font-size: 9;
+    -fx-text-fill: #78909c;
+}
+
+.labeleditor-ref-date {
+    -fx-font-size: 10;
+    -fx-text-fill: #607d8b;
+}
+
+.labeleditor-ref-placeholder {
+    -fx-font-size: 10;
+    -fx-font-style: italic;
+    -fx-text-fill: #9e9e9e;
+}
+
+/* Popup styles (dark theme) */
+.labeleditor-popup-content {
+    -fx-text-fill: #f7fafc;
+}
+
+.labeleditor-popup-header {
+    -fx-font-size: 13;
+    -fx-text-fill: #f7fafc;
+}
+
+.labeleditor-popup-type-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #a0aec0;
+}
+
+.labeleditor-popup-more-label {
+    -fx-font-size: 11;
+    -fx-font-style: italic;
+    -fx-text-fill: #718096;
+}
+
+.labeleditor-popup-bullet {
+    -fx-text-fill: #63b3ed;
+    -fx-font-size: 12;
+}
+
+.labeleditor-popup-id-badge {
+    -fx-background-color: #4299e1;
+    -fx-text-fill: white;
+    -fx-background-radius: 3;
+    -fx-font-size: 11;
+    -fx-font-weight: bold;
+}
+
+.labeleditor-popup-date {
+    -fx-font-size: 11;
+    -fx-text-fill: #a0aec0;
+}
+
+.labeleditor-popup-name {
+    -fx-font-size: 12;
+    -fx-text-fill: #e2e8f0;
+}
+
+.labeleditor-popup-placeholder {
+    -fx-font-size: 11;
+    -fx-font-style: italic;
+    -fx-text-fill: #718096;
+}
+

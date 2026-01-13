@@ -27,6 +27,7 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
     private final AssignUserAndRoleToOrganizationView userManagementView = new AssignUserAndRoleToOrganizationView(
             this);
     private final ScheduledItemGenerationView scheduledItemGenerationView = new ScheduledItemGenerationView();
+    private final LabelEditorView labelEditorView = new LabelEditorView(this);
 
     private final BorderPane container = new BorderPane();
     private final TabsBar<Node> mainTabsBar = new TabsBar<>(this, this::changeMainTabSelection);
@@ -39,7 +40,8 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
     public Node buildUi() {
         mainTabsBar.setTabs(
                 mainTabsBar.createTab(ManageUsers, userManagementView::getView),
-                mainTabsBar.createTab("Scheduled Items", scheduledItemGenerationView::getView));
+                mainTabsBar.createTab("Scheduled Items", scheduledItemGenerationView::getView),
+                mainTabsBar.createTab(LabelEditor, labelEditorView::getView));
         return container;
     }
 
@@ -53,9 +55,11 @@ final class AdminActivity extends ViewDomainActivityBase implements ButtonFactor
         boolean activityActive = isActive();
         boolean manageUsersActive = activityActive && mainTabs.get(0).isSelected();
         boolean scheduledItemsActive = activityActive && mainTabs.size() > 1 && mainTabs.get(1).isSelected();
+        boolean labelEditorActive = activityActive && mainTabs.size() > 2 && mainTabs.get(2).isSelected();
 
         userManagementView.setActive(manageUsersActive);
         scheduledItemGenerationView.setActive(scheduledItemsActive);
+        labelEditorView.setActive(labelEditorActive);
     }
 
     @Override

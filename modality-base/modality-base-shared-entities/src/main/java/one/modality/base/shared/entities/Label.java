@@ -12,7 +12,16 @@ public interface Label extends
     EntityHasOrganization,
     EntityHasI18nFields {
 
+    String ref = "ref";
     String livestreamMessage = "livestreamMessage";
+
+    default void setRef(String value) {
+        setFieldValue(ref, value);
+    }
+
+    default String getRef() {
+        return getStringFieldValue(ref);
+    }
 
     default void setLivestreamMessage(Boolean value) {
         setFieldValue(livestreamMessage, value);

@@ -9,6 +9,7 @@
     <dependencies>
         <used-by-source-modules>
             <undetected-module>javafx-controls</undetected-module>
+            <module>webfx-extras-async</module>
             <module>webfx-extras-controlfactory</module>
             <module>webfx-extras-util-dialog</module>
             <module>webfx-extras-util-layout</module>
@@ -16,6 +17,7 @@
             <module>modality-base-client-mainframe-fx</module>
             <module>modality-base-client-bootstrap</module>
             <module>webfx-stack-orm-entity-controls</module>
+            <module>webfx-stack-orm-entity-binding</module>
             <module>webfx-stack-orm-datasourcemodel-service</module>
             <module>webfx-stack-orm-reactive-entities</module>
             <module>modality-base-shared-entities</module>
