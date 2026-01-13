@@ -224,6 +224,12 @@ public final class PolicyAggregate {
             .collect(Collectors.toList());
     }
 
+    public List<ItemPolicy> getTranslationItemPolicies() {
+        return getItemPolicies().stream()
+            .filter(ip -> ip.getItem().getItemFamilyType() == KnownItemFamily.TRANSLATION)
+            .collect(Collectors.toList());
+    }
+
     public ItemPolicy getSharingAccommodationItemPolicy() {
         return getItemPolicies().stream()
             .filter(ip -> Booleans.isTrue(ip.getItem().isShare_mate()) && ip.getItem().getItemFamilyType() == KnownItemFamily.ACCOMMODATION)
