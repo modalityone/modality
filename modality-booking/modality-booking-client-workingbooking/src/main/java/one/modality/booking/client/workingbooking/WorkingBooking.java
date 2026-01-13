@@ -311,6 +311,16 @@ public final class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
+    public void linkMateToOwner(DocumentLine documentLine, DocumentLine ownerDocumentLine) {
+        integrateNewDocumentEvent(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerDocumentLine), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void linkMateToOwner(DocumentLine documentLine, Person ownerPerson) {
+        integrateNewDocumentEvent(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerPerson), true);
+        lastestDocumentAggregate = null;
+    }
+
     public void applyFacilityFeeRate(boolean apply) {
         integrateNewDocumentEvent(new ApplyFacilityFeeEvent(document, apply), true);
     }

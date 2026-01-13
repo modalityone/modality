@@ -22,6 +22,7 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.EditShareMateInfoDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.EditShareOwnerInfoDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.LinkMateToOwnerDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
@@ -56,7 +57,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         EntityStoreQuery[] queries = {
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
-                                 "share_mate_ownerName,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
+                                 ",share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
+                                 ",share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
                                  " from DocumentLine where document=? and site!=null order by id", docPk),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
@@ -95,13 +97,18 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
                     documentEvents.add(new AddDocumentLineEvent(dl));
                     documentEvents.add(new PriceDocumentLineEvent(dl));
+                    String[] matesNames = dl.getShareOwnerMatesNames();
+                    if (!Arrays.isEmpty(matesNames)) {
+                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, matesNames));
+                    }
                     String ownerName = dl.getShareMateOwnerName();
                     if (ownerName != null) {
                         documentEvents.add(new EditShareMateInfoDocumentLineEvent(dl, ownerName));
                     }
-                    String[] matesNames = dl.getShareOwnerMatesNames();
-                    if (!Arrays.isEmpty(matesNames)) {
-                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, matesNames));
+                    DocumentLine ownerDocumentLine = dl.getShareMateOwnerDocumentLine();
+                    Person ownerPerson = dl.getShareMateOwnerPerson();
+                    if (ownerDocumentLine != null || ownerPerson != null) {
+                        documentEvents.add(new LinkMateToOwnerDocumentLineEvent(dl, ownerDocumentLine, ownerPerson));
                     }
                 });
                 // Aggregating attendances by adding AddAttendancesEvent for each document line
