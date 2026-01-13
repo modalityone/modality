@@ -29,8 +29,9 @@ one.modality.base.shared.entities.impl.GatewayParameterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.HistoryImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ImageImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.InvitationImpl$ProvidedFactory
-one.modality.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.ItemFamilyImpl$ProvidedFactory
+one.modality.base.shared.entities.impl.ItemFamilyPolicyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.ItemPolicyImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.KdmCenterImpl$ProvidedFactory
 one.modality.base.shared.entities.impl.LanguageImpl$ProvidedFactory
