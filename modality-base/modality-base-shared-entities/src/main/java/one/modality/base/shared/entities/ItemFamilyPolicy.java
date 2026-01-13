@@ -4,6 +4,8 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.EntityHasItemFamily;
 
+import java.util.List;
+
 /**
  * @author Bruno Salmon
  */
@@ -29,7 +31,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntity(scope);
     }
 
-    default void setPhaseCoverage1(Boolean value) {
+    default void setPhaseCoverage1(Object value) {
         setFieldValue(phaseCoverage1, value);
     }
 
@@ -41,7 +43,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntity(phaseCoverage1);
     }
 
-    default void setPhaseCoverage2(Boolean value) {
+    default void setPhaseCoverage2(Object value) {
         setFieldValue(phaseCoverage2, value);
     }
 
@@ -53,7 +55,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntity(phaseCoverage2);
     }
 
-    default void setPhaseCoverage3(Boolean value) {
+    default void setPhaseCoverage3(Object value) {
         setFieldValue(phaseCoverage3, value);
     }
 
@@ -65,7 +67,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntity(phaseCoverage3);
     }
 
-    default void setPhaseCoverage4(Boolean value) {
+    default void setPhaseCoverage4(Object value) {
         setFieldValue(phaseCoverage4, value);
     }
 
@@ -76,5 +78,9 @@ public interface ItemFamilyPolicy extends Entity,
     default PhaseCoverage getPhaseCoverage4() {
         return getForeignEntity(phaseCoverage4);
     }
+
+    List<PhaseCoverage> getPhaseCoverages(); // implemented in ItemFamilyPolicyImpl
+
+    void setPhaseCoverages(List<PhaseCoverage> phaseCoverages); // implemented in ItemFamilyPolicyImpl
 
 }
