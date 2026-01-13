@@ -9,6 +9,7 @@ module modality.ecommerce.document.service.buscall {
     requires webfx.platform.util;
     requires webfx.stack.com.bus.call;
     requires webfx.stack.com.serial;
+    requires webfx.stack.orm.entity;
 
     // Exported packages
     exports one.modality.ecommerce.document.service.buscall;

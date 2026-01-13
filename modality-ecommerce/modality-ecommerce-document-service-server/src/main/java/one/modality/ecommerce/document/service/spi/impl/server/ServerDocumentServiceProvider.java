@@ -20,6 +20,7 @@ import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.EditShareOwnerInfoDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
@@ -53,7 +54,9 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
-            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", docPk),
+            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
+                                 ",share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
+                                 " from DocumentLine where document=? and site!=null order by id", docPk),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
@@ -91,6 +94,10 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
                     documentEvents.add(new AddDocumentLineEvent(dl));
                     documentEvents.add(new PriceDocumentLineEvent(dl));
+                    String[] matesNames = dl.getShareOwnerMatesNames();
+                    if (!Arrays.isEmpty(matesNames)) {
+                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, matesNames));
+                    }
                 });
                 // Aggregating attendances by adding AddAttendancesEvent for each document line
                 ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))

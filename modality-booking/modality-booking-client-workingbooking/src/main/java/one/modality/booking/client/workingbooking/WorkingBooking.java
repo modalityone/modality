@@ -22,8 +22,7 @@ import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.CancelDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
@@ -299,6 +298,11 @@ public final class WorkingBooking {
 
     private void cancelDocumentLine(DocumentLine documentLine, boolean cancel) {
         integrateNewDocumentEvent(new CancelDocumentLineEvent(documentLine, cancel, Meta.isBackoffice()), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void setShareOwnerInfo(DocumentLine documentLine, String[] matesNames) {
+        integrateNewDocumentEvent(new EditShareOwnerInfoDocumentLineEvent(documentLine, matesNames), true);
         lastestDocumentAggregate = null;
     }
 
