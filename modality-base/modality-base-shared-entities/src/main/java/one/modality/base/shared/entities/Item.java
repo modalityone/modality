@@ -20,6 +20,7 @@ public interface Item extends
     String family = "family";
     String rateAliasItem = "rateAliasItem";
     String share_mate = "share_mate";
+    String capacity = "capacity";
     String deprecated = "deprecated";
     String imageUrl = "imageUrl";
     String language = "language";
@@ -54,6 +55,14 @@ public interface Item extends
 
     default Boolean isShare_mate() {
         return getBooleanFieldValue(share_mate);
+    }
+
+    default void setCapacity(Integer value) {
+        setFieldValue(capacity, value);
+    }
+
+    default Integer getCapacity() {
+        return getIntegerFieldValue(capacity);
     }
 
     default void setDeprecated(Boolean value) {
