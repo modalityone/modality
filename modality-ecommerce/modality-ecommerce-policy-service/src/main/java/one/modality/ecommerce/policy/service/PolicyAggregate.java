@@ -38,6 +38,8 @@ public final class PolicyAggregate {
     private final QueryResult eventPhasesQueryResult;
     private final String phaseCoveragesQueryBase;
     private final QueryResult phaseCoveragesQueryResult;
+    private final String itemFamilyPoliciesQueryBase;
+    private final QueryResult itemFamilyPoliciesQueryResult;
     private final String itemPoliciesQueryBase;
     private final QueryResult itemPoliciesQueryResult;
     private final String ratesQueryBase;
@@ -56,6 +58,7 @@ public final class PolicyAggregate {
     private EntityList<EventSelection> eventSelections;
     private EntityList<EventPhase> eventPhases;
     private EntityList<PhaseCoverage> phaseCoverages;
+    private EntityList<ItemFamilyPolicy> itemFamilyPolicies;
     private EntityList<ItemPolicy> itemPolicies;
     private EntityList<Rate> rates;
     @Deprecated
@@ -67,6 +70,7 @@ public final class PolicyAggregate {
                            String eventSelectionsQueryBase, QueryResult eventSelectionsQueryResult,
                            String eventPhasesQueryBase, QueryResult eventPhasesQueryResult,
                            String phaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
+                           String itemFamilyPoliciesQueryBase, QueryResult itemFamilyPoliciesQueryResult,
                            String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
                            String ratesQueryBase, QueryResult ratesQueryResult,
                            String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult
@@ -85,6 +89,8 @@ public final class PolicyAggregate {
         this.phaseCoveragesQueryResult = phaseCoveragesQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
+        this.itemFamilyPoliciesQueryBase = itemFamilyPoliciesQueryBase;
+        this.itemFamilyPoliciesQueryResult = itemFamilyPoliciesQueryResult;
         this.itemPoliciesQueryBase = itemPoliciesQueryBase;
         this.itemPoliciesQueryResult = itemPoliciesQueryResult;
         this.bookablePeriodsQueryBase = bookablePeriodsQueryBase;
@@ -107,6 +113,8 @@ public final class PolicyAggregate {
         eventPhases = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventPhasesQueryResult, queryMapping, entityStore, "eventPhases");
         queryMapping = dataSourceModel.parseAndCompileSelect(phaseCoveragesQueryBase).getQueryMapping();
         phaseCoverages = QueryResultToEntitiesMapper.mapQueryResultToEntities(phaseCoveragesQueryResult, queryMapping, entityStore, "phaseCoverages");
+        queryMapping = dataSourceModel.parseAndCompileSelect(itemFamilyPoliciesQueryBase).getQueryMapping();
+        itemFamilyPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemFamilyPoliciesQueryResult, queryMapping, entityStore, "itemFamilyPolicies");
         queryMapping = dataSourceModel.parseAndCompileSelect(itemPoliciesQueryBase).getQueryMapping();
         itemPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemPoliciesQueryResult, queryMapping, entityStore, "itemPolicies");
         queryMapping = dataSourceModel.parseAndCompileSelect(ratesQueryBase).getQueryMapping();
@@ -161,6 +169,10 @@ public final class PolicyAggregate {
 
     public EntityList<PhaseCoverage> getPhaseCoverages() {
         return phaseCoverages;
+    }
+
+    public EntityList<ItemFamilyPolicy> getItemFamilyPolicies() {
+        return itemFamilyPolicies;
     }
 
     public EntityList<ItemPolicy> getItemPolicies() {
@@ -370,6 +382,14 @@ public final class PolicyAggregate {
 
     public QueryResult getPhaseCoveragesQueryResult() {
         return phaseCoveragesQueryResult;
+    }
+
+    public String getItemFamilyPoliciesQueryBase() {
+        return itemFamilyPoliciesQueryBase;
+    }
+
+    public QueryResult getItemFamilyPoliciesQueryResult() {
+        return itemFamilyPoliciesQueryResult;
     }
 
     public String getItemPoliciesQueryBase() {

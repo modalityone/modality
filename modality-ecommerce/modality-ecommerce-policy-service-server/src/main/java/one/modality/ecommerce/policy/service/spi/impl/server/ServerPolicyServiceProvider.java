@@ -42,6 +42,9 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private final static String PHASE_COVERAGES_QUERY_BASE =
         "select event,name,label,phase1,phase2,phase3" +
         " from PhaseCoverage pc";
+    private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
+        "select scope.(organization,site,eventType,event),itemFamily,phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
+        " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event),item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy" +
         " from ItemPolicy ip";
@@ -84,6 +87,15 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " order by phase1.id,phase2.id,phase3.id", eventPk)
                     // 6 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
+                    ITEM_FAMILY_POLICIES_QUERY_BASE + " where (select ifp.scope.(" +
+                    " organization = e.organization" +
+                    " and (site = null or site..event = null or site..event = coalesce(e.repeatedEvent, e))" +
+                    " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
+                    " and (event = null or event = coalesce(e.repeatedEvent, e))" +
+                    " ) from Event e where id=$1)" +
+                    " order by id", eventPk)
+                    // 7 - Loading item policies (of this event or of the repeated event if set)
+                    , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
                     " organization = e.organization" +
                     " and (site = null or site..event = null or site..event = coalesce(e.repeatedEvent, e))" +
@@ -91,12 +103,12 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
                     " order by id", eventPk)
-                    // 7 - Loading rates (of this event or of the repeated event if set)
+                    // 8 - Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     RATES_QUERY_BASE + " where (select r.site = coalesce(e.repeatedEvent.venue, e.venue) or r.site.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
                     " order by site,item,perDay desc,startDate,endDate,price", eventPk)
-                    // 8 - Loading bookable periods (of this event or of the repeated event if set)
+                    // 9 - Loading bookable periods (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by startScheduledItem.date,endScheduledItem.date", eventPk)
@@ -108,9 +120,10 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                 EVENT_SELECTIONS_QUERY_BASE, batch.get(3),
                 EVENT_PHASES_QUERY_BASE, batch.get(4),
                 PHASE_COVERAGES_QUERY_BASE, batch.get(5),
-                ITEM_POLICIES_QUERY_BASE, batch.get(6),
-                RATES_QUERY_BASE, batch.get(7),
-                BOOKABLE_PERIODS_QUERY_BASE, batch.get(8)
+                ITEM_FAMILY_POLICIES_QUERY_BASE, batch.get(6),
+                ITEM_POLICIES_QUERY_BASE, batch.get(7),
+                RATES_QUERY_BASE, batch.get(8),
+                BOOKABLE_PERIODS_QUERY_BASE, batch.get(9)
             ));
     }
 }
