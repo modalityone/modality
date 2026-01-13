@@ -8,7 +8,6 @@ import one.modality.base.shared.entities.markers.*;
  * @author Bruno Salmon
  */
 public interface ItemPolicy extends Entity,
-    EntityHasItemFamily,
     EntityHasItem
 {
 
@@ -20,10 +19,7 @@ public interface ItemPolicy extends Entity,
     String earlyAccommodationAllowed = "earlyAccommodationAllowed";
     String lateAccommodationAllowed = "lateAccommodationAllowed";
     String genderInfoRequired = "genderRequired";
-    String phaseCoverage1 = "phaseCoverage1";
-    String phaseCoverage2 = "phaseCoverage2";
-    String phaseCoverage3 = "phaseCoverage3";
-    String phaseCoverage4 = "phaseCoverage4";
+    String minOccupancy = "minOccupancy";
 
     default void setScope(Object value) {
         setForeignField(scope, value);
@@ -101,52 +97,13 @@ public interface ItemPolicy extends Entity,
         return getBooleanFieldValue(lateAccommodationAllowed);
     }
 
-    default void setPhaseCoverage1(Boolean value) {
-        setFieldValue(phaseCoverage1, value);
+    default void setMinOccupancy(Integer value) {
+        setFieldValue(minOccupancy, value);
     }
 
-    default EntityId getPhaseCoverage1Id() {
-        return getForeignEntityId(phaseCoverage1);
+    default Integer getMinOccupancy() {
+        return getIntegerFieldValue(minOccupancy);
     }
 
-    default PhaseCoverage getPhaseCoverage1() {
-        return getForeignEntity(phaseCoverage1);
-    }
-
-    default void setPhaseCoverage2(Boolean value) {
-        setFieldValue(phaseCoverage2, value);
-    }
-
-    default EntityId getPhaseCoverage2Id() {
-        return getForeignEntityId(phaseCoverage2);
-    }
-
-    default PhaseCoverage getPhaseCoverage2() {
-        return getForeignEntity(phaseCoverage2);
-    }
-
-    default void setPhaseCoverage3(Boolean value) {
-        setFieldValue(phaseCoverage3, value);
-    }
-
-    default EntityId getPhaseCoverage3Id() {
-        return getForeignEntityId(phaseCoverage3);
-    }
-
-    default PhaseCoverage getPhaseCoverage3() {
-        return getForeignEntity(phaseCoverage3);
-    }
-
-    default void setPhaseCoverage4(Boolean value) {
-        setFieldValue(phaseCoverage4, value);
-    }
-
-    default EntityId getPhaseCoverage4Id() {
-        return getForeignEntityId(phaseCoverage4);
-    }
-
-    default PhaseCoverage getPhaseCoverage4() {
-        return getForeignEntity(phaseCoverage4);
-    }
 
 }
