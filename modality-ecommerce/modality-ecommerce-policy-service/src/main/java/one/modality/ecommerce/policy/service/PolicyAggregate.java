@@ -1,6 +1,7 @@
 package one.modality.ecommerce.policy.service;
 
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -201,6 +202,13 @@ public final class PolicyAggregate {
     public ItemPolicy getItemPolicy(Item item) {
         return getItemPolicies().stream()
             .filter(ip -> Entities.samePrimaryKey(ip.getItem(), item))
+            .findFirst()
+            .orElse(null);
+    }
+
+    public ItemPolicy getSharingAccommodationItemPolicy() {
+        return getItemPolicies().stream()
+            .filter(ip -> Booleans.isTrue(ip.getItem().isShare_mate()) && ip.getItem().getItemFamilyType() == KnownItemFamily.ACCOMMODATION)
             .findFirst()
             .orElse(null);
     }
