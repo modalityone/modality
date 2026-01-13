@@ -174,6 +174,22 @@ public final class WorkingBooking {
         documentChanges.addAll(workingBooking.documentChanges);
     }
 
+    public DocumentLine bookAtemporalItem(SiteItem siteItem) {
+        return bookAtemporalItem(siteItem.getSite(), siteItem.getItem());
+    }
+
+    public DocumentLine bookAtemporalItem(Site site, Item item) {
+        DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        if (documentLine == null) {
+            documentLine = getEntityStore().createEntity(DocumentLine.class);
+            documentLine.setDocument(document);
+            documentLine.setSite(site);
+            documentLine.setItem(item);
+            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
+        }
+        return documentLine;
+    }
+
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
