@@ -54,8 +54,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         EntityStoreQuery[] queries = {
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
-                                 ",share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
-                                 ",share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
+                                 ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
+                                 ",share_mate,share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
                                  ",resourceConfiguration" +
                                  " from DocumentLine where document=? and site!=null order by id", docPk),
             new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
@@ -95,18 +95,16 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
                     documentEvents.add(new AddDocumentLineEvent(dl));
                     documentEvents.add(new PriceDocumentLineEvent(dl));
-                    String[] matesNames = dl.getShareOwnerMatesNames();
-                    if (!Arrays.isEmpty(matesNames)) {
-                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, matesNames));
+                    if (dl.isShareOwner()) {
+                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, dl.getShareOwnerMatesNames()));
                     }
-                    String ownerName = dl.getShareMateOwnerName();
-                    if (ownerName != null) {
-                        documentEvents.add(new EditShareMateInfoDocumentLineEvent(dl, ownerName));
-                    }
-                    DocumentLine ownerDocumentLine = dl.getShareMateOwnerDocumentLine();
-                    Person ownerPerson = dl.getShareMateOwnerPerson();
-                    if (ownerDocumentLine != null || ownerPerson != null) {
-                        documentEvents.add(new LinkMateToOwnerDocumentLineEvent(dl, ownerDocumentLine, ownerPerson));
+                    if (dl.isShareMate()) {
+                        documentEvents.add(new EditShareMateInfoDocumentLineEvent(dl, dl.getShareMateOwnerName()));
+                        DocumentLine ownerDocumentLine = dl.getShareMateOwnerDocumentLine();
+                        Person ownerPerson = dl.getShareMateOwnerPerson();
+                        if (ownerDocumentLine != null || ownerPerson != null) {
+                            documentEvents.add(new LinkMateToOwnerDocumentLineEvent(dl, ownerDocumentLine, ownerPerson));
+                        }
                     }
                     ResourceConfiguration resourceConfiguration = dl.getResourceConfiguration();
                     if (resourceConfiguration != null) {
