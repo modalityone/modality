@@ -7,9 +7,9 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.platform.async.CompositeFuture;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.cloud.deepl.client.ClientDeeplService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -24,7 +24,9 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Label;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static one.modality.crm.backoffice.activities.admin.Admin18nKeys.*;
@@ -101,8 +103,19 @@ public class LabelEditorDialog {
         titleLabel.getStyleClass().add("labeleditor-dialog-title");
         Bootstrap.h2(titleLabel);
 
-        // Reference language selector
-        HBox refLangContainer = createReferenceLangSelector(labelEntity);
+        // Language fields container (created first so reference selector can update highlighting)
+        VBox languageFieldsContainer = new VBox(12);
+        languageFieldsContainer.setPadding(new Insets(10, 0, 10, 0));
+
+        Map<String, TextArea> languageFields = new HashMap<>();
+
+        for (String lang : LANGUAGES) {
+            VBox fieldContainer = createLanguageField(lang, labelEntity, languageFields);
+            languageFieldsContainer.getChildren().add(fieldContainer);
+        }
+
+        // Reference language selector (needs languageFieldsContainer for highlight updates)
+        HBox refLangContainer = createReferenceLangSelector(labelEntity, languageFieldsContainer);
 
         // Separator
         Separator separator1 = new Separator();
@@ -114,16 +127,6 @@ public class LabelEditorDialog {
         scrollPane.setPrefHeight(400);
         scrollPane.setMaxHeight(500);
 
-        VBox languageFieldsContainer = new VBox(12);
-        languageFieldsContainer.setPadding(new Insets(10, 0, 10, 0));
-
-        Map<String, TextArea> languageFields = new HashMap<>();
-
-        for (String lang : LANGUAGES) {
-            VBox fieldContainer = createLanguageField(lang, labelEntity, languageFields);
-            languageFieldsContainer.getChildren().add(fieldContainer);
-        }
-
         scrollPane.setContent(languageFieldsContainer);
 
         // Action buttons (Auto-translate, Clear All)
@@ -131,9 +134,9 @@ public class LabelEditorDialog {
         actionButtons.setAlignment(Pos.CENTER);
 
         Button autoTranslateButton = Bootstrap.primaryButton(I18nControls.newButton(AutoTranslate));
-        autoTranslateButton.setOnAction(e -> autoTranslate(labelEntity, languageFields, autoTranslateButton));
-
         Button clearAllButton = Bootstrap.secondaryButton(I18nControls.newButton(ClearAll));
+
+        autoTranslateButton.setOnAction(e -> autoTranslate(labelEntity, languageFields, autoTranslateButton, clearAllButton));
         clearAllButton.setOnAction(e -> clearAllFields(labelEntity, languageFields));
 
         actionButtons.getChildren().addAll(autoTranslateButton, clearAllButton);
@@ -192,7 +195,7 @@ public class LabelEditorDialog {
         updateRefLanguageHighlight(labelEntity.getRef(), languageFieldsContainer);
     }
 
-    private static HBox createReferenceLangSelector(Label labelEntity) {
+    private static HBox createReferenceLangSelector(Label labelEntity, VBox languageFieldsContainer) {
         HBox container = new HBox(15);
         container.setAlignment(Pos.CENTER_LEFT);
         container.setPadding(new Insets(10, 0, 10, 0));
@@ -221,11 +224,12 @@ public class LabelEditorDialog {
             buttonContainer.getChildren().add(btn);
         }
 
-        // Update entity and button styles when reference language changes
+        // Update entity and highlight when reference language changes
         refLangGroup.selectedToggleProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 String newRef = (String) newVal.getUserData();
                 labelEntity.setRef(newRef);
+                updateRefLanguageHighlight(newRef, languageFieldsContainer);
             }
         });
 
@@ -235,7 +239,7 @@ public class LabelEditorDialog {
 
     private static VBox createLanguageField(String lang, Label labelEntity, Map<String, TextArea> languageFields) {
         VBox container = new VBox(5);
-        container.setPadding(new Insets(5, 0, 5, 0));
+        container.setPadding(new Insets(5, 15, 5, 15));
 
         HBox header = new HBox(10);
         header.setAlignment(Pos.CENTER_LEFT);
@@ -322,7 +326,8 @@ public class LabelEditorDialog {
         return null;
     }
 
-    private static void autoTranslate(Label labelEntity, Map<String, TextArea> languageFields, Button button) {
+    private static void autoTranslate(Label labelEntity, Map<String, TextArea> languageFields,
+                                        Button autoTranslateButton, Button clearAllButton) {
         String refLang = labelEntity.getRef();
         if (refLang == null || refLang.isEmpty()) {
             refLang = Label.en;
@@ -330,51 +335,86 @@ public class LabelEditorDialog {
 
         TextArea refField = languageFields.get(refLang);
         if (refField == null) {
-            showError("Reference language field not found.");
+            showError(I18n.getI18nText(TranslationError) + ": Reference language field not found.");
             return;
         }
 
         String sourceText = refField.getText();
         if (sourceText == null || sourceText.trim().isEmpty()) {
-            showError("Please enter text in the reference language before translating.");
+            showError(I18n.getI18nText(TranslationErrorEmptySource));
             return;
         }
-
-        // Disable button during translation
-        button.setDisable(true);
-        String originalText = button.getText();
-        button.setText(I18n.getI18nText(Translating));
 
         String sourceLangCode = DEEPL_LANG_MAP.get(refLang);
         final String finalRefLang = refLang;
 
-        Scheduler.runInBackground(() -> {
-            for (String targetLang : LANGUAGES) {
-                if (!targetLang.equals(finalRefLang)) {
-                    TextArea targetField = languageFields.get(targetLang);
-                    if (targetField != null && (targetField.getText() == null || targetField.getText().trim().isEmpty())) {
-                        String targetLangCode = DEEPL_LANG_MAP.get(targetLang);
-                        if (targetLangCode != null) {
-                            translateField(sourceText, sourceLangCode, targetLangCode, targetField);
-                        }
+        // Collect all translation futures
+        List<Future<?>> translationFutures = new ArrayList<>();
+        List<String> targetLanguages = new ArrayList<>(); // Track which languages we're translating
+
+        for (String targetLang : LANGUAGES) {
+            if (!targetLang.equals(finalRefLang)) {
+                TextArea targetField = languageFields.get(targetLang);
+                if (targetField != null && (targetField.getText() == null || targetField.getText().trim().isEmpty())) {
+                    String targetLangCode = DEEPL_LANG_MAP.get(targetLang);
+                    if (targetLangCode != null) {
+                        targetLanguages.add(targetLang);
+                        Future<String> translationFuture = ClientDeeplService.translate(sourceText, sourceLangCode, targetLangCode)
+                            .onSuccess(text -> Platform.runLater(() -> {
+                                if (text != null && !text.trim().isEmpty()) {
+                                    targetField.setText(text);
+                                }
+                            }));
+                        translationFutures.add(translationFuture);
                     }
                 }
             }
+        }
 
-            Platform.runLater(() -> {
-                button.setDisable(false);
-                button.setText(originalText);
-            });
-        });
+        // If no translations needed
+        if (translationFutures.isEmpty()) {
+            return;
+        }
+
+        // Use Future.join() to wait for all translations (doesn't fail fast)
+        CompositeFuture allTranslations = Future.join(translationFutures);
+
+        // Use AsyncSpinner to show spinner and disable buttons during translation
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+            allTranslations
+                .onComplete(ar -> Platform.runLater(() -> {
+                    // Check for any failures and display them
+                    if (ar.failed() || hasAnyFailure(allTranslations)) {
+                        StringBuilder errorMessages = new StringBuilder();
+                        for (int i = 0; i < allTranslations.size(); i++) {
+                            if (allTranslations.failed(i)) {
+                                Throwable cause = allTranslations.cause(i);
+                                String langName = i < targetLanguages.size() ? LANGUAGE_NAMES.get(targetLanguages.get(i)) : "Unknown";
+                                if (errorMessages.length() > 0) {
+                                    errorMessages.append("\n");
+                                }
+                                errorMessages.append("• ").append(langName).append(": ")
+                                    .append(cause != null ? cause.getMessage() : "Unknown error");
+                                Console.log("Translation failed for " + langName + ": " +
+                                    (cause != null ? cause.getMessage() : "Unknown error"));
+                            }
+                        }
+                        if (errorMessages.length() > 0) {
+                            showError(I18n.getI18nText(TranslationError) + ":\n" + errorMessages);
+                        }
+                    }
+                })),
+            autoTranslateButton, clearAllButton
+        );
     }
 
-    private static void translateField(String sourceText, String sourceLang, String targetLang, TextArea targetField) {
-        Future<String> translation = ClientDeeplService.translate(sourceText, sourceLang, targetLang);
-        translation.onSuccess(text -> Platform.runLater(() -> {
-            if (text != null && !text.trim().isEmpty()) {
-                targetField.setText(text);
+    private static boolean hasAnyFailure(CompositeFuture cf) {
+        for (int i = 0; i < cf.size(); i++) {
+            if (cf.failed(i)) {
+                return true;
             }
-        })).onFailure(error -> Console.log("Translation failed for " + targetLang + ": " + error.getMessage()));
+        }
+        return false;
     }
 
     private static void clearAllFields(Label labelEntity, Map<String, TextArea> languageFields) {

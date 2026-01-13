@@ -64,6 +64,8 @@ public interface Admin18nKeys {
     Object SpecificEventDescription = "SpecificEventDescription";
     Object TeamMembersAndRoles = "TeamMembersAndRoles";
     Object Translating = "Translating";
+    Object TranslationError = "TranslationError";
+    Object TranslationErrorEmptySource = "TranslationErrorEmptySource";
     Object UpdateExistingLabel = "UpdateExistingLabel";
 
 }

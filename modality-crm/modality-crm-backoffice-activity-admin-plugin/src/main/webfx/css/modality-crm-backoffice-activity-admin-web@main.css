@@ -182,6 +182,30 @@
 
 .labeleditor-lang-toggle {
     font-size: 11px;
+    cursor: pointer;
+    --fx-background-color: #f8f9fa;
+    --fx-border-color: #dee2e6;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 4px;
+    --fx-background-radius: 4px;
+    --fx-text-fill: #495057;
+}
+
+.labeleditor-lang-toggle:hover {
+    --fx-background-color: #e9ecef;
+    --fx-border-color: #ced4da;
+}
+
+.labeleditor-lang-toggle.pseudo-selected {
+    --fx-background-color: #00b8d4;
+    --fx-border-color: #00a5c4;
+    --fx-text-fill: white;
+}
+
+.labeleditor-lang-toggle.pseudo-selected:hover {
+    --fx-background-color: #00a5c4;
+    --fx-border-color: #0096b4;
 }
 
 /* Dialog styles */
