@@ -190,6 +190,14 @@ public final class WorkingBooking {
         return documentLine;
     }
 
+    public void unbookItem(Site site, Item item) {
+        DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        if (documentLine != null) {
+            removeDocumentLine(documentLine);
+            // TODO: check if it's necessary to remove the attendances in addition
+        }
+    }
+
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
@@ -274,6 +282,11 @@ public final class WorkingBooking {
 
     public void bookWholeEvent() {
         bookScheduledItems(ScheduledItems.filterNotCancelled(policyAggregate.filterTeachingScheduledItems()), false);
+    }
+
+    public void removeDocumentLine(DocumentLine documentLine) {
+        integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), false);
+        lastestDocumentAggregate = null;
     }
 
     public void removeAttendance(Attendance attendance) {
