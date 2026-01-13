@@ -306,6 +306,11 @@ public final class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
+    public void setShareMateInfo(DocumentLine documentLine, String ownerName) {
+        integrateNewDocumentEvent(new EditShareMateInfoDocumentLineEvent(documentLine, ownerName), true);
+        lastestDocumentAggregate = null;
+    }
+
     public void applyFacilityFeeRate(boolean apply) {
         integrateNewDocumentEvent(new ApplyFacilityFeeEvent(document, apply), true);
     }

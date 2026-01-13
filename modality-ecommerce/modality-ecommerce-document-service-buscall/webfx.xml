@@ -28,6 +28,7 @@
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MarkNotMultipleBookingEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MergeMultipleBookingsOptionsEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.registration.documentline.CancelDocumentLineEventSerialCodec</provider>
+        <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.registration.documentline.EditShareMateInfoDocumentLineEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.registration.documentline.EditShareOwnerInfoDocumentLineEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.registration.documentline.PriceDocumentLineEventSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.document.service.buscall.serial.registration.documentline.RemoveDocumentLineEventSerialCodec</provider>
