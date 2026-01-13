@@ -214,15 +214,25 @@ public final class PolicyAggregate {
     public ItemPolicy getItemPolicy(Item item) {
         return getItemPolicies().stream()
             .filter(ip -> Entities.samePrimaryKey(ip.getItem(), item))
-            .findFirst()
-            .orElse(null);
+            .findFirst().orElse(null);
     }
 
     public ItemPolicy getSharingAccommodationItemPolicy() {
         return getItemPolicies().stream()
             .filter(ip -> Booleans.isTrue(ip.getItem().isShare_mate()) && ip.getItem().getItemFamilyType() == KnownItemFamily.ACCOMMODATION)
-            .findFirst()
-            .orElse(null);
+            .findFirst().orElse(null);
+    }
+
+    public ItemFamilyPolicy getItemFamilyPolicy(KnownItemFamily knownItemFamily) {
+        return getItemFamilyPolicies().stream()
+            .filter(ifp -> ifp.getItemFamilyType() == knownItemFamily)
+            .findFirst().orElse(null);
+    }
+
+    public List<PhaseCoverage> getAudioRecordingPhaseCoverages() {
+        ItemFamilyPolicy audioRecordingPolicy = getItemFamilyPolicy(KnownItemFamily.AUDIO_RECORDING);
+        if (audioRecordingPolicy == null) return Collections.emptyList();
+        return audioRecordingPolicy.getPhaseCoverages();
     }
 
     public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {
