@@ -48,7 +48,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         ",phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event)" +
+        "select scope.(organization,site,eventType,event.termsUrlEn)" + // loading terms url for US Festival (ways to load terms will change later)
         ",item.(name,label,code,family.(code,name,label),capacity,share_mate,ord)" +
         ",descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy,forceSoldOut" +
         " from ItemPolicy ip";

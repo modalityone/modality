@@ -99,8 +99,7 @@ public final class PolicyAggregate {
     }
 
     public void rebuildEntities(Event event) {
-        this.event = event;
-        this.entityStore = EntityStore.createAbove(event.getStore());
+        entityStore = EntityStore.createAbove(event.getStore());
         DataSourceModel dataSourceModel = entityStore.getDataSourceModel();
         QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
@@ -122,6 +121,9 @@ public final class PolicyAggregate {
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
+        // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
+        // additional fields such as termsUrlEn
+        this.event = entityStore.getEntity(event.getId());
     }
 
     public EntityStore getEntityStore() {
