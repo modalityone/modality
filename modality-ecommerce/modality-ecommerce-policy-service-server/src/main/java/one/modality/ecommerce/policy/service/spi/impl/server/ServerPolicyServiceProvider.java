@@ -44,11 +44,11 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         " from PhaseCoverage pc";
     private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event)" +
-        ",itemFamily" +
+        ",itemFamily.ord" +
         ",phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event.termsUrlEn)" + // loading terms url for US Festival (ways to load terms will change later)
+        "select scope.(organization,site,eventType,event.termsUrlEn)" + // loading terms url for US Festival (way to load terms will change later)
         ",item.(name,label,code,family.(code,name,label),capacity,share_mate,ord)" +
         ",descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy,forceSoldOut" +
         " from ItemPolicy ip";
@@ -58,6 +58,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         ",age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount" +
         ",resident_price,resident_discount,resident2_price,resident2_discount" +
         " from Rate r";
+    @Deprecated
     private final static String BOOKABLE_PERIODS_QUERY_BASE =
         "select startScheduledItem,endScheduledItem,name,label" +
         " from BookablePeriod bp";
@@ -71,7 +72,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     // 0 - Loading scheduled items (of this event or of the repeated event if set)
                     DqlQueries.newQueryArgumentForDefaultDataSource(
                         SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
-                        " order by site,item,date", eventPk)
+                        " order by site..ord,item..ord,date", eventPk)
                     // 1 - Loading scheduled boundaries (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     SCHEDULED_BOUNDARIES_QUERY_BASE + " where (select sb.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
@@ -83,15 +84,15 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     // 3 - Loading event selections (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_SELECTIONS_QUERY_BASE + " where (select es.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by part1.id,part2..id,part3..id", eventPk)
+                    " order by id", eventPk) // Will introduce an ord later
                     // 4 - Loading event phases (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_PHASES_QUERY_BASE + " where (select eph.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by startBoundary.id", eventPk)
+                    " order by id", eventPk)
                     // 5 - Loading phase coverages (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     PHASE_COVERAGES_QUERY_BASE + " where (select pc.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
-                    " order by phase1.id,phase2..id,phase3..id,phase4..id", eventPk)
+                    " order by id", eventPk) // Will introduce an ord later
                     // 6 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_FAMILY_POLICIES_QUERY_BASE + " where (select ifp.scope.(" +
@@ -100,7 +101,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
-                    " order by id", eventPk)
+                    " order by itemFamily.ord,id", eventPk)
                     // 7 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
@@ -109,7 +110,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
-                    " order by id", eventPk)
+                    " order by item.family.ord,item.ord,id", eventPk)
                     // 8 - Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     RATES_QUERY_BASE + " where (" +
@@ -120,7 +121,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
                     " order by site,item,perDay desc,startDate,endDate,price", eventPk)
-                    // 9 - Loading bookable periods (of this event or of the repeated event if set)
+                    // 9 (deprecated) - Loading bookable periods (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by startScheduledItem.date,endScheduledItem.date", eventPk)
