@@ -8,6 +8,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Person;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.SiteItem;
+import one.modality.base.shared.entities.util.Rates;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
@@ -106,12 +107,8 @@ public final class SiteItemBill {
         LocalDate lastDay = Collections.last(bas).getDate();
         DocumentAggregate documentAggregate = documentBill.getDocumentAggregate();
         PolicyAggregate policyAggregate = documentAggregate.getPolicyAggregate();
-        List<Rate> rates = policyAggregate.filterRatesStreamOfSiteAndItem(siteItem.getSite(), siteItem.getItem())
-            .filter(r -> r.isPerDay() == perDayRates)
-            .filter(r -> r.getOnDate() == null || Times.isPastOrToday(r.getOnDate()))
-            .filter(r -> r.getOffDate() == null || Times.isFutureOrToday(r.getOffDate()))
-            .filter(r -> r.getStartDate() == null || Times.isBeforeOrEquals(r.getStartDate(), lastDay))
-            .filter(r -> r.getEndDate() == null || Times.isAfterOrEquals(r.getEndDate(), firstDay))
+        List<Rate> rates = policyAggregate.filterRatesStreamOfSiteAndItem(siteItem.getSite(), siteItem.getItem(), perDayRates)
+            .filter(r -> Rates.isOnTodayAndApplicableOverPeriod(r, firstDay, lastDay))
             //.filter(r -> r.getRateMatchesDocument(bill.getDocument()))
             .collect(Collectors.toList());
         int price = Integer.MIN_VALUE;

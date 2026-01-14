@@ -15,6 +15,7 @@ import one.modality.base.shared.entities.util.Rates;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
@@ -319,12 +320,21 @@ public final class PolicyAggregate {
         return Rates.filterRatesOfSiteAndItem(getRatesStream(), site, item);
     }
 
+    public Stream<Rate> filterRatesStreamOfSiteAndItem(Site site, Item item, boolean perDay) {
+        return perDay ? filterDailyRatesStreamOfSiteAndItem(site, item) : filterFixedRatesStreamOfSiteAndItem(site, item);
+    }
+
     public Stream<Rate> filterDailyRatesStreamOfSiteAndItem(Site site, Item item) {
         return Rates.filterRatesOfSiteAndItem(getDailyRatesStream(), site, item);
     }
 
     public Stream<Rate> filterFixedRatesStreamOfSiteAndItem(Site site, Item item) {
         return Rates.filterRatesOfSiteAndItem(getFixedRatesStream(), site, item);
+    }
+
+    public Stream<Rate> filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(Site site, Item item, boolean perDay, LocalDate startDate, LocalDate lastDate) {
+        return filterRatesStreamOfSiteAndItem(site, item, perDay)
+            .filter(r -> Rates.isOnTodayAndApplicableOverPeriod(r, startDate, lastDate));
     }
 
     public boolean hasFacilityFees() {
