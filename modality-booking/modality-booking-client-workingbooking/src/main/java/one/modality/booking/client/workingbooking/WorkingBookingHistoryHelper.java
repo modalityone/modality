@@ -3,6 +3,7 @@ package one.modality.booking.client.workingbooking;
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.util.Attendances;
 import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
 import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
@@ -56,9 +57,9 @@ public final class WorkingBookingHistoryHelper {
     private void appendHistoryCommentFromAttendances(List<Attendance> attendances, boolean added, StringBuilder sb) {
         if (!attendances.isEmpty()) {
             newSection(sb).append(!added ? "Removed" : workingBooking.isNewBooking() ? "Booked" : "Added");
-            attendances.stream().collect(Collectors.groupingBy(a -> a.getScheduledItem().getItem()))
+            attendances.stream().collect(Collectors.groupingBy(Attendances::getItem))
                 .forEach((item, itemAttendances) -> {
-                    List<LocalDate> dates = Collections.map(itemAttendances, a -> a.getScheduledItem().getDate());
+                    List<LocalDate> dates = Collections.map(itemAttendances, Attendances::getDate);
                     sb.append("  ⦿ ").append(item.getName()).append(" ").append(ModalityDates.formatDateSeries(dates));
                 });
         }

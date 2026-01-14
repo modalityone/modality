@@ -15,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Attendances;
 import one.modality.base.shared.entities.util.DocumentLines;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -216,7 +217,7 @@ public final class WorkingBooking {
         List<Attendance> existingAttendances = getLastestDocumentAggregate().getLineAttendances(documentLine);
         Attendance[] newAttendances = datesOrScheduledItems.stream().map(dateOrScheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
-            if (Collections.findFirst(existingAttendances, a -> attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) != null)
+            if (Collections.findFirst(existingAttendances, a -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) != null)
                 return null;
             // Note: attendances are not directly submitted to the database but incorporated in document events, so we
             // don't use insertEntity() but createEntity() to create them in memory.
@@ -231,7 +232,7 @@ public final class WorkingBooking {
             if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
                 newAttendance.setDate(scheduledItem.getDate());
                 newAttendance.setScheduledItem(dateOrScheduledItem);
-            } else
+            } else // assuming it's a local date
                 newAttendance.setDate((LocalDate) dateOrScheduledItem);
             return newAttendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
@@ -240,19 +241,11 @@ public final class WorkingBooking {
         if (!addOnly) {
             // We remove all existing attendances not referencing the passed dates or scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
-                Collections.findFirst(datesOrScheduledItems, dateOrScheduledItem -> attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) == null);
+                Collections.findFirst(datesOrScheduledItems, dateOrScheduledItem -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) == null);
             removeAttendances(attendancesToRemove);
         }
         lastestDocumentAggregate = null;
         return documentLine;
-    }
-
-    private static boolean attendanceMatchesDateOrScheduledItem(Attendance a, Object dateOrScheduledItem) {
-        if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
-            return Entities.sameId(a.getScheduledItem(), scheduledItem) || Objects.equals(a.getDate(), scheduledItem.getDate());
-        }
-        // dateOrScheduledItem is a LocalDate
-        return Objects.equals(a.getDate(), dateOrScheduledItem);
     }
 
     public void unbookScheduledItems(List<ScheduledItem> scheduledItems) {

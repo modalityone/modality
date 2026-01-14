@@ -1,6 +1,7 @@
 package one.modality.ecommerce.shared.pricecalculator;
 
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Attendances;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
 import java.time.LocalDate;
@@ -32,8 +33,7 @@ final class Kbs2PriceAlgorithm {
             SiteItemBill siteItemBill = siteItemBills.computeIfAbsent(siteItem, SiteItemBill::new);
             List<Attendance> lineAttendances = documentAggregate.getLineAttendances(line);
             lineAttendances.forEach(attendance -> {
-                //LocalDate date = attendance.getDate(); // is null
-                LocalDate date = attendance.getScheduledItem().getDate(); // running this on a KBS2 event will produce a NPE (should we do something about it?)
+                LocalDate date = Attendances.getDate(attendance);
                 AttendanceBill attendanceBill = new AttendanceBill(line, date);
                 siteItemBill.addAttendanceBill(attendanceBill);
             });
