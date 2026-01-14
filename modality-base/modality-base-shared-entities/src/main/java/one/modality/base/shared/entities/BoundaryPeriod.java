@@ -16,21 +16,21 @@ public interface BoundaryPeriod extends Period {
 
     @Override
     default LocalDate getStartDate() {
-        return ScheduledBoundaries.getDate(getStartBoundary());
+        return ScheduledBoundaries.getDate(getStartBoundary(), false);
     }
 
     @Override
     default LocalTime getStartTime() {
-        return ScheduledBoundaries.getTime(getStartBoundary());
+        return ScheduledBoundaries.getTime(getStartBoundary(), false);
     }
 
     default LocalDate getEndDate() {
-        return ScheduledBoundaries.getDate(getEndBoundary());
+        return ScheduledBoundaries.getDate(getEndBoundary(), true);
     }
 
     @Override
     default LocalTime getEndTime() {
-        return ScheduledBoundaries.getTime(getEndBoundary());
+        return ScheduledBoundaries.getTime(getEndBoundary(), true);
     }
 
 }

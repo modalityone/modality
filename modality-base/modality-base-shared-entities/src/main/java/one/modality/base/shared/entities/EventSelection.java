@@ -16,7 +16,7 @@ public interface EventSelection extends Entity,
     EntityHasEvent,
     EntityHasName,
     EntityHasLabel,
-    BoundaryPeriod // Can be used as a BoundaryPeriod, when all parts are consecutive (no discontinuity)
+    BoundaryPeriod // Can be used as a BoundaryPeriod when all parts are consecutive (no discontinuity)
 {
     String inPerson = "inPerson";
     String online = "online";

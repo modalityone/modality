@@ -1,9 +1,7 @@
 package one.modality.base.shared.entities.util;
 
-import one.modality.base.shared.entities.ItemFamily;
 import one.modality.base.shared.entities.ScheduledBoundary;
 import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.Timeline;
 import one.modality.base.shared.entities.markers.EntityHasStartAndEndTime;
 
 import java.time.LocalDate;
@@ -15,21 +13,34 @@ import java.time.LocalTime;
 public final class ScheduledBoundaries {
 
     public static LocalDate getDate(ScheduledBoundary scheduledBoundary) {
+        return getDate(scheduledBoundary, false);
+    }
+
+    public static LocalDate getDate(ScheduledBoundary scheduledBoundary, boolean isEndBoundary) {
         LocalDate date = scheduledBoundary.getDate();
-        if (date != null)
-            return date;
+        if (date == null) {
+            ScheduledItem scheduledItem = scheduledBoundary.getScheduledItem();
+            if (scheduledItem != null)
+                date = scheduledItem.getDate();
+        }
+        // If it's an end boundary and the time is 00:00, the end actually refers to the previous day at midnight
+        if (date != null && isEndBoundary && LocalTime.MIN.equals(getTime(scheduledBoundary))) {
+            date = date.minusDays(1); // and getTime(scheduledBoundary, true) will return midnight
+        }
 
-        ScheduledItem scheduledItem = scheduledBoundary.getScheduledItem();
-        if (scheduledItem != null)
-            return scheduledItem.getDate();
-
-        return null;
+        return date;
     }
 
     public static LocalTime getTime(ScheduledBoundary scheduledBoundary) {
-        if (scheduledBoundary.isAtStartTime())
-            return getStartTime(scheduledBoundary);
-        return getEndTime(scheduledBoundary);
+        return getTime(scheduledBoundary, false);
+    }
+
+    public static LocalTime getTime(ScheduledBoundary scheduledBoundary, boolean isEndBoundary) {
+        LocalTime time = scheduledBoundary.isAtStartTime() ? getStartTime(scheduledBoundary) : getEndTime(scheduledBoundary);
+        // If it's an end boundary and the time is 00:00, the end actually refers to the previous day at midnight
+        if (isEndBoundary && LocalTime.MIN.equals(time))
+            time = LocalTime.MAX; // and getDate(scheduledBoundary, true) will return the previous day
+        return time;
     }
 
     public static EntityHasStartAndEndTime getStartAndEndDateHolder(ScheduledBoundary scheduledBoundary) {
@@ -52,12 +63,4 @@ public final class ScheduledBoundaries {
         return endTime != null ? endTime : LocalTime.MAX;
     }
 
-    public ItemFamily getItemFamily(ScheduledBoundary scheduledBoundary) {
-        ScheduledItem scheduledItem = scheduledBoundary.getScheduledItem();
-        if (scheduledItem != null)
-            return scheduledItem.getItem().getFamily();
-
-        Timeline timeline = scheduledBoundary.getTimeline();
-        return timeline != null ? timeline.getItemFamily() : null;
-    }
 }

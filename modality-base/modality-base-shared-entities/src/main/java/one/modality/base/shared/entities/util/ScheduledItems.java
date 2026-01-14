@@ -44,18 +44,22 @@ public final class ScheduledItems {
     }
 
     public static List<ScheduledItem> filterOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
+        LocalDate periodStartDate = period.getStartDate();
+        LocalTime periodStartTime = period.getStartTime();
+        LocalDate periodEndDate = period.getEndDate();
+        LocalTime periodEndTime = period.getEndTime();
         return Collections.filter(scheduledItems, scheduledItem -> {
             LocalDate date = scheduledItem.getDate();
-            if (!Times.isBetween(date, period.getStartDate(), period.getEndDate()))
+            if (!Times.isBetween(date, periodStartDate, periodEndDate))
                 return false;
-            if (Objects.equals(date, period.getStartDate())) {
-                LocalTime sessionStartTime = getSessionStartTime(scheduledItem);
-                if (sessionStartTime.isBefore(period.getStartTime()))
+            if (Objects.equals(date, periodStartDate)) {
+                LocalTime sessionStartTime = getSessionStartTimeOrMin(scheduledItem);
+                if (sessionStartTime.isBefore(periodStartTime))
                     return false;
             }
-            if (Objects.equals(date, period.getEndDate())) {
-                LocalTime sessionEndTime = getSessionEndTime(scheduledItem);
-                if (sessionEndTime.isAfter(period.getEndTime()))
+            if (Objects.equals(date, periodEndDate)) {
+                LocalTime sessionEndTime = getSessionEndTimeOrMax(scheduledItem);
+                if (sessionEndTime.isAfter(periodEndTime))
                     return false;
             }
             return true;
@@ -91,6 +95,16 @@ public final class ScheduledItems {
 
     public static LocalTime getSessionEndTime(ScheduledItem scheduledItem) {
         return scheduledItem.evaluate("coalesce(endTime, timeline.endTime, programScheduledItem.endTime, programScheduledItem.timeline.endTime)");
+    }
+
+    public static LocalTime getSessionStartTimeOrMin(ScheduledItem scheduledItem) {
+        LocalTime sessionStartTime = getSessionStartTime(scheduledItem);
+        return sessionStartTime != null ? sessionStartTime : LocalTime.MIN;
+    }
+
+    public static LocalTime getSessionEndTimeOrMax(ScheduledItem scheduledItem) {
+        LocalTime sessionEndTime = getSessionEndTime(scheduledItem);
+        return sessionEndTime != null ? sessionEndTime : LocalTime.MAX;
     }
 
 }
