@@ -358,19 +358,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
     protected BookingFormPage createDefaultSummaryPage() {
         defaultSummarySection = new DefaultSummarySection();
         defaultSummarySection.setColorScheme(colorScheme);
+        // Terms section is shown on Summary page, before submitting registration
+        defaultTermsSection = new DefaultTermsSection();
+        defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
-            defaultSummarySection)
+            defaultSummarySection,
+            defaultTermsSection)
             .setStep(true);
     }
 
     protected BookingFormPage createDefaultPendingBookingsPage() {
         defaultPendingBookingsSection = new DefaultPendingBookingsSection();
         defaultPendingBookingsSection.setColorScheme(colorScheme);
-        defaultTermsSection = new DefaultTermsSection();
-        defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-            defaultPendingBookingsSection,
-            defaultTermsSection)
+            defaultPendingBookingsSection)
             .setStep(true);
     }
 
@@ -628,7 +629,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Pending Bookings page: Register Another Person + Proceed to Payment (or Confirm Booking if price is zero)
         // Register Another Person is only shown for logged-in users (new users can't register another person)
         // Register Another Person is disabled when no available members to book
-        // Proceed to Payment/Confirm Booking is disabled when terms are not accepted
+        // Note: Terms are accepted on the Summary page before reaching this page
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
             // Initialize button text based on total (will be updated when bookings change)
             updatePendingBookingsButtonText();
@@ -646,20 +647,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     // Use dynamic button text that changes based on total amount
                     new BookingFormButton(pendingBookingsButtonText,
                         e -> handleProceedToPaymentOrConfirm(),
-                        "btn-primary booking-form-btn-primary",
-                        defaultTermsSection != null
-                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
-                            : null)
+                        "btn-primary booking-form-btn-primary")
                 );
             } else {
                 // New users (not logged in) - only show the proceed button
                 compositePending.setButtons(
                     new BookingFormButton(pendingBookingsButtonText,
                         e -> handleProceedToPaymentOrConfirm(),
-                        "btn-primary booking-form-btn-primary",
-                        defaultTermsSection != null
-                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
-                            : null)
+                        "btn-primary booking-form-btn-primary")
                 );
             }
         }
@@ -1454,32 +1449,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     continue;
                 }
 
-                // Build display name based on item family type:
-                // - Teaching: family name only (e.g., "Teaching")
-                // - Accommodation: "Family - Item" (e.g., "Accommodation - Single Room")
-                // - Meals: item name only (e.g., "Lunch", "Dinner")
-                // - Other: family name if available, else item name
+                // Build display name: always show "Family - Item" format for clarity
+                // e.g., "Accommodation - Single Room", "Meals - Lunch", "Teaching - Full Course"
                 String familyName = (family != null && family.getName() != null) ? family.getName() : null;
                 String itemName = item.getName() != null ? item.getName() : "Item";
-                String familyCode = family != null ? family.getCode() : "";
                 String displayName;
 
-                if (KnownItemFamily.TEACHING.getCode().equals(familyCode)) {
-                    // Teaching: show family name only
-                    displayName = familyName != null ? familyName : itemName;
-                } else if (KnownItemFamily.ACCOMMODATION.getCode().equals(familyCode)) {
-                    // Accommodation: show "Family - Item" (e.g., "Accommodation - Single Room")
-                    if (familyName != null) {
-                        displayName = familyName + " - " + itemName;
-                    } else {
-                        displayName = itemName;
-                    }
-                } else if (KnownItemFamily.MEALS.getCode().equals(familyCode)) {
-                    // Meals: show item name only (e.g., "Lunch", "Dinner")
-                    displayName = itemName;
+                if (familyName != null) {
+                    // Show both family and item name
+                    displayName = familyName + " - " + itemName;
                 } else {
-                    // Other items: prefer family name, fall back to item name
-                    displayName = familyName != null ? familyName : itemName;
+                    // No family, show item name only
+                    displayName = itemName;
                 }
 
                 // Get price: use stored price if available, otherwise calculate dynamically
@@ -1871,5 +1852,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
             header.forceRebuildSteps();
         }
         updateNavigationBar();
+    }
+
+    /**
+     * Sets the URL for the terms and conditions link.
+     * This URL will open when the user clicks on the terms link in the booking page.
+     *
+     * @param url The URL to the terms and conditions page
+     */
+    public void setTermsUrl(String url) {
+        if (defaultTermsSection != null) {
+            defaultTermsSection.setTermsUrl(url);
+        }
     }
 }

@@ -149,13 +149,12 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
                 fieldsContainer.getChildren().add(fieldContainer);
             }
         } else {
-            // Share Accommodation mode: show single roommate field + optional registration number
+            // Share Accommodation mode: show single combined field for name and reference
             infoBox.setVisible(false);
             infoBox.setManaged(false);
 
             VBox nameFieldContainer = createShareAccommodationNameField();
-            VBox regNumberFieldContainer = createRegistrationNumberField();
-            fieldsContainer.getChildren().addAll(nameFieldContainer, regNumberFieldContainer);
+            fieldsContainer.getChildren().add(nameFieldContainer);
         }
 
         updateValidity();
@@ -246,18 +245,19 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
     }
 
     /**
-     * Creates the roommate name field for Share Accommodation mode.
+     * Creates the combined roommate name and reference field for Share Accommodation mode.
+     * This single field replaces the previous separate name and registration number fields.
      */
     protected VBox createShareAccommodationNameField() {
         VBox fieldContainer = new VBox(6);
         fieldContainer.getStyleClass().add("bookingpage-form-field");
 
-        // Label with required asterisk
-        HBox labelRow = createRequiredFieldLabel(RoommateName);
+        // Label with required asterisk - combined label for name and reference
+        HBox labelRow = createRequiredFieldLabel(RoommateNameAndReference);
 
-        // Text field
+        // Text field - single combined field
         nameField = new TextField();
-        I18n.bindI18nPromptProperty(nameField.promptTextProperty(), RoommateNamePlaceholder);
+        I18n.bindI18nPromptProperty(nameField.promptTextProperty(), RoommateNameAndReferencePlaceholder);
         nameField.getStyleClass().add("bookingpage-text-input");
         nameField.textProperty().bindBidirectional(roommateNameProperty);
         nameField.setPadding(new Insets(12, 14, 12, 14));
@@ -265,30 +265,6 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         HBox.setHgrow(nameField, Priority.ALWAYS);
 
         fieldContainer.getChildren().addAll(labelRow, nameField);
-        return fieldContainer;
-    }
-
-    /**
-     * Creates the registration number field for Share Accommodation mode.
-     */
-    protected VBox createRegistrationNumberField() {
-        VBox fieldContainer = new VBox(6);
-        fieldContainer.getStyleClass().add("bookingpage-form-field");
-
-        // Label (no asterisk - optional field)
-        Label label = I18nControls.newLabel(RegistrationNumber);
-        label.getStyleClass().add("bookingpage-form-label");
-
-        // Text field
-        registrationNumberField = new TextField();
-        I18n.bindI18nPromptProperty(registrationNumberField.promptTextProperty(), RegistrationNumberPlaceholder);
-        registrationNumberField.getStyleClass().add("bookingpage-text-input");
-        registrationNumberField.textProperty().bindBidirectional(registrationNumberProperty);
-        registrationNumberField.setPadding(new Insets(12, 14, 12, 14));
-        registrationNumberField.setMaxWidth(Double.MAX_VALUE);
-        HBox.setHgrow(registrationNumberField, Priority.ALWAYS);
-
-        fieldContainer.getChildren().addAll(label, registrationNumberField);
         return fieldContainer;
     }
 

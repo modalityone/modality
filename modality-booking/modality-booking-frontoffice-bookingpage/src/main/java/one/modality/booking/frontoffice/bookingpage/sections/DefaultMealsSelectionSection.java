@@ -14,9 +14,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ItemPolicy;
+import one.modality.base.shared.entities.Period;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.SiteItem;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -30,6 +32,7 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -126,6 +129,21 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     protected LocalDate eventBoundaryStartDate;
     protected LocalDate eventBoundaryEndDate;
 
+    // === EVENT BOUNDARY MEALS ===
+    // These define which meal marks the start/end of the main event on the boundary dates
+    // For example, if main event starts at DINNER on Apr 24, then lunch on Apr 24 is early arrival
+    public enum MealBoundary { BREAKFAST, LUNCH, DINNER }
+    protected MealBoundary eventBoundaryStartMeal = MealBoundary.BREAKFAST; // Default: main event starts at breakfast
+    protected MealBoundary eventBoundaryEndMeal = MealBoundary.DINNER;      // Default: main event ends at dinner
+
+    // === MAIN EVENT PERIOD ===
+    // The main event period (from EventPart) used for isInPeriod checks
+    protected Period mainEventPeriod;
+
+    // === MEAL SCHEDULED ITEMS ===
+    // All meal ScheduledItems from PolicyAggregate, used for isInPeriod checks
+    protected List<ScheduledItem> mealScheduledItems = new ArrayList<>();
+
     // === SUMMARY UI ===
     protected VBox summaryBox;  // Summary info box showing meal counts
 
@@ -191,26 +209,67 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      * Uses BookingPageUIBuilder.createInfoBox() for consistent styling via CSS.
      */
     protected VBox createCombinedInfoBox() {
-        VBox box = new VBox(8);
-        box.setAlignment(Pos.CENTER_LEFT);
+        VBox box = new VBox(4);
+        box.setPadding(new Insets(12, 16, 12, 16));
+        box.getStyleClass().addAll("bookingpage-info-box", "bookingpage-info-box-neutral");
 
-        // Main info box using helper (CSS-styled, matches "Price includes" boxes)
-        HBox mainInfoBox = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.AllMealsVegetarian, BookingPageUIBuilder.InfoBoxType.NEUTRAL);
+        // Main info text - vegetarian info
+        infoLabel = I18nControls.newLabel(BookingPageI18nKeys.AllMealsVegetarian);
+        infoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        infoLabel.setWrapText(true);
 
-        // Get the label from the info box for potential updates (first child since NEUTRAL has no icon)
-        if (!mainInfoBox.getChildren().isEmpty() && mainInfoBox.getChildren().get(0) instanceof Label) {
-            infoLabel = (Label) mainInfoBox.getChildren().get(0);
-        }
-
-        // Extended stay label (hidden by default) - shown below main info box when needed
-        extendedStayLabel = I18nControls.newLabel(BookingPageI18nKeys.ExtendedStayMealsNote);
+        // Extended stay label (hidden by default) - shows pricing info
+        extendedStayLabel = new Label();
         extendedStayLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-primary");
-        extendedStayLabel.setPadding(new Insets(4, 0, 0, 28)); // Indent to align with text after icon
+        extendedStayLabel.setWrapText(true);
         extendedStayLabel.setVisible(false);
         extendedStayLabel.setManaged(false);
 
-        box.getChildren().addAll(mainInfoBox, extendedStayLabel);
+        box.getChildren().addAll(infoLabel, extendedStayLabel);
         return box;
+    }
+
+    /**
+     * Updates the info box with meal pricing information based on selected dates.
+     * Shows prices during event and outside event (early arrival/late departure).
+     */
+    protected void updateInfoBoxPricing() {
+        if (extendedStayLabel == null) return;
+
+        // Check if we have extended stay (early arrival or late departure)
+        boolean hasExtendedStay = showEarlyArrivalPricing || showLateDeparturePricing;
+
+        if (!hasExtendedStay) {
+            extendedStayLabel.setVisible(false);
+            extendedStayLabel.setManaged(false);
+            return;
+        }
+
+        // Get the main event price (use lunch as representative, or dinner if lunch is 0)
+        int mainEventPrice = lunchPricePerDay > 0 ? lunchPricePerDay : dinnerPricePerDay;
+        // Get the outside event price (early/late - use the higher of early arrival or late departure)
+        int outsideEventPrice = Math.max(
+            Math.max(lunchEarlyArrivalPrice, dinnerEarlyArrivalPrice),
+            Math.max(lunchLateDeparturePrice, dinnerLateDeparturePrice)
+        );
+
+        // Build pricing text
+        StringBuilder sb = new StringBuilder();
+        if (mainEventPrice > 0 && outsideEventPrice > 0 && mainEventPrice != outsideEventPrice) {
+            sb.append("During event: ").append(formatPrice(mainEventPrice)).append("/meal");
+            sb.append(" • Outside event: ").append(formatPrice(outsideEventPrice)).append("/meal");
+        } else if (outsideEventPrice > 0) {
+            sb.append("Outside event dates: ").append(formatPrice(outsideEventPrice)).append("/meal");
+        }
+
+        if (sb.length() > 0) {
+            extendedStayLabel.setText(sb.toString());
+            extendedStayLabel.setVisible(true);
+            extendedStayLabel.setManaged(true);
+        } else {
+            extendedStayLabel.setVisible(false);
+            extendedStayLabel.setManaged(false);
+        }
     }
 
     /**
@@ -773,19 +832,25 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
-     * Sets the arrival time and updates the summary.
+     * Sets the arrival time and rebuilds meal cards to update pricing.
+     * Changing arrival time (e.g., afternoon to morning) affects which meals are included,
+     * and if that meal is outside the main event period, different pricing may apply.
      */
     public void setArrivalTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
         this.arrivalTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
-        updateSummary();
+        Console.log("DefaultMealsSelectionSection.setArrivalTime: " + this.arrivalTime);
+        rebuildMealCards();
     }
 
     /**
-     * Sets the departure time and updates the summary.
+     * Sets the departure time and rebuilds meal cards to update pricing.
+     * Changing departure time affects which meals are included,
+     * and if that meal is outside the main event period, different pricing may apply.
      */
     public void setDepartureTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
         this.departureTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
-        updateSummary();
+        Console.log("DefaultMealsSelectionSection.setDepartureTime: " + this.departureTime);
+        rebuildMealCards();
     }
 
     /**
@@ -804,6 +869,50 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     public void setEventBoundaryEndDate(LocalDate date) {
         this.eventBoundaryEndDate = date;
         // Don't call updateSummary() here - it will be called after prices are set via rebuildMealCards()
+    }
+
+    /**
+     * Sets the meal type that marks the start of the main event.
+     * Meals before this on the start date are considered "early arrival".
+     * For example, if main event starts at DINNER, then lunch on start date is early arrival.
+     */
+    public void setEventBoundaryStartMeal(MealBoundary meal) {
+        this.eventBoundaryStartMeal = meal != null ? meal : MealBoundary.BREAKFAST;
+        Console.log("DefaultMealsSelectionSection.setEventBoundaryStartMeal: " + this.eventBoundaryStartMeal);
+    }
+
+    /**
+     * Sets the meal type that marks the end of the main event.
+     * Meals after this on the end date are considered "late departure".
+     * For example, if main event ends at LUNCH, then dinner on end date is late departure.
+     */
+    public void setEventBoundaryEndMeal(MealBoundary meal) {
+        this.eventBoundaryEndMeal = meal != null ? meal : MealBoundary.DINNER;
+        Console.log("DefaultMealsSelectionSection.setEventBoundaryEndMeal: " + this.eventBoundaryEndMeal);
+    }
+
+    /**
+     * Sets the main event period (typically from EventPart) for isInPeriod checks.
+     * This allows accurate determination of whether a meal ScheduledItem falls within the main event.
+     *
+     * @param period the main event period (e.g., EventPart which implements Period via BoundaryPeriod)
+     */
+    public void setMainEventPeriod(Period period) {
+        this.mainEventPeriod = period;
+        Console.log("DefaultMealsSelectionSection.setMainEventPeriod: " +
+            (period != null ? "start=" + period.getStartDate() + " " + period.getStartTime() +
+                ", end=" + period.getEndDate() + " " + period.getEndTime() : "null"));
+    }
+
+    /**
+     * Sets the meal ScheduledItems for isInPeriod checks.
+     * These are used to determine which meals fall outside the main event period.
+     *
+     * @param scheduledItems list of meal ScheduledItems from PolicyAggregate
+     */
+    public void setMealScheduledItems(List<ScheduledItem> scheduledItems) {
+        this.mealScheduledItems = scheduledItems != null ? new ArrayList<>(scheduledItems) : new ArrayList<>();
+        Console.log("DefaultMealsSelectionSection.setMealScheduledItems: " + this.mealScheduledItems.size() + " items");
     }
 
     protected HBox createMealToggle(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty, int pricePerDay) {
@@ -882,7 +991,14 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      * Creates a price display VBox that shows the main price per meal and optionally
      * early arrival/late departure prices stacked below in a compact layout.
      *
-     * @param pricePerDay the main price per meal
+     * <p>UX Design:</p>
+     * <ul>
+     *   <li>Main event price shown prominently at top</li>
+     *   <li>Secondary price shown smaller below only when user has selected early/late dates</li>
+     *   <li>If early and late prices are the same, show once as "Outside event"</li>
+     * </ul>
+     *
+     * @param pricePerDay the main price per meal (during event)
      * @param titleKey the meal type key (used to determine which early/late prices to show)
      * @return a VBox with the price display
      */
@@ -890,7 +1006,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         VBox priceBox = new VBox(2);
         priceBox.setAlignment(Pos.CENTER_RIGHT);
 
-        // Main price label - "/meal" instead of "/day"
+        // Main price label - this is the event price, shown prominently
         Label mainPrice = new Label(formatPrice(pricePerDay) + "/meal");
         mainPrice.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
         priceBox.getChildren().add(mainPrice);
@@ -900,27 +1016,54 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         int latePrice = 0;
         boolean isLunch = titleKey == BookingPageI18nKeys.Lunch;
         boolean isDinner = titleKey == BookingPageI18nKeys.Dinner;
+        boolean hasEarlyMeal = false;
+        boolean hasLateMeal = false;
 
         if (isLunch) {
             earlyPrice = lunchEarlyArrivalPrice;
             latePrice = lunchLateDeparturePrice;
+            hasEarlyMeal = hasEarlyArrivalLunch();
+            hasLateMeal = hasLateDepartureLunch();
+            Console.log("DefaultMealsSelectionSection: Lunch - earlyPrice=" + earlyPrice + ", latePrice=" + latePrice
+                + ", hasEarlyLunch=" + hasEarlyMeal + ", hasLateLunch=" + hasLateMeal
+                + ", arrivalTime=" + arrivalTime + ", departureTime=" + departureTime
+                + ", arrivalDate=" + arrivalDate + ", eventBoundaryStart=" + eventBoundaryStartDate
+                + ", showEarlyPricing=" + showEarlyArrivalPricing);
         } else if (isDinner) {
             earlyPrice = dinnerEarlyArrivalPrice;
             latePrice = dinnerLateDeparturePrice;
+            hasEarlyMeal = hasEarlyArrivalDinner();
+            hasLateMeal = hasLateDepartureDinner();
+            Console.log("DefaultMealsSelectionSection: Dinner - earlyPrice=" + earlyPrice + ", latePrice=" + latePrice
+                + ", hasEarlyDinner=" + hasEarlyMeal + ", hasLateDinner=" + hasLateMeal
+                + ", arrivalTime=" + arrivalTime + ", departureTime=" + departureTime);
         }
 
-        // Show early arrival price if enabled and different from main price
-        if (showEarlyArrivalPricing && earlyPrice > 0 && earlyPrice != pricePerDay) {
-            Label earlyLabel = new Label("Early: " + formatPrice(earlyPrice) + "/meal");
-            earlyLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-            priceBox.getChildren().add(earlyLabel);
-        }
+        // Only show secondary prices when this specific meal type has early/late meals
+        // based on both the selected dates AND times
+        boolean showEarly = hasEarlyMeal && earlyPrice > 0 && earlyPrice != pricePerDay;
+        boolean showLate = hasLateMeal && latePrice > 0 && latePrice != pricePerDay;
+        Console.log("DefaultMealsSelectionSection: showEarly=" + showEarly + ", showLate=" + showLate + ", pricePerDay=" + pricePerDay);
 
-        // Show late departure price if enabled and different from main price
-        if (showLateDeparturePricing && latePrice > 0 && latePrice != pricePerDay) {
-            Label lateLabel = new Label("Late: " + formatPrice(latePrice) + "/meal");
-            lateLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-            priceBox.getChildren().add(lateLabel);
+        if (showEarly || showLate) {
+            // If early and late prices are the same, show single line "Outside event: $X/meal"
+            if (showEarly && showLate && earlyPrice == latePrice) {
+                Label outsideLabel = new Label("Outside event: " + formatPrice(earlyPrice) + "/meal");
+                outsideLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                priceBox.getChildren().add(outsideLabel);
+            } else {
+                // Show separate lines for early and late if different
+                if (showEarly) {
+                    Label earlyLabel = new Label("Early arrival: " + formatPrice(earlyPrice) + "/meal");
+                    earlyLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                    priceBox.getChildren().add(earlyLabel);
+                }
+                if (showLate) {
+                    Label lateLabel = new Label("Late departure: " + formatPrice(latePrice) + "/meal");
+                    lateLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                    priceBox.getChildren().add(lateLabel);
+                }
+            }
         }
 
         return priceBox;
@@ -1326,11 +1469,130 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
+     * Returns whether early arrival pricing is currently displayed.
+     */
+    public boolean isShowEarlyArrivalPricing() {
+        return showEarlyArrivalPricing;
+    }
+
+    /**
      * Enables/disables display of late departure pricing in meal cards.
      * When enabled, shows a secondary price line for late departure days.
      */
     public void setShowLateDeparturePricing(boolean show) {
         this.showLateDeparturePricing = show;
+    }
+
+    /**
+     * Returns whether late departure pricing is currently displayed.
+     */
+    public boolean isShowLateDeparturePricing() {
+        return showLateDeparturePricing;
+    }
+
+    /**
+     * Checks if there's at least one early arrival lunch based on arrival date, time, and boundary meal.
+     * Early arrival lunch exists if:
+     * - User can eat lunch (arrives MORNING)
+     * - AND lunch is outside the main event boundary:
+     *   - Arrival is strictly before event start date, OR
+     *   - Arrival is ON event start date but main event starts at DINNER (lunch is before boundary)
+     */
+    public boolean hasEarlyArrivalLunch() {
+        if (!showEarlyArrivalPricing || arrivalDate == null || eventBoundaryStartDate == null) {
+            return false;
+        }
+        // User must arrive early enough to get lunch (MORNING arrival)
+        if (arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
+            return false;
+        }
+        // Case 1: Arrival is strictly before event start date - all meals are early arrival
+        if (arrivalDate.isBefore(eventBoundaryStartDate)) {
+            return true;
+        }
+        // Case 2: Arrival is ON event start date - lunch is early if main event starts at DINNER
+        if (arrivalDate.equals(eventBoundaryStartDate)) {
+            return eventBoundaryStartMeal == MealBoundary.DINNER;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there's at least one early arrival dinner based on arrival date, time, and boundary meal.
+     * Early arrival dinner exists if:
+     * - User can eat dinner (arrives MORNING or AFTERNOON)
+     * - AND dinner is outside the main event boundary:
+     *   - Arrival is strictly before event start date
+     *   - (Note: dinner on start date is never early arrival since DINNER is the last meal of day,
+     *     so if boundary is DINNER or earlier, dinner IS part of main event)
+     */
+    public boolean hasEarlyArrivalDinner() {
+        if (!showEarlyArrivalPricing || arrivalDate == null || eventBoundaryStartDate == null) {
+            return false;
+        }
+        // User must arrive early enough to get dinner (MORNING or AFTERNOON arrival)
+        if (arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING
+            && arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON) {
+            return false;
+        }
+        // Dinner on event start date is NEVER early arrival (it's always the boundary or after)
+        // Only dinners BEFORE event start date are early arrival
+        return arrivalDate.isBefore(eventBoundaryStartDate);
+    }
+
+    /**
+     * Checks if there's at least one late departure lunch based on departure date, time, and boundary meal.
+     * Late departure lunch exists if:
+     * - User can eat lunch (departs AFTERNOON or EVENING)
+     * - AND lunch is outside the main event boundary:
+     *   - Departure is strictly after event end date, OR
+     *   - Departure is ON event end date but main event ends at BREAKFAST (lunch is after boundary)
+     */
+    public boolean hasLateDepartureLunch() {
+        if (!showLateDeparturePricing || departureDate == null || eventBoundaryEndDate == null) {
+            return false;
+        }
+        // User must stay long enough to get lunch (AFTERNOON or EVENING departure)
+        if (departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON
+            && departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            return false;
+        }
+        // Case 1: Departure is strictly after event end date - all meals are late departure
+        if (departureDate.isAfter(eventBoundaryEndDate)) {
+            return true;
+        }
+        // Case 2: Departure is ON event end date - lunch is late if main event ends at BREAKFAST
+        if (departureDate.equals(eventBoundaryEndDate)) {
+            return eventBoundaryEndMeal == MealBoundary.BREAKFAST;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if there's at least one late departure dinner based on departure date, time, and boundary meal.
+     * Late departure dinner exists if:
+     * - User can eat dinner (departs EVENING)
+     * - AND dinner is outside the main event boundary:
+     *   - Departure is strictly after event end date, OR
+     *   - Departure is ON event end date but main event ends at BREAKFAST or LUNCH (dinner is after boundary)
+     */
+    public boolean hasLateDepartureDinner() {
+        if (!showLateDeparturePricing || departureDate == null || eventBoundaryEndDate == null) {
+            return false;
+        }
+        // User must stay long enough to get dinner (EVENING departure)
+        if (departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
+            return false;
+        }
+        // Case 1: Departure is strictly after event end date - all meals are late departure
+        if (departureDate.isAfter(eventBoundaryEndDate)) {
+            return true;
+        }
+        // Case 2: Departure is ON event end date - dinner is late if main event ends at BREAKFAST or LUNCH
+        if (departureDate.equals(eventBoundaryEndDate)) {
+            return eventBoundaryEndMeal == MealBoundary.BREAKFAST || eventBoundaryEndMeal == MealBoundary.LUNCH;
+        }
+        return false;
     }
 
     @Override
@@ -1428,6 +1690,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     /**
      * Populates meal prices from PolicyAggregate data.
      * Looks for MEALS family items and extracts their daily rates.
+     * Also extracts early arrival and late departure rates when event boundaries are set.
      *
      * @param policyAggregate the policy data containing scheduledItems and rates
      */
@@ -1450,33 +1713,121 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             Item item = entry.getKey();
             String itemName = item.getName() != null ? item.getName().toLowerCase() : "";
 
-            // Get rate for this meal item - only use daily rates (per_day=true)
-            // Fixed rates should not be used for per-day meal pricing
-            int dailyRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
-                .findFirst()
-                .map(Rate::getPrice)
-                .orElseGet(() -> {
-                    // Fallback: search all daily rates for this item regardless of site
-                    return policyAggregate.getDailyRatesStream()
-                        .filter(r -> r.getItem() != null && r.getItem().getPrimaryKey() != null
-                            && r.getItem().getPrimaryKey().equals(item.getPrimaryKey()))
-                        .findFirst()
-                        .map(Rate::getPrice)
-                        .orElse(0);
-                });
+            // Get all daily rates for this meal item
+            List<Rate> itemRates = policyAggregate.getDailyRatesStream()
+                .filter(r -> r.getItem() != null && r.getItem().getPrimaryKey() != null
+                    && r.getItem().getPrimaryKey().equals(item.getPrimaryKey()))
+                .collect(Collectors.toList());
 
-            Console.log("DefaultMealsSelectionSection: Meal item '" + item.getName() + "' rate=" + dailyRate);
+            // Find main event rate and early/late rates
+            // Strategy: The LOWEST price is the main event rate, higher prices are for early/late
+            // This is because early arrival/late departure typically costs more than the main event
+            int mainRate = 0;
+            int earlyRate = 0;
+            int lateRate = 0;
+
+            if (itemRates.isEmpty()) {
+                Console.log("DefaultMealsSelectionSection: No rates found for " + item.getName());
+            } else if (itemRates.size() == 1) {
+                // Only one rate - use it as the main rate
+                mainRate = itemRates.get(0).getPrice();
+                Console.log("DefaultMealsSelectionSection: Single rate for " + item.getName() + " = " + mainRate);
+            } else {
+                // Multiple rates - find the lowest price as main, others as early/late
+                // First, try to classify by date boundaries if available
+                Rate mainEventRate = null;
+                Rate earlyArrivalRate = null;
+                Rate lateDepartureRate = null;
+
+                for (Rate rate : itemRates) {
+                    LocalDate rateStart = rate.getStartDate();
+                    LocalDate rateEnd = rate.getEndDate();
+                    int price = rate.getPrice();
+
+                    Console.log("DefaultMealsSelectionSection: Checking rate for " + item.getName() +
+                        " - price=" + price + ", start=" + rateStart + ", end=" + rateEnd);
+
+                    // Try to classify by date boundaries
+                    boolean isEarlyRate = eventBoundaryStartDate != null && rateEnd != null
+                        && !rateEnd.isAfter(eventBoundaryStartDate.minusDays(1));
+                    boolean isLateRate = eventBoundaryEndDate != null && rateStart != null
+                        && !rateStart.isBefore(eventBoundaryEndDate.plusDays(1));
+
+                    if (isEarlyRate) {
+                        earlyArrivalRate = rate;
+                        Console.log("DefaultMealsSelectionSection: -> Classified as early arrival rate");
+                    } else if (isLateRate) {
+                        lateDepartureRate = rate;
+                        Console.log("DefaultMealsSelectionSection: -> Classified as late departure rate");
+                    } else {
+                        // Could be main rate - keep track for later selection
+                        if (mainEventRate == null || price < mainEventRate.getPrice()) {
+                            mainEventRate = rate;
+                            Console.log("DefaultMealsSelectionSection: -> Candidate for main event rate");
+                        }
+                    }
+                }
+
+                // If we couldn't classify clearly by dates, use price-based heuristic:
+                // The LOWEST price among unclassified rates is the main event rate
+                if (mainEventRate != null) {
+                    mainRate = mainEventRate.getPrice();
+                } else {
+                    // No rate matched as main by date criteria - use lowest price as main
+                    int lowestPrice = Integer.MAX_VALUE;
+                    for (Rate rate : itemRates) {
+                        if (rate.getPrice() < lowestPrice) {
+                            lowestPrice = rate.getPrice();
+                        }
+                    }
+                    mainRate = lowestPrice;
+                    Console.log("DefaultMealsSelectionSection: Using lowest price as main rate: " + mainRate);
+                }
+
+                // Set early/late rates
+                if (earlyArrivalRate != null) {
+                    earlyRate = earlyArrivalRate.getPrice();
+                }
+                if (lateDepartureRate != null) {
+                    lateRate = lateDepartureRate.getPrice();
+                }
+
+                // If no early/late rates found by date, but we have multiple rates,
+                // use the higher price as the early/late rate (since they typically cost more)
+                if (earlyRate == 0 && lateRate == 0 && itemRates.size() > 1) {
+                    for (Rate rate : itemRates) {
+                        if (rate.getPrice() > mainRate) {
+                            // This higher price is the early/late rate
+                            earlyRate = rate.getPrice();
+                            lateRate = rate.getPrice();
+                            Console.log("DefaultMealsSelectionSection: Using higher price as early/late rate: " + earlyRate);
+                            break;
+                        }
+                    }
+                }
+            }
+
+            Console.log("DefaultMealsSelectionSection: Meal item '" + item.getName() +
+                "' mainRate=" + mainRate + ", earlyRate=" + earlyRate + ", lateRate=" + lateRate);
 
             // Determine if this is breakfast, lunch, or dinner based on item name
             if (itemName.contains("breakfast") || itemName.contains("morning")) {
-                setBreakfastPricePerDay(dailyRate);
-                Console.log("DefaultMealsSelectionSection: Set breakfast price to " + dailyRate);
+                setBreakfastPricePerDay(mainRate);
+                breakfastEarlyArrivalPrice = earlyRate;
+                breakfastLateDeparturePrice = lateRate;
+                Console.log("DefaultMealsSelectionSection: Set breakfast price to " + mainRate);
             } else if (itemName.contains("lunch") || itemName.contains("midday")) {
-                setLunchPricePerDay(dailyRate);
-                Console.log("DefaultMealsSelectionSection: Set lunch price to " + dailyRate);
+                setLunchPricePerDay(mainRate);
+                setLunchEarlyArrivalPrice(earlyRate);
+                setLunchLateDeparturePrice(lateRate);
+                Console.log("DefaultMealsSelectionSection: Set lunch price to " + mainRate +
+                    " (early=" + earlyRate + ", late=" + lateRate + ")");
             } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
-                setDinnerPricePerDay(dailyRate);
-                Console.log("DefaultMealsSelectionSection: Set dinner price to " + dailyRate);
+                setDinnerPricePerDay(mainRate);
+                setDinnerEarlyArrivalPrice(earlyRate);
+                setDinnerLateDeparturePrice(lateRate);
+                Console.log("DefaultMealsSelectionSection: Set dinner price to " + mainRate +
+                    " (early=" + earlyRate + ", late=" + lateRate + ")");
             }
         }
 
@@ -1554,6 +1905,15 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      * Call this after updating early arrival/late departure prices to refresh the display.
      */
     public void rebuildMealCards() {
+        // Recalculate early arrival / late departure pricing flags based on current dates, times, and boundaries
+        recalculatePricingFlags();
+
+        Console.log("DefaultMealsSelectionSection.rebuildMealCards() called - " +
+            "arrivalTime=" + arrivalTime + ", departureTime=" + departureTime +
+            ", showEarly=" + showEarlyArrivalPricing + ", showLate=" + showLateDeparturePricing +
+            ", arrivalDate=" + arrivalDate + ", departureDate=" + departureDate +
+            ", eventBoundaryStart=" + eventBoundaryStartDate + ", eventBoundaryEnd=" + eventBoundaryEndDate +
+            ", startMeal=" + eventBoundaryStartMeal + ", endMeal=" + eventBoundaryEndMeal);
         // Use the mealsContainer field directly
         if (mealsContainer == null) return;
 
@@ -1569,8 +1929,222 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Update breakfast visibility based on accommodation state
         updateBreakfastVisibility();
 
+        // Update the info box with pricing information
+        updateInfoBoxPricing();
+
         // Update the summary to reflect new prices (including early/late breakdown)
         updateSummary();
+    }
+
+    /**
+     * Recalculates showEarlyArrivalPricing and showLateDeparturePricing based on current state.
+     * Uses ScheduledItems.isInPeriod to check if meals fall within the user's stay and main event periods.
+     *
+     * Arrival/departure time meanings:
+     * - MORNING = before lunch (user arrives/departs before lunch starts)
+     * - AFTERNOON = before dinner (user arrives/departs after lunch but before dinner)
+     * - EVENING = after dinner (user arrives/departs after dinner ends)
+     *
+     * These flags indicate whether early/late pricing should be displayed:
+     * - Early arrival: meals that are within the user's stay but outside the main event period (before it starts)
+     * - Late departure: meals that are within the user's stay but outside the main event period (after it ends)
+     */
+    protected void recalculatePricingFlags() {
+        boolean hasEarlyPrices = lunchEarlyArrivalPrice > 0 || dinnerEarlyArrivalPrice > 0;
+        boolean hasLatePrices = lunchLateDeparturePrice > 0 || dinnerLateDeparturePrice > 0;
+
+        // Reset flags
+        showEarlyArrivalPricing = false;
+        showLateDeparturePricing = false;
+
+        // If we have the main event period and meal ScheduledItems, use isInPeriod for accurate check
+        if (mainEventPeriod != null && !mealScheduledItems.isEmpty()) {
+            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: Using isInPeriod with " +
+                mealScheduledItems.size() + " meal items, mainEventPeriod=" +
+                mainEventPeriod.getStartDate() + " " + mainEventPeriod.getStartTime() + " to " +
+                mainEventPeriod.getEndDate() + " " + mainEventPeriod.getEndTime());
+
+            // Create a Period representing the user's stay
+            // The start/end times are derived from the meal ScheduledItems based on arrival/departure selection
+            Period userStayPeriod = createUserStayPeriod();
+            if (userStayPeriod != null) {
+                Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: userStayPeriod=" +
+                    userStayPeriod.getStartDate() + " " + userStayPeriod.getStartTime() + " to " +
+                    userStayPeriod.getEndDate() + " " + userStayPeriod.getEndTime());
+            }
+
+            // Check each meal ScheduledItem
+            for (ScheduledItem mealItem : mealScheduledItems) {
+                LocalDate mealDate = mealItem.getDate();
+                if (mealDate == null) continue;
+
+                // Check if this meal is within the user's stay period using isInPeriod
+                boolean isInUserStay = userStayPeriod != null && ScheduledItems.isInPeriod(mealItem, userStayPeriod);
+                if (!isInUserStay) continue; // User doesn't get this meal
+
+                // Get meal name for logging
+                String itemName = mealItem.getName();
+                if (itemName == null && mealItem.getItem() != null) {
+                    itemName = mealItem.getItem().getName();
+                }
+
+                // Use isInPeriod to check if this meal is within the main event period
+                boolean isInMainEvent = ScheduledItems.isInPeriod(mealItem, mainEventPeriod);
+                Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: Meal '" + itemName +
+                    "' on " + mealDate + " isInUserStay=" + isInUserStay + ", isInMainEvent=" + isInMainEvent);
+
+                if (!isInMainEvent) {
+                    // This meal is within user's stay but outside the main event period
+                    // Determine if it's early arrival or late departure based on date
+                    LocalDate periodStart = mainEventPeriod.getStartDate();
+                    LocalDate periodEnd = mainEventPeriod.getEndDate();
+
+                    if (periodStart != null && (mealDate.isBefore(periodStart) || mealDate.equals(periodStart))) {
+                        // Before or on start date - early arrival
+                        if (hasEarlyPrices) {
+                            showEarlyArrivalPricing = true;
+                            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: " +
+                                "Found early arrival meal: " + itemName + " on " + mealDate);
+                        }
+                    }
+                    if (periodEnd != null && (mealDate.isAfter(periodEnd) || mealDate.equals(periodEnd))) {
+                        // After or on end date - late departure
+                        if (hasLatePrices) {
+                            showLateDeparturePricing = true;
+                            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: " +
+                                "Found late departure meal: " + itemName + " on " + mealDate);
+                        }
+                    }
+                }
+            }
+        } else {
+            // Fallback: use date-based heuristics if we don't have the Period/ScheduledItems
+            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: No mainEventPeriod or mealScheduledItems, using date-based fallback");
+
+            if (hasEarlyPrices && arrivalDate != null && eventBoundaryStartDate != null) {
+                if (arrivalDate.isBefore(eventBoundaryStartDate)) {
+                    showEarlyArrivalPricing = true;
+                }
+            }
+            if (hasLatePrices && departureDate != null && eventBoundaryEndDate != null) {
+                if (departureDate.isAfter(eventBoundaryEndDate)) {
+                    showLateDeparturePricing = true;
+                }
+            }
+        }
+
+        Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: showEarly=" + showEarlyArrivalPricing +
+            ", showLate=" + showLateDeparturePricing);
+    }
+
+    /**
+     * Creates a Period representing the user's stay based on arrival/departure dates and times.
+     * The start/end times are derived from the actual meal ScheduledItems:
+     * - MORNING = before lunch → use lunch start time as boundary
+     * - AFTERNOON = before dinner → use dinner start time as boundary
+     * - EVENING = after dinner → use dinner end time as boundary
+     *
+     * @return a Period representing the user's stay, or null if dates are not set
+     */
+    protected Period createUserStayPeriod() {
+        if (arrivalDate == null || departureDate == null) {
+            return null;
+        }
+
+        // Find the lunch and dinner ScheduledItems for boundary times
+        ScheduledItem arrivalLunch = findMealOnDate(arrivalDate, "lunch");
+        ScheduledItem arrivalDinner = findMealOnDate(arrivalDate, "dinner");
+        ScheduledItem departureLunch = findMealOnDate(departureDate, "lunch");
+        ScheduledItem departureDinner = findMealOnDate(departureDate, "dinner");
+
+        // Determine arrival time based on arrival selection
+        // MORNING = before lunch → arrival time is before lunch starts (use MIN to include lunch)
+        // AFTERNOON = before dinner → arrival time is after lunch ends, before dinner (use lunch end time)
+        // EVENING = after dinner → arrival time is after dinner ends (use dinner end time)
+        final LocalTime arrivalStartTime;
+        switch (arrivalTime) {
+            case MORNING:
+                // User arrives before lunch - they get lunch and dinner
+                arrivalStartTime = LocalTime.MIN;
+                break;
+            case AFTERNOON:
+                // User arrives after lunch, before dinner - they get dinner only
+                // Use lunch end time as the arrival time
+                arrivalStartTime = arrivalLunch != null ? ScheduledItems.getSessionEndTimeOrMax(arrivalLunch) : LocalTime.of(14, 0);
+                break;
+            case EVENING:
+            default:
+                // User arrives after dinner - they get no meals on arrival day
+                // Use dinner end time as the arrival time
+                arrivalStartTime = arrivalDinner != null ? ScheduledItems.getSessionEndTimeOrMax(arrivalDinner) : LocalTime.of(20, 0);
+                break;
+        }
+
+        // Determine departure time based on departure selection
+        // MORNING = before lunch → departure time is before lunch starts (use lunch start time)
+        // AFTERNOON = before dinner → departure time is after lunch ends, before dinner (use dinner start time)
+        // EVENING = after dinner → departure time is after dinner ends (use MAX to include dinner)
+        final LocalTime departureEndTime;
+        switch (departureTime) {
+            case MORNING:
+                // User departs before lunch - they don't get lunch or dinner
+                // Use lunch start time as the departure boundary
+                departureEndTime = departureLunch != null ? ScheduledItems.getSessionStartTimeOrMin(departureLunch) : LocalTime.of(12, 0);
+                break;
+            case AFTERNOON:
+                // User departs after lunch, before dinner - they get lunch only
+                // Use dinner start time as the departure boundary
+                departureEndTime = departureDinner != null ? ScheduledItems.getSessionStartTimeOrMin(departureDinner) : LocalTime.of(18, 0);
+                break;
+            case EVENING:
+            default:
+                // User departs after dinner - they get all meals
+                departureEndTime = LocalTime.MAX;
+                break;
+        }
+
+        // Create a simple Period implementation
+        final LocalDate startDate = arrivalDate;
+        final LocalDate endDate = departureDate;
+        final LocalTime startTime = arrivalStartTime;
+        final LocalTime endTime = departureEndTime;
+
+        return new Period() {
+            @Override public LocalDate getStartDate() { return startDate; }
+            @Override public LocalTime getStartTime() { return startTime; }
+            @Override public LocalDate getEndDate() { return endDate; }
+            @Override public LocalTime getEndTime() { return endTime; }
+        };
+    }
+
+    /**
+     * Finds a meal ScheduledItem on a specific date.
+     *
+     * @param date the date to search for
+     * @param mealType "lunch" or "dinner"
+     * @return the ScheduledItem for the meal on that date, or null if not found
+     */
+    protected ScheduledItem findMealOnDate(LocalDate date, String mealType) {
+        if (date == null || mealScheduledItems == null) return null;
+
+        for (ScheduledItem item : mealScheduledItems) {
+            if (!date.equals(item.getDate())) continue;
+
+            String itemName = item.getName();
+            if (itemName == null && item.getItem() != null) {
+                itemName = item.getItem().getName();
+            }
+            if (itemName == null) continue;
+
+            String lowerName = itemName.toLowerCase();
+            if ("lunch".equals(mealType) && (lowerName.contains("lunch") || lowerName.contains("midday"))) {
+                return item;
+            }
+            if ("dinner".equals(mealType) && (lowerName.contains("dinner") || lowerName.contains("supper") || lowerName.contains("evening"))) {
+                return item;
+            }
+        }
+        return null;
     }
 
 }

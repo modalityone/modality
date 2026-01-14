@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.console.Console;
 import javafx.beans.property.ObjectProperty;
@@ -61,6 +62,10 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
     // === COLOR SCHEME ===
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
 
+    // === DATE PROPERTIES (for availability) ===
+    protected final ObjectProperty<LocalDate> arrivalDateProperty = new SimpleObjectProperty<>();
+    protected final ObjectProperty<LocalDate> departureDateProperty = new SimpleObjectProperty<>();
+
     // === SELECTION ===
     protected final ObjectProperty<AudioRecordingPhaseOption> selectedOption = new SimpleObjectProperty<>();
     protected Consumer<AudioRecordingPhaseOption> onOptionSelected;
@@ -76,6 +81,10 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
     protected WorkingBookingProperties workingBookingProperties;
 
     public DefaultAudioRecordingPhaseCoverageSection() {
+        // Set up date change listeners to update option availability
+        arrivalDateProperty.addListener((obs, old, newDate) -> updateOptionsAvailability());
+        departureDateProperty.addListener((obs, old, newDate) -> updateOptionsAvailability());
+
         buildUI();
     }
 
@@ -87,6 +96,12 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         // Section header with headphones icon
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AudioRecording, StyledSectionHeader.ICON_HEADPHONES);
 
+        // Info box: attendance requirement, content info, and order timing
+        HBox infoBox = BookingPageUIBuilder.createInfoBox(
+            I18n.getI18nText(BookingPageI18nKeys.AudioRecordingInfoText).toString(),
+            BookingPageUIBuilder.InfoBoxType.NEUTRAL
+        );
+
         // Options container - holds radio cards
         optionsContainer = new VBox(12);
         optionsContainer.setAlignment(Pos.TOP_LEFT);
@@ -94,7 +109,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         // Build option cards from current options list
         buildOptionCards();
 
-        container.getChildren().addAll(sectionHeader, optionsContainer);
+        container.getChildren().addAll(sectionHeader, infoBox, optionsContainer);
         VBox.setMargin(sectionHeader, new Insets(0, 0, 8, 0));
     }
 
@@ -137,6 +152,14 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
             textContent.getChildren().add(dateLabel);
         }
 
+        // Unavailable message (shown when option is disabled)
+        Label unavailableLabel = new Label();
+        unavailableLabel.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.AudioRecordingUnavailable));
+        unavailableLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-error");
+        unavailableLabel.setVisible(false);
+        unavailableLabel.setManaged(false);
+        textContent.getChildren().add(unavailableLabel);
+
         // Price label
         Label priceLabel = new Label(formatPrice(option.getPrice()));
         priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-bold", "bookingpage-text-dark");
@@ -147,12 +170,57 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         HBox.setHgrow(content, Priority.ALWAYS);
         content.getChildren().addAll(textContent, priceLabel);
 
-        // Create radio card using existing helper
+        // Create radio card using existing helper - only allow selection if available
         HBox card = BookingPageUIBuilder.createRadioCard(content, option.selectedProperty(), () -> {
-            selectOption(option);
+            if (option.isAvailable()) {
+                selectOption(option);
+            }
         });
 
+        // Handle availability changes
+        option.availableProperty().addListener((obs, old, available) -> {
+            updateOptionCardAvailability(card, option, unavailableLabel);
+        });
+
+        // Initial availability state
+        updateOptionCardAvailability(card, option, unavailableLabel);
+
         return card;
+    }
+
+    /**
+     * Updates an option card's visual state based on availability.
+     */
+    protected void updateOptionCardAvailability(HBox card, AudioRecordingPhaseOption option, Label unavailableLabel) {
+        boolean available = option.isAvailable();
+
+        if (available) {
+            card.getStyleClass().remove("disabled");
+            card.setOpacity(1.0);
+            unavailableLabel.setVisible(false);
+            unavailableLabel.setManaged(false);
+        } else {
+            if (!card.getStyleClass().contains("disabled")) {
+                card.getStyleClass().add("disabled");
+            }
+            card.setOpacity(0.5);
+            unavailableLabel.setVisible(true);
+            unavailableLabel.setManaged(true);
+            // Deselect if was selected but now unavailable
+            if (option.isSelected()) {
+                // Select "No Audio Recordings" instead
+                AudioRecordingPhaseOption noRecordingOption = options.stream()
+                    .filter(AudioRecordingPhaseOption::isNoRecordingOption)
+                    .findFirst()
+                    .orElse(null);
+                if (noRecordingOption != null) {
+                    selectOption(noRecordingOption);
+                } else {
+                    option.setSelected(false);
+                    selectedOption.set(null);
+                }
+            }
+        }
     }
 
     /**
@@ -234,6 +302,57 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
     @Override
     public void setColorScheme(BookingFormColorScheme scheme) {
         this.colorScheme.set(scheme);
+    }
+
+    @Override
+    public ObjectProperty<LocalDate> arrivalDateProperty() {
+        return arrivalDateProperty;
+    }
+
+    @Override
+    public ObjectProperty<LocalDate> departureDateProperty() {
+        return departureDateProperty;
+    }
+
+    @Override
+    public void updateOptionsAvailability() {
+        LocalDate arrival = arrivalDateProperty.get();
+        LocalDate departure = departureDateProperty.get();
+
+        Console.log("DefaultAudioRecordingPhaseCoverageSection: Updating availability - arrival=" + arrival + ", departure=" + departure);
+
+        for (AudioRecordingPhaseOption option : options) {
+            // "No Audio Recordings" is always available
+            if (option.isNoRecordingOption()) {
+                option.setAvailable(true);
+                continue;
+            }
+
+            // Check if user's stay covers ALL days in the phase
+            boolean available = isStayCoveringPhase(arrival, departure, option.getStartDate(), option.getEndDate());
+
+            Console.log("DefaultAudioRecordingPhaseCoverageSection: Option '" + option.getName() +
+                "' (" + option.getStartDate() + " to " + option.getEndDate() + ") available=" + available);
+
+            option.setAvailable(available);
+        }
+    }
+
+    /**
+     * Checks if the user's stay (arrival to departure) covers all days in the phase.
+     * Returns true if arrival <= phaseStart AND departure >= phaseEnd.
+     */
+    protected boolean isStayCoveringPhase(LocalDate arrival, LocalDate departure, LocalDate phaseStart, LocalDate phaseEnd) {
+        if (arrival == null || departure == null) {
+            // No dates selected yet - not available
+            return false;
+        }
+        if (phaseStart == null || phaseEnd == null) {
+            // Phase has no dates - assume available
+            return true;
+        }
+        // User must arrive on or before phaseStart and depart on or after phaseEnd
+        return !arrival.isAfter(phaseStart) && !departure.isBefore(phaseEnd);
     }
 
     @Override
@@ -321,6 +440,10 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
 
         boolean hasMultipleLanguages = audioItemsMap.size() > 1;
 
+        // Add "No Audio Recordings" option first
+        AudioRecordingPhaseOption noRecordingOption = new AudioRecordingPhaseOption("No Audio Recordings");
+        addOption(noRecordingOption);
+
         // Create options for each phase coverage + language combination
         for (PhaseCoverage pc : phaseCoverages) {
             LocalDate phaseStartDate = pc.getStartDate();
@@ -377,10 +500,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
                     phaseScheduledItems.size() + " items, price=" + price);
             }
         }
-
-        // Add "No Audio Recordings" option at the end
-        AudioRecordingPhaseOption noRecordingOption = new AudioRecordingPhaseOption("No Audio Recordings");
-        addOption(noRecordingOption);
 
         // Default to "No Audio Recordings" selected
         selectOption(noRecordingOption);

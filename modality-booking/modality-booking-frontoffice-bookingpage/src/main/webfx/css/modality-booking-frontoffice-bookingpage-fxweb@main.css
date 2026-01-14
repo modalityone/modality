@@ -2722,3 +2722,66 @@
     -fx-fill: #dc3545;
     -fx-font-weight: 600;
 }
+
+/* ==========================================
+   Shuttle Options Section
+   ========================================== */
+
+/* Main grouped container for shuttle options */
+.bookingpage-shuttle-container {
+    -fx-background-color: -booking-form-card-bg;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.bookingpage-shuttle-container.has-selection {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Shuttle icon container (in header) */
+.bookingpage-shuttle-icon-container {
+    -fx-background-color: #f1f3f5;
+    -fx-background-radius: 8;
+}
+
+.bookingpage-shuttle-container.has-selection .bookingpage-shuttle-icon-container {
+    -fx-background-color: -booking-form-primary;
+}
+
+/* Shuttle icon stroke */
+.bookingpage-shuttle-icon {
+    -fx-stroke: #6c757d;
+}
+
+.bookingpage-shuttle-container.has-selection .bookingpage-shuttle-icon {
+    -fx-stroke: white;
+}
+
+/* Individual shuttle trip card */
+.bookingpage-shuttle-trip {
+    -fx-background-color: -booking-form-card-bg;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.bookingpage-shuttle-trip:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-shuttle-trip.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+}
+
+/* Disabled shuttle trip (date doesn't match) */
+.bookingpage-shuttle-trip.disabled {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e9ecef;
+    -fx-cursor: default;
+}

@@ -49,6 +49,7 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
         private final LocalDate endDate;
         private final int price;  // Calculated using PriceCalculator
         private final BooleanProperty selected = new SimpleBooleanProperty(false);
+        private final BooleanProperty available = new SimpleBooleanProperty(true);  // Whether this option can be selected
 
         /**
          * Creates a phase option for a specific PhaseCoverage and audio recording Item (language).
@@ -98,6 +99,10 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
         public boolean isSelected() { return selected.get(); }
         public void setSelected(boolean value) { selected.set(value); }
 
+        public BooleanProperty availableProperty() { return available; }
+        public boolean isAvailable() { return available.get(); }
+        public void setAvailable(boolean value) { available.set(value); }
+
         /**
          * Returns true if this is the "No Audio Recordings" option.
          */
@@ -124,6 +129,54 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
      * Sets the color scheme for this section.
      */
     void setColorScheme(BookingFormColorScheme scheme);
+
+    // === Date Binding (for availability) ===
+
+    /**
+     * Returns the arrival date property.
+     * Used to determine which phase options are available.
+     */
+    ObjectProperty<LocalDate> arrivalDateProperty();
+
+    /**
+     * Gets the arrival date.
+     */
+    default LocalDate getArrivalDate() {
+        return arrivalDateProperty().get();
+    }
+
+    /**
+     * Sets the arrival date. This updates phase option availability.
+     */
+    default void setArrivalDate(LocalDate date) {
+        arrivalDateProperty().set(date);
+    }
+
+    /**
+     * Returns the departure date property.
+     * Used to determine which phase options are available.
+     */
+    ObjectProperty<LocalDate> departureDateProperty();
+
+    /**
+     * Gets the departure date.
+     */
+    default LocalDate getDepartureDate() {
+        return departureDateProperty().get();
+    }
+
+    /**
+     * Sets the departure date. This updates phase option availability.
+     */
+    default void setDepartureDate(LocalDate date) {
+        departureDateProperty().set(date);
+    }
+
+    /**
+     * Updates the availability of phase options based on booked dates.
+     * A phase option is available only if the user's stay covers ALL days in the phase.
+     */
+    void updateOptionsAvailability();
 
     // === Data Population ===
 

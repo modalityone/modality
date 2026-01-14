@@ -387,6 +387,12 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     // Dynamic exclusion for audio recording (when handled by dedicated phase section)
     private boolean excludeAudioRecording = false;
 
+    // Dynamic exclusion for transport (when handled by dedicated transport section)
+    private boolean excludeTransport = false;
+
+    // Dynamic exclusion for parking (when handled by dedicated transport section)
+    private boolean excludeParking = false;
+
     /**
      * Sets whether to exclude audio recording items from additional options.
      * Use this when audio recording is handled by a dedicated phase coverage section.
@@ -402,6 +408,51 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
      */
     public boolean isExcludeAudioRecording() {
         return excludeAudioRecording;
+    }
+
+    /**
+     * Sets whether to exclude transport items from additional options.
+     * Use this when transport is handled by a dedicated transport section.
+     *
+     * @param exclude true to exclude transport items, false to include them
+     */
+    public void setExcludeTransport(boolean exclude) {
+        this.excludeTransport = exclude;
+    }
+
+    /**
+     * Returns whether transport items are excluded from additional options.
+     */
+    public boolean isExcludeTransport() {
+        return excludeTransport;
+    }
+
+    /**
+     * Sets whether to exclude parking items from additional options.
+     * Use this when parking is handled by a dedicated transport section.
+     *
+     * @param exclude true to exclude parking items, false to include them
+     */
+    public void setExcludeParking(boolean exclude) {
+        this.excludeParking = exclude;
+    }
+
+    /**
+     * Returns whether parking items are excluded from additional options.
+     */
+    public boolean isExcludeParking() {
+        return excludeParking;
+    }
+
+    /**
+     * Sets whether to exclude both parking and transport items from additional options.
+     * Convenience method to call setExcludeParking(true) and setExcludeTransport(true).
+     *
+     * @param exclude true to exclude parking and transport items
+     */
+    public void setExcludeParkingAndTransport(boolean exclude) {
+        setExcludeParking(exclude);
+        setExcludeTransport(exclude);
     }
 
     /**
@@ -455,6 +506,18 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             // Skip audio recording items if they're handled by dedicated phase section
             if (excludeAudioRecording && family == KnownItemFamily.AUDIO_RECORDING) {
                 Console.log("DefaultAdditionalOptionsSection: Excluding audio recording item (handled by phase section)");
+                continue;
+            }
+
+            // Skip transport items if they're handled by dedicated transport section
+            if (excludeTransport && family == KnownItemFamily.TRANSPORT) {
+                Console.log("DefaultAdditionalOptionsSection: Excluding transport item (handled by transport section)");
+                continue;
+            }
+
+            // Skip parking items if they're handled by dedicated transport section
+            if (excludeParking && family == KnownItemFamily.PARKING) {
+                Console.log("DefaultAdditionalOptionsSection: Excluding parking item (handled by transport section)");
                 continue;
             }
 

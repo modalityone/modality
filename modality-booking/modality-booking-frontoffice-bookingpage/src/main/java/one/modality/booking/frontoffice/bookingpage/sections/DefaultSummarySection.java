@@ -107,10 +107,7 @@ public class DefaultSummarySection implements HasSummarySection {
         // Price Breakdown section
         VBox priceBreakdownSection = buildPriceBreakdownSection();
 
-        // Ready to submit info box
-        HBox readyToSubmitBox = buildReadyToSubmitBox();
-
-        container.getChildren().addAll(title, subtitle, bookingSummarySection, additionalOptionsSection, priceBreakdownSection, readyToSubmitBox);
+        container.getChildren().addAll(title, subtitle, bookingSummarySection, additionalOptionsSection, priceBreakdownSection);
         VBox.setMargin(subtitle, new Insets(0, 0, 40, 0));
         VBox.setMargin(bookingSummarySection, new Insets(0, 0, 24, 0));
         VBox.setMargin(additionalOptionsSection, new Insets(0, 0, 24, 0));
@@ -156,7 +153,13 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected void updateRateTypeInfoBox() {
         String rateType = rateTypeProperty.get();
-        if (rateTypeInfoLabel != null && rateType != null) {
+        // Only show rate info box for non-standard rates (special rates)
+        boolean isStandardRate = rateType == null || rateType.isEmpty() || "standard".equalsIgnoreCase(rateType);
+        if (rateTypeInfoBox != null) {
+            rateTypeInfoBox.setVisible(!isStandardRate);
+            rateTypeInfoBox.setManaged(!isStandardRate);
+        }
+        if (rateTypeInfoLabel != null && rateType != null && !isStandardRate) {
             String capitalizedRate = rateType.substring(0, 1).toUpperCase() + rateType.substring(1).toLowerCase();
             rateTypeInfoLabel.setText(I18n.getI18nText(BookingPageI18nKeys.RateApplied, capitalizedRate));
             rateTypeDescLabel.setText(I18n.getI18nText(BookingPageI18nKeys.PricesReflectRate, rateType.toLowerCase()));
@@ -339,14 +342,19 @@ public class DefaultSummarySection implements HasSummarySection {
         VBox content = new VBox(4);
 
         String rateType = rateTypeProperty.get();
-        String capitalizedRate = rateType != null
+        // Only show for non-standard rates (special rates)
+        boolean isStandardRate = rateType == null || rateType.isEmpty() || "standard".equalsIgnoreCase(rateType);
+        box.setVisible(!isStandardRate);
+        box.setManaged(!isStandardRate);
+
+        String capitalizedRate = rateType != null && !isStandardRate
                 ? rateType.substring(0, 1).toUpperCase() + rateType.substring(1).toLowerCase()
-                : I18n.getI18nText(BookingPageI18nKeys.StandardRate);
+                : "";
 
         rateTypeInfoLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.RateApplied, capitalizedRate));
         rateTypeInfoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        rateTypeDescLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricesReflectRate, rateType != null ? rateType.toLowerCase() : "standard"));
+        rateTypeDescLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricesReflectRate, rateType != null ? rateType.toLowerCase() : ""));
         rateTypeDescLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
         rateTypeDescLabel.setWrapText(true);
 
@@ -459,29 +467,32 @@ public class DefaultSummarySection implements HasSummarySection {
     }
 
     protected HBox createPriceLineRow(PriceLine line) {
-        HBox row = new HBox();
-        row.setAlignment(Pos.CENTER_LEFT);
+        HBox row = new HBox(12);
+        row.setAlignment(Pos.TOP_LEFT);
         row.setPadding(new Insets(8, 0, 8, 0));
 
         VBox labelBox = new VBox(2);
+        HBox.setHgrow(labelBox, Priority.ALWAYS);
+
         Label nameLabel = new Label(line.getName());
         nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        nameLabel.setWrapText(true);
 
         if (line.getDescription() != null && !line.getDescription().isEmpty()) {
             Label descLabel = new Label(line.getDescription());
             descLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            descLabel.setWrapText(true);
             labelBox.getChildren().addAll(nameLabel, descLabel);
         } else {
             labelBox.getChildren().add(nameLabel);
         }
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-
+        // Amount label (right-aligned, doesn't wrap)
         Label amountLabel = new Label(EventPriceFormatter.formatWithCurrency(line.getAmount(), event));
         amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        amountLabel.setMinWidth(Region.USE_PREF_SIZE); // Prevent amount from shrinking
 
-        row.getChildren().addAll(labelBox, spacer, amountLabel);
+        row.getChildren().addAll(labelBox, amountLabel);
         return row;
     }
 
