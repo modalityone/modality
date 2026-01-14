@@ -20,6 +20,7 @@ public interface ItemPolicy extends Entity,
     String lateAccommodationAllowed = "lateAccommodationAllowed";
     String genderInfoRequired = "genderRequired";
     String minOccupancy = "minOccupancy";
+    String forceSoldOut = "forceSoldOut";
 
     default void setScope(Object value) {
         setForeignField(scope, value);
@@ -105,5 +106,12 @@ public interface ItemPolicy extends Entity,
         return getIntegerFieldValue(minOccupancy);
     }
 
+    default void setForceSoldOut(Boolean value) {
+        setFieldValue(forceSoldOut, value);
+    }
+
+    default Boolean isSoldOutForced() {
+        return getBooleanFieldValue(forceSoldOut);
+    }
 
 }

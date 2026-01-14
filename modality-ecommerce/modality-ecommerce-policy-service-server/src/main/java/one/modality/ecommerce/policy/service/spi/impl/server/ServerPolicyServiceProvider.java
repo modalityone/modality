@@ -43,13 +43,20 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         "select event,name,label,phase1,phase2,phase3,phase4" +
         " from PhaseCoverage pc";
     private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event),itemFamily,phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
+        "select scope.(organization,site,eventType,event)" +
+        ",itemFamily" +
+        ",phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event),item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy" +
+        "select scope.(organization,site,eventType,event)" +
+        ",item.(name,label,code,family.(code,name,label),capacity,share_mate,ord)" +
+        ",descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy,forceSoldOut" +
         " from ItemPolicy ip";
     private final static String RATES_QUERY_BASE =
-        "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit,cutoffDate,minDeposit2,age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount,resident_price,resident_discount,resident2_price,resident2_discount" +
+        "select site,item,price,perDay,perPerson,facilityFee_price,startDate,endDate,onDate,offDate,minDeposit" +
+        ",cutoffDate,minDeposit2" +
+        ",age1_max,age1_price,age1_discount,age2_max,age2_price,age2_discount" +
+        ",resident_price,resident_discount,resident2_price,resident2_discount" +
         " from Rate r";
     private final static String BOOKABLE_PERIODS_QUERY_BASE =
         "select startScheduledItem,endScheduledItem,name,label" +
