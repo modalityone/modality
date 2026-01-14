@@ -45,8 +45,12 @@ public final class ScheduledBoundaries {
 
     public static EntityHasStartAndEndTime getStartAndEndDateHolder(ScheduledBoundary scheduledBoundary) {
         ScheduledItem scheduledItem = scheduledBoundary.getScheduledItem();
-        if (scheduledItem != null)
-            return scheduledItem;
+        if (scheduledItem != null) {
+            if (scheduledItem.getStartTime() != null)
+                return scheduledItem;
+            if (scheduledItem.getTimeline() != null)
+                return scheduledItem.getTimeline();
+        }
 
         return scheduledBoundary.getTimeline();
     }
