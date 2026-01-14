@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.console.Console;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -12,9 +13,12 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.i18n.I18nEntities;
+import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.PhaseCoverage;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
@@ -25,13 +29,10 @@ import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * Default implementation of the audio recording phase coverage selection section.
@@ -56,11 +57,6 @@ import java.util.stream.Collectors;
  * @see HasAudioRecordingPhaseCoverageSection
  */
 public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecordingPhaseCoverageSection {
-
-    // Date formatter for display: "Apr 24, 2025"
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("MMM d, yyyy", Locale.ENGLISH);
-    // Short formatter without year: "Apr 24"
-    private static final DateTimeFormatter DATE_FORMATTER_SHORT = DateTimeFormatter.ofPattern("MMM d", Locale.ENGLISH);
 
     // === COLOR SCHEME ===
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
@@ -188,15 +184,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
      * If different years, shows "Dec 28, 2024 - Jan 2, 2025"
      */
     protected String formatDateRange(LocalDate start, LocalDate end) {
-        if (start == null || end == null) {
-            return "";
-        }
-
-        if (start.getYear() == end.getYear()) {
-            return DATE_FORMATTER_SHORT.format(start) + " - " + DATE_FORMATTER.format(end);
-        } else {
-            return DATE_FORMATTER.format(start) + " - " + DATE_FORMATTER.format(end);
-        }
+        return ModalityDates.formatDateInterval(start, end);
     }
 
     /**
@@ -335,9 +323,8 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
 
         // Create options for each phase coverage + language combination
         for (PhaseCoverage pc : phaseCoverages) {
-            // Get dates using safe extraction method with PolicyAggregate lookup
-            LocalDate phaseStartDate = getStartDateSafe(pc, policyAggregate);
-            LocalDate phaseEndDate = getEndDateSafe(pc, policyAggregate);
+            LocalDate phaseStartDate = pc.getStartDate();
+            LocalDate phaseEndDate = pc.getEndDate();
 
             Console.log("DefaultAudioRecordingPhaseCoverageSection: Processing phase '" + pc.getName() +
                 "' dates: " + phaseStartDate + " to " + phaseEndDate);
@@ -347,23 +334,14 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
                 continue;
             }
 
-            String phaseName = getDisplayName(pc);
+            String phaseName = I18nEntities.translateEntity(pc);
 
             for (Map.Entry<Item, List<ScheduledItem>> entry : audioItemsMap.entrySet()) {
                 Item audioItem = entry.getKey();
                 List<ScheduledItem> allScheduledItems = entry.getValue();
 
                 // Filter scheduled items within this phase's date range (simple date-only filtering)
-                final LocalDate startDate = phaseStartDate;
-                final LocalDate endDate = phaseEndDate;
-                List<ScheduledItem> phaseScheduledItems = allScheduledItems.stream()
-                    .filter(si -> {
-                        LocalDate siDate = si.getDate();
-                        return siDate != null &&
-                               !siDate.isBefore(startDate) &&
-                               !siDate.isAfter(endDate);
-                    })
-                    .collect(Collectors.toList());
+                List<ScheduledItem> phaseScheduledItems = ScheduledItems.filterOverPeriod(allScheduledItems, pc);
 
                 Console.log("DefaultAudioRecordingPhaseCoverageSection: Found " + phaseScheduledItems.size() +
                     " scheduled items for " + audioItem.getName() + " in phase " + phaseName +
@@ -446,70 +424,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
     }
 
     /**
-     * Gets the start date from a PhaseCoverage safely.
-     * Uses the BoundaryPeriod interface method with error handling.
-     */
-    protected LocalDate getStartDateSafe(PhaseCoverage pc, PolicyAggregate policyAggregate) {
-        if (pc == null) return null;
-
-        // Try direct access via BoundaryPeriod interface
-        try {
-            LocalDate date = pc.getStartDate();
-            if (date != null) {
-                Console.log("DefaultAudioRecordingPhaseCoverageSection: Got start date: " + date);
-                return date;
-            }
-        } catch (Exception e) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: Error getting start date: " + e.getMessage());
-        }
-
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Could not extract start date for phase " + pc.getName());
-        return null;
-    }
-
-    /**
-     * Gets the end date from a PhaseCoverage safely.
-     * Uses the BoundaryPeriod interface method with error handling.
-     */
-    protected LocalDate getEndDateSafe(PhaseCoverage pc, PolicyAggregate policyAggregate) {
-        if (pc == null) return null;
-
-        // Try direct access via BoundaryPeriod interface
-        try {
-            LocalDate date = pc.getEndDate();
-            if (date != null) {
-                Console.log("DefaultAudioRecordingPhaseCoverageSection: Got end date: " + date);
-                return date;
-            }
-        } catch (Exception e) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: Error getting end date: " + e.getMessage());
-        }
-
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Could not extract end date for phase " + pc.getName());
-        return null;
-    }
-
-    /**
-     * Gets a display name for a PhaseCoverage.
-     * Prefers label.en, then name.
-     */
-    protected String getDisplayName(PhaseCoverage pc) {
-        if (pc == null) return "";
-
-        // Try label first
-        if (pc.getLabel() != null && pc.getLabel().getEn() != null) {
-            return pc.getLabel().getEn();
-        }
-
-        // Fall back to name
-        if (pc.getName() != null) {
-            return pc.getName();
-        }
-
-        return "Audio Recording";
-    }
-
-    /**
      * Rebuilds the UI to reflect updated options.
      */
     protected void rebuildUI() {
@@ -521,7 +435,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
      * Sets the visibility of the section.
      */
     public void setVisible(boolean visible) {
-        container.setVisible(visible);
-        container.setManaged(visible);
+        Layouts.setManagedAndVisibleProperties(container, visible);
     }
 }
