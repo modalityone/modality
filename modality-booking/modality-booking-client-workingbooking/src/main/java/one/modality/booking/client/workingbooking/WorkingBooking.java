@@ -27,6 +27,7 @@ import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -174,10 +175,6 @@ public final class WorkingBooking {
         documentChanges.addAll(workingBooking.documentChanges);
     }
 
-    public DocumentLine bookAtemporalItem(SiteItem siteItem) {
-        return bookAtemporalItem(siteItem.getSite(), siteItem.getItem());
-    }
-
     public DocumentLine bookAtemporalItem(Site site, Item item) {
         DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
         if (documentLine == null) {
@@ -198,6 +195,10 @@ public final class WorkingBooking {
         }
     }
 
+    public DocumentLine bookTemporalButNonScheduledItem(Site site, Item item, List<LocalDate> dates, boolean addOnly) {
+        return bookDatesOrScheduledItems(site, item, dates, addOnly);
+    }
+
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
@@ -205,26 +206,17 @@ public final class WorkingBooking {
         ScheduledItem scheduledItemSample = scheduledItems.get(0);
         Site site = scheduledItemSample.getSite();
         Item item = scheduledItemSample.getItem();
-        DocumentLine existingDocumentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
-        DocumentLine documentLine;
-        List<Attendance> existingAttendances;
-        if (existingDocumentLine != null) {
-            documentLine = existingDocumentLine;
-            existingAttendances = getLastestDocumentAggregate().getLineAttendances(existingDocumentLine);
-        } else {
-            documentLine = getEntityStore().createEntity(DocumentLine.class);
-            documentLine.setDocument(document);
-            documentLine.setSite(site);
-            documentLine.setItem(item);
-            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
-            existingAttendances = null;
-        }
-        Attendance[] newAttendances = scheduledItems.stream().map(scheduledItem -> {
+        bookDatesOrScheduledItems(site, item, scheduledItems, addOnly);
+    }
+
+    private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean addOnly) {
+        if (datesOrScheduledItems.isEmpty())
+            return null;
+        DocumentLine documentLine = bookAtemporalItem(site, item); // Just as a first step (the item is temporal here)
+        List<Attendance> existingAttendances = getLastestDocumentAggregate().getLineAttendances(documentLine);
+        Attendance[] newAttendances = datesOrScheduledItems.stream().map(dateOrScheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
-            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getScheduledItem(), scheduledItem)) != null)
-                return null;
-            // Second check, but using the date
-            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
+            if (Collections.findFirst(existingAttendances, a -> attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) != null)
                 return null;
             // Note: attendances are not directly submitted to the database but incorporated in document events, so we
             // don't use insertEntity() but createEntity() to create them in memory.
@@ -236,19 +228,31 @@ public final class WorkingBooking {
             // when passing it to new AttendancesEvent() because all document events must know which document they are
             // referring to. So we ensure this by the following assignment:
             newAttendance.getDocumentLine().setDocument(document); // may copy the document to the store as well
-            newAttendance.setDate(scheduledItem.getDate());
-            newAttendance.setScheduledItem(scheduledItem);
+            if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
+                newAttendance.setDate(scheduledItem.getDate());
+                newAttendance.setScheduledItem(dateOrScheduledItem);
+            } else
+                newAttendance.setDate((LocalDate) dateOrScheduledItem);
             return newAttendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (newAttendances.length > 0)
             integrateNewDocumentEvent(new AddAttendancesEvent(newAttendances), false);
         if (!addOnly) {
-            // We remove all existing attendances not referencing the passed scheduledItems
+            // We remove all existing attendances not referencing the passed dates or scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
-                Collections.findFirst(scheduledItems, si -> Entities.sameId(a.getScheduledItem(), si)) == null);
+                Collections.findFirst(datesOrScheduledItems, dateOrScheduledItem -> attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) == null);
             removeAttendances(attendancesToRemove);
         }
         lastestDocumentAggregate = null;
+        return documentLine;
+    }
+
+    private static boolean attendanceMatchesDateOrScheduledItem(Attendance a, Object dateOrScheduledItem) {
+        if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
+            return Entities.sameId(a.getScheduledItem(), scheduledItem) || Objects.equals(a.getDate(), scheduledItem.getDate());
+        }
+        // dateOrScheduledItem is a LocalDate
+        return Objects.equals(a.getDate(), dateOrScheduledItem);
     }
 
     public void unbookScheduledItems(List<ScheduledItem> scheduledItems) {
