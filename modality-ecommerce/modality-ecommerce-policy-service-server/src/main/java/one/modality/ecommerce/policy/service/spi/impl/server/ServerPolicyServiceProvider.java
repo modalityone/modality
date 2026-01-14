@@ -112,7 +112,12 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " order by id", eventPk)
                     // 8 - Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    RATES_QUERY_BASE + " where (select r.site = coalesce(e.repeatedEvent.venue, e.venue) or r.site.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
+                    RATES_QUERY_BASE + " where (" +
+                    // Sites dedicated to this event
+                    "select r.site.event = coalesce(e.repeatedEvent, e)" +
+                    // or global sites of the organization with scheduled items over the period of the event
+                    " or r.site.(event = null and organization=e.organization and exists(select ScheduledItem si where si.site=r.site and si.item=r.item and si.date>=e.startDate and si.date<=e.endDate))" +
+                    " from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
                     " order by site,item,perDay desc,startDate,endDate,price", eventPk)
                     // 9 - Loading bookable periods (of this event or of the repeated event if set)
