@@ -332,13 +332,21 @@ public final class PolicyAggregate {
         return Rates.filterRatesOfSiteAndItem(getFixedRatesStream(), site, item);
     }
 
-    public Stream<Rate> filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(Site site, Item item, boolean perDay, LocalDate startDate, LocalDate lastDate) {
+    public Stream<Rate> filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(Site site, Item item, boolean perDay, LocalDate startDate, LocalDate endDate) {
         return filterRatesStreamOfSiteAndItem(site, item, perDay)
-            .filter(r -> Rates.isOnTodayAndApplicableOverPeriod(r, startDate, lastDate));
+            .filter(r -> Rates.isOnTodayAndApplicableOverPeriod(r, startDate, endDate));
     }
 
     public Rate getScheduledItemDailyRate(ScheduledItem scheduledItem) {
-        return filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(scheduledItem.getSite(), scheduledItem.getItem(), true, scheduledItem.getDate(), scheduledItem.getDate())
+        return getSiteItemDailyRateOverPeriod(scheduledItem.getSite(), scheduledItem.getItem(), scheduledItem.getDate(), scheduledItem.getDate());
+    }
+
+    public Rate getSiteItemDailyRateOverPeriod(Site site, Item item, Period period) {
+        return getSiteItemDailyRateOverPeriod(site, item, period.getStartDate(), period.getEndDate());
+    }
+
+    public Rate getSiteItemDailyRateOverPeriod(Site site, Item item, LocalDate startDate, LocalDate endDate) {
+        return filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(site, item, true, startDate, endDate)
             .findFirst().orElse(null);
     }
 
