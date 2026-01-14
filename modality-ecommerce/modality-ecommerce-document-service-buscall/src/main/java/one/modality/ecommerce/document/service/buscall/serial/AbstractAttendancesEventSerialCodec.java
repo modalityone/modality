@@ -4,6 +4,8 @@ import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
 
+import java.time.LocalDate;
+
 /**
  * @author Bruno Salmon
  */
@@ -11,6 +13,7 @@ public abstract class AbstractAttendancesEventSerialCodec<T extends AbstractAtte
 
     private static final String ATTENDANCES_PRIMARY_KEYS = "attendances";
     private static final String SCHEDULED_ITEMS_PRIMARY_KEYS = "scheduledItems";
+    private static final String DATES_KEYS = "dates";
 
     public AbstractAttendancesEventSerialCodec(Class<T> javaClass, String codecId) {
         super(javaClass, codecId);
@@ -19,8 +22,9 @@ public abstract class AbstractAttendancesEventSerialCodec<T extends AbstractAtte
     @Override
     public void encode(T o, AstObject serial) {
         super.encode(o, serial);
-        encodeObjectArray(serial, ATTENDANCES_PRIMARY_KEYS,     o.getAttendancesPrimaryKeys());
-        encodeObjectArray(serial, SCHEDULED_ITEMS_PRIMARY_KEYS, o.getScheduledItemsPrimaryKeys());
+        encodeObjectArray(   serial, ATTENDANCES_PRIMARY_KEYS,     o.getAttendancesPrimaryKeys());
+        encodeObjectArray(   serial, SCHEDULED_ITEMS_PRIMARY_KEYS, o.getScheduledItemsPrimaryKeys());
+        encodeLocalDateArray(serial, DATES_KEYS,                   o.getDates());
     }
 
     protected Object[] decodeAttendancesPrimaryKeys(ReadOnlyAstObject serial) {
@@ -31,5 +35,8 @@ public abstract class AbstractAttendancesEventSerialCodec<T extends AbstractAtte
         return decodeObjectArray(serial, SCHEDULED_ITEMS_PRIMARY_KEYS);
     }
 
+    protected LocalDate[] decodeDates(ReadOnlyAstObject serial) {
+        return decodeLocalDateArray(serial, DATES_KEYS);
+    }
 
 }

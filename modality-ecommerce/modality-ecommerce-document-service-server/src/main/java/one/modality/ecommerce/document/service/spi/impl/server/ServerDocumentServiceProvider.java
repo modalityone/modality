@@ -52,13 +52,17 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     private Future<DocumentAggregate[]> loadLatestDocumentsFromDatabase(LoadDocumentArgument argument, boolean limit1) {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
+            // 0 - Loading document
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
+            // 1 - Loading document lines
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
                                  ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
                                  ",share_mate,share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
                                  ",resourceConfiguration" +
                                  " from DocumentLine where document=? and site!=null order by id", docPk),
-            new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
+            // 2 - Loading attendances
+            new EntityStoreQuery("select documentLine,scheduledItem,date from Attendance where documentLine.document=? order by id", docPk),
+            // 3 - Loading money transfers
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
         boolean personProvided = argument.personPrimaryKey() != null;
@@ -91,38 +95,40 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         documentEvents.add(new AddRequestEvent(document, document.getRequest()));
                 });
                 // Aggregating document lines by adding AddDocumentLineEvent and PriceDocumentLineEvent for each document
-                ((List<DocumentLine>) entityLists[1]).forEach(dl -> {
-                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
-                    documentEvents.add(new AddDocumentLineEvent(dl));
-                    documentEvents.add(new PriceDocumentLineEvent(dl));
-                    if (dl.isShareOwner()) {
-                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(dl, dl.getShareOwnerMatesNames()));
+                ((List<DocumentLine>) entityLists[1]).forEach(documentLine -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(documentLine.getDocument());
+                    documentEvents.add(new AddDocumentLineEvent(documentLine));
+                    documentEvents.add(new PriceDocumentLineEvent(documentLine));
+                    if (documentLine.isShareOwner()) {
+                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(documentLine, documentLine.getShareOwnerMatesNames()));
                     }
-                    if (dl.isShareMate()) {
-                        documentEvents.add(new EditShareMateInfoDocumentLineEvent(dl, dl.getShareMateOwnerName()));
-                        DocumentLine ownerDocumentLine = dl.getShareMateOwnerDocumentLine();
-                        Person ownerPerson = dl.getShareMateOwnerPerson();
+                    if (documentLine.isShareMate()) {
+                        documentEvents.add(new EditShareMateInfoDocumentLineEvent(documentLine, documentLine.getShareMateOwnerName()));
+                        DocumentLine ownerDocumentLine = documentLine.getShareMateOwnerDocumentLine();
+                        Person ownerPerson = documentLine.getShareMateOwnerPerson();
                         if (ownerDocumentLine != null || ownerPerson != null) {
-                            documentEvents.add(new LinkMateToOwnerDocumentLineEvent(dl, ownerDocumentLine, ownerPerson));
+                            documentEvents.add(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerDocumentLine, ownerPerson));
                         }
                     }
-                    ResourceConfiguration resourceConfiguration = dl.getResourceConfiguration();
+                    ResourceConfiguration resourceConfiguration = documentLine.getResourceConfiguration();
                     if (resourceConfiguration != null) {
-                        documentEvents.add(new AllocateDocumentLineEvent(dl, resourceConfiguration));
+                        documentEvents.add(new AllocateDocumentLineEvent(documentLine, resourceConfiguration));
                     }
                 });
                 // Aggregating attendances by adding AddAttendancesEvent for each document line
                 ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
-                    .entrySet().forEach(entry -> {
-                        List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(entry.getKey().getDocument());
-                        documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0])));
+                    .forEach((documentLine, attendances) -> {
+                        List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(documentLine.getDocument());
+                        documentEvents.add(new AddAttendancesEvent(attendances.toArray(new Attendance[0])));
                     });
                 // Aggregating money transfers by Adding AddMoneyTransferEvent
-                ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> {
-                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(mt.getDocument());
-                    documentEvents.add(new AddMoneyTransferEvent(mt));
+                ((List<MoneyTransfer>) entityLists[3]).forEach(moneyTransfer -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(moneyTransfer.getDocument());
+                    documentEvents.add(new AddMoneyTransferEvent(moneyTransfer));
                 });
-                return allDocumentEvents.values().stream().map(DocumentAggregate::new).toArray(DocumentAggregate[]::new);
+                return allDocumentEvents.values().stream()
+                    .map(DocumentAggregate::new)
+                    .toArray(DocumentAggregate[]::new);
             });
     }
 
