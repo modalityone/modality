@@ -43,27 +43,29 @@ public final class ScheduledItems {
         return Collections.filter(scheduledItems, scheduledItem -> Entities.sameId(scheduledItem.getSite(), site) && Entities.sameId(scheduledItem.getItem(), item));
     }
 
-    public static List<ScheduledItem> filterOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
+    public static boolean isInPeriod(ScheduledItem scheduledItem, Period period) {
         LocalDate periodStartDate = period.getStartDate();
-        LocalTime periodStartTime = period.getStartTime();
         LocalDate periodEndDate = period.getEndDate();
-        LocalTime periodEndTime = period.getEndTime();
-        return Collections.filter(scheduledItems, scheduledItem -> {
-            LocalDate date = scheduledItem.getDate();
-            if (!Times.isBetween(date, periodStartDate, periodEndDate))
+        LocalDate date = scheduledItem.getDate();
+        if (!Times.isBetween(date, periodStartDate, periodEndDate))
+            return false;
+        if (Objects.equals(date, periodStartDate)) {
+            LocalTime periodStartTime = period.getStartTime();
+            LocalTime sessionStartTime = getSessionStartTimeOrMin(scheduledItem);
+            if (sessionStartTime.isBefore(periodStartTime))
                 return false;
-            if (Objects.equals(date, periodStartDate)) {
-                LocalTime sessionStartTime = getSessionStartTimeOrMin(scheduledItem);
-                if (sessionStartTime.isBefore(periodStartTime))
-                    return false;
-            }
-            if (Objects.equals(date, periodEndDate)) {
-                LocalTime sessionEndTime = getSessionEndTimeOrMax(scheduledItem);
-                if (sessionEndTime.isAfter(periodEndTime))
-                    return false;
-            }
-            return true;
-        });
+        }
+        if (Objects.equals(date, periodEndDate)) {
+            LocalTime periodEndTime = period.getEndTime();
+            LocalTime sessionEndTime = getSessionEndTimeOrMax(scheduledItem);
+            if (sessionEndTime.isAfter(periodEndTime))
+                return false;
+        }
+        return true;
+    }
+
+    public static List<ScheduledItem> filterOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
+        return Collections.filter(scheduledItems, scheduledItem -> isInPeriod(scheduledItem, period));
     }
 
     public static List<ScheduledItem> filterSiteItemOverPeriod(List<ScheduledItem> scheduledItems, Site site, Item item, Period period) {
