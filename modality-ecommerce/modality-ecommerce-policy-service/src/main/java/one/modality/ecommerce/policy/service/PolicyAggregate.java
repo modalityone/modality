@@ -337,6 +337,11 @@ public final class PolicyAggregate {
             .filter(r -> Rates.isOnTodayAndApplicableOverPeriod(r, startDate, lastDate));
     }
 
+    public Rate getScheduledItemDailyRate(ScheduledItem scheduledItem) {
+        return filterRatesStreamOfSiteAndItemOnTodayAndApplicableOverPeriod(scheduledItem.getSite(), scheduledItem.getItem(), true, scheduledItem.getDate(), scheduledItem.getDate())
+            .findFirst().orElse(null);
+    }
+
     public boolean hasFacilityFees() {
         return Rates.hasFacilityFees(getRatesStream());
     }
