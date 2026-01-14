@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -63,17 +64,22 @@ public class StickyPriceHeader extends HBox {
         textContainer.setAlignment(Pos.CENTER_LEFT);
 
         // Room name + days in one line
-        HBox textRow = new HBox(0);
+        HBox textRow = new HBox(6);
         textRow.setAlignment(Pos.CENTER_LEFT);
 
-        roomNameLabel = new Label();
-        roomNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-secondary");
+        roomNameLabel = new Label("Room");  // Default text to ensure proper rendering
+        roomNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        roomNameLabel.setTextFill(Color.web("#495057"));  // Secondary text color
+        roomNameLabel.setMinWidth(50);  // Ensure minimum width for proper layout
 
-        Label separator = new Label(" · ");
+        Label separator = new Label("·");
         separator.getStyleClass().add("sticky-price-header-separator");
+        separator.setTextFill(Color.web("#9CA3AF"));  // Muted separator
 
-        daysLabel = new Label();
-        daysLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        daysLabel = new Label("0 days");  // Default text
+        daysLabel.getStyleClass().addAll("bookingpage-text-sm");
+        daysLabel.setTextFill(Color.web("#6c757d"));  // Muted text color
+        daysLabel.setMinWidth(50);  // Ensure minimum width for proper layout
 
         textRow.getChildren().addAll(roomNameLabel, separator, daysLabel);
         textContainer.getChildren().add(textRow);
@@ -85,10 +91,12 @@ public class StickyPriceHeader extends HBox {
         rightSide.setAlignment(Pos.CENTER_RIGHT);
 
         Label totalLabel = new Label("TOTAL");  // TODO: i18n
-        totalLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium", "bookingpage-text-muted");
+        totalLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium");
+        totalLabel.setTextFill(Color.web("#6c757d"));  // Muted text color
 
-        priceLabel = new Label();
-        priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-primary");
+        priceLabel = new Label("$0");  // Default text to ensure proper rendering
+        priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold");
+        priceLabel.setMinWidth(60);  // Ensure minimum width for price display
 
         rightSide.getChildren().addAll(totalLabel, priceLabel);
 
@@ -97,6 +105,9 @@ public class StickyPriceHeader extends HBox {
 
         // Set up bindings
         setupBindings();
+
+        // Set initial price label color from color scheme
+        updatePriceLabel();
 
         // Initially hidden
         setManaged(false);
@@ -162,7 +173,11 @@ public class StickyPriceHeader extends HBox {
     private void updatePriceLabel() {
         int price = totalPrice.get();
         priceLabel.setText("$" + (price / 100));
-        // Price color uses CSS class "bookingpage-text-primary" which uses theme variable
+        // Set price color from color scheme (CSS classes not reliable in web)
+        BookingFormColorScheme scheme = colorScheme.get();
+        if (scheme != null) {
+            priceLabel.setTextFill(scheme.getPrimary());
+        }
     }
 
     private void updateVisibility() {

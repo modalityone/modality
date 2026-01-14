@@ -1,9 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.platform.console.Console;
 import javafx.beans.property.*;
-import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -23,29 +21,27 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * Default implementation of the additional options section.
- * Displays additional services like parking, shuttle, and accessibility options.
+ * Dynamically displays additional services loaded from PolicyAggregate.
  *
- * <p>Features:</p>
+ * <p>Options are loaded from the database based on Item families:</p>
  * <ul>
- *   <li>Assisted listening checkbox (typically free)</li>
- *   <li>Parking checkbox with price per day</li>
- *   <li>Parking type selection (standard/handicap)</li>
- *   <li>Shuttle checkboxes (outbound/return)</li>
+ *   <li>PARKING - Parking options</li>
+ *   <li>TRANSPORT - Shuttle/transport options</li>
+ *   <li>Any other additional service items configured for the event</li>
  * </ul>
  *
  * <p>CSS classes used:</p>
  * <ul>
  *   <li>{@code .bookingpage-additional-options-section} - section container</li>
- *   <li>{@code .bookingpage-option-checkbox} - option checkbox card</li>
- *   <li>{@code .bookingpage-option-checkbox.selected} - selected state</li>
- *   <li>{@code .bookingpage-parking-type} - parking type option</li>
- *   <li>{@code .bookingpage-parking-type.selected} - selected parking type</li>
+ *   <li>{@code .bookingpage-checkbox-card} - option checkbox card</li>
+ *   <li>{@code .bookingpage-checkbox-card.selected} - selected state</li>
  * </ul>
  *
  * @author Bruno Salmon
@@ -56,28 +52,33 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     // === COLOR SCHEME ===
     protected final ObjectProperty<BookingFormColorScheme> colorScheme = new SimpleObjectProperty<>(BookingFormColorScheme.DEFAULT);
 
-    // === OPTIONS SELECTION ===
+    // === DYNAMIC OPTIONS ===
+    protected final List<AdditionalOption> options = new ArrayList<>();
+
+    // === LEGACY OPTIONS SELECTION (for backward compatibility) ===
     protected final BooleanProperty assistedListening = new SimpleBooleanProperty(false);
     protected final BooleanProperty needsParking = new SimpleBooleanProperty(false);
     protected final ObjectProperty<ParkingType> parkingType = new SimpleObjectProperty<>(ParkingType.STANDARD);
     protected final BooleanProperty shuttleOutbound = new SimpleBooleanProperty(false);
     protected final BooleanProperty shuttleReturn = new SimpleBooleanProperty(false);
 
-    // === PRICING ===
-    protected int parkingPricePerDay = 500; // Default $5
-    protected int shuttlePrice = 2500; // Default $25
+    // === PRICING (legacy, kept for backward compatibility) ===
+    protected int parkingPricePerDay = 0;
+    protected int shuttlePrice = 0;
     protected int daysCount = 1;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
-    protected HBox parkingTypeSection;
+    protected VBox optionsContainer;
 
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
 
+    // === CALLBACKS ===
+    protected Runnable onSelectionChangedCallback;
+
     public DefaultAdditionalOptionsSection() {
         buildUI();
-        setupBindings();
     }
 
     protected void buildUI() {
@@ -88,29 +89,51 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         // Section header
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AdditionalOptions, StyledSectionHeader.ICON_PLUS_CIRCLE);
 
-        // Assisted listening option
-        VBox assistedListeningCard = createOptionCard(
-            BookingPageI18nKeys.AssistedListeningDevice,
-            BookingPageI18nKeys.HearingAssistanceAvailable,
-            assistedListening,
-            BookingPageI18nKeys.Free,
-            null
-        );
+        // Options container - will hold dynamically created cards
+        optionsContainer = new VBox(12);
+        optionsContainer.setAlignment(Pos.TOP_LEFT);
 
-        // Parking option with nested type selection
-        VBox parkingCard = createParkingCard();
+        // Build option cards from current options list
+        buildOptionCards();
 
-        // Shuttle options
-        VBox shuttleCard = createShuttleCard();
-
-        container.getChildren().addAll(sectionHeader, assistedListeningCard, parkingCard, shuttleCard);
+        container.getChildren().addAll(sectionHeader, optionsContainer);
         VBox.setMargin(sectionHeader, new Insets(0, 0, 8, 0));
     }
 
-    protected VBox createOptionCard(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty,
-                                    Object priceKey, String priceText) {
+    /**
+     * Builds option cards from the current options list.
+     * Called after options are loaded from PolicyAggregate.
+     */
+    protected void buildOptionCards() {
+        optionsContainer.getChildren().clear();
+
+        if (options.isEmpty()) {
+            // No options to display
+            return;
+        }
+
+        // Group options by family for visual organization
+        Map<KnownItemFamily, List<AdditionalOption>> optionsByFamily = options.stream()
+            .collect(Collectors.groupingBy(AdditionalOption::getItemFamily));
+
+        // Add cards for each family
+        for (Map.Entry<KnownItemFamily, List<AdditionalOption>> entry : optionsByFamily.entrySet()) {
+            KnownItemFamily family = entry.getKey();
+            List<AdditionalOption> familyOptions = entry.getValue();
+
+            // Create cards for each option in this family
+            for (AdditionalOption option : familyOptions) {
+                VBox card = createOptionCard(option);
+                optionsContainer.getChildren().add(card);
+            }
+        }
+    }
+
+    /**
+     * Creates a card for a single additional option.
+     */
+    protected VBox createOptionCard(AdditionalOption option) {
         VBox card = new VBox(0);
-        // Use checkbox-card CSS class - handles all states via CSS
         card.getStyleClass().add("bookingpage-checkbox-card");
 
         HBox mainRow = new HBox(12);
@@ -119,40 +142,57 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         mainRow.setCursor(Cursor.HAND);
 
         // Checkbox indicator
-        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(selectedProperty, colorScheme);
+        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(option.selectedProperty(), colorScheme);
+
+        // Icon (if available)
+        Node iconNode = null;
+        if (option.getIconSvg() != null && !option.getIconSvg().isEmpty()) {
+            SVGPath icon = new SVGPath();
+            icon.setContent(option.getIconSvg());
+            icon.setStroke(Color.web("#64748b"));
+            icon.setStrokeWidth(2);
+            icon.setFill(Color.TRANSPARENT);
+            icon.setScaleX(0.85);
+            icon.setScaleY(0.85);
+            iconNode = icon;
+        }
 
         // Text content
         VBox textContent = new VBox(2);
         textContent.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
-        Label title = I18nControls.newLabel(titleKey);
+        Label title = new Label(option.getName());
         title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
 
-        Label subtitle = I18nControls.newLabel(subtitleKey);
-        subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-
-        textContent.getChildren().addAll(title, subtitle);
-
-        // Price
-        Label price;
-        if (priceText != null) {
-            price = new Label(priceText);
+        if (option.getDescription() != null && !option.getDescription().isEmpty()) {
+            Label subtitle = new Label(option.getDescription());
+            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            textContent.getChildren().addAll(title, subtitle);
         } else {
-            price = I18nControls.newLabel(priceKey);
+            textContent.getChildren().add(title);
         }
-        price.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        mainRow.getChildren().addAll(checkbox, textContent, price);
+        // Price label
+        Label priceLabel = new Label(formatPrice(option));
+        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+
+        // Assemble the row
+        if (iconNode != null) {
+            mainRow.getChildren().addAll(checkbox, iconNode, textContent, priceLabel);
+        } else {
+            mainRow.getChildren().addAll(checkbox, textContent, priceLabel);
+        }
+
         card.getChildren().add(mainRow);
 
         // Initial selection state
-        if (selectedProperty.get()) {
+        if (option.isSelected()) {
             card.getStyleClass().add("selected");
         }
 
         // Selection handling - CSS handles styling via .selected class
-        selectedProperty.addListener((obs, old, newVal) -> {
+        option.selectedProperty().addListener((obs, old, newVal) -> {
             if (newVal) {
                 if (!card.getStyleClass().contains("selected")) {
                     card.getStyleClass().add("selected");
@@ -160,212 +200,56 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             } else {
                 card.getStyleClass().remove("selected");
             }
+            // Sync with legacy properties for backward compatibility
+            syncLegacyPropertiesFromOption(option);
+            // Notify callback if registered
+            if (onSelectionChangedCallback != null) {
+                onSelectionChangedCallback.run();
+            }
         });
 
-        mainRow.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
+        mainRow.setOnMouseClicked(e -> option.setSelected(!option.isSelected()));
 
         return card;
     }
 
-    protected VBox createParkingCard() {
-        VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-checkbox-card");
-
-        // Main parking checkbox row
-        HBox mainRow = new HBox(12);
-        mainRow.setAlignment(Pos.CENTER_LEFT);
-        mainRow.setPadding(new Insets(16));
-        mainRow.setCursor(Cursor.HAND);
-
-        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(needsParking, colorScheme);
-
-        VBox textContent = new VBox(2);
-        textContent.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(textContent, Priority.ALWAYS);
-
-        Label title = I18nControls.newLabel(BookingPageI18nKeys.ParkingPass);
-        title.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
-
-        Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.LimitedParkingAvailable);
-        subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-
-        textContent.getChildren().addAll(title, subtitle);
-
-        Label price = new Label(formatPrice(parkingPricePerDay) + "/day");
-        price.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold");
-
-        mainRow.getChildren().addAll(checkbox, textContent, price);
-
-        // Parking type selection (hidden when parking not selected)
-        parkingTypeSection = buildParkingTypeSection();
-        parkingTypeSection.setVisible(false);
-        parkingTypeSection.setManaged(false);
-
-        card.getChildren().addAll(mainRow, parkingTypeSection);
-
-        // Selection handling
-        if (needsParking.get()) {
-            card.getStyleClass().add("selected");
-        }
-        needsParking.addListener((obs, old, newVal) -> {
-            if (newVal) {
-                card.getStyleClass().add("selected");
-            } else {
-                card.getStyleClass().remove("selected");
-            }
-        });
-
-        mainRow.setOnMouseClicked(e -> needsParking.set(!needsParking.get()));
-
-        return card;
-    }
-
-    protected HBox buildParkingTypeSection() {
-        HBox section = new HBox(12);
-        section.setAlignment(Pos.CENTER_LEFT);
-        section.setPadding(new Insets(0, 16, 16, 48)); // Indented under checkbox
-
-        Label label = I18nControls.newLabel(BookingPageI18nKeys.SelectParkingType);
-        label.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-
-        // Standard option
-        HBox standardOption = createParkingTypeOption(BookingPageI18nKeys.Standard, ParkingType.STANDARD);
-
-        // Handicap option
-        HBox handicapOption = createParkingTypeOption(BookingPageI18nKeys.Handicap, ParkingType.HANDICAP);
-
-        section.getChildren().addAll(label, standardOption, handicapOption);
-        return section;
-    }
-
-    protected HBox createParkingTypeOption(Object labelKey, ParkingType type) {
-        HBox option = new HBox(6);
-        option.setAlignment(Pos.CENTER_LEFT);
-        option.setPadding(new Insets(6, 12, 6, 12));
-        option.setCursor(Cursor.HAND);
-        option.getStyleClass().add("bookingpage-parking-type");
-
-        Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium");
-
-        option.getChildren().add(label);
-
-        // Selection handling
-        if (parkingType.get() == type) {
-            option.getStyleClass().add("selected");
-        }
-        parkingType.addListener((obs, old, newVal) -> {
-            if (newVal == type) {
-                option.getStyleClass().add("selected");
-            } else {
-                option.getStyleClass().remove("selected");
-            }
-        });
-
-        option.setOnMouseClicked(e -> parkingType.set(type));
-
-        return option;
-    }
-
-    protected VBox createShuttleCard() {
-        VBox card = new VBox(12);
-        card.setPadding(new Insets(16));
-        // CSS class handles border/background styling
-        card.getStyleClass().add("bookingpage-shuttle-section");
-
-        // Header with plane icon
-        HBox headerRow = new HBox(8);
-        headerRow.setAlignment(Pos.CENTER_LEFT);
-
-        // Plane SVG icon - flat gray non-colored style
-        SVGPath planeIcon = new SVGPath();
-        planeIcon.setContent(BookingPageUIBuilder.ICON_PLANE);
-        planeIcon.setStroke(Color.web("#64748b"));  // Flat gray color
-        planeIcon.setStrokeWidth(2);
-        planeIcon.setFill(Color.TRANSPARENT);
-        planeIcon.setScaleX(0.85);
-        planeIcon.setScaleY(0.85);
-
-        Label header = I18nControls.newLabel(BookingPageI18nKeys.AirportShuttle);
-        header.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
-
-        headerRow.getChildren().addAll(planeIcon, header);
-
-        // Shuttle options container
-        VBox shuttleOptionsContainer = new VBox(8);
-
-        // Outbound shuttle
-        HBox outboundCard = createShuttleOptionRow(
-            BookingPageI18nKeys.ShuttleToVenue,
-            shuttleOutbound,
-            formatPrice(shuttlePrice)
-        );
-
-        // Return shuttle
-        HBox returnCard = createShuttleOptionRow(
-            BookingPageI18nKeys.ShuttleFromVenue,
-            shuttleReturn,
-            formatPrice(shuttlePrice)
-        );
-
-        shuttleOptionsContainer.getChildren().addAll(outboundCard, returnCard);
-
-        card.getChildren().addAll(headerRow, shuttleOptionsContainer);
-        return card;
-    }
-
-    protected HBox createShuttleOptionRow(Object labelKey, BooleanProperty selectedProperty, String priceText) {
-        HBox row = new HBox(8);
-        row.setAlignment(Pos.CENTER_LEFT);
-        row.setPadding(new Insets(12, 16, 12, 16));
-        row.setCursor(Cursor.HAND);
-        // CSS class handles border/background styling
-        row.getStyleClass().add("bookingpage-shuttle-row");
-
-        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(selectedProperty, colorScheme);
-
-        // Label with flex grow
-        Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
-        HBox.setHgrow(label, Priority.ALWAYS);
-
-        // Price label
-        Label priceLabel = new Label(priceText);
-        priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
-
-        row.getChildren().addAll(checkbox, label, priceLabel);
-
-        // Initial selection state
-        if (selectedProperty.get()) {
-            row.getStyleClass().add("selected");
+    /**
+     * Formats the price for display based on option properties.
+     */
+    protected String formatPrice(AdditionalOption option) {
+        if (option.getPrice() == 0) {
+            return "Free";
         }
 
-        // Selection handling - CSS handles styling via .selected class
-        selectedProperty.addListener((obs, old, newVal) -> {
-            if (newVal) {
-                if (!row.getStyleClass().contains("selected")) {
-                    row.getStyleClass().add("selected");
-                }
+        String priceStr = "$" + (option.getPrice() / 100);
+        if (option.isPerDay()) {
+            priceStr += "/day";
+        }
+        if (option.isPerPerson()) {
+            priceStr += " pp";
+        }
+        return priceStr;
+    }
+
+    /**
+     * Syncs legacy properties when a dynamic option selection changes.
+     * This maintains backward compatibility with code using the old API.
+     */
+    protected void syncLegacyPropertiesFromOption(AdditionalOption option) {
+        if (option.getItemFamily() == KnownItemFamily.PARKING) {
+            needsParking.set(option.isSelected());
+        } else if (option.getItemFamily() == KnownItemFamily.TRANSPORT) {
+            String name = option.getName() != null ? option.getName().toLowerCase() : "";
+            if (name.contains("outbound") || name.contains("arrival") || name.contains("to ")) {
+                shuttleOutbound.set(option.isSelected());
+            } else if (name.contains("return") || name.contains("departure") || name.contains("from ")) {
+                shuttleReturn.set(option.isSelected());
             } else {
-                row.getStyleClass().remove("selected");
+                // Generic transport - set both for legacy compatibility
+                shuttleOutbound.set(option.isSelected());
+                shuttleReturn.set(option.isSelected());
             }
-        });
-
-        row.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
-
-        return row;
-    }
-
-    protected void setupBindings() {
-        // Show/hide parking type section based on parking selection
-        needsParking.addListener((obs, old, newVal) -> {
-            parkingTypeSection.setVisible(newVal);
-            parkingTypeSection.setManaged(newVal);
-        });
-    }
-
-    protected String formatPrice(int priceInCents) {
-        return "$" + (priceInCents / 100);
+        }
     }
 
     // ========================================
@@ -443,98 +327,213 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
     @Override
     public int getTotalParkingCost() {
-        if (needsParking.get()) {
-            return parkingPricePerDay * daysCount;
-        }
-        return 0;
+        // Calculate from dynamic options
+        return options.stream()
+            .filter(opt -> opt.getItemFamily() == KnownItemFamily.PARKING && opt.isSelected())
+            .mapToInt(opt -> opt.isPerDay() ? opt.getPrice() * daysCount : opt.getPrice())
+            .sum();
     }
 
     @Override
     public int getTotalShuttleCost() {
-        int total = 0;
-        if (shuttleOutbound.get()) {
-            total += shuttlePrice;
+        // Calculate from dynamic options
+        return options.stream()
+            .filter(opt -> opt.getItemFamily() == KnownItemFamily.TRANSPORT && opt.isSelected())
+            .mapToInt(AdditionalOption::getPrice)
+            .sum();
+    }
+
+    // ========================================
+    // DYNAMIC OPTIONS API
+    // ========================================
+
+    @Override
+    public List<AdditionalOption> getOptions() {
+        return options;
+    }
+
+    @Override
+    public void clearOptions() {
+        options.clear();
+        if (optionsContainer != null) {
+            optionsContainer.getChildren().clear();
         }
-        if (shuttleReturn.get()) {
-            total += shuttlePrice;
-        }
-        return total;
+    }
+
+    @Override
+    public void addOption(AdditionalOption option) {
+        options.add(option);
+    }
+
+    @Override
+    public void setOnSelectionChanged(Runnable callback) {
+        this.onSelectionChangedCallback = callback;
     }
 
     // ========================================
     // DATA POPULATION FROM POLICY AGGREGATE
     // ========================================
 
+    // Item families that are handled by other sections and should NOT appear as additional options
+    private static final java.util.Set<KnownItemFamily> EXCLUDED_FAMILIES = java.util.Set.of(
+        KnownItemFamily.TEACHING,      // Handled by teaching/event section
+        KnownItemFamily.ACCOMMODATION, // Handled by accommodation section
+        KnownItemFamily.MEALS,         // Handled by meals section
+        KnownItemFamily.DIET,          // Handled by meals section (dietary options)
+        KnownItemFamily.TAX,           // Not user-selectable
+        KnownItemFamily.UNKNOWN        // Unknown items
+    );
+
+    // Dynamic exclusion for audio recording (when handled by dedicated phase section)
+    private boolean excludeAudioRecording = false;
+
     /**
-     * Populates additional options prices from PolicyAggregate data.
-     * Looks for PARKING and TRANSPORT family items and extracts their rates.
+     * Sets whether to exclude audio recording items from additional options.
+     * Use this when audio recording is handled by a dedicated phase coverage section.
+     *
+     * @param exclude true to exclude audio recording items, false to include them
+     */
+    public void setExcludeAudioRecording(boolean exclude) {
+        this.excludeAudioRecording = exclude;
+    }
+
+    /**
+     * Returns whether audio recording items are excluded from additional options.
+     */
+    public boolean isExcludeAudioRecording() {
+        return excludeAudioRecording;
+    }
+
+    /**
+     * Populates additional options from PolicyAggregate data.
+     * Loads ALL items except those handled by other sections (teaching, accommodation, meals, diet, tax).
+     * This allows any additional service type configured in the database to be displayed.
      *
      * @param policyAggregate the policy data containing scheduledItems and rates
      */
+    @Override
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultAdditionalOptionsSection: PolicyAggregate is null, using default prices");
+            Console.log("DefaultAdditionalOptionsSection: PolicyAggregate is null");
             return;
         }
 
-        // Get PARKING items
-        List<ScheduledItem> parkingItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.PARKING);
-        Console.log("DefaultAdditionalOptionsSection: Found " + parkingItems.size() + " parking scheduled items");
+        // Clear existing options
+        clearOptions();
 
-        // Extract parking price from first item
-        if (!parkingItems.isEmpty()) {
-            Map<Item, List<ScheduledItem>> parkingItemMap = parkingItems.stream()
-                .filter(si -> si.getItem() != null)
-                .collect(Collectors.groupingBy(ScheduledItem::getItem));
-
-            for (Item item : parkingItemMap.keySet()) {
-                int dailyRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
-                    .findFirst()
-                    .map(Rate::getPrice)
-                    .orElse(0);
-
-                if (dailyRate > 0) {
-                    setParkingPricePerDay(dailyRate);
-                    Console.log("DefaultAdditionalOptionsSection: Set parking price to " + dailyRate);
-                    break;
-                }
-            }
+        // Load all scheduled items and group by item family
+        List<ScheduledItem> allScheduledItems = policyAggregate.getScheduledItems();
+        if (allScheduledItems == null || allScheduledItems.isEmpty()) {
+            Console.log("DefaultAdditionalOptionsSection: No scheduled items found");
+            rebuildUI();
+            return;
         }
 
-        // Get TRANSPORT (shuttle) items
-        List<ScheduledItem> transportItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.TRANSPORT);
-        Console.log("DefaultAdditionalOptionsSection: Found " + transportItems.size() + " transport scheduled items");
+        // Group by Item, filtering out null items
+        Map<Item, List<ScheduledItem>> itemMap = allScheduledItems.stream()
+            .filter(si -> si.getItem() != null)
+            .collect(Collectors.groupingBy(ScheduledItem::getItem));
 
-        // Extract shuttle price from first item
-        if (!transportItems.isEmpty()) {
-            Map<Item, List<ScheduledItem>> transportItemMap = transportItems.stream()
-                .filter(si -> si.getItem() != null)
-                .collect(Collectors.groupingBy(ScheduledItem::getItem));
+        // Sort by Item.ord
+        List<Item> sortedItems = itemMap.keySet().stream()
+            .sorted((a, b) -> {
+                Integer ordA = a.getOrd() != null ? a.getOrd() : Integer.MAX_VALUE;
+                Integer ordB = b.getOrd() != null ? b.getOrd() : Integer.MAX_VALUE;
+                return ordA.compareTo(ordB);
+            })
+            .collect(Collectors.toList());
 
-            for (Item item : transportItemMap.keySet()) {
-                int rate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
-                    .findFirst()
-                    .map(Rate::getPrice)
-                    .orElse(0);
+        // Process each item
+        for (Item item : sortedItems) {
+            KnownItemFamily family = item.getItemFamilyType();
 
-                if (rate > 0) {
-                    setShuttlePrice(rate);
-                    Console.log("DefaultAdditionalOptionsSection: Set shuttle price to " + rate);
-                    break;
-                }
+            // Skip items from excluded families (handled by other sections)
+            if (EXCLUDED_FAMILIES.contains(family)) {
+                continue;
             }
+
+            // Skip audio recording items if they're handled by dedicated phase section
+            if (excludeAudioRecording && family == KnownItemFamily.AUDIO_RECORDING) {
+                Console.log("DefaultAdditionalOptionsSection: Excluding audio recording item (handled by phase section)");
+                continue;
+            }
+
+            // Get price from rate
+            int price = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
+                .findFirst()
+                .map(Rate::getPrice)
+                .orElse(0);
+
+            // Determine if per-day based on family (parking is typically per-day)
+            boolean perDay = (family == KnownItemFamily.PARKING);
+
+            // Get per-person flag from rate
+            boolean perPerson = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
+                .findFirst()
+                .map(r -> !Boolean.FALSE.equals(r.isPerPerson()))
+                .orElse(false);
+
+            // Get item name and description
+            String name = item.getName() != null ? item.getName() : "";
+            String description = "";
+            if (item.getLabel() != null && item.getLabel().getEn() != null) {
+                description = item.getLabel().getEn();
+            }
+
+            // Determine default icon based on family
+            String iconSvg = getDefaultIconForFamily(family);
+            if (item.getIcon() != null && !item.getIcon().isEmpty()) {
+                iconSvg = item.getIcon();
+            }
+
+            AdditionalOption option = new AdditionalOption(
+                item.getPrimaryKey(),
+                item,
+                name,
+                description,
+                price,
+                family,
+                perDay,
+                perPerson,
+                iconSvg
+            );
+
+            addOption(option);
+            Console.log("DefaultAdditionalOptionsSection: Added option '" + name + "' (" + family.name() + ") price=" + price);
         }
 
-        // Rebuild UI to reflect new prices
+        Console.log("DefaultAdditionalOptionsSection: Loaded " + options.size() + " options from PolicyAggregate");
+
+        // Rebuild UI to show new options
         rebuildUI();
     }
 
     /**
-     * Rebuilds the UI to reflect updated prices.
+     * Returns a default icon SVG path for a given item family.
+     */
+    protected String getDefaultIconForFamily(KnownItemFamily family) {
+        if (family == null) return null;
+        switch (family) {
+            case TRANSPORT:
+                return BookingPageUIBuilder.ICON_PLANE;
+            case PARKING:
+                return null; // No default icon for parking
+            case VIDEO:
+                return null; // Could add video icon
+            case AUDIO_RECORDING:
+                return null; // Could add audio icon
+            case TRANSLATION:
+                return null; // Could add translation icon
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Rebuilds the UI to reflect updated options.
      */
     protected void rebuildUI() {
         container.getChildren().clear();
         buildUI();
     }
-
 }

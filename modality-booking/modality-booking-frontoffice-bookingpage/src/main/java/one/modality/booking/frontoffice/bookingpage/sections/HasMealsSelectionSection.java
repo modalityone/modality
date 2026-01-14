@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import one.modality.base.shared.entities.Item;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
@@ -212,5 +213,33 @@ public interface HasMealsSelectionSection extends BookingFormSection {
      */
     default boolean hasAnyMeals() {
         return wantsBreakfast() || wantsLunch() || wantsDinner();
+    }
+
+    // === DocumentBill Integration ===
+
+    /**
+     * Sets the WorkingBooking for DocumentBill-based pricing.
+     * This enables accurate price calculation using the booking's price calculator.
+     *
+     * @param workingBooking the working booking instance
+     */
+    default void setWorkingBooking(WorkingBooking workingBooking) {
+        // Default no-op for backward compatibility
+    }
+
+    /**
+     * Populates meal prices from the DocumentBill API.
+     * This method should be called after setWorkingBooking() and after the booking
+     * has been updated (e.g., meal selections changed).
+     *
+     * <p>The DocumentBill provides accurate pricing that accounts for:</p>
+     * <ul>
+     *   <li>Rate variations by date (early arrival, late departure)</li>
+     *   <li>Person-specific discounts (age, unemployed, facility fee)</li>
+     *   <li>Long stay discounts</li>
+     * </ul>
+     */
+    default void populateFromDocumentBill() {
+        // Default no-op for backward compatibility
     }
 }

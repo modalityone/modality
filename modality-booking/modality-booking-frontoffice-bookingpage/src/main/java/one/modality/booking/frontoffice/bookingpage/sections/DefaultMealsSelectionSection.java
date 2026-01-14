@@ -13,10 +13,16 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ItemPolicy;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.SiteItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
+import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.ecommerce.shared.pricecalculator.AttendanceBill;
+import one.modality.ecommerce.shared.pricecalculator.DocumentBill;
+import one.modality.ecommerce.shared.pricecalculator.SiteItemBill;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
@@ -77,10 +83,22 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     protected final ObjectProperty<Item> selectedDietaryItem = new SimpleObjectProperty<>();  // API-driven dietary option
 
     // === PRICING ===
-    protected int breakfastPricePerDay = 0;  // Included with accommodation
-    protected int lunchPricePerDay = 700; // Default $7
-    protected int dinnerPricePerDay = 700; // Default $7
+    // All prices come from the database via populateFromPolicyAggregate()
+    protected int breakfastPricePerDay = 0;
+    protected int lunchPricePerDay = 0;
+    protected int dinnerPricePerDay = 0;
     protected int daysCount = 1;
+
+    // === EARLY ARRIVAL / LATE DEPARTURE PRICING ===
+    // These are shown stacked under the main price when set (> 0) and different from main price
+    protected int breakfastEarlyArrivalPrice = 0;
+    protected int lunchEarlyArrivalPrice = 0;
+    protected int dinnerEarlyArrivalPrice = 0;
+    protected int breakfastLateDeparturePrice = 0;
+    protected int lunchLateDeparturePrice = 0;
+    protected int dinnerLateDeparturePrice = 0;
+    protected boolean showEarlyArrivalPricing = false;
+    protected boolean showLateDeparturePricing = false;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -103,11 +121,22 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     protected HasFestivalDaySelectionSection.ArrivalDepartureTime arrivalTime = HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
     protected HasFestivalDaySelectionSection.ArrivalDepartureTime departureTime = HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
 
+    // === EVENT BOUNDARY DATES ===
+    // These define when the event officially starts/ends - meals outside these dates are early arrival/late departure
+    protected LocalDate eventBoundaryStartDate;
+    protected LocalDate eventBoundaryEndDate;
+
     // === SUMMARY UI ===
     protected VBox summaryBox;  // Summary info box showing meal counts
 
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
+    protected WorkingBooking workingBooking;  // For DocumentBill-based pricing
+
+    // === DOCUMENT BILL PRICING ===
+    // Cached meal prices from DocumentBill for use in summary display
+    protected Map<String, Integer> mealBillPrices = new java.util.HashMap<>();  // "lunch" -> total price, etc.
+    protected Map<String, List<AttendanceBill>> mealAttendanceBills = new java.util.HashMap<>();  // Per-day breakdown
 
     public DefaultMealsSelectionSection() {
         buildUI();
@@ -241,22 +270,24 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         }
 
         if (hasLunch) {
-            int count = calculateLunchCount();
-            if (count > 0) {
-                String text = formatMealSummaryLine("Lunch", count, getLunchDateRange(), dayMonthFormat);
-                Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-                summaryBox.getChildren().add(label);
+            // Prefer DocumentBill pricing when available
+            if (mealAttendanceBills.containsKey("lunch") && !mealAttendanceBills.get("lunch").isEmpty()) {
+                addMealSummaryFromDocumentBill("Lunch", "lunch", dayMonthFormat, summaryBox);
+            } else {
+                addMealSummaryWithBreakdown("Lunch", calculateLunchCountBreakdown(),
+                    lunchPricePerDay, lunchEarlyArrivalPrice, lunchLateDeparturePrice,
+                    dayMonthFormat, summaryBox);
             }
         }
 
         if (hasDinner) {
-            int count = calculateDinnerCount();
-            if (count > 0) {
-                String text = formatMealSummaryLine("Dinner", count, getDinnerDateRange(), dayMonthFormat);
-                Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-                summaryBox.getChildren().add(label);
+            // Prefer DocumentBill pricing when available
+            if (mealAttendanceBills.containsKey("dinner") && !mealAttendanceBills.get("dinner").isEmpty()) {
+                addMealSummaryFromDocumentBill("Dinner", "dinner", dayMonthFormat, summaryBox);
+            } else {
+                addMealSummaryWithBreakdown("Dinner", calculateDinnerCountBreakdown(),
+                    dinnerPricePerDay, dinnerEarlyArrivalPrice, dinnerLateDeparturePrice,
+                    dayMonthFormat, summaryBox);
             }
         }
 
@@ -284,6 +315,186 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             String toDate = dateRange[1].format(formatter);
             return count + " " + mealName + plural + ": " + fromDate + " - " + toDate;
         }
+    }
+
+    /**
+     * Adds meal summary lines with price breakdown to the summary box.
+     * Shows separate lines for early arrival, regular, and late departure meals when prices differ.
+     * Format: "3 Lunches: Mon 21 Apr - Wed 23 Apr - $30"
+     */
+    protected void addMealSummaryWithBreakdown(String mealName, MealCountBreakdown breakdown,
+                                                int regularPrice, int earlyPrice, int latePrice,
+                                                DateTimeFormatter formatter, VBox summaryBox) {
+        if (breakdown.totalCount() == 0) return;
+
+        // Check if we need to show breakdown (different prices exist)
+        boolean hasEarlyWithDifferentPrice = breakdown.earlyCount > 0 && earlyPrice > 0 && earlyPrice != regularPrice;
+        boolean hasLateWithDifferentPrice = breakdown.lateCount > 0 && latePrice > 0 && latePrice != regularPrice;
+        boolean needsBreakdown = hasEarlyWithDifferentPrice || hasLateWithDifferentPrice;
+
+        if (!needsBreakdown) {
+            // Simple case: all meals have same price - show single line with total
+            int totalCount = breakdown.totalCount();
+            LocalDate[] dateRange = getOverallDateRange(breakdown);
+            int totalPrice = totalCount * regularPrice;
+            String text = formatMealSummaryLineWithPrice(mealName, totalCount, dateRange, regularPrice, totalPrice, formatter);
+            Label label = new Label(text);
+            label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+            summaryBox.getChildren().add(label);
+        } else {
+            // Complex case: show breakdown by price period
+            // Early arrival meals
+            if (breakdown.earlyCount > 0) {
+                int price = earlyPrice > 0 ? earlyPrice : regularPrice;
+                int totalPrice = breakdown.earlyCount * price;
+                LocalDate[] range = new LocalDate[] { breakdown.earlyStart, breakdown.earlyEnd };
+                String text = formatMealSummaryLineWithPrice(mealName + " (Early)", breakdown.earlyCount, range, price, totalPrice, formatter);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+
+            // Regular event meals
+            if (breakdown.regularCount > 0) {
+                int totalPrice = breakdown.regularCount * regularPrice;
+                LocalDate[] range = new LocalDate[] { breakdown.regularStart, breakdown.regularEnd };
+                String text = formatMealSummaryLineWithPrice(mealName, breakdown.regularCount, range, regularPrice, totalPrice, formatter);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+
+            // Late departure meals
+            if (breakdown.lateCount > 0) {
+                int price = latePrice > 0 ? latePrice : regularPrice;
+                int totalPrice = breakdown.lateCount * price;
+                LocalDate[] range = new LocalDate[] { breakdown.lateStart, breakdown.lateEnd };
+                String text = formatMealSummaryLineWithPrice(mealName + " (Late)", breakdown.lateCount, range, price, totalPrice, formatter);
+                Label label = new Label(text);
+                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                summaryBox.getChildren().add(label);
+            }
+        }
+    }
+
+    /**
+     * Adds meal summary using actual DocumentBill data.
+     * This provides accurate pricing based on the booking's price calculator,
+     * including any discounts, rate variations by date, etc.
+     *
+     * <p>Format examples:</p>
+     * <ul>
+     *   <li>"3 Lunches: Mon 21 Apr - Wed 23 Apr = $30"</li>
+     *   <li>"1 Dinner: Fri 25 Apr = $12"</li>
+     * </ul>
+     *
+     * @param mealName the display name (e.g., "Lunch", "Dinner")
+     * @param mealType the key for cached data (e.g., "lunch", "dinner")
+     * @param formatter date formatter for display
+     * @param summaryBox the container to add labels to
+     */
+    protected void addMealSummaryFromDocumentBill(String mealName, String mealType,
+                                                    DateTimeFormatter formatter, VBox summaryBox) {
+        List<AttendanceBill> attendanceBills = mealAttendanceBills.get(mealType);
+        if (attendanceBills == null || attendanceBills.isEmpty()) return;
+
+        int count = attendanceBills.size();
+        int totalPrice = mealBillPrices.getOrDefault(mealType, 0);
+
+        // Get date range from attendance bills
+        LocalDate firstDate = null;
+        LocalDate lastDate = null;
+        for (AttendanceBill ab : attendanceBills) {
+            LocalDate date = ab.getDate();
+            if (date == null) continue;
+            if (firstDate == null || date.isBefore(firstDate)) firstDate = date;
+            if (lastDate == null || date.isAfter(lastDate)) lastDate = date;
+        }
+
+        // Format the summary line
+        StringBuilder sb = new StringBuilder();
+        String plural = count == 1 ? "" : "s";
+        sb.append(count).append(" ").append(mealName).append(plural);
+
+        if (firstDate != null) {
+            sb.append(": ");
+            String fromDate = firstDate.format(formatter);
+            if (lastDate == null || firstDate.equals(lastDate)) {
+                sb.append(fromDate);
+            } else {
+                sb.append(fromDate).append(" - ").append(lastDate.format(formatter));
+            }
+        }
+
+        // Add total price from DocumentBill
+        sb.append(" = ").append(formatPrice(totalPrice));
+
+        Label label = new Label(sb.toString());
+        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        summaryBox.getChildren().add(label);
+
+        Console.log("DefaultMealsSelectionSection: Added DocumentBill summary for " + mealType +
+            " - count=" + count + ", totalPrice=" + totalPrice);
+    }
+
+    /**
+     * Gets the overall date range from a breakdown (earliest to latest date).
+     */
+    protected LocalDate[] getOverallDateRange(MealCountBreakdown breakdown) {
+        LocalDate earliest = null;
+        LocalDate latest = null;
+
+        if (breakdown.earlyStart != null) {
+            earliest = breakdown.earlyStart;
+            latest = breakdown.earlyEnd;
+        }
+        if (breakdown.regularStart != null) {
+            if (earliest == null || breakdown.regularStart.isBefore(earliest)) {
+                earliest = breakdown.regularStart;
+            }
+            if (latest == null || breakdown.regularEnd.isAfter(latest)) {
+                latest = breakdown.regularEnd;
+            }
+        }
+        if (breakdown.lateStart != null) {
+            if (earliest == null || breakdown.lateStart.isBefore(earliest)) {
+                earliest = breakdown.lateStart;
+            }
+            if (latest == null || breakdown.lateEnd.isAfter(latest)) {
+                latest = breakdown.lateEnd;
+            }
+        }
+
+        return new LocalDate[] { earliest, latest };
+    }
+
+    /**
+     * Formats a meal summary line with price.
+     * Format: "3 Lunches: Mon 21 Apr - Wed 23 Apr @ $10/meal = $30"
+     */
+    protected String formatMealSummaryLineWithPrice(String mealName, int count, LocalDate[] dateRange,
+                                                     int pricePerMeal, int totalPrice, DateTimeFormatter formatter) {
+        String plural = count == 1 ? "" : "s";
+        StringBuilder sb = new StringBuilder();
+        sb.append(count).append(" ").append(mealName).append(plural);
+
+        if (dateRange != null && dateRange[0] != null) {
+            sb.append(": ");
+            String fromDate = dateRange[0].format(formatter);
+            if (dateRange[1] == null || dateRange[0].equals(dateRange[1])) {
+                sb.append(fromDate);
+            } else {
+                sb.append(fromDate).append(" - ").append(dateRange[1].format(formatter));
+            }
+        }
+
+        // Add price per meal and total
+        sb.append(" @ ").append(formatPrice(pricePerMeal)).append("/meal");
+        if (count > 1) {
+            sb.append(" = ").append(formatPrice(totalPrice));
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -428,6 +639,123 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         return new LocalDate[] { firstDinner, lastDinner };
     }
 
+    // === MEAL COUNT BREAKDOWN BY PRICING PERIOD ===
+
+    /**
+     * Represents a breakdown of meals by pricing period (early arrival, regular, late departure).
+     */
+    protected static class MealCountBreakdown {
+        final int earlyCount;
+        final LocalDate earlyStart;
+        final LocalDate earlyEnd;
+        final int regularCount;
+        final LocalDate regularStart;
+        final LocalDate regularEnd;
+        final int lateCount;
+        final LocalDate lateStart;
+        final LocalDate lateEnd;
+
+        MealCountBreakdown(int earlyCount, LocalDate earlyStart, LocalDate earlyEnd,
+                          int regularCount, LocalDate regularStart, LocalDate regularEnd,
+                          int lateCount, LocalDate lateStart, LocalDate lateEnd) {
+            this.earlyCount = earlyCount;
+            this.earlyStart = earlyStart;
+            this.earlyEnd = earlyEnd;
+            this.regularCount = regularCount;
+            this.regularStart = regularStart;
+            this.regularEnd = regularEnd;
+            this.lateCount = lateCount;
+            this.lateStart = lateStart;
+            this.lateEnd = lateEnd;
+        }
+
+        int totalCount() {
+            return earlyCount + regularCount + lateCount;
+        }
+
+        boolean hasDifferentPrices() {
+            return (earlyCount > 0 || lateCount > 0) && regularCount > 0;
+        }
+    }
+
+    /**
+     * Calculates the lunch count breakdown by early arrival, regular, and late departure periods.
+     */
+    protected MealCountBreakdown calculateLunchCountBreakdown() {
+        LocalDate[] dateRange = getLunchDateRange();
+        if (dateRange == null || dateRange[0] == null) {
+            return new MealCountBreakdown(0, null, null, 0, null, null, 0, null, null);
+        }
+
+        LocalDate firstLunch = dateRange[0];
+        LocalDate lastLunch = dateRange[1] != null ? dateRange[1] : firstLunch;
+
+        return calculateMealBreakdown(firstLunch, lastLunch);
+    }
+
+    /**
+     * Calculates the dinner count breakdown by early arrival, regular, and late departure periods.
+     */
+    protected MealCountBreakdown calculateDinnerCountBreakdown() {
+        LocalDate[] dateRange = getDinnerDateRange();
+        if (dateRange == null || dateRange[0] == null) {
+            return new MealCountBreakdown(0, null, null, 0, null, null, 0, null, null);
+        }
+
+        LocalDate firstDinner = dateRange[0];
+        LocalDate lastDinner = dateRange[1] != null ? dateRange[1] : firstDinner;
+
+        return calculateMealBreakdown(firstDinner, lastDinner);
+    }
+
+    /**
+     * Generic method to calculate meal breakdown between two dates against event boundaries.
+     */
+    protected MealCountBreakdown calculateMealBreakdown(LocalDate firstMeal, LocalDate lastMeal) {
+        // If no event boundaries set, all meals are regular
+        if (eventBoundaryStartDate == null || eventBoundaryEndDate == null) {
+            int count = (int) java.time.temporal.ChronoUnit.DAYS.between(firstMeal, lastMeal) + 1;
+            return new MealCountBreakdown(0, null, null, count, firstMeal, lastMeal, 0, null, null);
+        }
+
+        int earlyCount = 0;
+        LocalDate earlyStart = null;
+        LocalDate earlyEnd = null;
+        int regularCount = 0;
+        LocalDate regularStart = null;
+        LocalDate regularEnd = null;
+        int lateCount = 0;
+        LocalDate lateStart = null;
+        LocalDate lateEnd = null;
+
+        // Early arrival meals: before event boundary start
+        if (firstMeal.isBefore(eventBoundaryStartDate)) {
+            earlyStart = firstMeal;
+            earlyEnd = lastMeal.isBefore(eventBoundaryStartDate) ? lastMeal : eventBoundaryStartDate.minusDays(1);
+            earlyCount = (int) java.time.temporal.ChronoUnit.DAYS.between(earlyStart, earlyEnd) + 1;
+        }
+
+        // Regular meals: within event boundaries
+        LocalDate regStart = firstMeal.isBefore(eventBoundaryStartDate) ? eventBoundaryStartDate : firstMeal;
+        LocalDate regEnd = lastMeal.isAfter(eventBoundaryEndDate) ? eventBoundaryEndDate : lastMeal;
+        if (!regStart.isAfter(regEnd) && !regStart.isAfter(eventBoundaryEndDate) && !regEnd.isBefore(eventBoundaryStartDate)) {
+            regularStart = regStart;
+            regularEnd = regEnd;
+            regularCount = (int) java.time.temporal.ChronoUnit.DAYS.between(regularStart, regularEnd) + 1;
+        }
+
+        // Late departure meals: after event boundary end
+        if (lastMeal.isAfter(eventBoundaryEndDate)) {
+            lateStart = firstMeal.isAfter(eventBoundaryEndDate) ? firstMeal : eventBoundaryEndDate.plusDays(1);
+            lateEnd = lastMeal;
+            lateCount = (int) java.time.temporal.ChronoUnit.DAYS.between(lateStart, lateEnd) + 1;
+        }
+
+        return new MealCountBreakdown(earlyCount, earlyStart, earlyEnd,
+                                       regularCount, regularStart, regularEnd,
+                                       lateCount, lateStart, lateEnd);
+    }
+
     /**
      * Sets the arrival date and updates the summary.
      */
@@ -458,6 +786,24 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     public void setDepartureTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
         this.departureTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
         updateSummary();
+    }
+
+    /**
+     * Sets the event boundary start date (when the event officially begins).
+     * Meals before this date are considered "early arrival" with potentially different pricing.
+     */
+    public void setEventBoundaryStartDate(LocalDate date) {
+        this.eventBoundaryStartDate = date;
+        // Don't call updateSummary() here - it will be called after prices are set via rebuildMealCards()
+    }
+
+    /**
+     * Sets the event boundary end date (when the event officially ends).
+     * Meals after this date are considered "late departure" with potentially different pricing.
+     */
+    public void setEventBoundaryEndDate(LocalDate date) {
+        this.eventBoundaryEndDate = date;
+        // Don't call updateSummary() here - it will be called after prices are set via rebuildMealCards()
     }
 
     protected HBox createMealToggle(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty, int pricePerDay) {
@@ -511,11 +857,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         textContent.getChildren().addAll(title, subtitle);
 
-        // Price
-        Label price = new Label(formatPrice(pricePerDay) + "/day");
-        price.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        // Price display - supports stacked pricing for early arrival/late departure
+        VBox priceContainer = createMealPriceDisplay(pricePerDay, titleKey);
 
-        card.getChildren().addAll(checkbox, iconNode, textContent, price);
+        card.getChildren().addAll(checkbox, iconNode, textContent, priceContainer);
 
         // Selection handling - CSS handles visual styling via .selected class
         selectedProperty.addListener((obs, old, newVal) -> {
@@ -531,6 +876,54 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         card.setOnMouseClicked(e -> selectedProperty.set(!selectedProperty.get()));
 
         return card;
+    }
+
+    /**
+     * Creates a price display VBox that shows the main price per meal and optionally
+     * early arrival/late departure prices stacked below in a compact layout.
+     *
+     * @param pricePerDay the main price per meal
+     * @param titleKey the meal type key (used to determine which early/late prices to show)
+     * @return a VBox with the price display
+     */
+    protected VBox createMealPriceDisplay(int pricePerDay, Object titleKey) {
+        VBox priceBox = new VBox(2);
+        priceBox.setAlignment(Pos.CENTER_RIGHT);
+
+        // Main price label - "/meal" instead of "/day"
+        Label mainPrice = new Label(formatPrice(pricePerDay) + "/meal");
+        mainPrice.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        priceBox.getChildren().add(mainPrice);
+
+        // Determine which early/late prices to show based on meal type
+        int earlyPrice = 0;
+        int latePrice = 0;
+        boolean isLunch = titleKey == BookingPageI18nKeys.Lunch;
+        boolean isDinner = titleKey == BookingPageI18nKeys.Dinner;
+
+        if (isLunch) {
+            earlyPrice = lunchEarlyArrivalPrice;
+            latePrice = lunchLateDeparturePrice;
+        } else if (isDinner) {
+            earlyPrice = dinnerEarlyArrivalPrice;
+            latePrice = dinnerLateDeparturePrice;
+        }
+
+        // Show early arrival price if enabled and different from main price
+        if (showEarlyArrivalPricing && earlyPrice > 0 && earlyPrice != pricePerDay) {
+            Label earlyLabel = new Label("Early: " + formatPrice(earlyPrice) + "/meal");
+            earlyLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            priceBox.getChildren().add(earlyLabel);
+        }
+
+        // Show late departure price if enabled and different from main price
+        if (showLateDeparturePricing && latePrice > 0 && latePrice != pricePerDay) {
+            Label lateLabel = new Label("Late: " + formatPrice(latePrice) + "/meal");
+            lateLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            priceBox.getChildren().add(lateLabel);
+        }
+
+        return priceBox;
     }
 
     /**
@@ -757,6 +1150,107 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         this.workingBookingProperties = workingBookingProperties;
     }
 
+    /**
+     * Sets the WorkingBooking for DocumentBill-based pricing.
+     * This enables accurate price calculation using the booking's price calculator.
+     */
+    public void setWorkingBooking(WorkingBooking workingBooking) {
+        this.workingBooking = workingBooking;
+    }
+
+    /**
+     * Populates meal prices from the DocumentBill API.
+     * This method extracts pricing for MEALS family items from the computed DocumentBill
+     * and caches them for display in the summary.
+     *
+     * <p>The DocumentBill provides accurate per-day pricing that accounts for:</p>
+     * <ul>
+     *   <li>Rate variations by date (early arrival, late departure)</li>
+     *   <li>Person-specific discounts (age, unemployed, facility fee)</li>
+     *   <li>Long stay discounts</li>
+     * </ul>
+     */
+    public void populateFromDocumentBill() {
+        if (workingBooking == null) {
+            Console.log("DefaultMealsSelectionSection: No WorkingBooking set, cannot populate from DocumentBill");
+            return;
+        }
+
+        // Clear cached prices
+        mealBillPrices.clear();
+        mealAttendanceBills.clear();
+
+        // Get the DocumentBill from the latest booking state
+        DocumentBill documentBill = workingBooking.getLatestBookingPriceCalculator().computeDocumentBill();
+        if (documentBill == null) {
+            Console.log("DefaultMealsSelectionSection: DocumentBill is null");
+            return;
+        }
+
+        Console.log("DefaultMealsSelectionSection: Processing DocumentBill with " + documentBill.getSiteItemBills().size() + " SiteItemBills");
+
+        // IMPORTANT: Trigger price computation by calling getTotalPrice() first
+        // This populates the totalPrice field on each SiteItemBill (lazy computation)
+        int documentTotal = documentBill.getTotalPrice();
+        Console.log("DefaultMealsSelectionSection: DocumentBill total = " + documentTotal);
+
+        // Process each SiteItemBill to find MEALS items
+        for (SiteItemBill siteItemBill : documentBill.getSiteItemBills()) {
+            SiteItem siteItem = siteItemBill.getSiteItem();
+            if (siteItem == null || siteItem.getItem() == null) continue;
+
+            Item item = siteItem.getItem();
+            KnownItemFamily family = item.getItemFamilyType();
+
+            // Only process MEALS family items
+            if (family != KnownItemFamily.MEALS) continue;
+
+            String itemName = item.getName() != null ? item.getName().toLowerCase() : "";
+            String mealType = determineMealType(itemName);
+
+            if (mealType != null) {
+                // Store per-day breakdown
+                List<AttendanceBill> attendanceBills = siteItemBill.getAttendanceBills();
+                mealAttendanceBills.put(mealType, attendanceBills);
+
+                // Calculate total price by summing AttendanceBill prices
+                // Note: siteItemBill.getTotalPrice() may return -1 in some code paths,
+                // so we sum the individual attendance prices instead
+                int totalPrice = 0;
+                for (AttendanceBill ab : attendanceBills) {
+                    totalPrice += ab.getPrice();
+                }
+                mealBillPrices.put(mealType, totalPrice);
+
+                Console.log("DefaultMealsSelectionSection: " + mealType + " - totalPrice=" + totalPrice +
+                    " (summed from " + attendanceBills.size() + " days)");
+
+                // Log per-day prices for debugging
+                for (AttendanceBill ab : attendanceBills) {
+                    Console.log("  " + ab.getDate() + ": " + ab.getPrice());
+                }
+            }
+        }
+
+        // Update the summary to reflect DocumentBill prices
+        updateSummary();
+    }
+
+    /**
+     * Determines the meal type from the item name.
+     * @return "breakfast", "lunch", "dinner", or null if not recognized
+     */
+    protected String determineMealType(String itemName) {
+        if (itemName.contains("breakfast") || itemName.contains("morning")) {
+            return "breakfast";
+        } else if (itemName.contains("lunch") || itemName.contains("midday")) {
+            return "lunch";
+        } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
+            return "dinner";
+        }
+        return null;
+    }
+
     // ========================================
     // HasMealsSelectionSection INTERFACE
     // ========================================
@@ -791,6 +1285,52 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     @Override
     public void setDaysCount(int count) {
         this.daysCount = count;
+    }
+
+    // === EARLY ARRIVAL / LATE DEPARTURE PRICING SETTERS ===
+
+    /**
+     * Sets the lunch price for early arrival days (before event start).
+     */
+    public void setLunchEarlyArrivalPrice(int price) {
+        this.lunchEarlyArrivalPrice = price;
+    }
+
+    /**
+     * Sets the dinner price for early arrival days (before event start).
+     */
+    public void setDinnerEarlyArrivalPrice(int price) {
+        this.dinnerEarlyArrivalPrice = price;
+    }
+
+    /**
+     * Sets the lunch price for late departure days (after event end).
+     */
+    public void setLunchLateDeparturePrice(int price) {
+        this.lunchLateDeparturePrice = price;
+    }
+
+    /**
+     * Sets the dinner price for late departure days (after event end).
+     */
+    public void setDinnerLateDeparturePrice(int price) {
+        this.dinnerLateDeparturePrice = price;
+    }
+
+    /**
+     * Enables/disables display of early arrival pricing in meal cards.
+     * When enabled, shows a secondary price line for early arrival days.
+     */
+    public void setShowEarlyArrivalPricing(boolean show) {
+        this.showEarlyArrivalPricing = show;
+    }
+
+    /**
+     * Enables/disables display of late departure pricing in meal cards.
+     * When enabled, shows a secondary price line for late departure days.
+     */
+    public void setShowLateDeparturePricing(boolean show) {
+        this.showLateDeparturePricing = show;
     }
 
     @Override
@@ -852,6 +1392,22 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
     @Override
     public int getTotalMealsCost() {
+        // Prefer DocumentBill prices when available (more accurate)
+        if (!mealBillPrices.isEmpty()) {
+            int total = 0;
+            if (wantsBreakfast.get() && mealBillPrices.containsKey("breakfast")) {
+                total += mealBillPrices.get("breakfast");
+            }
+            if (wantsLunch.get() && mealBillPrices.containsKey("lunch")) {
+                total += mealBillPrices.get("lunch");
+            }
+            if (wantsDinner.get() && mealBillPrices.containsKey("dinner")) {
+                total += mealBillPrices.get("dinner");
+            }
+            return total;
+        }
+
+        // Fallback to manual calculation
         int total = 0;
         if (wantsBreakfast.get()) {
             total += breakfastPricePerDay * daysCount;
@@ -894,23 +1450,14 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             Item item = entry.getKey();
             String itemName = item.getName() != null ? item.getName().toLowerCase() : "";
 
-            // Get rate for this meal item
-            // Try daily rates first, then fallback to searching all rates (including fixed rates)
+            // Get rate for this meal item - only use daily rates (per_day=true)
+            // Fixed rates should not be used for per-day meal pricing
             int dailyRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
                 .findFirst()
                 .map(Rate::getPrice)
                 .orElseGet(() -> {
-                    // Fallback 1: search all daily rates for this item regardless of site
-                    Integer rate = policyAggregate.getDailyRatesStream()
-                        .filter(r -> r.getItem() != null && r.getItem().getPrimaryKey() != null
-                            && r.getItem().getPrimaryKey().equals(item.getPrimaryKey()))
-                        .findFirst()
-                        .map(Rate::getPrice)
-                        .orElse(null);
-                    if (rate != null) return rate;
-
-                    // Fallback 2: search ALL rates (including fixed rates) for this item
-                    return policyAggregate.getRatesStream()
+                    // Fallback: search all daily rates for this item regardless of site
+                    return policyAggregate.getDailyRatesStream()
                         .filter(r -> r.getItem() != null && r.getItem().getPrimaryKey() != null
                             && r.getItem().getPrimaryKey().equals(item.getPrimaryKey()))
                         .findFirst()
@@ -942,33 +1489,47 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
-     * Loads dietary options from the DIET item family in PolicyAggregate.
-     * Auto-selects the first option.
+     * Loads dietary options from getDietItemPolicies() in PolicyAggregate.
+     * Uses ItemPolicy.isDefault() to find the default dietary option.
+     * Falls back to first option if no default is specified.
      */
     protected void loadDietaryOptions(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) return;
 
-        // Get all DIET scheduled items
-        List<ScheduledItem> dietItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.DIET);
-        Console.log("DefaultMealsSelectionSection: Found " + dietItems.size() + " diet scheduled items");
+        // Get all DIET item policies directly from PolicyAggregate
+        List<ItemPolicy> dietPolicies = policyAggregate.getDietItemPolicies();
+        Console.log("DefaultMealsSelectionSection: Found " + dietPolicies.size() + " diet item policies");
 
-        // Extract unique Items
+        // Extract Items from policies and find default
         dietaryOptions.clear();
-        dietItems.stream()
-            .map(ScheduledItem::getItem)
-            .filter(item -> item != null)
-            .distinct()
-            .forEach(dietaryOptions::add);
+        Item defaultDiet = null;
 
-        Console.log("DefaultMealsSelectionSection: Loaded " + dietaryOptions.size() + " unique dietary options");
-        for (Item item : dietaryOptions) {
-            Console.log("DefaultMealsSelectionSection: Dietary option: " + item.getName());
+        for (ItemPolicy policy : dietPolicies) {
+            Item item = policy.getItem();
+            if (item != null) {
+                dietaryOptions.add(item);
+                Console.log("DefaultMealsSelectionSection: Dietary option: " + item.getName() +
+                    (Boolean.TRUE.equals(policy.isDefault()) ? " (DEFAULT)" : ""));
+
+                // Check if this is the default
+                if (Boolean.TRUE.equals(policy.isDefault())) {
+                    defaultDiet = item;
+                    Console.log("DefaultMealsSelectionSection: Found default diet from ItemPolicy: " + item.getName());
+                }
+            }
         }
 
-        // Auto-select the first dietary option
-        if (!dietaryOptions.isEmpty() && selectedDietaryItem.get() == null) {
-            selectedDietaryItem.set(dietaryOptions.get(0));
-            Console.log("DefaultMealsSelectionSection: Auto-selected dietary option: " + dietaryOptions.get(0).getName());
+        Console.log("DefaultMealsSelectionSection: Loaded " + dietaryOptions.size() + " unique dietary options");
+
+        // Auto-select: prefer default from ItemPolicy, fallback to first option
+        if (selectedDietaryItem.get() == null) {
+            if (defaultDiet != null) {
+                selectedDietaryItem.set(defaultDiet);
+                Console.log("DefaultMealsSelectionSection: Auto-selected default dietary option: " + defaultDiet.getName());
+            } else if (!dietaryOptions.isEmpty()) {
+                selectedDietaryItem.set(dietaryOptions.get(0));
+                Console.log("DefaultMealsSelectionSection: No default set, auto-selected first dietary option: " + dietaryOptions.get(0).getName());
+            }
         }
     }
 
@@ -990,8 +1551,9 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
     /**
      * Rebuilds the meal toggle cards with current prices.
+     * Call this after updating early arrival/late departure prices to refresh the display.
      */
-    protected void rebuildMealCards() {
+    public void rebuildMealCards() {
         // Use the mealsContainer field directly
         if (mealsContainer == null) return;
 
@@ -1006,6 +1568,9 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // Update breakfast visibility based on accommodation state
         updateBreakfastVisibility();
+
+        // Update the summary to reflect new prices (including early/late breakdown)
+        updateSummary();
     }
 
 }
