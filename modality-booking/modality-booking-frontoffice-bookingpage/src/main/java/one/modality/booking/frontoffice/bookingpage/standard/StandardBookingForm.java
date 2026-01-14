@@ -958,8 +958,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         // Get dates from database field, or compute from attendances if not available
                         String lineDates = line.getDates();
                         if (lineDates == null || lineDates.isEmpty()) {
-                            // Compute dates from attendances
-                            List<LocalDate> attendanceDates = documentAggregate.getLineAttendancesStream(line).map(a -> a.getScheduledItem().getDate()).collect(Collectors.toList());
+                            // Compute dates from attendances (filter out nulls to avoid sort errors)
+                            List<LocalDate> attendanceDates = documentAggregate.getLineAttendancesStream(line)
+                                .map(a -> a.getScheduledItem() != null ? a.getScheduledItem().getDate() : null)
+                                .filter(java.util.Objects::nonNull)
+                                .collect(Collectors.toList());
                             if (!attendanceDates.isEmpty()) {
                                 Collections.sort(attendanceDates);
                                 lineDates = formatDates(attendanceDates);

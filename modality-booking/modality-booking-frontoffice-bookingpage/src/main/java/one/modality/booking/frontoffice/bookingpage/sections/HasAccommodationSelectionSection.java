@@ -60,12 +60,14 @@ public interface HasAccommodationSelectionSection extends BookingFormSection {
         private final boolean isDayVisitor;
         private final String imageUrl;
         private final boolean perPerson;  // true = price per person, false = price per room
+        private final int preCalculatedTotalPrice;  // Pre-calculated total price from WorkingBooking (-1 = not set)
 
+        // Full constructor with pre-calculated price
         public AccommodationOption(Object itemId, Item itemEntity, String name, String description,
                                    int pricePerNight, AvailabilityStatus availability,
                                    ConstraintType constraintType, String constraintLabel,
                                    int minNights, boolean isDayVisitor, String imageUrl,
-                                   boolean perPerson) {
+                                   boolean perPerson, int preCalculatedTotalPrice) {
             this.itemId = itemId;
             this.itemEntity = itemEntity;
             this.name = name;
@@ -78,6 +80,16 @@ public interface HasAccommodationSelectionSection extends BookingFormSection {
             this.isDayVisitor = isDayVisitor;
             this.imageUrl = imageUrl;
             this.perPerson = perPerson;
+            this.preCalculatedTotalPrice = preCalculatedTotalPrice;
+        }
+
+        public AccommodationOption(Object itemId, Item itemEntity, String name, String description,
+                                   int pricePerNight, AvailabilityStatus availability,
+                                   ConstraintType constraintType, String constraintLabel,
+                                   int minNights, boolean isDayVisitor, String imageUrl,
+                                   boolean perPerson) {
+            this(itemId, itemEntity, name, description, pricePerNight, availability,
+                 constraintType, constraintLabel, minNights, isDayVisitor, imageUrl, perPerson, -1);
         }
 
         // Constructor without perPerson (defaults to true for backward compatibility)
@@ -86,14 +98,14 @@ public interface HasAccommodationSelectionSection extends BookingFormSection {
                                    ConstraintType constraintType, String constraintLabel,
                                    int minNights, boolean isDayVisitor, String imageUrl) {
             this(itemId, itemEntity, name, description, pricePerNight, availability,
-                 constraintType, constraintLabel, minNights, isDayVisitor, imageUrl, true);
+                 constraintType, constraintLabel, minNights, isDayVisitor, imageUrl, true, -1);
         }
 
         // Simple constructor for common cases
         public AccommodationOption(Object itemId, String name, String description,
                                    int pricePerNight, AvailabilityStatus availability) {
             this(itemId, null, name, description, pricePerNight, availability,
-                 ConstraintType.NONE, null, 0, false, null, true);
+                 ConstraintType.NONE, null, 0, false, null, true, -1);
         }
 
         public Object getItemId() { return itemId; }
@@ -108,6 +120,8 @@ public interface HasAccommodationSelectionSection extends BookingFormSection {
         public boolean isDayVisitor() { return isDayVisitor; }
         public String getImageUrl() { return imageUrl; }
         public boolean isPerPerson() { return perPerson; }
+        public int getPreCalculatedTotalPrice() { return preCalculatedTotalPrice; }
+        public boolean hasPreCalculatedPrice() { return preCalculatedTotalPrice >= 0; }
 
         public boolean isAvailable() {
             return availability != AvailabilityStatus.SOLD_OUT;

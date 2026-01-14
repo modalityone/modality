@@ -31,6 +31,14 @@ public final class SiteItemBill {
         this.siteItem = siteItem;
     }
 
+    public SiteItem getSiteItem() {
+        return siteItem;
+    }
+
+    public List<AttendanceBill> getAttendanceBills() {
+        return attendanceBills;
+    }
+
     public int getTotalPrice() {
         return totalPrice;
     }

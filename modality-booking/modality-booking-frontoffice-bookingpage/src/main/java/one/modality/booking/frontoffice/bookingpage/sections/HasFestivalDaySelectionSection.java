@@ -94,14 +94,46 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection {
     /**
      * Sets the earliest possible arrival date (for early arrival).
      * This date may be before the first festival day.
+     * This corresponds to ScheduledBoundary[0] - first meal for early arrival.
      */
     void setEarliestArrivalDate(LocalDate date);
 
     /**
+     * Alias for setEarliestArrivalDate - sets the early arrival date from meal boundaries.
+     * @param date the earliest arrival date (ScheduledBoundary[0])
+     */
+    default void setEarlyArrivalDate(LocalDate date) {
+        setEarliestArrivalDate(date);
+    }
+
+    /**
+     * Sets the event start date (first meal of event itself).
+     * This corresponds to ScheduledBoundary[1] and becomes the default arrival date.
+     * @param date the event start date (ScheduledBoundary[1])
+     */
+    void setEventStartDate(LocalDate date);
+
+    /**
+     * Sets the event end date (last meal of event itself).
+     * This corresponds to ScheduledBoundary[2] and becomes the default departure date.
+     * @param date the event end date (ScheduledBoundary[2])
+     */
+    void setEventEndDate(LocalDate date);
+
+    /**
      * Sets the latest possible departure date (for late departure).
      * This date may be after the last festival day.
+     * This corresponds to ScheduledBoundary[3] - last meal for late departure.
      */
     void setLatestDepartureDate(LocalDate date);
+
+    /**
+     * Alias for setLatestDepartureDate - sets the late departure date from meal boundaries.
+     * @param date the latest departure date (ScheduledBoundary[3])
+     */
+    default void setLateDepartureDate(LocalDate date) {
+        setLatestDepartureDate(date);
+    }
 
     /**
      * Sets the minimum nights constraint from the selected accommodation.

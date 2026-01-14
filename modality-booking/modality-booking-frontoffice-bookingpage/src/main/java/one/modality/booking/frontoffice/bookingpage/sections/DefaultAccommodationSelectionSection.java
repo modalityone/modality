@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.beans.property.*;
@@ -28,6 +27,7 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -198,7 +198,11 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
         VBox card = new VBox(8);
         card.setMaxWidth(Double.MAX_VALUE);  // Full width cards
-        card.setPadding(new Insets(20));
+        // Note: Padding is applied to contentBox instead of card when soldout,
+        // so the ribbon can extend to card edges
+        if (!isSoldOut) {
+            card.setPadding(new Insets(20));
+        }
         card.getStyleClass().add("bookingpage-selectable-card");
 
         // Apply CSS classes for different states (styling handled in CSS)
@@ -208,8 +212,11 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             card.getStyleClass().add("selected");
         }
 
-        // Content container
+        // Content container - has padding when soldout (since card doesn't)
         VBox contentBox = new VBox(8);
+        if (isSoldOut) {
+            contentBox.setPadding(new Insets(20));
+        }
 
         // === HEADER ROW: Room name (left) + Total Price (right) ===
         // Using BorderPane for proper space-between layout like JSX
@@ -316,6 +323,7 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         } else {
             // Add sold out ribbon
             StackPane wrapper = new StackPane(contentBox);
+            wrapper.setMaxWidth(Double.MAX_VALUE);  // Fill card width so ribbon reaches edge
             if (isSoldOut) {
                 Node ribbon = createSoldOutRibbon();
                 wrapper.getChildren().add(ribbon);
@@ -420,23 +428,29 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         // Style: warm gray background (#78716c), light text (#fafaf9), rotated 45deg
         StackPane ribbon = new StackPane();
         ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
+        ribbon.setAlignment(Pos.CENTER);  // Center the text in the ribbon
 
-        // Text styling - CSS handles font and color
+        // Text styling - smaller font for better fit
         Label ribbonText = new Label("SOLD OUT");
         ribbonText.getStyleClass().add("bookingpage-soldout-ribbon-text");
+        ribbonText.setStyle("-fx-font-size: 9px;");  // Smaller text
+
+        // Padding for the ribbon - asymmetric to center text in visible area
+        // More padding on left to shift text towards visible center
+        ribbon.setPadding(new Insets(4, 35, 4, 55));
 
         ribbon.getChildren().add(ribbonText);
         ribbon.setMaxWidth(Region.USE_PREF_SIZE);
         ribbon.setMaxHeight(Region.USE_PREF_SIZE);
-        ribbon.setOpacity(1.0);  // Ensure no transparency
+        // Set solid background color directly to ensure no transparency
+        ribbon.setStyle("-fx-background-color: #78716c;");
 
         // Rotate for diagonal effect (45deg per JSX)
-        // Using setRotate() rotates around the center of the node (unlike getTransforms().add(new Rotate()))
         ribbon.setRotate(45);
 
-        // Position in top-right corner relative to TOP_RIGHT alignment
-        ribbon.setTranslateX(25);
-        ribbon.setTranslateY(5);
+        // Position: extend to right edge, but low enough for text to be visible
+        ribbon.setTranslateX(30);
+        ribbon.setTranslateY(18);
 
         return ribbon;
     }
@@ -449,12 +463,25 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
     }
 
     protected int calculateTotalPrice(AccommodationOption option) {
+        // Use pre-calculated price from WorkingBooking if available
+        if (option.hasPreCalculatedPrice()) {
+            return option.getPreCalculatedTotalPrice();
+        }
+
+        // Fallback to legacy manual calculation
+        int totalPrice;
+        int accommodationPrice = 0;
+
         // For "Day Visitor" option, no accommodation cost but include meals
         if (option.isDayVisitor()) {
-            return fullEventTeachingPrice + fullEventMealsPrice;
+            totalPrice = fullEventTeachingPrice + fullEventMealsPrice;
+        } else {
+            // Total = teaching price + meals + (accommodation per night * nights)
+            accommodationPrice = option.getPricePerNight() * fullEventNights;
+            totalPrice = fullEventTeachingPrice + fullEventMealsPrice + accommodationPrice;
         }
-        // Total = teaching price + meals + (accommodation per night * nights)
-        return fullEventTeachingPrice + fullEventMealsPrice + (option.getPricePerNight() * fullEventNights);
+
+        return totalPrice;
     }
 
     protected String formatPrice(int priceInCents) {
@@ -638,8 +665,6 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             int pricePerNight = itemRate != null && itemRate.getPrice() != null ? itemRate.getPrice() : 0;
             // Per person = true (default), Per room = false
             boolean perPerson = itemRate == null || !Boolean.FALSE.equals(itemRate.isPerPerson());
-
-            Console.log("DefaultAccommodationSection: Item '" + item.getName() + "' pricePerNight=" + pricePerNight + ", perPerson=" + perPerson);
 
             // Get item name and description
             String name = item.getName() != null ? item.getName() : "";

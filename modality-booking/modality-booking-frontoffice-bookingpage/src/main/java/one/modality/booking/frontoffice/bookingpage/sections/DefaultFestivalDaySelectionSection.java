@@ -15,10 +15,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.EventPart;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledBoundary;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.util.ScheduledBoundaries;
 import one.modality.base.shared.knownitems.KnownItemFamily;
+import dev.webfx.stack.orm.entity.EntityList;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -94,12 +98,39 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected LocalTime lunchStartTime;
     protected LocalTime dinnerStartTime;
 
+    // === MEALS AVAILABLE PER DATE ===
+    // Tracks which meals are scheduled on each date (loaded from MEALS ScheduledItems)
+    // Used to dynamically show correct meal options for arrival/departure days
+    protected Map<LocalDate, java.util.Set<String>> mealsAvailableByDate = new HashMap<>();
+
+    // === BOUNDARY MEAL LIMITS ===
+    // Maps date to the FIRST/LAST meal available that day (from EventPart boundary scheduledItems)
+    // Used to exclude meals BEFORE the first or AFTER the last boundary meal
+    protected Map<LocalDate, String> firstMealOnDate = new HashMap<>();  // e.g., "dinner" means no lunch/breakfast on arrival
+    protected Map<LocalDate, String> lastMealOnDate = new HashMap<>();   // e.g., "lunch" means no dinner on departure
+
+    // === LATE DEPARTURE TRANSITION INFO ===
+    // The first meal of late departure (on event end date) - this is an ADDITIONAL meal beyond main event
+    // e.g., if main event ends with lunch and late departure starts with dinner on same day
+    protected LocalDate lateDepartureTransitionDate = null;
+    protected String lateDepartureFirstMeal = null;  // The first meal available to late departures on transition day
+
+    // === BOUNDARY-DERIVED TIMES ===
+    // Times from ScheduledBoundaries for computing arrival/departure defaults
+    protected LocalTime eventFirstMealEndTime;   // From boundary[1] - when first event meal ends
+    protected LocalTime eventLastMealStartTime;  // From boundary[2] - when last event meal starts
+    protected LocalTime arrivalDeadline;         // eventFirstMealEndTime - 10 minutes
+    protected LocalTime departureEarliest;       // eventLastMealStartTime + 10 minutes
+    protected ArrivalDepartureTime defaultArrivalTime = ArrivalDepartureTime.AFTERNOON;
+    protected ArrivalDepartureTime defaultDepartureTime = ArrivalDepartureTime.AFTERNOON;
+
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
     protected HBox instructionBox;
     protected Label instructionLabel;
     protected FlowPane daysContainer;
     protected HBox changeDateButtonsBox;
+    protected HBox timeMealsInfoBox;  // Info box explaining meal time selection
     protected VBox arrivalTimeSection;
     protected VBox departureTimeSection;
     protected Label arrivalTimeTitleLabel;  // Title label for arrival time section
@@ -139,6 +170,11 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         changeDateButtonsBox.setVisible(false);
         changeDateButtonsBox.setManaged(false);
 
+        // Info box explaining meal time selection (shown above time sections)
+        timeMealsInfoBox = BookingPageUIBuilder.createInfoBox(BookingPageI18nKeys.FestivalDaysTimeMealsInfo, BookingPageUIBuilder.InfoBoxType.NEUTRAL);
+        timeMealsInfoBox.setVisible(false);
+        timeMealsInfoBox.setManaged(false);
+
         // Arrival time section
         arrivalTimeSection = buildTimeSelectionSection(true);
         arrivalTimeSection.setVisible(false);
@@ -149,7 +185,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         departureTimeSection.setVisible(false);
         departureTimeSection.setManaged(false);
 
-        container.getChildren().addAll(sectionHeader, instructionBox, daysContainer, changeDateButtonsBox, arrivalTimeSection, departureTimeSection);
+        container.getChildren().addAll(sectionHeader, instructionBox, daysContainer, changeDateButtonsBox, timeMealsInfoBox, arrivalTimeSection, departureTimeSection);
     }
 
     protected HBox buildInstructionBox() {
@@ -234,11 +270,23 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         optionsRow.setAlignment(Pos.CENTER_LEFT);
 
         ObjectProperty<ArrivalDepartureTime> timeProperty = isArrival ? arrivalTimeProperty : departureTimeProperty;
+        LocalDate dateToCheck = isArrival ? arrivalDateProperty.get() : departureDateProperty.get();
 
+        Console.log("DefaultFestivalDaySelectionSection.buildTimeSelectionSection: isArrival=" + isArrival + ", dateToCheck=" + dateToCheck);
+        Console.log("DefaultFestivalDaySelectionSection.buildTimeSelectionSection: mealsAvailableByDate.size()=" + mealsAvailableByDate.size());
+
+        int optionsAdded = 0;
         for (ArrivalDepartureTime time : ArrivalDepartureTime.values()) {
-            VBox optionCard = createTimeOptionCard(time, timeProperty, isArrival);
-            optionsRow.getChildren().add(optionCard);
+            // Only show time options that have valid meals for this date
+            boolean isValid = isTimeOptionValidForDate(time, isArrival, dateToCheck);
+            Console.log("DefaultFestivalDaySelectionSection.buildTimeSelectionSection: " + time + " isValid=" + isValid);
+            if (isValid) {
+                VBox optionCard = createTimeOptionCard(time, timeProperty, isArrival);
+                optionsRow.getChildren().add(optionCard);
+                optionsAdded++;
+            }
         }
+        Console.log("DefaultFestivalDaySelectionSection.buildTimeSelectionSection: Added " + optionsAdded + " time options");
 
         section.getChildren().addAll(header, optionsRow);
         return section;
@@ -305,25 +353,31 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     protected String getTimeRange(ArrivalDepartureTime time, boolean isArrival) {
+        // Add 15 minute buffer to meal times for realistic timing
+        // - For arrival: buffer after meal start (arrive within 15 min of meal starting to still get it)
+        // - For departure: buffer after meal start (stay 15 min after meal starts to have eaten)
+        LocalTime lunchWithBuffer = lunchStartTime != null ? lunchStartTime.plusMinutes(15) : null;
+        LocalTime dinnerWithBuffer = dinnerStartTime != null ? dinnerStartTime.plusMinutes(15) : null;
+
         if (isArrival) {
-            // Arrival times based on meal schedule - uses API meal times
-            // Morning: arrive before lunch starts → get lunch + dinner
-            // Afternoon: arrive after lunch starts but before dinner → get dinner only
-            // Evening: arrive after dinner starts → no meals that day
+            // Arrival times based on meal schedule - uses API meal times + 15 min buffer
+            // Morning: arrive before lunch + buffer → get lunch + dinner
+            // Afternoon: arrive after lunch + buffer but before dinner + buffer → get dinner only
+            // Evening: arrive after dinner + buffer → no meals that day
             return switch (time) {
-                case MORNING -> formatBefore(lunchStartTime);
-                case AFTERNOON -> formatRange(lunchStartTime, dinnerStartTime);
-                case EVENING -> formatAfter(dinnerStartTime);
+                case MORNING -> formatBefore(lunchWithBuffer);
+                case AFTERNOON -> formatRange(lunchWithBuffer, dinnerWithBuffer);
+                case EVENING -> formatAfter(dinnerWithBuffer);
             };
         } else {
             // Departure times based on meal schedule - uses API meal times
             // Morning: leave before lunch starts → breakfast only
-            // Afternoon: leave after lunch starts but before dinner → breakfast + lunch
-            // Evening: leave after dinner starts → all meals
+            // Afternoon: leave after lunch + buffer but before dinner → breakfast + lunch
+            // Evening: leave after dinner + buffer → all meals
             return switch (time) {
                 case MORNING -> formatBefore(lunchStartTime);
-                case AFTERNOON -> formatRange(lunchStartTime, dinnerStartTime);
-                case EVENING -> formatAfter(dinnerStartTime);
+                case AFTERNOON -> formatRange(lunchWithBuffer, dinnerStartTime);
+                case EVENING -> formatAfter(dinnerWithBuffer);
             };
         }
     }
@@ -365,19 +419,190 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     protected String getMealNote(ArrivalDepartureTime time, boolean isArrival) {
+        // Get the actual date to check which meals are available
+        LocalDate dateToCheck = isArrival ? arrivalDateProperty.get() : departureDateProperty.get();
+        return getMealNoteForDate(time, isArrival, dateToCheck);
+    }
+
+    /**
+     * Returns the meal note for a specific date, taking into account what meals
+     * are actually scheduled on that date in the database AND the boundary limits
+     * from EventPart boundaries (which tell us the first/last meals of the event).
+     */
+    protected String getMealNoteForDate(ArrivalDepartureTime time, boolean isArrival, LocalDate date) {
+        // Get meals available on this date (or empty set if no data)
+        java.util.Set<String> mealsOnDate = date != null ? mealsAvailableByDate.getOrDefault(date, java.util.Collections.emptySet()) : java.util.Collections.emptySet();
+        boolean hasBreakfast = mealsOnDate.contains("breakfast");
+        boolean hasLunch = mealsOnDate.contains("lunch");
+        boolean hasDinner = mealsOnDate.contains("dinner");
+
+        // If we have no meal data for this date, use default assumptions
+        // (breakfast, lunch, dinner all available on festival days)
+        if (mealsOnDate.isEmpty() && date != null) {
+            // Check if it's a festival day - if so, assume all meals
+            boolean isFestivalDay = festivalDays.stream().anyMatch(d -> d.getDate().equals(date) && d.isFestivalDay());
+            if (isFestivalDay) {
+                hasBreakfast = true;
+                hasLunch = true;
+                hasDinner = true;
+            }
+        }
+
+        // Apply boundary limits from EventPart boundaries
+        // For arrival: check firstMealOnDate - meals BEFORE the first meal are not included
+        // For departure: check lastMealOnDate - meals AFTER the last meal are not included
+        if (date != null) {
+            if (isArrival) {
+                // For arrival days, exclude meals BEFORE the first boundary meal
+                String firstMeal = firstMealOnDate.get(date);
+                if (firstMeal != null) {
+                    // Meal ordering: breakfast < lunch < dinner
+                    // If first meal is lunch, exclude breakfast
+                    // If first meal is dinner, exclude breakfast and lunch
+                    if ("lunch".equals(firstMeal)) {
+                        hasBreakfast = false;
+                        Console.log("DefaultFestivalDaySelectionSection.getMealNoteForDate: Excluding breakfast (first meal is lunch)");
+                    } else if ("dinner".equals(firstMeal)) {
+                        hasBreakfast = false;
+                        hasLunch = false;
+                        Console.log("DefaultFestivalDaySelectionSection.getMealNoteForDate: Excluding breakfast+lunch (first meal is dinner)");
+                    }
+                }
+            } else {
+                // For departure days, exclude meals AFTER the last boundary meal
+                String lastMeal = lastMealOnDate.get(date);
+                if (lastMeal != null) {
+                    // Meal ordering: breakfast < lunch < dinner
+                    // If last meal is lunch, exclude dinner
+                    // If last meal is breakfast, exclude lunch and dinner
+                    if ("lunch".equals(lastMeal)) {
+                        hasDinner = false;
+                        Console.log("DefaultFestivalDaySelectionSection.getMealNoteForDate: Excluding dinner (last meal is lunch)");
+                    } else if ("breakfast".equals(lastMeal)) {
+                        hasLunch = false;
+                        hasDinner = false;
+                        Console.log("DefaultFestivalDaySelectionSection.getMealNoteForDate: Excluding lunch+dinner (last meal is breakfast)");
+                    }
+                }
+            }
+        }
+
         if (isArrival) {
+            // Arrival: based on arrival time, which meals will guest get?
+            // MORNING: arrives before lunch, gets lunch (if available) + dinner (if available)
+            // AFTERNOON: arrives after lunch but before dinner, gets dinner only (if available)
+            // EVENING: arrives after dinner, no meals
             return switch (time) {
-                case MORNING -> "\u2713 Lunch + Dinner"; // Checkmark
-                case AFTERNOON -> "\u2713 Dinner only";
-                case EVENING -> "\u2717 No meals"; // X mark
+                case MORNING -> {
+                    if (hasLunch && hasDinner) yield "\u2713 Lunch + Dinner";
+                    if (hasLunch) yield "\u2713 Lunch only";
+                    if (hasDinner) yield "\u2713 Dinner only";
+                    yield "\u2717 No meals";
+                }
+                case AFTERNOON -> {
+                    if (hasDinner) yield "\u2713 Dinner only";
+                    yield "\u2717 No meals";
+                }
+                case EVENING -> "\u2717 No meals";
             };
         } else {
+            // Departure: based on departure time, which meals will guest get?
+            // MORNING: leaves before lunch, gets breakfast only (if available)
+            // AFTERNOON: leaves after lunch but before dinner, gets breakfast + lunch
+            // EVENING: leaves after dinner, gets all available meals
             return switch (time) {
-                case MORNING -> "\u2713 Breakfast only";
-                case AFTERNOON -> "\u2713 Breakfast + Lunch";
-                case EVENING -> "\u2713 All meals";
+                case MORNING -> {
+                    if (hasBreakfast) yield "\u2713 Breakfast only";
+                    yield "\u2717 No meals";
+                }
+                case AFTERNOON -> {
+                    if (hasBreakfast && hasLunch) yield "\u2713 Breakfast + Lunch";
+                    if (hasBreakfast) yield "\u2713 Breakfast only";
+                    if (hasLunch) yield "\u2713 Lunch only";
+                    yield "\u2717 No meals";
+                }
+                case EVENING -> {
+                    List<String> meals = new ArrayList<>();
+                    if (hasBreakfast) meals.add("Breakfast");
+                    if (hasLunch) meals.add("Lunch");
+                    if (hasDinner) meals.add("Dinner");
+                    if (meals.isEmpty()) yield "\u2717 No meals";
+                    if (meals.size() == 3) yield "\u2713 All meals";
+                    yield "\u2713 " + String.join(" + ", meals);
+                }
             };
         }
+    }
+
+    /**
+     * Checks if a time option should be displayed for a given date.
+     * Hides time options that reference meals that don't exist on that date.
+     *
+     * For departure:
+     * - EVENING: Only show if dinner exists on that day
+     * - AFTERNOON: Only show if lunch exists on that day
+     * - MORNING: Always show (breakfast is from previous night's stay)
+     *
+     * For arrival: Always show all options (arriving at any time is valid)
+     */
+    protected boolean isTimeOptionValidForDate(ArrivalDepartureTime time, boolean isArrival, LocalDate date) {
+        Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: time=" + time + ", isArrival=" + isArrival + ", date=" + date);
+
+        // Arrival options are always valid - you can arrive at any time
+        if (isArrival) {
+            Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: Arrival - always valid");
+            return true;
+        }
+
+        // For departure, check if the required meal exists on that date
+        if (date == null) {
+            Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: date is null - showing all options");
+            return true; // No date selected yet, show all options
+        }
+
+        java.util.Set<String> mealsOnDate = mealsAvailableByDate.getOrDefault(date, java.util.Collections.emptySet());
+        String lastMeal = lastMealOnDate.get(date);
+        Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: mealsOnDate=" + mealsOnDate +
+            " (map size=" + mealsAvailableByDate.size() + "), lastMealOnDate=" + lastMeal);
+
+        // Check if the requested time option is valid given the boundary limit
+        // If lastMeal is set for this date, meals AFTER the last meal are not available
+        if (lastMeal != null) {
+            boolean isValidGivenBoundary = switch (time) {
+                case MORNING -> true; // Breakfast is always before lunch/dinner
+                case AFTERNOON -> !lastMeal.equals("breakfast"); // Need lunch, which is after breakfast
+                case EVENING -> lastMeal.equals("dinner"); // Only valid if dinner is the last meal
+            };
+            Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: Boundary check - lastMeal=" + lastMeal +
+                ", " + time + " validGivenBoundary=" + isValidGivenBoundary);
+            if (!isValidGivenBoundary) {
+                return false;
+            }
+        }
+
+        // If we have no meal data, check if it's a festival day (assume all meals available)
+        if (mealsOnDate.isEmpty()) {
+            boolean isFestivalDay = festivalDays.stream().anyMatch(d -> d.getDate().equals(date) && d.isFestivalDay());
+            Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: No meals data, isFestivalDay=" + isFestivalDay);
+            if (isFestivalDay) {
+                return true; // Festival day with no data - assume all meals, show all options
+            }
+            // Non-festival day with no meal data - only show MORNING (breakfast from night before)
+            boolean result = time == ArrivalDepartureTime.MORNING;
+            Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: Non-festival, no meals -> " + time + " valid=" + result);
+            return result;
+        }
+
+        // Check meal availability for each departure time option
+        boolean result = switch (time) {
+            case MORNING -> true; // Always valid - breakfast is from accommodation night before
+            case AFTERNOON -> mealsOnDate.contains("lunch"); // Need lunch to stay until afternoon
+            case EVENING -> mealsOnDate.contains("dinner"); // Need dinner to stay until evening
+        };
+        Console.log("DefaultFestivalDaySelectionSection.isTimeOptionValidForDate: " + time + " requires " +
+            (time == ArrivalDepartureTime.EVENING ? "dinner" : time == ArrivalDepartureTime.AFTERNOON ? "lunch" : "none") +
+            " -> valid=" + result);
+        return result;
     }
 
     protected void setupBindings() {
@@ -393,6 +618,10 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         arrivalDateProperty.addListener((obs, old, newVal) -> updateSectionVisibility());
         departureDateProperty.addListener((obs, old, newVal) -> updateSectionVisibility());
 
+        // Rebuild time sections when dates change to update meal notes for new dates
+        arrivalDateProperty.addListener((obs, old, newVal) -> rebuildTimeSections());
+        departureDateProperty.addListener((obs, old, newVal) -> rebuildTimeSections());
+
         // Rebuild time sections when color scheme changes to apply new colors
         colorScheme.addListener((obs, old, newVal) -> rebuildTimeSections());
     }
@@ -400,9 +629,13 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     /**
      * Rebuilds the time selection sections with current color scheme.
      * Called when color scheme changes to apply new theme colors.
+     * Also validates current time selections and auto-selects valid options if needed.
      */
     protected void rebuildTimeSections() {
         if (container == null || arrivalTimeSection == null || departureTimeSection == null) return;
+
+        // Auto-select valid time options if current selection is no longer valid
+        autoSelectValidTimeOptions();
 
         // Store visibility state
         boolean arrivalVisible = arrivalTimeSection.isVisible();
@@ -434,6 +667,30 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         updateSectionVisibility();
     }
 
+    /**
+     * Auto-selects valid time options if the current selection is no longer valid for the date.
+     * For example, if EVENING is selected but dinner is not available, switches to AFTERNOON or MORNING.
+     */
+    protected void autoSelectValidTimeOptions() {
+        // Check departure time validity
+        LocalDate departureDate = departureDateProperty.get();
+        ArrivalDepartureTime currentDepartureTime = departureTimeProperty.get();
+        if (departureDate != null && currentDepartureTime != null) {
+            if (!isTimeOptionValidForDate(currentDepartureTime, false, departureDate)) {
+                // Find the best valid option (prefer AFTERNOON over MORNING for better UX)
+                if (isTimeOptionValidForDate(ArrivalDepartureTime.AFTERNOON, false, departureDate)) {
+                    departureTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
+                    Console.log("DefaultFestivalDaySelectionSection: Auto-selected AFTERNOON departure (EVENING not available)");
+                } else {
+                    departureTimeProperty.set(ArrivalDepartureTime.MORNING);
+                    Console.log("DefaultFestivalDaySelectionSection: Auto-selected MORNING departure (AFTERNOON/EVENING not available)");
+                }
+            }
+        }
+
+        // Arrival times are always valid, no auto-selection needed
+    }
+
     protected void updateSectionVisibility() {
         LocalDate arrival = arrivalDateProperty.get();
         LocalDate departure = departureDateProperty.get();
@@ -450,6 +707,11 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         arrivalTimeSection.setManaged(showArrivalTime);
         departureTimeSection.setVisible(showDepartureTime);
         departureTimeSection.setManaged(showDepartureTime);
+
+        // Show meal time info box when time sections are visible
+        boolean showTimeMealsInfo = showArrivalTime || showDepartureTime;
+        timeMealsInfoBox.setVisible(showTimeMealsInfo);
+        timeMealsInfoBox.setManaged(showTimeMealsInfo);
 
         // Update time section titles with dates
         if (arrivalTimeTitleLabel != null && hasArrival) {
@@ -766,14 +1028,14 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         // Normal mode: First click sets arrival, second click sets departure
         if (arrival == null) {
             arrivalDateProperty.set(date);
-            arrivalTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
+            arrivalTimeProperty.set(defaultArrivalTime);  // Use computed default from boundary meals
         } else if (departure == null) {
             // Day visitors can depart same day as arrival (0 nights)
             // All others must depart at least 1 day after arrival
             boolean validDeparture = isDayVisitor ? !date.isBefore(arrival) : date.isAfter(arrival);
             if (validDeparture) {
                 departureDateProperty.set(date);
-                departureTimeProperty.set(ArrivalDepartureTime.AFTERNOON);  // Default to afternoon per user request
+                departureTimeProperty.set(defaultDepartureTime);  // Use computed default from boundary meals
             }
         }
     }
@@ -837,6 +1099,18 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     @Override
+    public void setEventStartDate(LocalDate date) {
+        this.defaultArrivalDate = date;
+        Console.log("DefaultFestivalDaySelectionSection: Set event start date (default arrival) to " + date);
+    }
+
+    @Override
+    public void setEventEndDate(LocalDate date) {
+        this.defaultDepartureDate = date;
+        Console.log("DefaultFestivalDaySelectionSection: Set event end date (default departure) to " + date);
+    }
+
+    @Override
     public void setMinNightsConstraint(int minNights) {
         this.minNightsConstraint = minNights;
         // Rebuild cards to reflect constraint changes
@@ -855,9 +1129,9 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         // Reset date selections to event defaults (first and last festival days)
         arrivalDateProperty.set(defaultArrivalDate);
         departureDateProperty.set(defaultDepartureDate);
-        // Reset times to defaults
-        arrivalTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
-        departureTimeProperty.set(ArrivalDepartureTime.AFTERNOON);
+        // Reset times to computed defaults from boundary meals (or AFTERNOON as fallback)
+        arrivalTimeProperty.set(defaultArrivalTime);
+        departureTimeProperty.set(defaultDepartureTime);
         // Clear changing mode
         changingDateMode = null;
         // Update UI
@@ -946,6 +1220,12 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             return;
         }
 
+        // Clear boundary meal limits (will be repopulated from EventPart boundaries)
+        firstMealOnDate.clear();
+        lastMealOnDate.clear();
+        lateDepartureTransitionDate = null;
+        lateDepartureFirstMeal = null;
+
         Event event = policyAggregate.getEvent();
         if (event == null) {
             Console.log("DefaultFestivalDaySelectionSection: Event not available");
@@ -978,9 +1258,252 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         Console.log("DefaultFestivalDaySelectionSection: Found " + teachingItems.size() + " teaching items");
         Console.log("DefaultFestivalDaySelectionSection: First teaching: " + firstTeachingDate + ", Last teaching: " + lastTeachingDate);
 
-        // Add 2 days before first teaching for early arrival and 2 days after for late departure
-        LocalDate startDate = firstTeachingDate.minusDays(2);
-        LocalDate endDate = lastTeachingDate.plusDays(2);
+        // Get event boundary dates from Event and EventParts (preferred method)
+        // - Main event dates from Event entity
+        // - Early arrival from EarlyArrivalPart
+        // - Late departure from LateDeparturePart
+        LocalDate earlyArrivalDate = null;
+        LocalDate eventStartDate = null;
+        LocalDate eventEndDate = null;
+        LocalDate lateDepartureDate = null;
+
+        // Get main event dates from Event entity (authoritative source)
+        eventStartDate = event.getStartDate();
+        eventEndDate = event.getEndDate();
+        Console.log("DefaultFestivalDaySelectionSection: Main event dates from Event: " + eventStartDate + " to " + eventEndDate);
+
+        // Get early arrival date from EarlyArrivalPart
+        EventPart earlyArrivalPart = policyAggregate.getEarlyArrivalPart();
+        if (earlyArrivalPart != null) {
+            earlyArrivalDate = earlyArrivalPart.getStartDate();
+            Console.log("DefaultFestivalDaySelectionSection: Early arrival from EventPart: " + earlyArrivalDate);
+        }
+
+        // Get late departure date from LateDeparturePart
+        EventPart lateDeparturePart = policyAggregate.getLateDeparturePart();
+        if (lateDeparturePart != null) {
+            lateDepartureDate = lateDeparturePart.getEndDate();
+            Console.log("DefaultFestivalDaySelectionSection: Late departure from EventPart: " + lateDepartureDate);
+        }
+
+        // ========== LOG EVENTPART BOUNDARIES AND THEIR SCHEDULED ITEMS ==========
+        // The boundary.scheduledItem tells us what meal marks the boundary
+        Console.log("DefaultFestivalDaySelectionSection: ========== EVENT PART BOUNDARIES ==========");
+
+        // Store Early Arrival boundaries - first meal available for early arrivals
+        if (earlyArrivalPart != null) {
+            ScheduledBoundary startBoundary = earlyArrivalPart.getStartBoundary();
+            ScheduledBoundary endBoundary = earlyArrivalPart.getEndBoundary();
+            logBoundaryInfo("EarlyArrival.start", startBoundary);
+            logBoundaryInfo("EarlyArrival.end", endBoundary);
+
+            // Store the FIRST meal for early arrivals (start boundary)
+            // This tells us what meal is available when early arrivals can start eating
+            if (startBoundary != null) {
+                ScheduledItem firstMealOnEarlyArrival = startBoundary.getScheduledItem();
+                if (firstMealOnEarlyArrival != null && earlyArrivalDate != null) {
+                    String mealName = firstMealOnEarlyArrival.getItem() != null ?
+                        firstMealOnEarlyArrival.getItem().getName() : null;
+                    Console.log("DefaultFestivalDaySelectionSection: First meal on early arrival (" + earlyArrivalDate +
+                        ") is: " + mealName + " (scheduledItem id=" + firstMealOnEarlyArrival.getPrimaryKey() + ")");
+                    storeBoundaryMealInfo(earlyArrivalDate, firstMealOnEarlyArrival, true);  // true = isFirstMeal
+                }
+            }
+        }
+
+        // Track late departure start date to avoid restricting meals on days that have late departure
+        LocalDate lateDepartureStartDate = null;
+        if (lateDeparturePart != null) {
+            ScheduledBoundary startBoundary = lateDeparturePart.getStartBoundary();
+            ScheduledBoundary endBoundary = lateDeparturePart.getEndBoundary();
+            logBoundaryInfo("LateDeparture.start", startBoundary);
+            logBoundaryInfo("LateDeparture.end", endBoundary);
+
+            // Track the late departure start date - meals on this day should NOT be restricted
+            // by the main event's end boundary, since late departure continues with more meals
+            lateDepartureStartDate = lateDeparturePart.getStartDate();
+            Console.log("DefaultFestivalDaySelectionSection: Late departure START date: " + lateDepartureStartDate);
+
+            // Store the FIRST meal on late departure start date
+            // This is the first meal that late departures get on the transition day (e.g., dinner on event end date)
+            if (startBoundary != null) {
+                ScheduledItem firstMealOnLateDepartureStart = startBoundary.getScheduledItem();
+                if (firstMealOnLateDepartureStart != null && lateDepartureStartDate != null) {
+                    String mealName = firstMealOnLateDepartureStart.getItem() != null ?
+                        firstMealOnLateDepartureStart.getItem().getName() : null;
+                    Console.log("DefaultFestivalDaySelectionSection: First meal on late departure START (" + lateDepartureStartDate +
+                        ") is: " + mealName + " (scheduledItem id=" + firstMealOnLateDepartureStart.getPrimaryKey() + ")");
+                    // Store in separate fields for late departure transition tracking
+                    // This tells us what ADDITIONAL meal late departures get on the event end date
+                    lateDepartureTransitionDate = lateDepartureStartDate;
+                    if (mealName != null) {
+                        mealName = mealName.toLowerCase();
+                        if (mealName.contains("breakfast") || mealName.contains("morning")) {
+                            lateDepartureFirstMeal = "breakfast";
+                        } else if (mealName.contains("lunch") || mealName.contains("midday") || mealName.contains("noon")) {
+                            lateDepartureFirstMeal = "lunch";
+                        } else if (mealName.contains("dinner") || mealName.contains("evening") || mealName.contains("supper")) {
+                            lateDepartureFirstMeal = "dinner";
+                        }
+                    }
+                    Console.log("DefaultFestivalDaySelectionSection: Stored lateDepartureTransitionDate=" + lateDepartureTransitionDate +
+                        ", lateDepartureFirstMeal=" + lateDepartureFirstMeal);
+                }
+            }
+
+            // The endBoundary.scheduledItem tells us the LAST meal available on the late departure day
+            // Store this for use in meal availability detection
+            if (endBoundary != null) {
+                ScheduledItem lastMealOnLateDeparture = endBoundary.getScheduledItem();
+                if (lastMealOnLateDeparture != null && lateDepartureDate != null) {
+                    String mealName = lastMealOnLateDeparture.getItem() != null ?
+                        lastMealOnLateDeparture.getItem().getName() : null;
+                    Console.log("DefaultFestivalDaySelectionSection: Last meal on late departure (" + lateDepartureDate +
+                        ") is: " + mealName + " (scheduledItem id=" + lastMealOnLateDeparture.getPrimaryKey() + ")");
+                    // Store the last meal info for this date - will be used by loadMealTimesFromPolicyAggregate
+                    storeBoundaryMealInfo(lateDepartureDate, lastMealOnLateDeparture, false);
+                }
+            }
+        }
+        // Make lateDepartureStartDate effectively final for use in lambda
+        final LocalDate finalLateDepartureStartDate = lateDepartureStartDate;
+        // Also check main event part boundaries
+        EntityList<EventPart> eventParts = policyAggregate.getEventParts();
+        if (eventParts != null) {
+            for (EventPart part : eventParts) {
+                String partName = part.getName() != null ? part.getName() : "unnamed";
+                Console.log("DefaultFestivalDaySelectionSection: EventPart '" + partName + "' dates: " +
+                    part.getStartDate() + " to " + part.getEndDate());
+                logBoundaryInfo(partName + ".start", part.getStartBoundary());
+                logBoundaryInfo(partName + ".end", part.getEndBoundary());
+
+                // Check if this is the main event part (not early arrival or late departure)
+                // by comparing to the main event dates
+                LocalDate partStartDate = part.getStartDate();
+                LocalDate partEndDate = part.getEndDate();
+                boolean isMainEventPart = eventStartDate != null && eventEndDate != null &&
+                    partStartDate != null && partEndDate != null &&
+                    partStartDate.equals(eventStartDate) && partEndDate.equals(eventEndDate);
+
+                if (isMainEventPart) {
+                    Console.log("DefaultFestivalDaySelectionSection: Found MAIN EVENT PART: " + partName);
+                    // Store the first meal from the main event's start boundary
+                    ScheduledBoundary startBoundary = part.getStartBoundary();
+                    if (startBoundary != null) {
+                        ScheduledItem firstMealOfEvent = startBoundary.getScheduledItem();
+                        if (firstMealOfEvent != null) {
+                            LocalDate firstMealDate = ScheduledBoundaries.getDate(startBoundary);
+                            String mealName = firstMealOfEvent.getItem() != null ?
+                                firstMealOfEvent.getItem().getName() : null;
+                            Console.log("DefaultFestivalDaySelectionSection: First meal of event on " + firstMealDate +
+                                " is: " + mealName + " (scheduledItem id=" + firstMealOfEvent.getPrimaryKey() + ")");
+                            storeBoundaryMealInfo(firstMealDate, firstMealOfEvent, true);  // true = isFirstMeal
+                        }
+                    }
+                    // Also store the last meal from the main event's end boundary
+                    // BUT ONLY if there's no late departure starting on that date
+                    // (late departure would include additional meals like dinner)
+                    ScheduledBoundary endBoundary = part.getEndBoundary();
+                    if (endBoundary != null) {
+                        ScheduledItem lastMealOfEvent = endBoundary.getScheduledItem();
+                        if (lastMealOfEvent != null) {
+                            LocalDate lastMealDate = ScheduledBoundaries.getDate(endBoundary);
+                            String mealName = lastMealOfEvent.getItem() != null ?
+                                lastMealOfEvent.getItem().getName() : null;
+                            Console.log("DefaultFestivalDaySelectionSection: Last meal of main event on " + lastMealDate +
+                                " is: " + mealName + " (scheduledItem id=" + lastMealOfEvent.getPrimaryKey() + ")");
+
+                            // Check if late departure starts on or before this date
+                            // If so, don't restrict meals - late departure provides more meals on this day
+                            boolean lateDepartureCoversThisDate = finalLateDepartureStartDate != null &&
+                                !finalLateDepartureStartDate.isAfter(lastMealDate);
+                            if (lateDepartureCoversThisDate) {
+                                Console.log("DefaultFestivalDaySelectionSection: NOT storing lastMealOnDate for " + lastMealDate +
+                                    " because late departure starts on " + finalLateDepartureStartDate + " (covers this date)");
+                            } else {
+                                storeBoundaryMealInfo(lastMealDate, lastMealOfEvent, false);  // false = isLastMeal
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Console.log("DefaultFestivalDaySelectionSection: ==========================================");
+
+        // Log the stored boundary meal limits - comprehensive summary
+        Console.log("DefaultFestivalDaySelectionSection: ========== BOUNDARY MEAL LIMITS ==========");
+        Console.log("DefaultFestivalDaySelectionSection: EVENT DATES: start=" + eventStartDate + ", end=" + eventEndDate);
+        Console.log("DefaultFestivalDaySelectionSection: EARLY ARRIVAL: " + earlyArrivalDate);
+        Console.log("DefaultFestivalDaySelectionSection: LATE DEPARTURE: " + lateDepartureDate);
+        Console.log("DefaultFestivalDaySelectionSection: -------------------------------------------");
+        Console.log("DefaultFestivalDaySelectionSection: firstMealOnDate=" + firstMealOnDate);
+        Console.log("DefaultFestivalDaySelectionSection: lastMealOnDate=" + lastMealOnDate);
+        Console.log("DefaultFestivalDaySelectionSection: -------------------------------------------");
+        Console.log("DefaultFestivalDaySelectionSection: Late Departure Transition:");
+        Console.log("DefaultFestivalDaySelectionSection:   transitionDate=" + lateDepartureTransitionDate);
+        Console.log("DefaultFestivalDaySelectionSection:   firstMealForLateDepartures=" + lateDepartureFirstMeal);
+        Console.log("DefaultFestivalDaySelectionSection: ===========================================");
+
+        // Try to extract meal times from ScheduledBoundaries for arrival/departure defaults
+        EntityList<ScheduledBoundary> boundaries = policyAggregate.getScheduledBoundaries();
+        Console.log("DefaultFestivalDaySelectionSection: ========== ALL SCHEDULED BOUNDARIES ==========");
+        if (boundaries != null) {
+            Console.log("DefaultFestivalDaySelectionSection: Found " + boundaries.size() + " ScheduledBoundaries");
+            for (int i = 0; i < boundaries.size(); i++) {
+                ScheduledBoundary boundary = boundaries.get(i);
+                LocalDate boundaryDate = ScheduledBoundaries.getDate(boundary);
+                LocalTime boundaryStartTime = ScheduledBoundaries.getStartTime(boundary);
+                LocalTime boundaryEndTime = ScheduledBoundaries.getEndTime(boundary);
+                boolean atStartTime = boundary.isAtStartTime();
+                ScheduledItem scheduledItem = boundary.getScheduledItem();
+                String siInfo = scheduledItem != null ?
+                    "siId=" + scheduledItem.getPrimaryKey() + ", item=" + (scheduledItem.getItem() != null ? scheduledItem.getItem().getName() : "null") :
+                    "null";
+                Console.log("DefaultFestivalDaySelectionSection: Boundary[" + i + "] date=" + boundaryDate +
+                    ", startTime=" + boundaryStartTime + ", endTime=" + boundaryEndTime +
+                    ", atStartTime=" + atStartTime + ", " + siInfo);
+            }
+        } else {
+            Console.log("DefaultFestivalDaySelectionSection: No ScheduledBoundaries found (null)");
+        }
+        Console.log("DefaultFestivalDaySelectionSection: =============================================");
+
+        if (boundaries != null && boundaries.size() >= 3) {
+            // Find the boundaries that correspond to event start and end
+            for (ScheduledBoundary boundary : boundaries) {
+                LocalDate boundaryDate = ScheduledBoundaries.getDate(boundary);
+                if (boundaryDate != null) {
+                    if (boundaryDate.equals(eventStartDate)) {
+                        eventFirstMealEndTime = ScheduledBoundaries.getEndTime(boundary);
+                    } else if (boundaryDate.equals(eventEndDate)) {
+                        eventLastMealStartTime = ScheduledBoundaries.getStartTime(boundary);
+                    }
+                }
+            }
+
+            // Compute arrival deadline (10 min before first meal ends) and departure earliest (10 min after last meal starts)
+            if (eventFirstMealEndTime != null) {
+                arrivalDeadline = eventFirstMealEndTime.minusMinutes(10);
+            }
+            if (eventLastMealStartTime != null) {
+                departureEarliest = eventLastMealStartTime.plusMinutes(10);
+            }
+
+            // Compute default arrival/departure time slots based on boundary meal times
+            computeDefaultTimesFromBoundaries();
+
+            Console.log("DefaultFestivalDaySelectionSection: Boundary times - firstMealEnd: " + eventFirstMealEndTime +
+                ", lastMealStart: " + eventLastMealStartTime + " → arrival by " + arrivalDeadline +
+                ", departure after " + departureEarliest);
+        }
+
+        // Fallback to calculated dates if boundaries not available
+        LocalDate startDate = earlyArrivalDate != null ? earlyArrivalDate : firstTeachingDate.minusDays(2);
+        LocalDate endDate = lateDepartureDate != null ? lateDepartureDate : lastTeachingDate.plusDays(2);
+
+        // Store event boundary dates for use by other components
+        if (eventStartDate != null) setEventStartDate(eventStartDate);
+        if (eventEndDate != null) setEventEndDate(eventEndDate);
 
         Console.log("DefaultFestivalDaySelectionSection: Populating days from " + startDate + " to " + endDate);
 
@@ -996,12 +1519,23 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             ScheduledItem teaching = teachingsByDate.get(currentDate);
             boolean isFestivalDay = teaching != null;
 
-            // Get teaching title from ScheduledItem.getItem().getName() if available
+            // Get teaching title - prefer ScheduledItem's name/label over Item's name
             String title = null;
             Item teachingItem = null;
-            if (teaching != null && teaching.getItem() != null) {
-                teachingItem = teaching.getItem();
-                title = teachingItem.getName();
+            if (teaching != null) {
+                // First try ScheduledItem's own name
+                title = teaching.getName();
+                // If no name, try ScheduledItem's label
+                if ((title == null || title.isEmpty()) && teaching.getLabel() != null) {
+                    title = teaching.getLabel().getEn();
+                }
+                // Fall back to Item's name
+                if ((title == null || title.isEmpty()) && teaching.getItem() != null) {
+                    teachingItem = teaching.getItem();
+                    title = teachingItem.getName();
+                } else if (teaching.getItem() != null) {
+                    teachingItem = teaching.getItem();
+                }
             }
 
             // Calculate teaching price for this specific date
@@ -1030,7 +1564,9 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             days.add(day);
 
             Console.log("DefaultFestivalDaySelectionSection: Day " + dayIndex + " - " + currentDate +
-                " isFestival=" + isFestivalDay + " title=" + title + " price=" + teachingPrice);
+                " isFestival=" + isFestivalDay + " title=" + title + " price=" + teachingPrice +
+                " scheduledItemId=" + (teaching != null ? teaching.getPrimaryKey() : "null") +
+                " scheduledItemName=" + (teaching != null ? teaching.getName() : "null"));
 
             currentDate = currentDate.plusDays(1);
             dayIndex++;
@@ -1044,15 +1580,28 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         this.defaultArrivalDate = firstTeachingDate;
         this.defaultDepartureDate = lastTeachingDate;
 
+        // IMPORTANT: Load meal times BEFORE setting festival days and dates
+        // This populates mealsAvailableByDate map which is needed by time option filtering
+        // when rebuildTimeSections() is called by the date change listeners
+        loadMealTimesFromPolicyAggregate(policyAggregate);
+        Console.log("DefaultFestivalDaySelectionSection: Meals loaded - mealsAvailableByDate has " + mealsAvailableByDate.size() + " dates");
+
+        // Validate default times against actual meal availability
+        // The defaults were computed from boundary times, but we need to ensure they're valid
+        // for the specific dates (e.g., if no dinner on last day, can't default to EVENING)
+        validateDefaultTimesAgainstMeals(firstTeachingDate, lastTeachingDate);
+
         // Set the festival days (this will trigger UI rebuild)
         setFestivalDays(days);
 
         // Set default arrival/departure to the first/last teaching days
+        // NOTE: These trigger rebuildTimeSections() via listeners, which uses mealsAvailableByDate
         setArrivalDate(firstTeachingDate);
         setDepartureDate(lastTeachingDate);
 
-        // Load meal times from API to update time selection ranges
-        loadMealTimesFromPolicyAggregate(policyAggregate);
+        // Set initial arrival/departure times based on computed (and validated) defaults
+        arrivalTimeProperty.set(defaultArrivalTime);
+        departureTimeProperty.set(defaultDepartureTime);
 
         Console.log("DefaultFestivalDaySelectionSection: Populated " + days.size() + " festival days, default arrival: " + firstTeachingDate + ", departure: " + lastTeachingDate);
     }
@@ -1061,9 +1610,13 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
      * Loads meal times from MEALS ScheduledItems in PolicyAggregate.
      * Updates lunch and dinner start time fields based on API data.
      * These times are used to determine arrival/departure time slot boundaries.
+     * Also populates mealsAvailableByDate map for dynamic meal note display.
      */
     protected void loadMealTimesFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) return;
+
+        // Clear and rebuild the meals available by date map
+        mealsAvailableByDate.clear();
 
         // Get all MEALS scheduled items
         List<ScheduledItem> mealItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.MEALS);
@@ -1083,7 +1636,20 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
                 startTime = mealSi.getTimeline().getStartTime();
             }
 
-            Console.log("DefaultFestivalDaySelectionSection: Meal '" + itemName + "' startTime=" + startTime);
+            // Track which meals are available on each date
+            LocalDate mealDate = mealSi.getDate();
+            if (mealDate != null) {
+                java.util.Set<String> mealsOnDate = mealsAvailableByDate.computeIfAbsent(mealDate, k -> new java.util.HashSet<>());
+                if (itemName.contains("breakfast") || itemName.contains("morning")) {
+                    mealsOnDate.add("breakfast");
+                } else if (itemName.contains("lunch") || itemName.contains("midday") || itemName.contains("noon")) {
+                    mealsOnDate.add("lunch");
+                } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
+                    mealsOnDate.add("dinner");
+                }
+            }
+
+            Console.log("DefaultFestivalDaySelectionSection: Meal '" + itemName + "' date=" + mealDate + " startTime=" + startTime);
 
             // Match meal type and update corresponding time fields (only need start times)
             if (itemName.contains("lunch") || itemName.contains("midday") || itemName.contains("noon")) {
@@ -1099,7 +1665,214 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             }
         }
 
-        // Rebuild time sections to reflect new time values
-        rebuildTimeSections();
+        // Log the meals available by date for debugging
+        Console.log("DefaultFestivalDaySelectionSection: ========== MEALS BY DATE ==========");
+        for (Map.Entry<LocalDate, java.util.Set<String>> entry : mealsAvailableByDate.entrySet()) {
+            Console.log("DefaultFestivalDaySelectionSection: Date " + entry.getKey() + " -> " + entry.getValue());
+        }
+        Console.log("DefaultFestivalDaySelectionSection: ===================================");
+
+        // Note: rebuildTimeSections() not called here because this method is now called
+        // BEFORE the UI is built. Time sections will be built/rebuilt when dates change.
+    }
+
+    /**
+     * Validates and adjusts default times to ensure they INCLUDE the boundary meals.
+     * The default selection should give users the first/last meals of the event.
+     *
+     * For arrival:
+     * - If first meal is dinner → AFTERNOON (arrive before dinner)
+     * - If first meal is lunch → MORNING (arrive before lunch)
+     * - If first meal is breakfast → MORNING
+     *
+     * For departure:
+     * - If last meal is lunch → AFTERNOON (stay through lunch)
+     * - If last meal is dinner → EVENING (stay through dinner)
+     * - If last meal is breakfast → MORNING
+     */
+    protected void validateDefaultTimesAgainstMeals(LocalDate arrivalDate, LocalDate departureDate) {
+        Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: arrival=" + arrivalDate +
+            ", departure=" + departureDate + ", currentDefaults: arrival=" + defaultArrivalTime + ", departure=" + defaultDepartureTime);
+
+        // Set arrival default based on FIRST meal boundary - user should get the first meal
+        if (arrivalDate != null) {
+            String firstMeal = firstMealOnDate.get(arrivalDate);
+            Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: firstMeal on " + arrivalDate + " = " + firstMeal);
+            if (firstMeal != null) {
+                // Select time that allows getting the first meal
+                // dinner → AFTERNOON (arrive before dinner to get it)
+                // lunch → MORNING (arrive before lunch to get it + dinner)
+                // breakfast → MORNING (arrive before breakfast to get all)
+                if ("dinner".equals(firstMeal)) {
+                    defaultArrivalTime = ArrivalDepartureTime.AFTERNOON;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: First meal is dinner → AFTERNOON arrival");
+                } else if ("lunch".equals(firstMeal)) {
+                    defaultArrivalTime = ArrivalDepartureTime.MORNING;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: First meal is lunch → MORNING arrival");
+                } else if ("breakfast".equals(firstMeal)) {
+                    defaultArrivalTime = ArrivalDepartureTime.MORNING;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: First meal is breakfast → MORNING arrival");
+                }
+            }
+        }
+
+        // Set departure default based on LAST meal boundary - user should get the last meal
+        if (departureDate != null) {
+            String lastMeal = lastMealOnDate.get(departureDate);
+            Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: lastMeal on " + departureDate + " = " + lastMeal);
+            if (lastMeal != null) {
+                // Select time that allows getting the last meal
+                // lunch → AFTERNOON (stay through lunch)
+                // dinner → EVENING (stay through dinner)
+                // breakfast → MORNING (only breakfast available)
+                if ("lunch".equals(lastMeal)) {
+                    defaultDepartureTime = ArrivalDepartureTime.AFTERNOON;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: Last meal is lunch → AFTERNOON departure");
+                } else if ("dinner".equals(lastMeal)) {
+                    defaultDepartureTime = ArrivalDepartureTime.EVENING;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: Last meal is dinner → EVENING departure");
+                } else if ("breakfast".equals(lastMeal)) {
+                    defaultDepartureTime = ArrivalDepartureTime.MORNING;
+                    Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: Last meal is breakfast → MORNING departure");
+                }
+            } else {
+                // No boundary info (e.g., late departure covers this date) - default to AFTERNOON
+                // AFTERNOON is a reasonable default as it includes lunch but not dinner
+                Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: No boundary info for departure " + departureDate + ", defaulting to AFTERNOON");
+                defaultDepartureTime = ArrivalDepartureTime.AFTERNOON;
+            }
+        }
+
+        Console.log("DefaultFestivalDaySelectionSection.validateDefaultTimesAgainstMeals: Final defaults - arrival: " +
+            defaultArrivalTime + ", departure: " + defaultDepartureTime);
+    }
+
+    /**
+     * Computes default arrival/departure time slots based on boundary meal times.
+     * - Arrival: should be in the slot that includes the time BEFORE the first meal ends
+     * - Departure: should be in the slot that includes the time AFTER the last meal starts
+     */
+    protected void computeDefaultTimesFromBoundaries() {
+        // Determine default arrival time slot based on when guest must arrive
+        if (arrivalDeadline != null) {
+            if (arrivalDeadline.isBefore(LocalTime.of(12, 0))) {
+                defaultArrivalTime = ArrivalDepartureTime.MORNING;
+            } else if (arrivalDeadline.isBefore(LocalTime.of(17, 0))) {
+                defaultArrivalTime = ArrivalDepartureTime.AFTERNOON;
+            } else {
+                defaultArrivalTime = ArrivalDepartureTime.EVENING;
+            }
+        }
+
+        // Determine default departure time slot based on when guest can leave
+        if (departureEarliest != null) {
+            if (departureEarliest.isBefore(LocalTime.of(12, 0))) {
+                defaultDepartureTime = ArrivalDepartureTime.MORNING;
+            } else if (departureEarliest.isBefore(LocalTime.of(17, 0))) {
+                defaultDepartureTime = ArrivalDepartureTime.AFTERNOON;
+            } else {
+                defaultDepartureTime = ArrivalDepartureTime.EVENING;
+            }
+        }
+
+        Console.log("DefaultFestivalDaySelectionSection: Computed defaults - arrival: " + defaultArrivalTime +
+            ", departure: " + defaultDepartureTime);
+    }
+
+    /**
+     * Logs information about a ScheduledBoundary for debugging.
+     */
+    protected void logBoundaryInfo(String label, ScheduledBoundary boundary) {
+        if (boundary == null) {
+            Console.log("DefaultFestivalDaySelectionSection: " + label + " = null");
+            return;
+        }
+        LocalDate date = ScheduledBoundaries.getDate(boundary);
+        LocalTime startTime = ScheduledBoundaries.getStartTime(boundary);
+        LocalTime endTime = ScheduledBoundaries.getEndTime(boundary);
+        boolean atStart = boundary.isAtStartTime();
+        ScheduledItem si = boundary.getScheduledItem();
+        String itemName = "null";
+        if (si != null && si.getItem() != null) {
+            itemName = si.getItem().getName();
+        }
+        Console.log("DefaultFestivalDaySelectionSection: " + label + " date=" + date +
+            ", time=" + (atStart ? startTime : endTime) + " (atStart=" + atStart + ")" +
+            ", scheduledItem=" + itemName + " (id=" + (si != null ? si.getPrimaryKey() : "null") + ")");
+    }
+
+    /**
+     * Stores boundary meal information for a date.
+     * This records the LAST meal available on a given date based on EventPart boundaries.
+     *
+     * @param date the date to record
+     * @param scheduledItem the boundary scheduledItem (a meal)
+     * @param isFirstMeal true if this is the first meal (arrival boundary), false if last meal (departure boundary)
+     */
+    protected void storeBoundaryMealInfo(LocalDate date, ScheduledItem scheduledItem, boolean isFirstMeal) {
+        if (date == null || scheduledItem == null) return;
+
+        Item item = scheduledItem.getItem();
+        if (item == null) return;
+
+        String itemName = item.getName();
+        if (itemName == null) return;
+        itemName = itemName.toLowerCase();
+
+        // Determine meal type from item name
+        String mealType = null;
+        if (itemName.contains("breakfast") || itemName.contains("morning")) {
+            mealType = "breakfast";
+        } else if (itemName.contains("lunch") || itemName.contains("midday") || itemName.contains("noon")) {
+            mealType = "lunch";
+        } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
+            mealType = "dinner";
+        }
+
+        if (mealType != null) {
+            if (isFirstMeal) {
+                // Store the first meal for this date - meals BEFORE this are not available
+                firstMealOnDate.put(date, mealType);
+                Console.log("DefaultFestivalDaySelectionSection: Stored firstMealOnDate[" + date + "] = " + mealType);
+            } else {
+                // Store the last meal for this date - meals AFTER this are not available
+                lastMealOnDate.put(date, mealType);
+                Console.log("DefaultFestivalDaySelectionSection: Stored lastMealOnDate[" + date + "] = " + mealType);
+            }
+        }
+    }
+
+    // === BOUNDARY INFO GETTERS ===
+
+    /**
+     * Gets the map of first meal available on each date (from boundary info).
+     * Used to exclude meals BEFORE the first boundary meal on arrival days.
+     */
+    public Map<LocalDate, String> getFirstMealOnDate() {
+        return firstMealOnDate;
+    }
+
+    /**
+     * Gets the map of last meal available on each date (from boundary info).
+     * Used to exclude meals AFTER the last boundary meal on departure days.
+     */
+    public Map<LocalDate, String> getLastMealOnDate() {
+        return lastMealOnDate;
+    }
+
+    /**
+     * Gets the date when late departure starts (usually same as main event end date).
+     * On this date, late departures get additional meals beyond the main event.
+     */
+    public LocalDate getLateDepartureTransitionDate() {
+        return lateDepartureTransitionDate;
+    }
+
+    /**
+     * Gets the first meal available to late departures on the transition date.
+     * This is the first ADDITIONAL meal beyond the main event (e.g., "dinner" if main event ends with lunch).
+     */
+    public String getLateDepartureFirstMeal() {
+        return lateDepartureFirstMeal;
     }
 }

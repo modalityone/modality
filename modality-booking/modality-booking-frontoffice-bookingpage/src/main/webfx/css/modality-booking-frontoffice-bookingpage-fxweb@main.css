@@ -1781,16 +1781,55 @@
     -fx-text-fill: #6c757d;
 }
 
-/* Badge - constraint (info badge with icon, blue background) */
+/* Coming Soon Button Placeholder - styled like muted/disabled primary button */
+.bookingpage-btn-coming-soon {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 8;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-cursor: default;
+}
+
+.bookingpage-btn-coming-soon-text {
+    -fx-text-fill: -booking-form-text-secondary;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+}
+
+/* Select Type Button - uses theme primary color */
+/* Note: Padding set in Java code (RegistrationTypeSection.java) */
+.bookingpage-btn-select-type {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.bookingpage-btn-select-type:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0, 0, 4);
+}
+
+.bookingpage-btn-select-type-text {
+    -fx-text-fill: -booking-form-text-on-primary;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+}
+
+.bookingpage-btn-select-type-icon {
+    -fx-stroke: -booking-form-text-on-primary;
+    -fx-fill: transparent;
+}
+
+/* Badge - constraint (info badge with icon, uses theme colors) */
 .bookingpage-badge-constraint {
-    -fx-background-color: #E3F2FD;
+    -fx-background-color: -booking-form-selected-bg;
     -fx-background-radius: 6;
 }
 
 .bookingpage-badge-constraint-text {
     -fx-font-size: 12px;
     -fx-font-weight: 500;
-    -fx-text-fill: #0D47A1;
+    -fx-text-fill: -booking-form-primary-dark;
 }
 
 /* Badge - constraint disabled (for sold out items) */
@@ -1803,8 +1842,8 @@
 }
 
 .bookingpage-badge-constraint-icon {
-    -fx-stroke: #0D47A1;
-    -fx-fill: #0D47A1;
+    -fx-stroke: -booking-form-primary-dark;
+    -fx-fill: -booking-form-primary-dark;
     -fx-stroke-width: 2.5;
 }
 
@@ -2214,16 +2253,16 @@
     -fx-background-color: -booking-form-selected-bg;
 }
 
-/* Change Departure Button - uses dark text color */
+/* Change Departure Button - uses theme-aware dark color */
 .bookingpage-change-departure-btn {
     -fx-background-color: white;
-    -fx-border-color: -booking-form-text-primary;
+    -fx-border-color: -booking-form-primary-dark;
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-background-radius: 8;
     -fx-font-size: 13px;
     -fx-font-weight: 600;
-    -fx-text-fill: -booking-form-text-primary;
+    -fx-text-fill: -booking-form-primary-dark;
     -fx-cursor: hand;
 }
 
@@ -2247,7 +2286,7 @@
 /* Time section container - departure */
 .bookingpage-time-section-departure {
     -fx-background-color: white;
-    -fx-border-color: -booking-form-text-primary;
+    -fx-border-color: -booking-form-primary-dark;
     -fx-border-width: 2;
     -fx-border-radius: 12;
     -fx-background-radius: 12;
@@ -2257,7 +2296,7 @@
 .bookingpage-time-section-title {
     -fx-font-size: 13px;
     -fx-font-weight: 700;
-    -fx-text-fill: #292A33;
+    -fx-text-fill: -booking-form-text-primary;
 }
 
 /* Time section clock icon - arrival (primary color) */
@@ -2265,9 +2304,9 @@
     -fx-fill: -booking-form-primary;
 }
 
-/* Time section clock icon - departure (dark text color) */
+/* Time section clock icon - departure (dark theme color) */
 .bookingpage-time-section-icon-departure {
-    -fx-fill: -booking-form-text-primary;
+    -fx-fill: -booking-form-primary-dark;
 }
 
 /* Time option card - base */
@@ -2286,10 +2325,10 @@
     -fx-border-color: -booking-form-primary;
 }
 
-/* Time option card - hover (departure context - uses dark text) */
+/* Time option card - hover (departure context - uses dark theme color) */
 .bookingpage-time-option-departure:hover {
     -fx-background-color: #f8f9fa;
-    -fx-border-color: -booking-form-text-primary;
+    -fx-border-color: -booking-form-primary-dark;
 }
 
 /* Time option card - selected (arrival) */
@@ -2301,14 +2340,14 @@
 /* Time option card - selected (departure) */
 .bookingpage-time-option-departure.selected {
     -fx-background-color: -booking-form-selected-bg;
-    -fx-border-color: -booking-form-text-primary;
+    -fx-border-color: -booking-form-primary-dark;
 }
 
 /* Time option label - default */
 .bookingpage-time-option-label {
     -fx-font-size: 14px;
     -fx-font-weight: 700;
-    -fx-text-fill: #292A33;
+    -fx-text-fill: -booking-form-text-primary;
 }
 
 /* Time option label - selected arrival */
@@ -2318,7 +2357,7 @@
 
 /* Time option label - selected departure */
 .bookingpage-time-option-departure.selected .bookingpage-time-option-label {
-    -fx-text-fill: -booking-form-text-primary;
+    -fx-text-fill: -booking-form-primary-dark;
 }
 
 /* Time option range (subtitle showing time) */
@@ -2425,7 +2464,7 @@
 /* Festival day card - departure date */
 .bookingpage-festival-day-card.departure {
     -fx-background-color: -booking-form-selected-bg;
-    -fx-border-color: -booking-form-text-primary;
+    -fx-border-color: -booking-form-primary-dark;
 }
 
 /* Festival day card - in stay (between arrival and departure) */
@@ -2460,7 +2499,7 @@
 }
 
 .bookingpage-festival-day-card.departure .bookingpage-festival-day-weekday {
-    -fx-text-fill: -booking-form-text-primary;
+    -fx-text-fill: -booking-form-primary-dark;
 }
 
 /* Festival day card labels - day number */
@@ -2475,7 +2514,7 @@
 }
 
 .bookingpage-festival-day-card.departure .bookingpage-festival-day-number {
-    -fx-text-fill: -booking-form-text-primary;
+    -fx-text-fill: -booking-form-primary-dark;
 }
 
 /* Festival day card labels - month */
@@ -2490,7 +2529,7 @@
 }
 
 .bookingpage-festival-day-card.departure .bookingpage-festival-day-month {
-    -fx-text-fill: -booking-form-text-primary;
+    -fx-text-fill: -booking-form-primary-dark;
 }
 
 /* Festival day card - teaching title */
@@ -2544,7 +2583,7 @@
 }
 
 .bookingpage-festival-day-badge.departure {
-    -fx-background-color: -booking-form-text-primary;
+    -fx-background-color: -booking-form-primary-dark;
 }
 
 .bookingpage-festival-day-badge.changing {
@@ -2565,7 +2604,7 @@
 }
 
 .bookingpage-festival-day-badge-large.departure {
-    -fx-background-color: -booking-form-text-primary;
+    -fx-background-color: -booking-form-primary-dark;
 }
 
 .bookingpage-festival-day-badge-large.day-visit {
@@ -2578,7 +2617,7 @@
    ========================================== */
 
 .bookingpage-time-section-arrival {
-    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-color: #f8f9fa;
     -fx-background-radius: 12;
 }
 
@@ -2590,7 +2629,7 @@
 .bookingpage-time-section-title {
     -fx-font-size: 16px;
     -fx-font-weight: 600;
-    -fx-text-fill: #292A33;
+    -fx-text-fill: -booking-form-text-primary;
 }
 
 .bookingpage-time-section-icon-arrival {
@@ -2598,7 +2637,7 @@
 }
 
 .bookingpage-time-section-icon-departure {
-    -fx-fill: -booking-form-text-primary;
+    -fx-fill: -booking-form-primary-dark;
 }
 
 /* ==========================================

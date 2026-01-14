@@ -149,6 +149,7 @@ public interface BookingPageI18nKeys {
     Object FestivalDaysInstructions = "FestivalDaysInstructions";
     Object FestivalDaysMinNightsWarning = "FestivalDaysMinNightsWarning";
     Object FestivalDaysSelectDeparture = "FestivalDaysSelectDeparture";
+    Object FestivalDaysTimeMealsInfo = "FestivalDaysTimeMealsInfo";
     Object FirstName = "FirstName";
     Object FirstNamePlaceholder = "FirstNamePlaceholder";
     Object FirstNameRequired = "FirstNameRequired";
@@ -269,10 +270,15 @@ public interface BookingPageI18nKeys {
     Object ReviewDetailsSubtitle = "ReviewDetailsSubtitle";
     Object ReviewRegistrationsSubtitle = "ReviewRegistrationsSubtitle";
     Object ReviewYourBooking = "ReviewYourBooking";
+    Object RoomBookingRoommatesInfo = "RoomBookingRoommatesInfo";
+    Object Roommate = "Roommate";
     Object RoommateInformation = "RoommateInformation";
     Object RoommateName = "RoommateName";
     Object RoommateNamePlaceholder = "RoommateNamePlaceholder";
+    Object RoommateNumbered = "RoommateNumbered";
+    Object RoommateOptionalSuffix = "RoommateOptionalSuffix";
     Object RoommateRequiredWarning = "RoommateRequiredWarning";
+    Object RoommatesRequiredWarning = "RoommatesRequiredWarning";
     Object Select = "Select";
     Object SelectInPerson = "SelectInPerson";
     Object SelectParkingType = "SelectParkingType";

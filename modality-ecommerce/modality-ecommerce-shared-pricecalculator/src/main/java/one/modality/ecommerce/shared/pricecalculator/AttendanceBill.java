@@ -18,7 +18,7 @@ public final class AttendanceBill {
         this.date = date;
     }
 
-    LocalDate getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
