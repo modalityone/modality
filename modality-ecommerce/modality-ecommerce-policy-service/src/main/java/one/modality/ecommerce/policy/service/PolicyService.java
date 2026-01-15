@@ -2,6 +2,7 @@ package one.modality.ecommerce.policy.service;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.service.SingleServiceProvider;
+import dev.webfx.stack.db.query.QueryResult;
 import one.modality.ecommerce.policy.service.spi.PolicyServiceProvider;
 
 import java.util.ServiceLoader;
@@ -17,6 +18,10 @@ public final class PolicyService {
 
     public static Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
         return getProvider().loadPolicy(argument);
+    }
+
+    public static Future<QueryResult> loadAvailabilities(LoadPolicyArgument argument) {
+        return getProvider().loadAvailabilities(argument);
     }
 
 }

@@ -12,6 +12,7 @@
 
     <providers>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.policy.service.buscall.LoadPolicyMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.policy.service.buscall.LoadAvailabilitiesMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.policy.service.buscall.serial.LoadPolicyArgumentSerialCodec</provider>
         <provider interface="dev.webfx.stack.com.serial.spi.SerialCodec">one.modality.ecommerce.policy.service.buscall.serial.PolicyAggregateSerialCodec</provider>
     </providers>

@@ -3,6 +3,7 @@ package one.modality.ecommerce.policy.service.spi.impl.server;
 import dev.webfx.platform.async.Batch;
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.db.query.QueryArgument;
+import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.orm.entity.DqlQueries;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -138,5 +139,14 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                 RATES_QUERY_BASE, batch.get(8),
                 BOOKABLE_PERIODS_QUERY_BASE, batch.get(9)
             ));
+    }
+
+    @Override
+    public Future<QueryResult> loadAvailabilities(LoadPolicyArgument argument) {
+        return QueryService.executeQuery(
+            DqlQueries.newQueryArgumentForDefaultDataSource(
+                SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
+                " order by site..ord,item..ord,date", argument.getEventPk())
+        );
     }
 }

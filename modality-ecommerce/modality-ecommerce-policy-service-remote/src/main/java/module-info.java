@@ -7,6 +7,7 @@ module modality.ecommerce.policy.service.remote {
     requires modality.ecommerce.policy.service.buscall;
     requires webfx.platform.async;
     requires webfx.stack.com.bus.call;
+    requires webfx.stack.db.query;
 
     // Exported packages
     exports one.modality.ecommerce.policy.service.spi.impl.remote;
