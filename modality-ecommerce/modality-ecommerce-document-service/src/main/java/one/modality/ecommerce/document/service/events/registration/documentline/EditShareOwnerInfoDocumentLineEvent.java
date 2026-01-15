@@ -30,5 +30,6 @@ public final class EditShareOwnerInfoDocumentLineEvent extends AbstractDocumentL
         documentLine.setShareMate(false);
         documentLine.setShareOwner(true);
         documentLine.setShareOwnerMatesNames(matesNames);
+        documentLine.setShareOwnerQuantity(1 + matesNames.length);
     }
 }
