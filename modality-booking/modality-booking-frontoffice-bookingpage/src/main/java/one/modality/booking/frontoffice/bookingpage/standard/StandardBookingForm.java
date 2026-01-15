@@ -910,10 +910,25 @@ public class StandardBookingForm extends MultiPageBookingForm {
             String personName = documentAggregate.getAttendeeFullName();
             String personEmail = documentAggregate.getAttendeeEmail();
 
-            PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-            int totalPrice = priceCalculator.calculateTotalPrice();
-            int minDeposit = priceCalculator.calculateMinDeposit();
-            int paidAmount = priceCalculator.calculateDeposit();
+            // Use stored values from Document for database-loaded bookings
+            // These values were calculated and stored when the booking was submitted
+            Integer storedTotal = doc.getPriceNet();
+            Integer storedMinDeposit = doc.getPriceMinDeposit();
+            Integer storedDeposit = doc.getPriceDeposit();
+
+            int totalPrice, minDeposit, paidAmount;
+            if (storedTotal != null && storedMinDeposit != null && storedDeposit != null) {
+                // Use stored values directly (normal case for database-loaded documents)
+                totalPrice = storedTotal;
+                minDeposit = storedMinDeposit;
+                paidAmount = storedDeposit;
+            } else {
+                // Fall back to PriceCalculator if any stored value is null
+                PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+                totalPrice = storedTotal != null ? storedTotal : priceCalculator.calculateTotalPrice();
+                minDeposit = storedMinDeposit != null ? storedMinDeposit : priceCalculator.calculateMinDeposit();
+                paidAmount = storedDeposit != null ? storedDeposit : priceCalculator.calculateDeposit();
+            }
             int balance = totalPrice - paidAmount;
 
             // Create booking item
@@ -944,27 +959,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
                             continue;
                         }
                         String familyCode = family != null ? family.getCode() : "";
-                        // Use family name for display, fall back to item name if no family
+                        // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
                         String familyName = (family != null && family.getName() != null) ? family.getName() : null;
-                        String displayName = familyName != null ? familyName : (item.getName() != null ? item.getName() : "Item");
+                        String itemName = item.getName() != null ? item.getName() : "Item";
                         Integer linePriceObj = line.getPriceNet();
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
-                        // Get dates from database field, or compute from attendances if not available
-                        String lineDates = line.getDates();
-                        if (lineDates == null || lineDates.isEmpty()) {
-                            // Compute dates from attendances (filter out nulls to avoid sort errors)
-                            List<LocalDate> attendanceDates = documentAggregate.getLineAttendancesStream(line)
-                                .map(a -> a.getScheduledItem() != null ? a.getScheduledItem().getDate() : null)
-                                .filter(java.util.Objects::nonNull)
-                                .collect(Collectors.toList());
-                            if (!attendanceDates.isEmpty()) {
-                                Collections.sort(attendanceDates);
-                                lineDates = formatDates(attendanceDates);
-                            }
-                        }
-                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
+                        // Use centralized date formatting (same logic as Summary section)
+                        String lineDates = computeDatesForDocumentLine(documentAggregate, line);
+                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
+                        // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
+                        bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
                 }
             } else {
@@ -1009,12 +1014,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String personName = getDocumentPersonName(doc);
         String eventName = getEvent() != null ? getEvent().getName() : "";
 
-        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
-        documentAggregate.setPolicyAggregate(policyAggregate);
-
-        PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-        int totalPrice = priceCalculator.calculateTotalPrice();
-        int minDeposit = priceCalculator.calculateMinDeposit();
+        // Use the workingBooking's built-in price calculator (already has policyAggregate set)
+        int totalPrice = workingBooking.calculateTotal();
+        int minDeposit = workingBooking.calculateMinDeposit();
 
         defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
             doc,
@@ -1382,6 +1384,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection.clearPriceLines();
         defaultSummarySection.clearAdditionalOptions();
 
+        // Set working booking properties for event-aware currency formatting
+        defaultSummarySection.setWorkingBookingProperties(workingBookingProperties);
+
         // Let callbacks book items into WorkingBooking before populating price lines
         // This ensures form-specific items (accommodation, meals, options) appear in the breakdown
         if (callbacks != null) {
@@ -1449,19 +1454,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     continue;
                 }
 
-                // Build display name: always show "Family - Item" format for clarity
-                // e.g., "Accommodation - Single Room", "Meals - Lunch", "Teaching - Full Course"
+                // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
                 String familyName = (family != null && family.getName() != null) ? family.getName() : null;
                 String itemName = item.getName() != null ? item.getName() : "Item";
-                String displayName;
-
-                if (familyName != null) {
-                    // Show both family and item name
-                    displayName = familyName + " - " + itemName;
-                } else {
-                    // No family, show item name only
-                    displayName = itemName;
-                }
 
                 // Get price: use stored price if available, otherwise calculate dynamically
                 Integer linePriceObj = line.getPriceNet();
@@ -1473,14 +1468,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     linePrice = priceCalculator.calculateDocumentLinePrice(line);
                 }
 
-                // Compute dates from attendances for description
+                // Compute dates from attendances (uses centralized formatting)
                 String lineDates = computeDatesFromAttendances(workingBooking, line);
 
-                Console.log("  Price line: " + displayName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
+                Console.log("  Price line: " + familyName + " - " + itemName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
 
-                // Add the price line (skip zero-price items unless they're important)
+                // Add the price line using new API with separate family/item for consistent formatting via UnifiedPriceDisplay
                 if (linePrice != 0 || (family != null && !Boolean.TRUE.equals(family.isSummaryHidden()))) {
-                    defaultSummarySection.addPriceLine(displayName, lineDates, linePrice);
+                    defaultSummarySection.addPriceLine(familyName, itemName, lineDates, linePrice);
                 }
             }
         } else {
@@ -1492,14 +1487,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
             String eventName = event != null && event.getName() != null ? event.getName() : "Event";
 
             if (totalPrice > 0) {
-                defaultSummarySection.addPriceLine(eventName, null, totalPrice);
+                defaultSummarySection.addPriceLine(null, eventName, null, totalPrice);
             }
         }
     }
 
     /**
      * Computes a formatted dates string from the attendances associated with a document line.
-     * Returns dates in a user-friendly format like "Jan 15, 22, 29" or "Jan 15 - Feb 2".
+     * Returns dates in a user-friendly format like "15 Jan - 20 Jan" or "Jan 15, 22, 29".
      */
     private String computeDatesFromAttendances(WorkingBooking workingBooking, DocumentLine line) {
         if (workingBooking == null || line == null) return null;
@@ -1515,9 +1510,45 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .distinct()
             .collect(java.util.stream.Collectors.toList());
 
+        // Use centralized formatting
+        return formatDateList(dates);
+    }
+
+    /**
+     * Computes formatted dates for a document line from a DocumentAggregate.
+     * Uses the same formatting logic as computeDatesFromAttendances for consistency.
+     * This is the centralized date formatting method for existing bookings.
+     */
+    private String computeDatesForDocumentLine(DocumentAggregate documentAggregate, DocumentLine line) {
+        if (documentAggregate == null || line == null) return null;
+
+        // First check if dates are stored in the database
+        String storedDates = line.getDates();
+        if (storedDates != null && !storedDates.isEmpty()) {
+            return storedDates;
+        }
+
+        // Compute dates from attendances
+        List<LocalDate> dates = documentAggregate.getLineAttendancesStream(line)
+            .map(a -> a.getScheduledItem() != null ? a.getScheduledItem().getDate() : null)
+            .filter(Objects::nonNull)
+            .sorted()
+            .distinct()
+            .collect(java.util.stream.Collectors.toList());
+
         if (dates.isEmpty()) return null;
 
-        // Format dates - if consecutive range use "Jan 15 - Jan 20", otherwise list individual dates
+        // Use centralized formatting logic (same as computeDatesFromAttendances)
+        return formatDateList(dates);
+    }
+
+    /**
+     * Centralized date list formatting - formats dates as range if consecutive, otherwise as list.
+     * Used by both computeDatesFromAttendances and computeDatesForDocumentLine.
+     */
+    private String formatDateList(List<LocalDate> dates) {
+        if (dates == null || dates.isEmpty()) return null;
+
         if (dates.size() == 1) {
             return formatSingleDate(dates.get(0));
         }
@@ -1532,7 +1563,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         if (consecutive) {
-            // Format as range: "Jan 15 - Jan 20"
+            // Format as range: "15 Jan - 20 Jan"
             return formatSingleDate(dates.get(0)) + " - " + formatSingleDate(dates.get(dates.size() - 1));
         } else {
             // Format as list of dates, grouping by month
@@ -1651,19 +1682,22 @@ public class StandardBookingForm extends MultiPageBookingForm {
                             continue;
                         }
                         String familyCode = family != null ? family.getCode() : "";
-                        String displayName = (family != null && family.getName() != null) ? family.getName() : (item.getName() != null ? item.getName() : "Item");
+                        // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
+                        String familyName = (family != null && family.getName() != null) ? family.getName() : null;
+                        String itemName = item.getName() != null ? item.getName() : "Item";
                         Integer linePriceObj = line.getPriceNet();
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
-                        // Compute dates from attendances
+                        // Compute dates from attendances (uses centralized formatting)
                         String lineDates = computeDatesFromAttendances(workingBooking, line);
-                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
+                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
+                        // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
+                        bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
                 }
             } else {
                 // Fallback: add a single line item with the total (no line item details available)
-                bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(eventName, total, false));
+                bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(null, eventName, total, false, null, null));
             }
         }
 
@@ -1863,6 +1897,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
     public void setTermsUrl(String url) {
         if (defaultTermsSection != null) {
             defaultTermsSection.setTermsUrl(url);
+        }
+    }
+
+    /**
+     * Sets custom text for the terms and conditions checkbox.
+     * This text appears before the terms link. If not set, uses the default i18n text.
+     *
+     * @param text The custom terms text (e.g., "I have read and agree to the terms, including the cancellation policy")
+     */
+    public void setTermsText(String text) {
+        if (defaultTermsSection != null) {
+            defaultTermsSection.setTermsText(text);
         }
     }
 }

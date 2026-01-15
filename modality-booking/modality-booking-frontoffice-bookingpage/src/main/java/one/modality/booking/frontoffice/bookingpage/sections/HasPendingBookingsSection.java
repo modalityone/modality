@@ -21,34 +21,77 @@ public interface HasPendingBookingsSection extends BookingFormSection {
 
     /**
      * Represents a line item within a booking.
+     * Supports flexible display of ItemFamily + Item names.
      */
     class BookingLineItem {
-        private final String name;
+        private final String familyName;
+        private final String itemName;
         private final int amount;
         private final boolean included;
         private final String familyCode;
         private final String dates;
 
-        public BookingLineItem(String name, int amount, boolean included) {
-            this(name, amount, included, null, null);
-        }
-
-        public BookingLineItem(String name, int amount, boolean included, String familyCode) {
-            this(name, amount, included, familyCode, null);
-        }
-
-        public BookingLineItem(String name, int amount, boolean included, String familyCode, String dates) {
-            this.name = name;
+        /**
+         * Full constructor with separate family and item names.
+         *
+         * @param familyName ItemFamily name (can be null)
+         * @param itemName Item name
+         * @param amount price in cents
+         * @param included whether this item is included (no charge)
+         * @param familyCode ItemFamily code for reference
+         * @param dates date range string (can be null)
+         */
+        public BookingLineItem(String familyName, String itemName, int amount, boolean included, String familyCode, String dates) {
+            this.familyName = familyName;
+            this.itemName = itemName;
             this.amount = amount;
             this.included = included;
             this.familyCode = familyCode;
             this.dates = dates;
         }
 
-        public String getName() { return name; }
+        /**
+         * Constructor with combined name (backward compatibility).
+         *
+         * @deprecated Use {@link #BookingLineItem(String, String, int, boolean, String, String)} with separate family/item names
+         */
+        @Deprecated
+        public BookingLineItem(String name, int amount, boolean included) {
+            this(null, name, amount, included, null, null);
+        }
+
+        /**
+         * Constructor with combined name and family code (backward compatibility).
+         *
+         * @deprecated Use {@link #BookingLineItem(String, String, int, boolean, String, String)} with separate family/item names
+         */
+        @Deprecated
+        public BookingLineItem(String name, int amount, boolean included, String familyCode) {
+            this(null, name, amount, included, familyCode, null);
+        }
+
+        /**
+         * Constructor with combined name, family code, and dates (backward compatibility).
+         *
+         * @deprecated Use {@link #BookingLineItem(String, String, int, boolean, String, String)} with separate family/item names
+         */
+        @Deprecated
+        public BookingLineItem(String name, int amount, boolean included, String familyCode, String dates) {
+            this(null, name, amount, included, familyCode, dates);
+        }
+
+        public String getFamilyName() { return familyName; }
+        public String getItemName() { return itemName; }
         public int getAmount() { return amount; }
         public boolean isIncluded() { return included; }
+        public String getFamilyCode() { return familyCode; }
         public String getDates() { return dates; }
+
+        /**
+         * @deprecated Use {@link #getItemName()} for item name or {@link #getFamilyName()} for family name
+         */
+        @Deprecated
+        public String getName() { return itemName; }
     }
 
     /**
@@ -90,13 +133,35 @@ public interface HasPendingBookingsSection extends BookingFormSection {
         public int getMinDeposit() { return minDeposit; }
         public void setMinDeposit(int minDeposit) { this.minDeposit = minDeposit; }
 
-        public void addLineItem(String name, String familyCode, int amount) {
-            lineItems.add(new BookingLineItem(name, amount, false, familyCode));
+        /**
+         * Adds a line item with separate family and item names.
+         *
+         * @param familyName ItemFamily name (can be null)
+         * @param itemName Item name
+         * @param familyCode ItemFamily code for reference
+         * @param amount price in cents
+         * @param dates date range string (can be null)
+         */
+        public void addLineItem(String familyName, String itemName, String familyCode, int amount, String dates) {
+            lineItems.add(new BookingLineItem(familyName, itemName, amount, false, familyCode, dates));
             calculateTotal();
         }
 
+        /**
+         * @deprecated Use {@link #addLineItem(String, String, String, int, String)} with separate family/item names
+         */
+        @Deprecated
+        public void addLineItem(String name, String familyCode, int amount) {
+            lineItems.add(new BookingLineItem(null, name, amount, false, familyCode, null));
+            calculateTotal();
+        }
+
+        /**
+         * @deprecated Use {@link #addLineItem(String, String, String, int, String)} with separate family/item names
+         */
+        @Deprecated
         public void addLineItem(String name, String familyCode, int amount, String dates) {
-            lineItems.add(new BookingLineItem(name, amount, false, familyCode, dates));
+            lineItems.add(new BookingLineItem(null, name, amount, false, familyCode, dates));
             calculateTotal();
         }
 

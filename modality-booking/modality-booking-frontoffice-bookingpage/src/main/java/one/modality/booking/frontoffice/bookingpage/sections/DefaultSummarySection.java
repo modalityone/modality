@@ -17,15 +17,13 @@ import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
-import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
+import one.modality.booking.frontoffice.bookingpage.components.price.UnifiedPriceDisplay;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
 
@@ -79,6 +77,7 @@ public class DefaultSummarySection implements HasSummarySection {
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
     protected Event event;
+    protected UnifiedPriceDisplay unifiedPriceDisplay;
 
     public DefaultSummarySection() {
         buildUI();
@@ -253,7 +252,13 @@ public class DefaultSummarySection implements HasSummarySection {
         LocalDate end = eventEndDateProperty.get();
 
         if (start != null && end != null) {
-            sb.append(formatDateRange(start, end));
+            // Use UnifiedPriceDisplay for consistent date formatting via ModalityDates
+            if (unifiedPriceDisplay != null) {
+                sb.append(unifiedPriceDisplay.formatDateRange(start, end));
+            } else {
+                // Fallback if unifiedPriceDisplay not yet initialized
+                sb.append(one.modality.base.client.time.ModalityDates.formatDateInterval(start, end));
+            }
         }
 
         String rateType = rateTypeProperty.get();
@@ -263,17 +268,6 @@ public class DefaultSummarySection implements HasSummarySection {
         }
 
         return sb.toString();
-    }
-
-    protected String formatDateRange(LocalDate start, LocalDate end) {
-        DateTimeFormatter dayMonthFormatter = DateTimeFormatter.ofPattern("d MMM", Locale.ENGLISH);
-        DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("d MMM yyyy", Locale.ENGLISH);
-
-        if (start.getYear() == end.getYear()) {
-            return start.format(dayMonthFormatter) + " – " + end.format(fullFormatter);
-        } else {
-            return start.format(fullFormatter) + " – " + end.format(fullFormatter);
-        }
     }
 
     protected VBox buildPriceBreakdownSection() {
@@ -310,7 +304,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        totalAmountLabel = new Label(event != null ? EventPriceFormatter.formatWithCurrency(0, event) : "£0");
+        totalAmountLabel = new Label(unifiedPriceDisplay != null ? unifiedPriceDisplay.formatPrice(0) : "£0");
         totalAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
@@ -467,6 +461,17 @@ public class DefaultSummarySection implements HasSummarySection {
     }
 
     protected HBox createPriceLineRow(PriceLine line) {
+        // Use UnifiedPriceDisplay for consistent line item rendering
+        if (unifiedPriceDisplay != null) {
+            return unifiedPriceDisplay.createLineItem(
+                    line.getFamilyName(),
+                    line.getItemName(),
+                    line.getDates(),
+                    line.getAmount()
+            );
+        }
+
+        // Fallback if unifiedPriceDisplay not yet initialized
         HBox row = new HBox(12);
         row.setAlignment(Pos.TOP_LEFT);
         row.setPadding(new Insets(8, 0, 8, 0));
@@ -474,12 +479,18 @@ public class DefaultSummarySection implements HasSummarySection {
         VBox labelBox = new VBox(2);
         HBox.setHgrow(labelBox, Priority.ALWAYS);
 
-        Label nameLabel = new Label(line.getName());
+        // Format display name: "Family - Item" if family exists, otherwise just "Item"
+        String familyName = line.getFamilyName();
+        String itemName = line.getItemName() != null ? line.getItemName() : "Item";
+        String displayName = familyName != null ? familyName + " - " + itemName : itemName;
+
+        Label nameLabel = new Label(displayName);
         nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
         nameLabel.setWrapText(true);
+        nameLabel.setMaxWidth(Double.MAX_VALUE);
 
-        if (line.getDescription() != null && !line.getDescription().isEmpty()) {
-            Label descLabel = new Label(line.getDescription());
+        if (line.getDates() != null && !line.getDates().isEmpty()) {
+            Label descLabel = new Label(line.getDates());
             descLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
             descLabel.setWrapText(true);
             labelBox.getChildren().addAll(nameLabel, descLabel);
@@ -488,9 +499,9 @@ public class DefaultSummarySection implements HasSummarySection {
         }
 
         // Amount label (right-aligned, doesn't wrap)
-        Label amountLabel = new Label(EventPriceFormatter.formatWithCurrency(line.getAmount(), event));
+        Label amountLabel = new Label(one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(line.getAmount(), event));
         amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
-        amountLabel.setMinWidth(Region.USE_PREF_SIZE); // Prevent amount from shrinking
+        amountLabel.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(labelBox, amountLabel);
         return row;
@@ -498,7 +509,12 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected void updateTotalLabel() {
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(EventPriceFormatter.formatWithCurrency(totalAmount, event));
+            // Use UnifiedPriceDisplay for consistent price formatting
+            if (unifiedPriceDisplay != null) {
+                totalAmountLabel.setText(unifiedPriceDisplay.formatPrice(totalAmount));
+            } else {
+                totalAmountLabel.setText(one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(totalAmount, event));
+            }
             // Note: CSS class "bookingpage-text-primary" handles theme color
         }
     }
@@ -554,6 +570,9 @@ public class DefaultSummarySection implements HasSummarySection {
         if (props != null) {
             WorkingBooking workingBooking = props.getWorkingBooking();
             this.event = workingBooking.getEvent();
+
+            // Initialize unified price display with event for currency detection
+            this.unifiedPriceDisplay = new UnifiedPriceDisplay(event);
 
             if (event != null) {
                 eventNameProperty.set(event.getName());
@@ -651,8 +670,15 @@ public class DefaultSummarySection implements HasSummarySection {
     }
 
     @Override
+    public void addPriceLine(String familyName, String itemName, String dates, int amount) {
+        priceLines.add(new PriceLine(familyName, itemName, dates, amount));
+        refreshPriceBreakdown();
+    }
+
+    @Override
     public void addPriceLine(String name, String description, int amount) {
-        priceLines.add(new PriceLine(name, description, amount));
+        // Backward compatibility: treat name as itemName, familyName as null
+        priceLines.add(new PriceLine(null, name, description, amount));
         refreshPriceBreakdown();
     }
 

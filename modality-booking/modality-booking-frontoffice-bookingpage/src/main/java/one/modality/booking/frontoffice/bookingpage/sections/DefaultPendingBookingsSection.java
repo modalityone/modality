@@ -19,8 +19,8 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
-import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
+import one.modality.booking.frontoffice.bookingpage.components.price.UnifiedPriceDisplay;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.function.Consumer;
@@ -60,6 +60,8 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
 
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
+    protected Event event;
+    protected UnifiedPriceDisplay unifiedPriceDisplay;
 
     public DefaultPendingBookingsSection() {
         buildUI();
@@ -279,7 +281,9 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        Label totalPriceLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(booking.getTotalAmount()));
+        Label totalPriceLabel = new Label(unifiedPriceDisplay != null
+                ? unifiedPriceDisplay.formatPrice(booking.getTotalAmount())
+                : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(booking.getTotalAmount(), event));
         totalPriceLabel.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalPriceLabel);
@@ -298,7 +302,9 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region paidSpacer = new Region();
         HBox.setHgrow(paidSpacer, Priority.ALWAYS);
 
-        Label paidAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(paidAmount));
+        Label paidAmountLabel = new Label(unifiedPriceDisplay != null
+                ? unifiedPriceDisplay.formatPrice(paidAmount)
+                : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(paidAmount, event));
         // Green if paid > 0, muted if 0
         if (paidAmount > 0) {
             paidAmountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-success");
@@ -318,7 +324,9 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
         Region balanceSpacer = new Region();
         HBox.setHgrow(balanceSpacer, Priority.ALWAYS);
 
-        Label balanceAmountLabel = new Label(PriceFormatter.formatPriceWithCurrencyWithDecimals(balance));
+        Label balanceAmountLabel = new Label(unifiedPriceDisplay != null
+                ? unifiedPriceDisplay.formatPrice(balance)
+                : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(balance, event));
         // Always use theme primary color for balance due
         balanceAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
 
@@ -332,15 +340,38 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     }
 
     protected HBox createLineItemRow(BookingLineItem item) {
+        // Use UnifiedPriceDisplay for consistent line item rendering
+        boolean isIncluded = item.getAmount() == 0 && item.isIncluded();
+        if (unifiedPriceDisplay != null) {
+            if (isIncluded) {
+                return unifiedPriceDisplay.createIncludedLineItem(
+                        item.getFamilyName(),
+                        item.getItemName(),
+                        item.getDates()
+                );
+            } else {
+                return unifiedPriceDisplay.createLineItem(
+                        item.getFamilyName(),
+                        item.getItemName(),
+                        item.getDates(),
+                        item.getAmount()
+                );
+            }
+        }
+
+        // Fallback if unifiedPriceDisplay not yet initialized
         HBox row = new HBox(16);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 0, 8, 0));
 
         // Name and dates container
         VBox nameBox = new VBox(2);
-        Label nameLabel = new Label(item.getName());
+        HBox.setHgrow(nameBox, Priority.ALWAYS);
+
+        Label nameLabel = new Label(item.getItemName());
         nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-muted");
         nameLabel.setWrapText(true);
+        nameLabel.setMaxWidth(Double.MAX_VALUE);
         nameBox.getChildren().add(nameLabel);
 
         // Add dates below name if available
@@ -352,17 +383,15 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             nameBox.getChildren().add(datesLabel);
         }
 
-        // Add spacer to push price to the right
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        boolean isIncluded = item.getAmount() == 0 && item.isIncluded();
         Label priceLabel;
         if (isIncluded) {
             priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
             priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-muted");
         } else {
-            priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(item.getAmount()));
+            priceLabel = new Label(one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(item.getAmount(), event));
             priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-bold", "bookingpage-text-primary");
         }
         priceLabel.setAlignment(Pos.CENTER_RIGHT);
@@ -445,10 +474,14 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
             I18nControls.bindI18nProperties(totalBookingsLabel, i18nKey, count);
         }
         if (totalCostLabel != null) {
-            totalCostLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(total));
+            totalCostLabel.setText(unifiedPriceDisplay != null
+                    ? unifiedPriceDisplay.formatPrice(total)
+                    : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(total, event));
         }
         if (totalAmountLabel != null) {
-            totalAmountLabel.setText(PriceFormatter.formatPriceWithCurrencyNoDecimals(total));
+            totalAmountLabel.setText(unifiedPriceDisplay != null
+                    ? unifiedPriceDisplay.formatPrice(total)
+                    : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(total, event));
         }
     }
 
@@ -467,9 +500,14 @@ public class DefaultPendingBookingsSection implements HasPendingBookingsSection 
     @Override
     public void setWorkingBookingProperties(WorkingBookingProperties props) {
         this.workingBookingProperties = props;
-        if (props != null && props.getEvent() != null) {
-            rebuildBookingCards();
-            updatePaymentSummary();
+        if (props != null) {
+            this.event = props.getEvent();
+            // Initialize unified price display with event for currency detection
+            this.unifiedPriceDisplay = new UnifiedPriceDisplay(event);
+            if (event != null) {
+                rebuildBookingCards();
+                updatePaymentSummary();
+            }
         }
     }
 

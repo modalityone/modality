@@ -65,6 +65,7 @@ module modality.booking.frontoffice.bookingpage {
     exports one.modality.booking.frontoffice.bookingpage;
     exports one.modality.booking.frontoffice.bookingpage.cart;
     exports one.modality.booking.frontoffice.bookingpage.components;
+    exports one.modality.booking.frontoffice.bookingpage.components.price;
     exports one.modality.booking.frontoffice.bookingpage.navigation;
     exports one.modality.booking.frontoffice.bookingpage.pages.audiorecording;
     exports one.modality.booking.frontoffice.bookingpage.pages.closed;

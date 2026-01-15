@@ -137,9 +137,11 @@ public class DefaultTermsSection implements HasTermsSection {
         HtmlText htmlText = new HtmlText();
         htmlText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
 
-        // Build HTML with link that opens in new window, updating when language or URL changes
+        // Build HTML with link that opens in new window, updating when language, URL, or custom text changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            String prefix = I18n.getI18nText(BookingPageI18nKeys.AcceptTermsText);
+            // Use custom text if set, otherwise use i18n text
+            String customText = customTermsTextProperty.get();
+            String prefix = customText != null ? customText : I18n.getI18nText(BookingPageI18nKeys.AcceptTermsText);
             String linkText = I18n.getI18nText(BookingPageI18nKeys.TermsLinkText);
             String url = termsUrlProperty.get();
             if (url == null || url.isEmpty()) {
@@ -147,7 +149,7 @@ public class DefaultTermsSection implements HasTermsSection {
                 url = "#";
             }
             htmlText.setText(prefix + " <a href=\"" + url + "\" target=\"_blank\" class=\"booking-form-terms-link\">" + linkText + "</a>");
-        }, I18n.dictionaryProperty(), termsUrlProperty);
+        }, I18n.dictionaryProperty(), termsUrlProperty, customTermsTextProperty);
 
         return htmlText;
     }
