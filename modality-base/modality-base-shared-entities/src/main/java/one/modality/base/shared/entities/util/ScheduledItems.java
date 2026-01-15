@@ -23,6 +23,14 @@ public final class ScheduledItems {
         return Items.isOfFamily(scheduledItem, family);
     }
 
+    public static boolean hasResourceManagement(ScheduledItem scheduledItem) {
+        return scheduledItem.isResource();
+    }
+
+    public static boolean hasResourceManagement(List<ScheduledItem> scheduledItems) {
+        return Collections.anyMatch(scheduledItems, ScheduledItems::hasResourceManagement);
+    }
+
     public static Stream<ScheduledItem> filterFamily(Stream<ScheduledItem> scheduledItems, KnownItemFamily family) {
         return scheduledItems.filter(scheduledItem -> isOfFamily(scheduledItem, family));
     }

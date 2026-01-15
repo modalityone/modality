@@ -36,6 +36,8 @@ public interface DocumentLine extends
     String share_owner_mate5Name = "share_owner_mate5Name";
     String share_owner_mate6Name = "share_owner_mate6Name";
     String share_owner_mate7Name = "share_owner_mate7Name";
+    String share_owner_quantity = "share_owner_quantity";
+    String allocate = "allocate";
     String cleaned = "cleaned";
     String bedNumber = "bedNumber";
 
@@ -223,6 +225,21 @@ public interface DocumentLine extends
 
     void setShareOwnerMatesNames(String[] matesNames); // implemented in DocumentLineImpl
 
+    default Integer getShareOwnerQuantity() {
+        return getIntegerFieldValue(share_owner_quantity);
+    }
+
+    default void setShareOwnerQuantity(Integer value) {
+        setFieldValue(share_owner_quantity, value);
+    }
+
+    default Boolean isAllocate() {
+        return getBooleanFieldValue(allocate);
+    }
+
+    default void setAllocate(Boolean value) {
+        setFieldValue(allocate, value);
+    }
 
     // Non-persistent bedNumber field using by Household screen (allocated arbitrary at runtime)
     default Integer getBedNumber() {

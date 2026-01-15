@@ -177,13 +177,17 @@ public final class WorkingBooking {
     }
 
     public DocumentLine bookAtemporalItem(Site site, Item item) {
+        return bookItem(site, item, false);
+    }
+
+    public DocumentLine bookItem(Site site, Item item, boolean allocate) {
         DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
         if (documentLine == null) {
             documentLine = getEntityStore().createEntity(DocumentLine.class);
             documentLine.setDocument(document);
             documentLine.setSite(site);
             documentLine.setItem(item);
-            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
+            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine, allocate), false);
         }
         return documentLine;
     }
@@ -213,7 +217,9 @@ public final class WorkingBooking {
     private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean addOnly) {
         if (datesOrScheduledItems.isEmpty())
             return null;
-        DocumentLine documentLine = bookAtemporalItem(site, item); // Just as a first step (the item is temporal here)
+        boolean allocate = Collections.first(datesOrScheduledItems) instanceof ScheduledItem &&
+                           ScheduledItems.hasResourceManagement((List<ScheduledItem>) datesOrScheduledItems);
+        DocumentLine documentLine = bookItem(site, item, allocate);
         List<Attendance> existingAttendances = getLastestDocumentAggregate().getLineAttendances(documentLine);
         Attendance[] newAttendances = datesOrScheduledItems.stream().map(dateOrScheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
