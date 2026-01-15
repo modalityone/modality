@@ -6,8 +6,10 @@ public interface BookingPageI18nKeys {
     Object AcceptTermsAndConditions = "AcceptTermsAndConditions";
     Object AcceptTermsHtml = "AcceptTermsHtml";
     Object AcceptTermsText = "AcceptTermsText";
+    Object AccommodationNoLongerAvailable = "AccommodationNoLongerAvailable";
     Object AccommodationOptions = "AccommodationOptions";
     Object AccommodationRequiredWarning = "AccommodationRequiredWarning";
+    Object AccommodationUpdateNeeded = "AccommodationUpdateNeeded";
     Object AccountFound = "AccountFound";
     Object AccountInfoMessage = "AccountInfoMessage";
     Object AccountOwner = "AccountOwner";
@@ -71,6 +73,7 @@ public interface BookingPageI18nKeys {
     Object Breakfast = "Breakfast";
     Object BrowseMoreEvents = "BrowseMoreEvents";
     Object CancelBooking = "CancelBooking";
+    Object CancelRegistration = "CancelRegistration";
     Object CardDeclinedDesc = "CardDeclinedDesc";
     Object CardDeclinedSuggestion1 = "CardDeclinedSuggestion1";
     Object CardDeclinedSuggestion2 = "CardDeclinedSuggestion2";
@@ -88,6 +91,7 @@ public interface BookingPageI18nKeys {
     Object CheckYourEmailDesc = "CheckYourEmailDesc";
     Object CheckYourEmailTitle = "CheckYourEmailTitle";
     Object Checking = "Checking";
+    Object ChooseNewAccommodation = "ChooseNewAccommodation";
     Object ChooseYourAmount = "ChooseYourAmount";
     Object ComingSoon = "ComingSoon";
     Object CompletePayment = "CompletePayment";
@@ -102,6 +106,7 @@ public interface BookingPageI18nKeys {
     Object ConfirmationNextSteps = "ConfirmationNextSteps";
     Object ContactTeamMessage = "ContactTeamMessage";
     Object Continue = "Continue";
+    Object ContinueWithNewSelection = "ContinueWithNewSelection";
     Object CreateAccountBenefit = "CreateAccountBenefit";
     Object CreateAnAccount = "CreateAnAccount";
     Object CreditCard = "CreditCard";
@@ -211,6 +216,7 @@ public interface BookingPageI18nKeys {
     Object Online = "Online";
     Object OnlineDescription = "OnlineDescription";
     Object OnlineRegistration = "OnlineRegistration";
+    Object OriginalSelection = "OriginalSelection";
     Object PaidStatus = "PaidStatus";
     Object PaidToday = "PaidToday";
     Object ParkingPass = "ParkingPass";
@@ -247,6 +253,7 @@ public interface BookingPageI18nKeys {
     Object Person = "Person";
     Object PersonAlreadyBooked = "PersonAlreadyBooked";
     Object PersonAlreadyBooked1 = "PersonAlreadyBooked1";
+    Object PleaseSelectAccommodation = "PleaseSelectAccommodation";
     Object Prerequisite = "Prerequisite";
     Object PriceBreakdown = "PriceBreakdown";
     Object PricesReflectRate = "PricesReflectRate";
@@ -347,6 +354,7 @@ public interface BookingPageI18nKeys {
     Object WeWillSendEmailToSetPassword = "WeWillSendEmailToSetPassword";
     Object WelcomeBack = "WelcomeBack";
     Object WhatHappened = "WhatHappened";
+    Object WhatHappenedSoldOut = "WhatHappenedSoldOut";
     Object WhatHappensNext = "WhatHappensNext";
     Object WhatsNext = "WhatsNext";
     Object WhoIsThisBookingFor = "WhoIsThisBookingFor";

@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.platform.async.Future;
 import one.modality.booking.frontoffice.bookingpage.sections.DefaultSummarySection;
+import one.modality.booking.frontoffice.bookingpage.sections.HasAccommodationSelectionSection;
 
 /**
  * Simplified callbacks interface for form-specific behavior in standard booking forms.
@@ -119,6 +120,32 @@ public interface StandardBookingFormCallbacks {
      */
     default void onPrepareNewBooking() {
         // Default: no additional action needed
+    }
+
+    /**
+     * Called when accommodation selection needs to be updated due to sold-out error.
+     *
+     * <p>This callback is triggered when the server returns a SOLDOUT error during
+     * booking submission because the selected accommodation became unavailable.
+     * The form should update its accommodation selection with the new choice and
+     * then call the provided continueToSummary runnable to navigate back to the
+     * Summary page for retry.</p>
+     *
+     * <p>Override this to:</p>
+     * <ul>
+     *   <li>Update the form's accommodation section with the new selection</li>
+     *   <li>Re-book items with the new accommodation</li>
+     *   <li>Call continueToSummary.run() when ready to retry submission</li>
+     * </ul>
+     *
+     * <p>The default implementation just calls continueToSummary immediately.</p>
+     *
+     * @param newOption The newly selected accommodation option
+     * @param continueToSummary Runnable to call when ready to navigate back to Summary
+     */
+    default void onAccommodationSoldOutRecovery(HasAccommodationSelectionSection.AccommodationOption newOption, Runnable continueToSummary) {
+        // Default: just continue to summary (forms should override to handle re-booking)
+        continueToSummary.run();
     }
 
     // === Section Factory Hooks ===

@@ -49,6 +49,7 @@ import one.modality.event.frontoffice.activities.book.event.EventBookingFormSett
 import one.modality.event.frontoffice.activities.book.event.slides.ProvidedGatewayPaymentForm;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
+import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -779,8 +780,315 @@ public class StandardBookingForm extends MultiPageBookingForm {
             })
             .onFailure(error -> {
                 Console.log("ERROR: " + error.getMessage());
+
+                // Check if this is a SOLDOUT error (accommodation became unavailable)
+                if (SoldOutErrorParser.isSoldOutError(error)) {
+                    SoldOutErrorParser.SoldOutInfo soldOutInfo = SoldOutErrorParser.parse(error);
+                    if (soldOutInfo != null) {
+                        Console.log("SOLDOUT error detected: " + soldOutInfo);
+                        UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(soldOutInfo));
+                        return;
+                    }
+                }
+
                 // Stay on current page - spinner will be hidden automatically
             });
+    }
+
+    /**
+     * Handles accommodation sold-out error by showing a recovery page with alternatives.
+     *
+     * <p>This method is called when the server returns a SOLDOUT error during booking
+     * submission. It shows a user-friendly page that explains what happened and allows
+     * the user to select an alternative accommodation option.</p>
+     *
+     * <p>Key design decisions:</p>
+     * <ul>
+     *   <li>Uses EXISTING PolicyAggregate (no server reload) - availability data is already current</li>
+     *   <li>Uses CompositeBookingFormPage with custom buttons for proper page integration</li>
+     *   <li>Supports iterative flow: submit → SOLDOUT → select new → submit → (repeat if needed)</li>
+     * </ul>
+     *
+     * @param soldOutInfo Information about the sold-out item
+     */
+    private void handleAccommodationSoldOut(SoldOutErrorParser.SoldOutInfo soldOutInfo) {
+        Console.log("handleAccommodationSoldOut() - itemId: " + soldOutInfo.getItemId());
+
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) {
+            Console.log("PolicyAggregate is null, cannot show sold-out recovery");
+            return;
+        }
+
+        // Reload availabilities from the server to get current availability data
+        Console.log("Reloading availabilities from server...");
+        policyAggregate.reloadAvailabilities()
+            .onFailure(error -> {
+                Console.log("Failed to reload availabilities: " + error.getMessage());
+                // Continue anyway with existing data
+                UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
+            })
+            .onSuccess(v -> {
+                Console.log("Availabilities reloaded successfully");
+                UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
+            });
+    }
+
+    /**
+     * Shows the sold-out recovery page after availabilities have been reloaded.
+     */
+    private void showSoldOutRecoveryPage(SoldOutErrorParser.SoldOutInfo soldOutInfo, PolicyAggregate policyAggregate) {
+        List<ScheduledItem> scheduledItems = policyAggregate.getScheduledItems();
+        if (scheduledItems == null || scheduledItems.isEmpty()) {
+            Console.log("No scheduled items in PolicyAggregate, cannot show alternatives");
+            return;
+        }
+
+        // Find the sold-out item
+        Item soldOutItem = scheduledItems.stream()
+            .map(ScheduledItem::getItem)
+            .filter(item -> item != null && Entities.getPrimaryKey(item) != null)
+            .filter(item -> {
+                Object pk = Entities.getPrimaryKey(item);
+                return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
+            })
+            .findFirst()
+            .orElse(null);
+
+        String soldOutItemName = soldOutItem != null ? soldOutItem.getName() : "Selected Room";
+        int soldOutPrice = 0;
+
+        // Get original price from WorkingBooking document lines
+        WorkingBooking workingBooking = getWorkingBooking();
+        if (workingBooking != null) {
+            // First try to get stored price from document lines
+            soldOutPrice = workingBooking.getDocumentLines().stream()
+                .filter(line -> line.getItem() != null)
+                .filter(line -> {
+                    Object pk = Entities.getPrimaryKey(line.getItem());
+                    return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
+                })
+                .mapToInt(line -> line.getPriceNet() != null ? line.getPriceNet() : 0)
+                .sum();
+
+            // If stored price is 0, calculate dynamically using PriceCalculator
+            if (soldOutPrice == 0) {
+                DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
+                if (documentAggregate != null) {
+                    PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+                    for (DocumentLine line : documentAggregate.getDocumentLines()) {
+                        if (line.getItem() != null) {
+                            Object pk = Entities.getPrimaryKey(line.getItem());
+                            if (pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId()) {
+                                soldOutPrice += priceCalculator.calculateDocumentLinePrice(line);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        Console.log("Sold-out item: " + soldOutItemName + ", price: " + soldOutPrice);
+
+        // Build list of ALL accommodation options (excluding only the originally selected sold-out item)
+        // Other items that are also sold out will show with SOLD OUT ribbon
+        List<HasAccommodationSelectionSection.AccommodationOption> alternatives = buildAlternativeOptions(policyAggregate, soldOutInfo.getItemId());
+        Console.log("Built " + alternatives.size() + " alternative options with refreshed availability");
+
+        // Calculate number of nights from the booked accommodation dates
+        int numberOfNights = 0;
+        if (workingBooking != null) {
+            DocumentAggregate docAggregate = workingBooking.getLastestDocumentAggregate();
+            if (docAggregate != null && docAggregate.getAttendances() != null) {
+                // Count unique dates for accommodation item (the sold-out item)
+                numberOfNights = (int) docAggregate.getAttendances().stream()
+                    .filter(a -> a.getScheduledItem() != null && a.getScheduledItem().getItem() != null)
+                    .filter(a -> {
+                        Object pk = Entities.getPrimaryKey(a.getScheduledItem().getItem());
+                        return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
+                    })
+                    .map(a -> a.getScheduledItem().getDate())
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .count();
+            }
+        }
+        Console.log("Number of nights for sold-out item: " + numberOfNights);
+
+        // Create the sold-out recovery section
+        DefaultAccommodationSoldOutSection soldOutSection = new DefaultAccommodationSoldOutSection();
+        soldOutSection.setColorScheme(colorScheme);
+        soldOutSection.setEventName(getEvent() != null ? getEvent().getName() : "");
+        soldOutSection.setOriginalSelection(soldOutItemName, soldOutPrice);
+        soldOutSection.setNumberOfNights(numberOfNights);
+        soldOutSection.setAlternativeOptions(alternatives);
+
+        // Create the recovery page using CompositeBookingFormPage with custom buttons
+        CompositeBookingFormPage soldOutPage = createSoldOutRecoveryPage(soldOutSection);
+
+        // Show the page using navigateToSpecialPage for proper integration
+        navigateToSpecialPage(soldOutPage);
+    }
+
+    /**
+     * Creates a CompositeBookingFormPage for the sold-out recovery flow with custom navigation buttons.
+     *
+     * @param soldOutSection The section containing the sold-out info and alternatives
+     * @return A configured CompositeBookingFormPage with Continue and Cancel buttons
+     */
+    private CompositeBookingFormPage createSoldOutRecoveryPage(DefaultAccommodationSoldOutSection soldOutSection) {
+        CompositeBookingFormPage page = new CompositeBookingFormPage(
+            BookingPageI18nKeys.AccommodationUpdateNeeded,
+            soldOutSection
+        );
+
+        // Configure page properties
+        page.setStep(false)                    // Don't show in step progress header
+            .setHeaderVisible(false)           // Section has its own header
+            .setShowingOwnSubmitButton(false); // Show custom navigation buttons from this page
+
+        // Create custom buttons for this page
+        // Continue button - triggers callback with new selection, returns to Summary
+        BookingFormButton continueButton = new BookingFormButton(
+            BookingPageI18nKeys.ContinueWithNewSelection,
+            e -> {
+                HasAccommodationSelectionSection.AccommodationOption selectedOption = soldOutSection.getSelectedOption();
+                if (selectedOption != null) {
+                    Console.log("User selected alternative: " + selectedOption.getName());
+                    callbacks.onAccommodationSoldOutRecovery(selectedOption, this::navigateToSummary);
+                }
+            },
+            "btn-primary booking-form-btn-primary",
+            Bindings.not(soldOutSection.validProperty())  // Disable until selection made
+        );
+
+        // Cancel Booking button - cancels the booking entirely (left side)
+        BookingFormButton cancelButton = new BookingFormButton(
+            BookingPageI18nKeys.CancelBooking,
+            e -> cancelBookingAndExit(),
+            "btn-back booking-form-btn-back"
+        );
+
+        // Button order: Cancel (left), Continue (right) - matches other page layouts
+        page.setButtons(cancelButton, continueButton);
+
+        return page;
+    }
+
+    /**
+     * Cancels the current booking and exits to the event page.
+     * Called when user chooses to cancel from the sold-out recovery page.
+     */
+    private void cancelBookingAndExit() {
+        Console.log("User cancelled booking from sold-out recovery");
+
+        WorkingBooking workingBooking = getWorkingBooking();
+        if (workingBooking != null) {
+            workingBooking.cancelChanges();
+        }
+
+        // Navigate back to event page
+        // Use the activity callback if available to close the booking form
+        if (activityCallback != null) {
+            activityCallback.onEndReached();  // This signals the form is complete/cancelled
+        }
+    }
+
+    /**
+     * Builds a list of alternative accommodation options, excluding the sold-out item.
+     * Always includes a Day Visitor option as a fallback.
+     */
+    private List<HasAccommodationSelectionSection.AccommodationOption> buildAlternativeOptions(PolicyAggregate policy, int excludeItemId) {
+        List<HasAccommodationSelectionSection.AccommodationOption> options = new ArrayList<>();
+
+        // Build accommodation options from scheduled items (if available)
+        List<ScheduledItem> scheduledItems = policy.getScheduledItems();
+        if (scheduledItems != null && !scheduledItems.isEmpty()) {
+            // Group scheduled items by Item to find accommodation options
+            Map<Object, List<ScheduledItem>> itemGroups = scheduledItems.stream()
+                .filter(si -> si.getItem() != null)
+                .filter(si -> {
+                    Item item = si.getItem();
+                    // Filter for accommodation items (check family code matches KnownItemFamily.ACCOMMODATION)
+                    return item.getFamily() != null &&
+                           KnownItemFamily.ACCOMMODATION.getCode().equals(item.getFamily().getCode());
+                })
+                .collect(Collectors.groupingBy(si -> Entities.getPrimaryKey(si.getItem())));
+
+            for (Map.Entry<Object, List<ScheduledItem>> entry : itemGroups.entrySet()) {
+                Object itemId = entry.getKey();
+                List<ScheduledItem> itemScheduledItems = entry.getValue();
+
+                // Skip the sold-out item
+                if (itemId instanceof Number && ((Number) itemId).intValue() == excludeItemId) {
+                    continue;
+                }
+
+                if (itemScheduledItems.isEmpty()) continue;
+
+                ScheduledItem firstSi = itemScheduledItems.get(0);
+                Item item = firstSi.getItem();
+
+                // Calculate minimum availability across all days
+                int minAvailability = itemScheduledItems.stream()
+                    .mapToInt(si -> si.getGuestsAvailability() != null ? si.getGuestsAvailability() : 0)
+                    .min()
+                    .orElse(0);
+
+                HasAccommodationSelectionSection.AvailabilityStatus status =
+                    minAvailability <= 0
+                        ? HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT
+                        : minAvailability <= 5
+                            ? HasAccommodationSelectionSection.AvailabilityStatus.LIMITED
+                            : HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE;
+
+                // Get rate for pricing
+                Rate rate = policy.getScheduledItemDailyRate(firstSi);
+                int pricePerNight = rate != null && rate.getPrice() != null ? rate.getPrice() : 0;
+                boolean perPerson = rate == null || rate.isPerPerson();
+
+                HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
+                    itemId,
+                    item,
+                    item.getName(),
+                    null, // Item doesn't have a description field
+                    pricePerNight,
+                    status,
+                    HasAccommodationSelectionSection.ConstraintType.NONE,
+                    null,
+                    0,
+                    false,
+                    null,
+                    perPerson
+                );
+
+                options.add(option);
+            }
+        }
+
+        // Sort accommodation options: available first, then by price
+        options.sort(Comparator
+            .comparing((HasAccommodationSelectionSection.AccommodationOption o) ->
+                o.getAvailability() == HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT ? 1 : 0)
+            .thenComparingInt(HasAccommodationSelectionSection.AccommodationOption::getPricePerNight));
+
+        // Always add Day Visitor option at the end as a fallback
+        HasAccommodationSelectionSection.AccommodationOption dayVisitor = new HasAccommodationSelectionSection.AccommodationOption(
+            "DAY_VISITOR",  // special itemId
+            null,           // no itemEntity
+            I18n.getI18nText(BookingPageI18nKeys.DayVisitor),
+            I18n.getI18nText(BookingPageI18nKeys.DayVisitorDescription),
+            0,              // pricePerNight = 0 (no accommodation cost)
+            HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE,
+            HasAccommodationSelectionSection.ConstraintType.NONE,
+            null,
+            0,
+            true,           // isDayVisitor = true
+            null,
+            true            // perPerson
+        );
+        options.add(dayVisitor);
+
+        return options;
     }
 
     /**

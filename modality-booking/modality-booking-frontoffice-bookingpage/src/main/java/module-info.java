@@ -78,5 +78,6 @@ module modality.booking.frontoffice.bookingpage {
     exports one.modality.booking.frontoffice.bookingpage.sections;
     exports one.modality.booking.frontoffice.bookingpage.standard;
     exports one.modality.booking.frontoffice.bookingpage.theme;
+    exports one.modality.booking.frontoffice.bookingpage.util;
 
 }
