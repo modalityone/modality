@@ -20,7 +20,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
         "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled" +
         // We also compute the remaining available space for guests
-        ",(select sum(coalesce(max,configuration.max) - (select count(1) from Attendance where scheduledResource=sr and present and !documentLine.cancelled))" +
+        ",(select sum(coalesce(max,configuration.max) - (select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and !documentLine.cancelled))" +
             " from ScheduledResource sr" +
             // We consider only the resources allocated to the general guest pool for this event
             " where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)" +
