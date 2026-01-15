@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.platform.console.Console;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -12,13 +13,17 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ItemPolicy;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -74,8 +79,16 @@ public class DefaultTransportSection implements HasTransportSection {
     protected final List<ParkingOption> parkingOptions = new ArrayList<>();
     protected final List<ShuttleOption> shuttleOptions = new ArrayList<>();
 
+    // === UNIFIED PARKING CARD STATE ===
+    /** Main checkbox state - whether user wants parking */
+    protected final BooleanProperty parkingEnabledProperty = new SimpleBooleanProperty(false);
+    /** Currently selected parking type (e.g., Standard, Handicap) */
+    protected final ObjectProperty<ParkingOption> selectedParkingTypeProperty = new SimpleObjectProperty<>();
+
     // === CONFIGURATION ===
     protected int daysCount = 1;
+    /** Threshold for "Limited" availability status */
+    protected static final int LIMITED_THRESHOLD = 5;
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -97,7 +110,46 @@ public class DefaultTransportSection implements HasTransportSection {
         arrivalDateProperty.addListener((obs, old, newDate) -> updateShuttleAvailability());
         departureDateProperty.addListener((obs, old, newDate) -> updateShuttleAvailability());
 
+        // Set up parking enabled/selection logic
+        setupParkingSelectionLogic();
+
         buildUI();
+    }
+
+    /**
+     * Sets up the parking selection logic:
+     * - When parking enabled, auto-select default or first available option
+     * - When parking disabled, clear selection and deselect all options
+     * - When parking type changes, update individual option selected states
+     */
+    protected void setupParkingSelectionLogic() {
+        parkingEnabledProperty.addListener((obs, wasEnabled, isEnabled) -> {
+            if (!isEnabled) {
+                // Parking disabled - clear selection
+                selectedParkingTypeProperty.set(null);
+                parkingOptions.forEach(opt -> opt.setSelected(false));
+            } else if (isEnabled && selectedParkingTypeProperty.get() == null) {
+                // Parking enabled with no selection - auto-select default or first available
+                ParkingOption defaultOpt = getDefaultParkingOption();
+                if (defaultOpt == null) {
+                    defaultOpt = getFirstAvailableParkingOption();
+                }
+                if (defaultOpt != null) {
+                    selectedParkingTypeProperty.set(defaultOpt);
+                }
+            }
+            if (onSelectionChangedCallback != null) {
+                onSelectionChangedCallback.run();
+            }
+        });
+
+        selectedParkingTypeProperty.addListener((obs, oldOpt, newOpt) -> {
+            // Update individual option selected states based on which one is selected
+            parkingOptions.forEach(opt -> opt.setSelected(opt == newOpt));
+            if (onSelectionChangedCallback != null) {
+                onSelectionChangedCallback.run();
+            }
+        });
     }
 
     protected void buildUI() {
@@ -124,11 +176,15 @@ public class DefaultTransportSection implements HasTransportSection {
     }
 
     // ========================================
-    // PARKING UI
+    // PARKING UI - UNIFIED CARD WITH RADIO PILLS
     // ========================================
 
     /**
-     * Builds parking option cards.
+     * Builds the unified parking card with main checkbox and radio pill options.
+     * Supports three variants:
+     * 1. All available - main checkbox enabled, all radio pills selectable
+     * 2. Partial sold out - main checkbox enabled, some radio pills disabled with "Sold Out" badge
+     * 3. All sold out - entire card disabled with corner ribbon
      */
     protected void buildParkingCards() {
         parkingContainer.getChildren().clear();
@@ -137,81 +193,294 @@ public class DefaultTransportSection implements HasTransportSection {
             return;
         }
 
-        for (ParkingOption option : parkingOptions) {
-            VBox card = createParkingCard(option);
-            parkingContainer.getChildren().add(card);
-        }
+        StackPane unifiedCard = createUnifiedParkingCard();
+        parkingContainer.getChildren().add(unifiedCard);
     }
 
     /**
-     * Creates a card for a single parking option.
+     * Creates the unified parking card containing:
+     * - Main checkbox row (enable/disable parking)
+     * - Sub-section with radio pills (parking type selection)
+     * - Sold out ribbon if all options sold out
      */
-    protected VBox createParkingCard(ParkingOption option) {
+    protected StackPane createUnifiedParkingCard() {
+        boolean allSoldOut = areAllParkingOptionsSoldOut();
+
+        // Use StackPane to allow ribbon overlay
+        StackPane cardWrapper = new StackPane();
+
         VBox card = new VBox(0);
         card.getStyleClass().add("bookingpage-checkbox-card");
 
-        HBox mainRow = new HBox(12);
-        mainRow.setAlignment(Pos.CENTER_LEFT);
-        mainRow.setPadding(new Insets(16));
-        mainRow.setCursor(Cursor.HAND);
-
-        // Checkbox indicator
-        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(option.selectedProperty(), colorScheme);
-
-        // Icon
-        SVGPath icon = new SVGPath();
-        icon.setContent(BookingPageUIBuilder.ICON_CAR);
-        icon.setStroke(Color.web("#64748b"));
-        icon.setStrokeWidth(2);
-        icon.setFill(Color.TRANSPARENT);
-        icon.setScaleX(0.85);
-        icon.setScaleY(0.85);
-
-        // Text content
-        VBox textContent = new VBox(2);
-        textContent.setAlignment(Pos.CENTER_LEFT);
-        HBox.setHgrow(textContent, Priority.ALWAYS);
-
-        Label title = new Label(option.getName());
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
-
-        if (option.getDescription() != null && !option.getDescription().isEmpty()) {
-            Label subtitle = new Label(option.getDescription());
-            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
-            textContent.getChildren().addAll(title, subtitle);
-        } else {
-            textContent.getChildren().add(title);
+        if (allSoldOut) {
+            card.getStyleClass().add("soldout");
         }
 
-        // Price label
-        Label priceLabel = new Label(formatParkingPrice(option));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
-
-        mainRow.getChildren().addAll(checkbox, icon, textContent, priceLabel);
+        // Main checkbox row
+        HBox mainRow = createParkingMainRow(allSoldOut);
         card.getChildren().add(mainRow);
 
-        // Initial selection state
-        if (option.isSelected()) {
-            card.getStyleClass().add("selected");
+        // Sub-section with radio pills (only visible when parking enabled and not all sold out)
+        if (!allSoldOut && parkingOptions.size() > 1) {
+            VBox subsection = createParkingTypeSubsection();
+            // Bind visibility to parkingEnabledProperty
+            subsection.visibleProperty().bind(parkingEnabledProperty);
+            subsection.managedProperty().bind(parkingEnabledProperty);
+            card.getChildren().add(subsection);
         }
 
-        // Selection handling
-        option.selectedProperty().addListener((obs, old, newVal) -> {
-            if (newVal) {
+        // Update card style based on parking enabled state
+        parkingEnabledProperty.addListener((obs, old, enabled) -> {
+            if (enabled && !allSoldOut) {
                 if (!card.getStyleClass().contains("selected")) {
                     card.getStyleClass().add("selected");
                 }
             } else {
                 card.getStyleClass().remove("selected");
             }
-            if (onSelectionChangedCallback != null) {
-                onSelectionChangedCallback.run();
-            }
         });
 
-        mainRow.setOnMouseClicked(e -> option.setSelected(!option.isSelected()));
+        // Initial state
+        if (parkingEnabledProperty.get() && !allSoldOut) {
+            card.getStyleClass().add("selected");
+        }
 
-        return card;
+        cardWrapper.getChildren().add(card);
+
+        // Add sold out ribbon if all options are sold out
+        if (allSoldOut) {
+            StackPane ribbon = BookingPageUIBuilder.createSoldOutRibbon();
+            StackPane.setAlignment(ribbon, Pos.TOP_RIGHT);
+            cardWrapper.getChildren().add(ribbon);
+        }
+
+        return cardWrapper;
+    }
+
+    /**
+     * Creates the main row of the parking card with checkbox, icon, text, and price.
+     */
+    protected HBox createParkingMainRow(boolean allSoldOut) {
+        HBox mainRow = new HBox(12);
+        mainRow.setAlignment(Pos.CENTER_LEFT);
+        mainRow.setPadding(new Insets(16));
+
+        if (!allSoldOut) {
+            mainRow.setCursor(Cursor.HAND);
+        } else {
+            mainRow.setCursor(Cursor.DEFAULT);
+        }
+
+        // Checkbox indicator - bound to parkingEnabled
+        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(parkingEnabledProperty, colorScheme);
+        if (allSoldOut) {
+            checkbox.getStyleClass().add("disabled");
+            checkbox.setOpacity(0.5);
+        }
+
+        // Text content
+        VBox textContent = new VBox(2);
+        textContent.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(textContent, Priority.ALWAYS);
+
+        Label title = new Label();
+        title.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.RegisterForParkingPass));
+        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium");
+        if (allSoldOut) {
+            title.getStyleClass().add("bookingpage-text-muted");
+        } else {
+            title.getStyleClass().add("bookingpage-text-dark");
+        }
+
+        Label subtitle = new Label();
+        if (allSoldOut) {
+            subtitle.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.ParkingSoldOutMessage));
+            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        } else {
+            subtitle.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.LimitedParkingAvailable));
+            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        }
+        textContent.getChildren().addAll(title, subtitle);
+
+        // Price label - show price from first option (they typically have same price)
+        Label priceLabel = new Label(formatUnifiedParkingPrice());
+        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold");
+        if (allSoldOut) {
+            priceLabel.getStyleClass().addAll("bookingpage-text-muted", "bookingpage-strikethrough");
+        } else {
+            priceLabel.getStyleClass().add("bookingpage-text-dark");
+        }
+
+        mainRow.getChildren().addAll(checkbox, textContent, priceLabel);
+
+        // Click handler (only if not all sold out)
+        if (!allSoldOut) {
+            mainRow.setOnMouseClicked(e -> {
+                parkingEnabledProperty.set(!parkingEnabledProperty.get());
+            });
+        }
+
+        return mainRow;
+    }
+
+    /**
+     * Creates the sub-section containing parking type radio pills.
+     */
+    protected VBox createParkingTypeSubsection() {
+        VBox subsection = new VBox(10);
+        subsection.getStyleClass().add("bookingpage-parking-subsection");
+        subsection.setPadding(new Insets(12, 16, 16, 48)); // Left padding to align under checkbox
+
+        // "Select parking type:" label
+        Label typeLabel = new Label();
+        typeLabel.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.SelectParkingType));
+        typeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium", "bookingpage-text-muted");
+
+        // Radio pill container
+        FlowPane pillsContainer = new FlowPane();
+        pillsContainer.setHgap(10);
+        pillsContainer.setVgap(10);
+
+        for (ParkingOption option : parkingOptions) {
+            HBox pill = createParkingTypeRadioPill(option);
+            pillsContainer.getChildren().add(pill);
+        }
+
+        subsection.getChildren().addAll(typeLabel, pillsContainer);
+        return subsection;
+    }
+
+    /**
+     * Creates a radio pill button for a parking type option.
+     * Shows sold out badge and strikethrough text if option is sold out.
+     */
+    protected HBox createParkingTypeRadioPill(ParkingOption option) {
+        boolean soldOut = option.isSoldOut();
+
+        HBox pill = new HBox(6);
+        pill.setAlignment(Pos.CENTER_LEFT);
+        pill.setPadding(new Insets(8, 16, 8, 16));
+        pill.getStyleClass().add("bookingpage-radio-pill");
+
+        if (soldOut) {
+            pill.getStyleClass().add("disabled");
+            pill.setCursor(Cursor.DEFAULT);
+        } else {
+            pill.setCursor(Cursor.HAND);
+        }
+
+        // Radio indicator (small circular)
+        StackPane radio = createSmallRadioIndicator(option, soldOut);
+        pill.getChildren().add(radio);
+
+        // Label
+        Label text = new Label(option.getName());
+        text.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        if (soldOut) {
+            text.getStyleClass().addAll("bookingpage-text-muted", "bookingpage-strikethrough");
+        } else {
+            text.getStyleClass().add("bookingpage-text-dark");
+        }
+        pill.getChildren().add(text);
+
+        // Add sold out badge if applicable
+        if (soldOut) {
+            Label badge = createInlineSoldOutBadge();
+            pill.getChildren().add(badge);
+        }
+
+        // Update pill style based on selection
+        Runnable updatePillStyle = () -> {
+            ParkingOption selected = selectedParkingTypeProperty.get();
+            boolean isSelected = (selected == option);
+            if (isSelected && !soldOut) {
+                if (!pill.getStyleClass().contains("selected")) {
+                    pill.getStyleClass().add("selected");
+                }
+            } else {
+                pill.getStyleClass().remove("selected");
+            }
+        };
+
+        updatePillStyle.run();
+        selectedParkingTypeProperty.addListener((obs, old, newOpt) -> updatePillStyle.run());
+
+        // Click handler (only if not sold out)
+        if (!soldOut) {
+            pill.setOnMouseClicked(e -> {
+                e.consume(); // Prevent event from bubbling to parent
+                selectedParkingTypeProperty.set(option);
+            });
+        }
+
+        return pill;
+    }
+
+    /**
+     * Creates a small circular radio indicator for parking type pills.
+     */
+    protected StackPane createSmallRadioIndicator(ParkingOption option, boolean soldOut) {
+        double size = 14;
+        double dotSize = 6;
+
+        // Outer circle
+        Circle outer = new Circle(size / 2);
+        outer.getStyleClass().add("bookingpage-radio-pill-outer");
+        if (soldOut) {
+            outer.getStyleClass().add("disabled");
+        }
+
+        // Inner dot
+        Circle inner = new Circle(dotSize / 2);
+        inner.setVisible(false);
+        inner.getStyleClass().add("bookingpage-radio-pill-inner");
+
+        StackPane container = new StackPane(outer, inner);
+        container.setMinSize(size, size);
+        container.setMaxSize(size, size);
+        container.setAlignment(Pos.CENTER);
+
+        // Update indicator based on selection
+        Runnable updateIndicator = () -> {
+            ParkingOption selected = selectedParkingTypeProperty.get();
+            boolean isSelected = (selected == option);
+            if (isSelected && !soldOut) {
+                outer.getStyleClass().add("selected");
+                inner.setVisible(true);
+                inner.getStyleClass().add("selected");
+            } else {
+                outer.getStyleClass().remove("selected");
+                inner.setVisible(false);
+                inner.getStyleClass().remove("selected");
+            }
+        };
+
+        updateIndicator.run();
+        selectedParkingTypeProperty.addListener((obs, old, newOpt) -> updateIndicator.run());
+
+        return container;
+    }
+
+    /**
+     * Creates an inline "SOLD OUT" badge for radio pills.
+     */
+    protected Label createInlineSoldOutBadge() {
+        Label badge = new Label("SOLD OUT");
+        badge.getStyleClass().add("bookingpage-soldout-badge-inline");
+        badge.setPadding(new Insets(2, 6, 2, 6));
+        return badge;
+    }
+
+    /**
+     * Formats the unified parking price for display.
+     * Uses the price from the first option (assumes all options have same price).
+     */
+    protected String formatUnifiedParkingPrice() {
+        if (parkingOptions.isEmpty()) {
+            return "";
+        }
+        ParkingOption firstOption = parkingOptions.get(0);
+        return formatParkingPrice(firstOption);
     }
 
     /**
@@ -223,7 +492,7 @@ public class DefaultTransportSection implements HasTransportSection {
         }
         String priceStr = "$" + (option.getPrice() / 100);
         if (option.isPerDay()) {
-            priceStr += "/day";
+            priceStr += "/day/vehicle";
         }
         return priceStr;
     }
@@ -631,8 +900,20 @@ public class DefaultTransportSection implements HasTransportSection {
     }
 
     @Override
+    public BooleanProperty parkingEnabledProperty() {
+        return parkingEnabledProperty;
+    }
+
+    @Override
+    public ObjectProperty<ParkingOption> selectedParkingTypeProperty() {
+        return selectedParkingTypeProperty;
+    }
+
+    @Override
     public void clearParkingOptions() {
         parkingOptions.clear();
+        parkingEnabledProperty.set(false);
+        selectedParkingTypeProperty.set(null);
         if (parkingContainer != null) {
             parkingContainer.getChildren().clear();
         }
@@ -668,6 +949,10 @@ public class DefaultTransportSection implements HasTransportSection {
 
     @Override
     public void reset() {
+        // Reset parking unified card state
+        parkingEnabledProperty.set(false);
+        selectedParkingTypeProperty.set(null);
+
         // Deselect all parking options
         for (ParkingOption option : parkingOptions) {
             option.setSelected(false);
@@ -714,6 +999,7 @@ public class DefaultTransportSection implements HasTransportSection {
 
     /**
      * Loads parking options from PolicyAggregate.
+     * Fetches availability from ScheduledItem.guestsAvailability() and ItemPolicy for default/sold out status.
      */
     protected void loadParkingOptions(PolicyAggregate policyAggregate) {
         List<ScheduledItem> parkingItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.PARKING);
@@ -729,7 +1015,20 @@ public class DefaultTransportSection implements HasTransportSection {
             .filter(si -> si.getItem() != null)
             .collect(Collectors.groupingBy(ScheduledItem::getItem));
 
-        for (Map.Entry<Item, List<ScheduledItem>> entry : itemMap.entrySet()) {
+        // Sort entries by Item.ord (ascending) so Standard appears before Disabled
+        List<Map.Entry<Item, List<ScheduledItem>>> sortedEntries = itemMap.entrySet().stream()
+            .sorted((e1, e2) -> {
+                Integer ord1 = e1.getKey().getOrd();
+                Integer ord2 = e2.getKey().getOrd();
+                // Null ord values go to the end
+                if (ord1 == null && ord2 == null) return 0;
+                if (ord1 == null) return 1;
+                if (ord2 == null) return -1;
+                return ord1.compareTo(ord2);
+            })
+            .collect(Collectors.toList());
+
+        for (Map.Entry<Item, List<ScheduledItem>> entry : sortedEntries) {
             Item item = entry.getKey();
             List<ScheduledItem> scheduledItems = entry.getValue();
 
@@ -740,6 +1039,30 @@ public class DefaultTransportSection implements HasTransportSection {
                 if (rate != null) {
                     price = rate.getPrice();
                 }
+            }
+
+            // Get ItemPolicy for default and sold out flags
+            ItemPolicy itemPolicy = policyAggregate.getItemPolicy(item);
+            boolean isDefault = itemPolicy != null && Boolean.TRUE.equals(itemPolicy.isDefault());
+            boolean forceSoldOut = itemPolicy != null && Boolean.TRUE.equals(itemPolicy.isSoldOutForced());
+
+            // Calculate minimum availability across all scheduled items
+            int minAvailability = scheduledItems.stream()
+                .mapToInt(si -> {
+                    Integer avail = si.getGuestsAvailability();
+                    return avail != null ? avail : Integer.MAX_VALUE;
+                })
+                .min()
+                .orElse(Integer.MAX_VALUE);
+
+            // Determine availability status
+            ParkingAvailabilityStatus availabilityStatus;
+            if (forceSoldOut || minAvailability <= 0) {
+                availabilityStatus = ParkingAvailabilityStatus.SOLD_OUT;
+            } else if (minAvailability <= LIMITED_THRESHOLD) {
+                availabilityStatus = ParkingAvailabilityStatus.LIMITED;
+            } else {
+                availabilityStatus = ParkingAvailabilityStatus.AVAILABLE;
             }
 
             String name = item.getName() != null ? item.getName() : "Parking";
@@ -755,11 +1078,15 @@ public class DefaultTransportSection implements HasTransportSection {
                 description,
                 price,
                 true, // Parking is typically per-day
-                scheduledItems
+                scheduledItems,
+                availabilityStatus,
+                isDefault
             );
 
             addParkingOption(option);
-            Console.log("DefaultTransportSection: Added parking option '" + name + "' price=" + price);
+            Console.log("DefaultTransportSection: Added parking option '" + name +
+                "' price=" + price + " availability=" + availabilityStatus +
+                " isDefault=" + isDefault + " minAvailability=" + minAvailability);
         }
     }
 

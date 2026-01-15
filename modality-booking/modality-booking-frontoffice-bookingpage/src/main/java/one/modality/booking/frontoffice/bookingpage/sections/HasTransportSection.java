@@ -42,12 +42,29 @@ import java.util.List;
 public interface HasTransportSection extends BookingFormSection, ResettableSection {
 
     // ========================================
+    // PARKING AVAILABILITY STATUS
+    // ========================================
+
+    /**
+     * Availability status for a parking option.
+     */
+    enum ParkingAvailabilityStatus {
+        /** Parking is available for booking */
+        AVAILABLE,
+        /** Limited parking spots remaining */
+        LIMITED,
+        /** Parking is sold out */
+        SOLD_OUT
+    }
+
+    // ========================================
     // PARKING OPTION
     // ========================================
 
     /**
-     * Data class representing a parking option.
-     * Parking options are displayed as checkbox cards with per-day pricing.
+     * Data class representing a parking option (e.g., Standard, Handicap/Disabled).
+     * Multiple parking options are displayed within a single unified card with radio buttons.
+     * Supports availability tracking and default selection from PolicyAggregate.
      */
     class ParkingOption {
         private final Object itemId;
@@ -57,21 +74,26 @@ public interface HasTransportSection extends BookingFormSection, ResettableSecti
         private final int price;        // Price in cents
         private final boolean perDay;   // If true, price is per day
         private final List<ScheduledItem> scheduledItems;
+        private final ParkingAvailabilityStatus availabilityStatus;
+        private final boolean isDefault;  // From ItemPolicy.isDefault()
         private final BooleanProperty selected = new SimpleBooleanProperty(false);
 
         /**
-         * Creates a parking option.
+         * Creates a parking option with availability and default status.
          *
-         * @param itemId         the Item primary key
-         * @param itemEntity     the Item entity
-         * @param name           display name
-         * @param description    optional description
-         * @param price          price in cents
-         * @param perDay         whether price is per day
-         * @param scheduledItems the ScheduledItems to book when selected
+         * @param itemId             the Item primary key
+         * @param itemEntity         the Item entity
+         * @param name               display name (from Item.name)
+         * @param description        optional description
+         * @param price              price in cents
+         * @param perDay             whether price is per day
+         * @param scheduledItems     the ScheduledItems to book when selected
+         * @param availabilityStatus availability status (AVAILABLE, LIMITED, SOLD_OUT)
+         * @param isDefault          whether this is the default selection (from ItemPolicy)
          */
         public ParkingOption(Object itemId, Item itemEntity, String name, String description,
-                             int price, boolean perDay, List<ScheduledItem> scheduledItems) {
+                             int price, boolean perDay, List<ScheduledItem> scheduledItems,
+                             ParkingAvailabilityStatus availabilityStatus, boolean isDefault) {
             this.itemId = itemId;
             this.itemEntity = itemEntity;
             this.name = name;
@@ -79,6 +101,18 @@ public interface HasTransportSection extends BookingFormSection, ResettableSecti
             this.price = price;
             this.perDay = perDay;
             this.scheduledItems = scheduledItems != null ? scheduledItems : Collections.emptyList();
+            this.availabilityStatus = availabilityStatus != null ? availabilityStatus : ParkingAvailabilityStatus.AVAILABLE;
+            this.isDefault = isDefault;
+        }
+
+        /**
+         * Creates a parking option with default availability (AVAILABLE) and not default.
+         * For backwards compatibility.
+         */
+        public ParkingOption(Object itemId, Item itemEntity, String name, String description,
+                             int price, boolean perDay, List<ScheduledItem> scheduledItems) {
+            this(itemId, itemEntity, name, description, price, perDay, scheduledItems,
+                 ParkingAvailabilityStatus.AVAILABLE, false);
         }
 
         public Object getItemId() { return itemId; }
@@ -88,6 +122,12 @@ public interface HasTransportSection extends BookingFormSection, ResettableSecti
         public int getPrice() { return price; }
         public boolean isPerDay() { return perDay; }
         public List<ScheduledItem> getScheduledItems() { return scheduledItems; }
+
+        public ParkingAvailabilityStatus getAvailabilityStatus() { return availabilityStatus; }
+        public boolean isDefault() { return isDefault; }
+        public boolean isSoldOut() { return availabilityStatus == ParkingAvailabilityStatus.SOLD_OUT; }
+        public boolean isAvailable() { return availabilityStatus != ParkingAvailabilityStatus.SOLD_OUT; }
+        public boolean isLimited() { return availabilityStatus == ParkingAvailabilityStatus.LIMITED; }
 
         public BooleanProperty selectedProperty() { return selected; }
         public boolean isSelected() { return selected.get(); }
@@ -272,6 +312,80 @@ public interface HasTransportSection extends BookingFormSection, ResettableSecti
      */
     default boolean hasParkingOptions() {
         return !getParkingOptions().isEmpty();
+    }
+
+    /**
+     * Returns true if all parking options are sold out.
+     */
+    default boolean areAllParkingOptionsSoldOut() {
+        List<ParkingOption> options = getParkingOptions();
+        return !options.isEmpty() && options.stream().allMatch(ParkingOption::isSoldOut);
+    }
+
+    /**
+     * Returns true if any parking option is available (not sold out).
+     */
+    default boolean hasAvailableParkingOption() {
+        return getParkingOptions().stream().anyMatch(ParkingOption::isAvailable);
+    }
+
+    /**
+     * Returns the default parking option (from ItemPolicy), or null if none.
+     */
+    default ParkingOption getDefaultParkingOption() {
+        return getParkingOptions().stream()
+            .filter(opt -> opt.isDefault() && opt.isAvailable())
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Returns the first available parking option, or null if all sold out.
+     */
+    default ParkingOption getFirstAvailableParkingOption() {
+        return getParkingOptions().stream()
+            .filter(ParkingOption::isAvailable)
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Returns the parking enabled property (main checkbox state).
+     * When enabled, user wants parking. When disabled, no parking selected.
+     */
+    BooleanProperty parkingEnabledProperty();
+
+    /**
+     * Returns true if parking is enabled (main checkbox checked).
+     */
+    default boolean isParkingEnabled() {
+        return parkingEnabledProperty().get();
+    }
+
+    /**
+     * Sets whether parking is enabled (main checkbox state).
+     */
+    default void setParkingEnabled(boolean enabled) {
+        parkingEnabledProperty().set(enabled);
+    }
+
+    /**
+     * Returns the currently selected parking type property.
+     */
+    javafx.beans.property.ObjectProperty<ParkingOption> selectedParkingTypeProperty();
+
+    /**
+     * Returns the currently selected parking type, or null if none.
+     */
+    default ParkingOption getSelectedParkingType() {
+        return selectedParkingTypeProperty().get();
+    }
+
+    /**
+     * Sets the currently selected parking type.
+     */
+    default void setSelectedParkingType(ParkingOption option) {
+        selectedParkingTypeProperty().set(option);
     }
 
     /**

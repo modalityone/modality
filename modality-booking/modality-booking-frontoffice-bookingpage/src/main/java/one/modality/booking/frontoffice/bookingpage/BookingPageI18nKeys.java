@@ -214,6 +214,7 @@ public interface BookingPageI18nKeys {
     Object PaidStatus = "PaidStatus";
     Object PaidToday = "PaidToday";
     Object ParkingPass = "ParkingPass";
+    Object ParkingSoldOutMessage = "ParkingSoldOutMessage";
     Object Password = "Password";
     Object PasswordRequired = "PasswordRequired";
     Object PayAmountNow = "PayAmountNow";
@@ -261,6 +262,7 @@ public interface BookingPageI18nKeys {
     Object ReadyToSubmitMessage = "ReadyToSubmitMessage";
     Object RefPrefix = "RefPrefix";
     Object RegisterAnotherPerson = "RegisterAnotherPerson";
+    Object RegisterForParkingPass = "RegisterForParkingPass";
     Object RegistrationNumber = "RegistrationNumber";
     Object RegistrationNumberPlaceholder = "RegistrationNumberPlaceholder";
     Object RegistrationSubmitted = "RegistrationSubmitted";

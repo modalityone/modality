@@ -2785,3 +2785,89 @@
     -fx-border-color: #e9ecef;
     -fx-cursor: default;
 }
+
+/* ==========================================
+   Unified Parking Card - Radio Pills
+   ========================================== */
+
+/* Parking sub-section (contains radio pills) */
+.bookingpage-parking-subsection {
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1 0 0 0;
+    /* Dashed borders not supported in JavaFX, using solid */
+}
+
+/* Radio pill button for parking type selection */
+.bookingpage-radio-pill {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.bookingpage-radio-pill:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-radio-pill.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+}
+
+.bookingpage-radio-pill.disabled {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-cursor: default;
+    -fx-opacity: 0.7;
+}
+
+/* Radio pill inner circle (outer ring) */
+.bookingpage-radio-pill-outer {
+    -fx-fill: white;
+    -fx-stroke: #dee2e6;
+    -fx-stroke-width: 2;
+}
+
+.bookingpage-radio-pill-outer.selected {
+    -fx-stroke: -booking-form-primary;
+    -fx-stroke-width: 4;
+}
+
+.bookingpage-radio-pill-outer.disabled {
+    -fx-stroke: #d1d5db;
+    -fx-fill: #f3f4f6;
+}
+
+/* Radio pill inner dot (visible when selected) */
+.bookingpage-radio-pill-inner {
+    -fx-fill: transparent;
+}
+
+.bookingpage-radio-pill-inner.selected {
+    -fx-fill: -booking-form-primary;
+}
+
+/* Inline sold out badge (inside radio pills) */
+.bookingpage-soldout-badge-inline {
+    -fx-background-color: #78716c;
+    -fx-background-radius: 4;
+    -fx-font-size: 9px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #fafaf9;
+}
+
+/* Strikethrough text style */
+.bookingpage-strikethrough {
+    -fx-strikethrough: true;
+}
+
+/* Sold out card overlay styling */
+.bookingpage-checkbox-card.soldout {
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 2;
+    -fx-background-color: #fafafa;
+    -fx-cursor: default;
+    -fx-opacity: 0.85;
+}

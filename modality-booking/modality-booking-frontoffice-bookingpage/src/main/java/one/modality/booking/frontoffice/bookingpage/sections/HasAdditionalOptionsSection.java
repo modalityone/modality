@@ -30,8 +30,11 @@ import java.util.List;
 public interface HasAdditionalOptionsSection extends BookingFormSection {
 
     /**
-     * Parking type options (legacy - kept for backward compatibility).
+     * Parking type options.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#getSelectedParkingType()} instead.
      */
+    @Deprecated
     enum ParkingType {
         STANDARD,
         HANDICAP
@@ -130,42 +133,60 @@ public interface HasAdditionalOptionsSection extends BookingFormSection {
         assistedListeningProperty().set(needs);
     }
 
-    // === Parking ===
+    // === Parking (DEPRECATED - use HasTransportSection instead) ===
 
     /**
      * Property for parking request.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#parkingEnabledProperty()} instead.
      */
+    @Deprecated
     BooleanProperty needsParkingProperty();
 
     /**
      * Gets whether parking is requested.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#isParkingEnabled()} instead.
      */
+    @Deprecated
     default boolean needsParking() {
         return needsParkingProperty().get();
     }
 
     /**
      * Sets whether parking is requested.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#setParkingEnabled(boolean)} instead.
      */
+    @Deprecated
     default void setNeedsParking(boolean needs) {
         needsParkingProperty().set(needs);
     }
 
     /**
      * Property for parking type.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#selectedParkingTypeProperty()} instead.
      */
+    @Deprecated
     ObjectProperty<ParkingType> parkingTypeProperty();
 
     /**
      * Gets the parking type.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#getSelectedParkingType()} instead.
      */
+    @Deprecated
     default ParkingType getParkingType() {
         return parkingTypeProperty().get();
     }
 
     /**
      * Sets the parking type.
+     * @deprecated Parking is now handled by {@link HasTransportSection}. Use
+     *             {@link HasTransportSection#setSelectedParkingType(HasTransportSection.ParkingOption)} instead.
      */
+    @Deprecated
     default void setParkingType(ParkingType type) {
         parkingTypeProperty().set(type);
     }
