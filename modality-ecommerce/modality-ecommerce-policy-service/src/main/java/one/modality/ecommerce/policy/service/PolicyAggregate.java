@@ -1,5 +1,6 @@
 package one.modality.ecommerce.policy.service;
 
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.collection.Collections;
@@ -125,6 +126,16 @@ public final class PolicyAggregate {
         // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
         // additional fields such as termsUrlEn
         this.event = entityStore.getEntity(event.getId());
+    }
+
+    public Future<Void> reloadAvailabilities() {
+        return PolicyService.loadAvailabilities(new LoadPolicyArgument(event))
+            .onSuccess(scheduledItemsQueryResult -> {
+                DataSourceModel dataSourceModel = entityStore.getDataSourceModel();
+                QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
+                scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
+            })
+            .mapEmpty();
     }
 
     public EntityStore getEntityStore() {
