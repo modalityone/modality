@@ -18,7 +18,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private static final int GENERAL_GUESTS_EVENT_POOL_ID = 4; // temporarily hardcoded
 
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
-        "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled" +
+        "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
         ",(select sum(coalesce(max,configuration.max) - coalesce((select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and !documentLine.cancelled), 0))" +
             " from ScheduledResource sr" +

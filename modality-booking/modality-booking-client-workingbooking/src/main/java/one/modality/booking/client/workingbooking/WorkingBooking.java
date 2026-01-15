@@ -215,6 +215,9 @@ public final class WorkingBooking {
             return null;
         DocumentLine documentLine = bookAtemporalItem(site, item); // Just as a first step (the item is temporal here)
         List<Attendance> existingAttendances = getLastestDocumentAggregate().getLineAttendances(documentLine);
+        // We get the latest AddDocumentLineEvent (presumably associated to this documentLine if just created) so we can
+        // set its `allocate` flag accordingly (if resource management is required).
+        AddDocumentLineEvent addDocumentLineEvent = getLastestDocumentAggregate().findLatestAddDocumentLineEvent(true);
         Attendance[] newAttendances = datesOrScheduledItems.stream().map(dateOrScheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
             if (Collections.findFirst(existingAttendances, a -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) != null)
@@ -232,6 +235,10 @@ public final class WorkingBooking {
             if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
                 newAttendance.setDate(scheduledItem.getDate());
                 newAttendance.setScheduledItem(dateOrScheduledItem);
+                // If resource management is required, we set the `allocate` flag to true
+                if (scheduledItem.isResource() && addDocumentLineEvent != null && addDocumentLineEvent.getDocumentLine() == documentLine) {
+                    addDocumentLineEvent.setAllocate(true);
+                }
             } else // assuming it's a local date
                 newAttendance.setDate((LocalDate) dateOrScheduledItem);
             return newAttendance;

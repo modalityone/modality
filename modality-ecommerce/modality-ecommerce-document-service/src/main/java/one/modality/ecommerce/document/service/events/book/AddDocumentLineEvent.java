@@ -13,6 +13,7 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
 
     private final Object sitePrimaryKey;
     private final Object itemPrimaryKey;
+    private boolean allocate; // must be set to true to ask the database raising a sold-out exception when no resource is available
 
     public AddDocumentLineEvent(DocumentLine documentLine) {
         super(documentLine);
@@ -20,10 +21,11 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
         itemPrimaryKey = Entities.getPrimaryKey(documentLine.getItem());
     }
 
-    public AddDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object sitePrimaryKey, Object itemPrimaryKey) {
+    public AddDocumentLineEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object sitePrimaryKey, Object itemPrimaryKey, boolean allocate) {
         super(documentPrimaryKey, documentLinePrimaryKey);
         this.sitePrimaryKey = sitePrimaryKey;
         this.itemPrimaryKey = itemPrimaryKey;
+        this.allocate = allocate;
     }
 
     public Object getItemPrimaryKey() {
@@ -32,6 +34,14 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
 
     public Object getSitePrimaryKey() {
         return sitePrimaryKey;
+    }
+
+    public boolean isAllocate() {
+        return allocate;
+    }
+
+    public void setAllocate(boolean allocate) {
+        this.allocate = allocate;
     }
 
     @Override
@@ -48,5 +58,6 @@ public final class AddDocumentLineEvent extends AbstractDocumentLineEvent {
         super.replayEventOnDocumentLine();
         documentLine.setSite(isForSubmit() ? sitePrimaryKey : entityStore.getEntity(Site.class, sitePrimaryKey, true)); // Should be found from PolicyAggregate
         documentLine.setItem(isForSubmit() ? itemPrimaryKey : entityStore.getEntity(Item.class, itemPrimaryKey, true)); // Should be found from PolicyAggregate
+        documentLine.setAllocate(allocate);
     }
 }
