@@ -58,7 +58,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
                                  ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
                                  ",share_mate,share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
-                                 ",resourceConfiguration" +
+                                 ",resourceConfiguration,allocate" +
                                  " from DocumentLine where document=? and site!=null order by id", docPk),
             // 2 - Loading attendances
             new EntityStoreQuery("select documentLine,scheduledItem,date from Attendance where documentLine.document=? order by id", docPk),
@@ -97,7 +97,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 // Aggregating document lines by adding AddDocumentLineEvent and PriceDocumentLineEvent for each document
                 ((List<DocumentLine>) entityLists[1]).forEach(documentLine -> {
                     List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(documentLine.getDocument());
-                    documentEvents.add(new AddDocumentLineEvent(documentLine));
+                    documentEvents.add(new AddDocumentLineEvent(documentLine, documentLine.isAllocate()));
                     documentEvents.add(new PriceDocumentLineEvent(documentLine));
                     if (documentLine.isShareOwner()) {
                         documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(documentLine, documentLine.getShareOwnerMatesNames()));
