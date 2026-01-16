@@ -4,6 +4,7 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.entity.Entities;
@@ -14,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Attendances;
 import one.modality.base.shared.entities.util.DocumentLines;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -21,11 +23,12 @@ import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -164,6 +167,43 @@ public final class WorkingBooking {
         this.memberExplicitlySelected = memberExplicitlySelected;
     }
 
+    public void copyChanges(WorkingBooking workingBooking, boolean clearPreviousChanges) {
+        if (workingBooking.getPolicyAggregate() != policyAggregate)
+            throw new IllegalArgumentException("WorkingBooking must be from the same policy");
+        lastestDocumentAggregate = null;
+        if (clearPreviousChanges)
+            documentChanges.clear();
+        documentChanges.addAll(workingBooking.documentChanges);
+    }
+
+    public DocumentLine bookNonTemporalItem(Site site, Item item) {
+        return bookItem(site, item, false);
+    }
+
+    public DocumentLine bookItem(Site site, Item item, boolean allocate) {
+        DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        if (documentLine == null) {
+            documentLine = getEntityStore().createEntity(DocumentLine.class);
+            documentLine.setDocument(document);
+            documentLine.setSite(site);
+            documentLine.setItem(item);
+            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine, allocate), false);
+        }
+        return documentLine;
+    }
+
+    public void unbookItem(Site site, Item item) {
+        DocumentLine documentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
+        if (documentLine != null) {
+            removeDocumentLine(documentLine);
+            // TODO: check if it's necessary to remove the attendances in addition
+        }
+    }
+
+    public DocumentLine bookTemporalButNonScheduledItem(Site site, Item item, List<LocalDate> dates, boolean addOnly) {
+        return bookDatesOrScheduledItems(site, item, dates, addOnly);
+    }
+
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
@@ -171,26 +211,19 @@ public final class WorkingBooking {
         ScheduledItem scheduledItemSample = scheduledItems.get(0);
         Site site = scheduledItemSample.getSite();
         Item item = scheduledItemSample.getItem();
-        DocumentLine existingDocumentLine = getLastestDocumentAggregate().getFirstSiteItemDocumentLine(site, item);
-        DocumentLine documentLine;
-        List<Attendance> existingAttendances;
-        if (existingDocumentLine != null) {
-            documentLine = existingDocumentLine;
-            existingAttendances = getLastestDocumentAggregate().getLineAttendances(existingDocumentLine);
-        } else {
-            documentLine = getEntityStore().createEntity(DocumentLine.class);
-            documentLine.setDocument(document);
-            documentLine.setSite(site);
-            documentLine.setItem(item);
-            integrateNewDocumentEvent(new AddDocumentLineEvent(documentLine), false);
-            existingAttendances = null;
-        }
-        Attendance[] newAttendances = scheduledItems.stream().map(scheduledItem -> {
+        bookDatesOrScheduledItems(site, item, scheduledItems, addOnly);
+    }
+
+    private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean addOnly) {
+        if (datesOrScheduledItems.isEmpty())
+            return null;
+        boolean allocate = Collections.first(datesOrScheduledItems) instanceof ScheduledItem &&
+                           ScheduledItems.hasResourceManagement((List<ScheduledItem>) datesOrScheduledItems);
+        DocumentLine documentLine = bookItem(site, item, allocate);
+        List<Attendance> existingAttendances = getLastestDocumentAggregate().getLineAttendances(documentLine);
+        Attendance[] newAttendances = datesOrScheduledItems.stream().map(dateOrScheduledItem -> {
             // Checking that the scheduledItem is not already in the existing attendances
-            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getScheduledItem(), scheduledItem)) != null)
-                return null;
-            // Second check, but using the date
-            if (Collections.findFirst(existingAttendances, a -> Objects.equals(a.getDate(), scheduledItem.getDate())) != null)
+            if (Collections.findFirst(existingAttendances, a -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) != null)
                 return null;
             // Note: attendances are not directly submitted to the database but incorporated in document events, so we
             // don't use insertEntity() but createEntity() to create them in memory.
@@ -202,23 +235,41 @@ public final class WorkingBooking {
             // when passing it to new AttendancesEvent() because all document events must know which document they are
             // referring to. So we ensure this by the following assignment:
             newAttendance.getDocumentLine().setDocument(document); // may copy the document to the store as well
-            newAttendance.setDate(scheduledItem.getDate());
-            newAttendance.setScheduledItem(scheduledItem);
+            if (dateOrScheduledItem instanceof ScheduledItem scheduledItem) {
+                newAttendance.setDate(scheduledItem.getDate());
+                newAttendance.setScheduledItem(dateOrScheduledItem);
+            } else // assuming it's a local date
+                newAttendance.setDate((LocalDate) dateOrScheduledItem);
             return newAttendance;
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (newAttendances.length > 0)
             integrateNewDocumentEvent(new AddAttendancesEvent(newAttendances), false);
         if (!addOnly) {
-            // We remove all existing attendances not referencing the passed scheduledItems
+            // We remove all existing attendances not referencing the passed dates or scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
-                Collections.findFirst(scheduledItems, si -> Entities.sameId(a.getScheduledItem(), si)) == null);
+                Collections.findFirst(datesOrScheduledItems, dateOrScheduledItem -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) == null);
             removeAttendances(attendancesToRemove);
         }
         lastestDocumentAggregate = null;
+        return documentLine;
     }
 
     public void unbookScheduledItems(List<ScheduledItem> scheduledItems) {
         removeAttendances(Collections.filter(getAttendancesAdded(false), a -> scheduledItems.contains(a.getScheduledItem())));
+    }
+
+    public void bookSiteItemsOverPeriod(List<SiteItem> siteItems, Period period) {
+        for (SiteItem siteItem : siteItems)
+            bookSiteItemOverPeriod(siteItem, period);
+    }
+
+    public void bookSiteItemOverPeriod(SiteItem siteItem, Period period) {
+        bookSiteItemOverPeriod(siteItem.getSite(), siteItem.getItem(), period);
+    }
+
+    public void bookSiteItemOverPeriod(Site site, Item item, Period period) {
+        List<ScheduledItem> scheduledItemsToBook = ScheduledItems.filterSiteItemOverPeriod(getPolicyScheduledItems(), site, item, period);
+        bookScheduledItems(scheduledItemsToBook, true);
     }
 
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
@@ -236,6 +287,11 @@ public final class WorkingBooking {
         bookScheduledItems(ScheduledItems.filterNotCancelled(policyAggregate.filterTeachingScheduledItems()), false);
     }
 
+    public void removeDocumentLine(DocumentLine documentLine) {
+        integrateNewDocumentEvent(new RemoveDocumentLineEvent(documentLine), false);
+        lastestDocumentAggregate = null;
+    }
+
     public void removeAttendance(Attendance attendance) {
         removeAttendances(java.util.Collections.singletonList(attendance));
     }
@@ -251,13 +307,54 @@ public final class WorkingBooking {
         if (document == null || document.isNew()) {
             cancelChanges();
         } else {
-            integrateNewDocumentEvent(new CancelDocumentEvent(document, true), true);
-            lastestDocumentAggregate = null;
+            cancelBooking(true);
         }
     }
 
     public void uncancelBooking() {
-        integrateNewDocumentEvent(new CancelDocumentEvent(document, false), true);
+        cancelBooking(false);
+    }
+
+    private void cancelBooking(boolean cancel) {
+        integrateNewDocumentEvent(new CancelDocumentEvent(document, cancel, Meta.isBackoffice()), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void cancelDocumentLine(DocumentLine documentLine) {
+        cancelDocumentLine(documentLine, true);
+    }
+
+    public void uncancelDocumentLine(DocumentLine documentLine) {
+        cancelDocumentLine(documentLine, false);
+    }
+
+    private void cancelDocumentLine(DocumentLine documentLine, boolean cancel) {
+        integrateNewDocumentEvent(new CancelDocumentLineEvent(documentLine, cancel, Meta.isBackoffice()), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void setShareOwnerInfo(DocumentLine documentLine, String[] matesNames) {
+        integrateNewDocumentEvent(new EditShareOwnerInfoDocumentLineEvent(documentLine, matesNames), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void setShareMateInfo(DocumentLine documentLine, String ownerName) {
+        integrateNewDocumentEvent(new EditShareMateInfoDocumentLineEvent(documentLine, ownerName), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void linkMateToOwner(DocumentLine documentLine, DocumentLine ownerDocumentLine) {
+        integrateNewDocumentEvent(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerDocumentLine), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void linkMateToOwner(DocumentLine documentLine, Person ownerPerson) {
+        integrateNewDocumentEvent(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerPerson), true);
+        lastestDocumentAggregate = null;
+    }
+
+    public void allocateDocumentLine(DocumentLine documentLine, ResourceConfiguration resourceConfiguration) {
+        integrateNewDocumentEvent(new AllocateDocumentLineEvent(documentLine, resourceConfiguration), true);
         lastestDocumentAggregate = null;
     }
 
@@ -349,6 +446,8 @@ public final class WorkingBooking {
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
         ).compose(result -> {
+            if (result.isSoldOut())
+                return Future.succeededFuture(result);
             // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
             return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.documentPrimaryKey()))
                 .map(documentAggregate -> {
@@ -488,6 +587,12 @@ public final class WorkingBooking {
                 DocumentAggregate existingBooking = policyAndDocumentAggregates.documentAggregate(); // might be null
                 return new WorkingBooking(policyAggregate, existingBooking);
             });
+    }
+
+    public static WorkingBooking ofSiteItemsOverPeriod(PolicyAggregate policyAggregate, List<SiteItem> siteItems, Period period) {
+        WorkingBooking workingBooking = new WorkingBooking(policyAggregate, null);
+        workingBooking.bookSiteItemsOverPeriod(siteItems, period);
+        return workingBooking;
     }
 
 }

@@ -412,7 +412,7 @@ final class DayTemplateModel {
         teachingScheduledItem.setSite(getSite());
         teachingScheduledItem.setDate(date);
         teachingScheduledItem.setName(name);
-        teachingScheduledItem.setTimeLine(timeline);
+        teachingScheduledItem.setTimeline(timeline);
         teachingScheduledItem.setItem(timeline.getItem());
 
         // Link to bookable scheduled item if day ticket is enabled

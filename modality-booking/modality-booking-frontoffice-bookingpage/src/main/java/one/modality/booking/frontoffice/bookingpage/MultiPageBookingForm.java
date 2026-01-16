@@ -38,7 +38,7 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
 
     private BookingFormHeader header;
     private BookingFormNavigation navigation;
-    private final TransitionPane transitionPane = new TransitionPane(); {
+    protected final TransitionPane transitionPane = new TransitionPane(); {
         transitionPane.setScrollToTop(true); // scrolling to top each time the user navigates to a new step
     }
     private final BooleanProperty personToBookRequiredProperty = new SimpleBooleanProperty() {
@@ -392,6 +392,65 @@ public abstract class MultiPageBookingForm extends BookingFormBase {
         if (header != null) {
             header.setNavigationClickable(clickable);
         }
+    }
+
+    /**
+     * Navigates to a special page that is NOT part of the standard pages array.
+     * This is used for dynamic pages like sold-out recovery that are created on-demand
+     * and don't belong in the static page flow.
+     *
+     * <p>The page is displayed with its own navigation buttons (via getButtons())
+     * and all standard page bindings are established.</p>
+     *
+     * @param page The special page to navigate to
+     */
+    protected void navigateToSpecialPage(BookingFormPage page) {
+        // Not during transitions
+        if (transitionPane.isTransiting())
+            return;
+
+        // Mark as special page (not in pages array)
+        displayedPage = page;
+        displayedPageIndex = -1;
+
+        // Setup the page
+        page.setWorkingBookingProperties(workingBookingProperties);
+
+        // Bind page properties
+        pageShowingOwnSubmitButtonProperty.set(page.isShowingOwnSubmitButton());
+        pageIsPriceBarRelevantToShowProperty.set(page.isPriceBarRelevantToShow());
+        pageValidProperty.bind(page.validProperty());
+        pageBusyFutureProperty.bind(page.busyFutureProperty());
+        pageCanGoBackProperty.bind(page.canGoBackProperty());
+        pageCanGoForwardProperty.bind(page.canGoForwardProperty());
+        pageEndReachedProperty.bind(page.endReachedProperty());
+
+        // Unregister previous listener
+        if (bookingFormPageValidListener != null)
+            bookingFormPageValidListener.unregister();
+
+        // Register new callback listener if available
+        if (activityCallback != null) {
+            bookingFormPageValidListener = FXProperties.runNowAndOnPropertyChange(
+                valid -> getActivityCallback().disableSubmitButton(!valid),
+                page.validProperty());
+        }
+
+        // Update Header Visibility
+        if (header != null) {
+            Layouts.setManagedAndVisibleProperties(header.getView(), page.isHeaderVisible());
+        }
+
+        // Update Navigation Buttons (use page's custom buttons)
+        updateNavigationButtons();
+
+        // Update navigation bar and don't allow back navigation from special pages
+        previousPageApplicableProperty.set(false);
+        updateShowDefaultSubmitButton();
+
+        // Transition to the page
+        transitionPane.setReverse(false);
+        transitionPane.transitToContent(page.getView(), page::onTransitionFinished);
     }
 
 }

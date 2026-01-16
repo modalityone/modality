@@ -14,6 +14,7 @@ module modality.booking.client.workingbooking {
     requires webfx.extras.i18n;
     requires webfx.kit.util;
     requires webfx.platform.async;
+    requires webfx.platform.meta;
     requires webfx.platform.scheduler;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;

@@ -18,10 +18,11 @@ public final class AddAttendancesEventSerialCodec extends AbstractAttendancesEve
     @Override
     public AddAttendancesEvent decode(ReadOnlyAstObject serial) {
         return postDecode(new AddAttendancesEvent(
-                decodeDocumentPrimaryKey(serial),
-                decodeDocumentLinePrimaryKey(serial),
-                decodeAttendancesPrimaryKeys(serial),
-                decodeScheduledItemsPrimaryKeys(serial)
+            decodeDocumentPrimaryKey(serial),
+            decodeDocumentLinePrimaryKey(serial),
+            decodeAttendancesPrimaryKeys(serial),
+            decodeScheduledItemsPrimaryKeys(serial),
+            decodeDates(serial)
         ), serial);
     }
 }

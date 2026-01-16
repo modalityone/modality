@@ -74,4 +74,15 @@ public interface BookingForm {
         return null;
     }
 
+    /**
+     * Returns the sticky header node if this form has one, or null otherwise.
+     * The sticky header should be added to the main frame overlay area
+     * (e.g., FXMainFrameOverlayArea.getOverlayChildren()) by the calling code.
+     *
+     * @return The sticky header node, or null if none
+     */
+    default Node getStickyHeader() {
+        return null;
+    }
+
 }

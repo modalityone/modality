@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.panes.GrowingPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -11,29 +12,41 @@ import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Attendances;
+import one.modality.base.shared.entities.util.DocumentLines;
+import one.modality.base.shared.entities.util.ScheduledItems;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.booking.frontoffice.bookingpage.*;
+import one.modality.booking.frontoffice.bookingpage.components.StickyPriceHeader;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.LoadDocumentArgument;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -119,6 +132,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Navigation configuration
     private final boolean navigationClickable;
 
+    // Sticky header (optional - appears at top of form)
+    private final Node stickyHeader;
+
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
      */
@@ -139,10 +155,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         StandardBookingFormCallbacks callbacks,
         boolean cardPaymentOnly,
         BookingFormEntryPoint entryPoint,
-        boolean navigationClickable) {
+        boolean navigationClickable,
+        Node stickyHeader) {
 
         super(activity, settings);
         this.navigationClickable = navigationClickable;
+        this.stickyHeader = stickyHeader;
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
         this.callbacks = callbacks;
@@ -278,6 +296,30 @@ public class StandardBookingForm extends MultiPageBookingForm {
             // node, and see the CSS file applying `-footer-logo-color: -booking-form-primary;`
             FXProperties.onPropertySet(node.sceneProperty(), scene -> scene.getRoot().getStyleClass().add(themeClass));
         }
+
+        // If a sticky header is provided, add it to the overlay area for fixed positioning
+        if (stickyHeader != null && node instanceof StackPane stackPane) {
+            // Position at top center using StackPane alignment
+            StackPane.setAlignment(stickyHeader, Pos.TOP_CENTER);
+
+            // Set max width for the header
+            if (stickyHeader instanceof Region stickyRegion) {
+                stickyRegion.setMaxWidth(800);
+            }
+
+
+            // Listen for visibility changes to add/remove padding on the form content
+            // This prevents content from being hidden under the fixed header
+            if (stickyHeader instanceof StickyPriceHeader sph) {
+                Node firstChild = stackPane.getChildren().isEmpty() ? null : stackPane.getChildren().get(0);
+                if (firstChild instanceof BorderPane borderPane) {
+                    FXProperties.runNowAndOnPropertyChange(showHeader -> {
+                        borderPane.setPadding(showHeader ? new Insets(60, 0, 0, 0) : Insets.EMPTY);
+                    }, sph.showHeaderProperty());
+                }
+            }
+        }
+
         return node;
     }
 
@@ -304,19 +346,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
     protected BookingFormPage createDefaultSummaryPage() {
         defaultSummarySection = new DefaultSummarySection();
         defaultSummarySection.setColorScheme(colorScheme);
+        // Terms section is shown on Summary page, before submitting registration
+        defaultTermsSection = new DefaultTermsSection();
+        defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
-            defaultSummarySection)
+            defaultSummarySection,
+            defaultTermsSection)
             .setStep(true);
     }
 
     protected BookingFormPage createDefaultPendingBookingsPage() {
         defaultPendingBookingsSection = new DefaultPendingBookingsSection();
         defaultPendingBookingsSection.setColorScheme(colorScheme);
-        defaultTermsSection = new DefaultTermsSection();
-        defaultTermsSection.setColorScheme(colorScheme);
         return new CompositeBookingFormPage(BookingPageI18nKeys.PendingBookings,
-            defaultPendingBookingsSection,
-            defaultTermsSection)
+            defaultPendingBookingsSection)
             .setStep(true);
     }
 
@@ -574,7 +617,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Pending Bookings page: Register Another Person + Proceed to Payment (or Confirm Booking if price is zero)
         // Register Another Person is only shown for logged-in users (new users can't register another person)
         // Register Another Person is disabled when no available members to book
-        // Proceed to Payment/Confirm Booking is disabled when terms are not accepted
+        // Note: Terms are accepted on the Summary page before reaching this page
         if (pendingBookingsPage instanceof CompositeBookingFormPage compositePending) {
             // Initialize button text based on total (will be updated when bookings change)
             updatePendingBookingsButtonText();
@@ -592,20 +635,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     // Use dynamic button text that changes based on total amount
                     new BookingFormButton(pendingBookingsButtonText,
                         e -> handleProceedToPaymentOrConfirm(),
-                        "btn-primary booking-form-btn-primary",
-                        defaultTermsSection != null
-                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
-                            : null)
+                        "btn-primary booking-form-btn-primary")
                 );
             } else {
                 // New users (not logged in) - only show the proceed button
                 compositePending.setButtons(
                     new BookingFormButton(pendingBookingsButtonText,
                         e -> handleProceedToPaymentOrConfirm(),
-                        "btn-primary booking-form-btn-primary",
-                        defaultTermsSection != null
-                            ? Bindings.not(defaultTermsSection.termsAcceptedProperty())
-                            : null)
+                        "btn-primary booking-form-btn-primary")
                 );
             }
         }
@@ -690,7 +727,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
-            .compose(ignored -> {
+            .compose(submitResult -> {
+                if (submitResult.isSoldOut()) {
+                    UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
+                        new SoldOutErrorParser.SoldOutInfo(
+                            submitResult.soldOutSitePrimaryKey(),
+                            submitResult.soldOutItemPrimaryKey(),
+                            null
+                        )
+                    ));
+                    return Future.failedFuture("Sold out"); // We still want to stop the flow here
+                }
                 // For new users (guest or creating account), skip loading bookings
                 // They're not logged in, so there's nothing to load
                 if (isNewUser) {
@@ -730,8 +777,313 @@ public class StandardBookingForm extends MultiPageBookingForm {
             })
             .onFailure(error -> {
                 Console.log("ERROR: " + error.getMessage());
+
                 // Stay on current page - spinner will be hidden automatically
             });
+    }
+
+    /**
+     * Handles accommodation sold-out error by showing a recovery page with alternatives.
+     *
+     * <p>This method is called when the server returns a SOLDOUT error during booking
+     * submission. It shows a user-friendly page that explains what happened and allows
+     * the user to select an alternative accommodation option.</p>
+     *
+     * <p>Key design decisions:</p>
+     * <ul>
+     *   <li>Uses EXISTING PolicyAggregate (no server reload) - availability data is already current</li>
+     *   <li>Uses CompositeBookingFormPage with custom buttons for proper page integration</li>
+     *   <li>Supports iterative flow: submit → SOLDOUT → select new → submit → (repeat if needed)</li>
+     * </ul>
+     *
+     * @param soldOutInfo Information about the sold-out item
+     */
+    private void handleAccommodationSoldOut(SoldOutErrorParser.SoldOutInfo soldOutInfo) {
+        Console.log("handleAccommodationSoldOut() - itemId: " + soldOutInfo.getItemPrimaryKey());
+
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) {
+            Console.log("PolicyAggregate is null, cannot show sold-out recovery");
+            return;
+        }
+
+        // Reload availabilities from the server to get current availability data
+        Console.log("Reloading availabilities from server...");
+        policyAggregate.reloadAvailabilities()
+            .onFailure(error -> {
+                Console.log("Failed to reload availabilities: " + error.getMessage());
+                // Continue anyway with existing data
+                UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
+            })
+            .onSuccess(v -> {
+                Console.log("Availabilities reloaded successfully");
+                UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
+            });
+    }
+
+    /**
+     * Shows the sold-out recovery page after availabilities have been reloaded.
+     */
+    private void showSoldOutRecoveryPage(SoldOutErrorParser.SoldOutInfo soldOutInfo, PolicyAggregate policyAggregate) {
+        // Find the sold-out item
+        EntityStore entityStore = policyAggregate.getEntityStore();
+        Site soldOutSite = entityStore.getEntity(Site.class, soldOutInfo.getSitePrimaryKey());
+        Item soldOutItem = entityStore.getEntity(Item.class, soldOutInfo.getItemPrimaryKey());
+
+        if (soldOutSite == null || soldOutItem == null) {
+            Console.log("No scheduled items in PolicyAggregate, cannot show alternatives");
+            return;
+        }
+
+        String soldOutItemName = I18nEntities.translateEntity(soldOutItem);
+        int soldOutPrice = 0;
+
+        // Get original price from WorkingBooking document lines
+        WorkingBooking workingBooking = getWorkingBooking();
+        if (workingBooking != null) {
+            // First, try to get stored price from document lines
+            soldOutPrice = DocumentLines.filterOfSiteAndItem(workingBooking.getDocumentLines().stream(), soldOutSite, soldOutItem)
+                .mapToInt(line -> line.getPriceNet() != null ? line.getPriceNet() : 0)
+                .sum();
+
+            // If stored price is 0, calculate dynamically using PriceCalculator
+            if (soldOutPrice == 0) {
+                PriceCalculator priceCalculator = workingBooking.getLatestBookingPriceCalculator();
+                soldOutPrice = DocumentLines.filterOfSiteAndItem(workingBooking.getDocumentLines().stream(), soldOutSite, soldOutItem)
+                    .mapToInt(priceCalculator::calculateDocumentLinePrice)
+                    .sum();
+            }
+        }
+        Console.log("Sold-out item: " + soldOutItemName + ", price: " + soldOutPrice);
+
+        // Build list of ALL accommodation options (excluding only the originally selected sold-out item)
+        // Other items that are also sold out will show with SOLD OUT ribbon
+        List<HasAccommodationSelectionSection.AccommodationOption> alternatives =
+            buildAlternativeOptions(policyAggregate, soldOutInfo.getSitePrimaryKey(), soldOutInfo.getItemPrimaryKey());
+        Console.log("Built " + alternatives.size() + " alternative options with refreshed availability");
+
+        // Calculate number of nights from the booked accommodation dates
+        int numberOfNights = 0;
+        if (workingBooking != null) {
+            DocumentAggregate docAggregate = workingBooking.getLastestDocumentAggregate();
+            // Count unique dates for accommodation item (the sold-out item)
+            numberOfNights = (int) docAggregate.getAttendances().stream()
+                .filter(a -> Attendances.isOfSiteAndItem(a, soldOutSite, soldOutItem))
+                .map(Attendances::getDate)
+                .filter(Objects::nonNull)
+                .distinct()
+                .count();
+        }
+        Console.log("Number of nights for sold-out item: " + numberOfNights);
+
+        // Create the sold-out recovery section
+        DefaultAccommodationSoldOutSection soldOutSection = new DefaultAccommodationSoldOutSection();
+        soldOutSection.setColorScheme(colorScheme);
+        soldOutSection.setEventName(getEvent() != null ? getEvent().getName() : "");
+        soldOutSection.setOriginalSelection(soldOutItemName, soldOutPrice);
+        soldOutSection.setNumberOfNights(numberOfNights);
+        soldOutSection.setAlternativeOptions(alternatives);
+
+        // Create the recovery page using CompositeBookingFormPage with custom buttons
+        CompositeBookingFormPage soldOutPage = createSoldOutRecoveryPage(soldOutSection);
+
+        // Show the page using navigateToSpecialPage for proper integration
+        navigateToSpecialPage(soldOutPage);
+    }
+
+    /**
+     * Creates a CompositeBookingFormPage for the sold-out recovery flow with custom navigation buttons.
+     *
+     * @param soldOutSection The section containing the sold-out info and alternatives
+     * @return A configured CompositeBookingFormPage with Continue and Cancel buttons
+     */
+    private CompositeBookingFormPage createSoldOutRecoveryPage(DefaultAccommodationSoldOutSection soldOutSection) {
+        CompositeBookingFormPage page = new CompositeBookingFormPage(
+            BookingPageI18nKeys.AccommodationUpdateNeeded,
+            soldOutSection
+        );
+
+        // Configure page properties
+        page.setStep(false)                    // Don't show in step progress header
+            .setHeaderVisible(false)           // Section has its own header
+            .setShowingOwnSubmitButton(false); // Show custom navigation buttons from this page
+
+        // Create custom buttons for this page
+        // Continue button - triggers callback with new selection, returns to Summary
+        BookingFormButton continueButton = new BookingFormButton(
+            BookingPageI18nKeys.ContinueWithNewSelection,
+            e -> {
+                HasAccommodationSelectionSection.AccommodationOption selectedOption = soldOutSection.getSelectedOption();
+                if (selectedOption != null) {
+                    Console.log("User selected alternative: " + selectedOption.getName());
+                    // Get roommate info if collected in the sold-out section
+                    StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo roommateInfo = soldOutSection.getRoommateInfo();
+                    callbacks.onAccommodationSoldOutRecovery(selectedOption, roommateInfo, this::navigateToSummary);
+                }
+            },
+            "btn-primary booking-form-btn-primary",
+            Bindings.not(soldOutSection.validProperty())  // Disable until selection and roommate info valid
+        );
+
+        // Cancel Booking button - cancels the booking entirely (left side)
+        BookingFormButton cancelButton = new BookingFormButton(
+            BookingPageI18nKeys.CancelBooking,
+            e -> cancelBookingAndExit(),
+            "btn-back booking-form-btn-back"
+        );
+
+        // Button order: Cancel (left), Continue (right) - matches other page layouts
+        page.setButtons(cancelButton, continueButton);
+
+        return page;
+    }
+
+    /**
+     * Cancels the current booking and returns to the first page of the form.
+     * Called when user chooses to cancel from the sold-out recovery page.
+     */
+    private void cancelBookingAndExit() {
+        Console.log("User cancelled booking from sold-out recovery - returning to first page");
+
+        WorkingBooking workingBooking = getWorkingBooking();
+        if (workingBooking != null) {
+            workingBooking.cancelChanges();
+        }
+
+        // Navigate back to the first page of the form so the user can start fresh
+        navigateToPage(0);
+    }
+
+    /**
+     * Builds a list of alternative accommodation options, excluding the sold-out item.
+     * Always includes a Day Visitor option as a fallback.
+     */
+    private List<HasAccommodationSelectionSection.AccommodationOption> buildAlternativeOptions(PolicyAggregate policy, Object excludeSiteId, Object excludeItemId) {
+        List<HasAccommodationSelectionSection.AccommodationOption> options = new ArrayList<>();
+
+        // Build accommodation options from scheduled items (if available)
+        List<ScheduledItem> scheduledItems = policy.getScheduledItems();
+        if (scheduledItems != null && !scheduledItems.isEmpty()) {
+            // Group scheduled items by Item to find accommodation options
+            Map<Object, List<ScheduledItem>> itemGroups =
+                ScheduledItems.filterFamily(scheduledItems.stream(), KnownItemFamily.ACCOMMODATION)
+                .collect(Collectors.groupingBy(si -> Entities.getPrimaryKey(si.getItem())));
+
+            for (Map.Entry<Object, List<ScheduledItem>> entry : itemGroups.entrySet()) {
+                Object itemId = entry.getKey();
+                // Skip the sold-out item
+                if (Entities.samePrimaryKey(itemId, excludeItemId))
+                    continue;
+
+                List<ScheduledItem> itemScheduledItems = entry.getValue();
+
+                if (itemScheduledItems.isEmpty()) continue;
+
+                ScheduledItem firstSi = itemScheduledItems.get(0);
+                Item item = firstSi.getItem();
+
+                // Calculate minimum availability across all days
+                int minAvailability = itemScheduledItems.stream()
+                    .mapToInt(si -> si.getGuestsAvailability() != null ? si.getGuestsAvailability() : 0)
+                    .min()
+                    .orElse(0);
+
+                HasAccommodationSelectionSection.AvailabilityStatus status =
+                    minAvailability <= 0
+                        ? HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT
+                        : minAvailability <= 5
+                            ? HasAccommodationSelectionSection.AvailabilityStatus.LIMITED
+                            : HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE;
+
+                // Get rate for pricing
+                Rate rate = policy.getScheduledItemDailyRate(firstSi);
+                int pricePerNight = rate != null && rate.getPrice() != null ? rate.getPrice() : 0;
+                boolean perPerson = rate == null || rate.isPerPerson();
+
+                // Get constraint from ItemPolicy
+                ItemPolicy itemPolicy = policy.getItemPolicy(item);
+                HasAccommodationSelectionSection.ConstraintType constraintType = HasAccommodationSelectionSection.ConstraintType.NONE;
+                String constraintLabel = null;
+                int minNights = 0;
+
+                if (itemPolicy != null && itemPolicy.getMinDay() != null && itemPolicy.getMinDay() > 0) {
+                    constraintType = HasAccommodationSelectionSection.ConstraintType.MIN_NIGHTS;
+                    minNights = itemPolicy.getMinDay();
+                    constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
+                }
+
+                HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
+                    itemId,
+                    item,
+                    item.getName(),
+                    null, // Item doesn't have a description field
+                    pricePerNight,
+                    status,
+                    constraintType,
+                    constraintLabel,
+                    minNights,
+                    false,
+                    null,
+                    perPerson
+                );
+
+                options.add(option);
+            }
+        }
+
+        // Sort accommodation options: available first, then by price
+        options.sort(Comparator
+            .comparing((HasAccommodationSelectionSection.AccommodationOption o) ->
+                o.getAvailability() == HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT ? 1 : 0)
+            .thenComparingInt(HasAccommodationSelectionSection.AccommodationOption::getPricePerNight));
+
+        // Add Share Accommodation option if configured in the policy
+        ItemPolicy sharingAccommodationItemPolicy = policy.getSharingAccommodationItemPolicy();
+        if (sharingAccommodationItemPolicy != null) {
+            Item sharingItem = sharingAccommodationItemPolicy.getItem();
+            if (sharingItem != null) {
+                // Get rate for pricing
+                Rate shareRate = policy.filterDailyRatesStreamOfSiteAndItem(null, sharingItem)
+                    .findFirst()
+                    .orElse(null);
+                int sharePricePerNight = shareRate != null && shareRate.getPrice() != null ? shareRate.getPrice() : 0;
+
+                HasAccommodationSelectionSection.AccommodationOption shareAccommodation = new HasAccommodationSelectionSection.AccommodationOption(
+                    sharingItem.getPrimaryKey(),
+                    sharingItem,
+                    sharingItem.getName() != null ? sharingItem.getName() : I18n.getI18nText(BookingPageI18nKeys.ShareAccommodation),
+                    I18n.getI18nText(BookingPageI18nKeys.ShareAccommodationDescription),
+                    sharePricePerNight,
+                    HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE,
+                    HasAccommodationSelectionSection.ConstraintType.NONE,
+                    null,
+                    0,
+                    false,          // isDayVisitor = false
+                    null,
+                    true            // perPerson
+                );
+                options.add(shareAccommodation);
+            }
+        }
+
+        // Always add Day Visitor option at the end as a fallback
+        HasAccommodationSelectionSection.AccommodationOption dayVisitor = new HasAccommodationSelectionSection.AccommodationOption(
+            "DAY_VISITOR",  // special itemId
+            null,           // no itemEntity
+            I18n.getI18nText(BookingPageI18nKeys.DayVisitor),
+            I18n.getI18nText(BookingPageI18nKeys.DayVisitorDescription),
+            0,              // pricePerNight = 0 (no accommodation cost)
+            HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE,
+            HasAccommodationSelectionSection.ConstraintType.NONE,
+            null,
+            0,
+            true,           // isDayVisitor = true
+            null,
+            true            // perPerson
+        );
+        options.add(dayVisitor);
+
+        return options;
     }
 
     /**
@@ -765,7 +1117,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      *
      * @return Future that completes when submission is done (or immediately if no changes)
      */
-    private Future<Void> submitBookingAsync() {
+    private Future<SubmitDocumentChangesResult> submitBookingAsync() {
         WorkingBooking workingBooking = getWorkingBooking();
         Console.log("WorkingBooking hasNoChanges: " + workingBooking.hasNoChanges());
 
@@ -785,18 +1137,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
-                Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
+                if (submitResult.isSoldOut()) {
+                    Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
 
-                // Store the booking reference
-                workingBookingProperties.setBookingReference(submitResult.documentRef());
+                    // Store the booking reference
+                    workingBookingProperties.setBookingReference(submitResult.documentRef());
 
-                // Reset reselection flag - booking is now confirmed
-                state.setAllowMemberReselection(false);
+                    // Reset reselection flag - booking is now confirmed
+                    state.setAllowMemberReselection(false);
 
-                // Clear pending new user data - booking is now associated with a Person in DB
-                state.setPendingNewUserData(null);
+                    // Clear pending new user data - booking is now associated with a Person in DB
+                    state.setPendingNewUserData(null);
+                }
 
-                return null;
+                return submitResult;
             });
     }
 
@@ -861,10 +1215,25 @@ public class StandardBookingForm extends MultiPageBookingForm {
             String personName = documentAggregate.getAttendeeFullName();
             String personEmail = documentAggregate.getAttendeeEmail();
 
-            PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-            int totalPrice = priceCalculator.calculateTotalPrice();
-            int minDeposit = priceCalculator.calculateMinDeposit();
-            int paidAmount = priceCalculator.calculateDeposit();
+            // Use stored values from Document for database-loaded bookings
+            // These values were calculated and stored when the booking was submitted
+            Integer storedTotal = doc.getPriceNet();
+            Integer storedMinDeposit = doc.getPriceMinDeposit();
+            Integer storedDeposit = doc.getPriceDeposit();
+
+            int totalPrice, minDeposit, paidAmount;
+            if (storedTotal != null && storedMinDeposit != null && storedDeposit != null) {
+                // Use stored values directly (normal case for database-loaded documents)
+                totalPrice = storedTotal;
+                minDeposit = storedMinDeposit;
+                paidAmount = storedDeposit;
+            } else {
+                // Fall back to PriceCalculator if any stored value is null
+                PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
+                totalPrice = storedTotal != null ? storedTotal : priceCalculator.calculateTotalPrice();
+                minDeposit = storedMinDeposit != null ? storedMinDeposit : priceCalculator.calculateMinDeposit();
+                paidAmount = storedDeposit != null ? storedDeposit : priceCalculator.calculateDeposit();
+            }
             int balance = totalPrice - paidAmount;
 
             // Create booking item
@@ -895,24 +1264,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
                             continue;
                         }
                         String familyCode = family != null ? family.getCode() : "";
-                        // Use family name for display, fall back to item name if no family
+                        // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
                         String familyName = (family != null && family.getName() != null) ? family.getName() : null;
-                        String displayName = familyName != null ? familyName : (item.getName() != null ? item.getName() : "Item");
+                        String itemName = item.getName() != null ? item.getName() : "Item";
                         Integer linePriceObj = line.getPriceNet();
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
-                        // Get dates from database field, or compute from attendances if not available
-                        String lineDates = line.getDates();
-                        if (lineDates == null || lineDates.isEmpty()) {
-                            // Compute dates from attendances
-                            List<LocalDate> attendanceDates = documentAggregate.getLineAttendancesStream(line).map(a -> a.getScheduledItem().getDate()).collect(Collectors.toList());
-                            if (!attendanceDates.isEmpty()) {
-                                Collections.sort(attendanceDates);
-                                lineDates = formatDates(attendanceDates);
-                            }
-                        }
-                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
+                        // Use centralized date formatting (same logic as Summary section)
+                        String lineDates = computeDatesForDocumentLine(documentAggregate, line);
+                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
+                        // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
+                        bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
                 }
             } else {
@@ -957,12 +1319,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String personName = getDocumentPersonName(doc);
         String eventName = getEvent() != null ? getEvent().getName() : "";
 
-        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
-        documentAggregate.setPolicyAggregate(policyAggregate);
-
-        PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-        int totalPrice = priceCalculator.calculateTotalPrice();
-        int minDeposit = priceCalculator.calculateMinDeposit();
+        // Use the workingBooking's built-in price calculator (already has policyAggregate set)
+        int totalPrice = workingBooking.calculateTotal();
+        int minDeposit = workingBooking.calculateMinDeposit();
 
         defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
             doc,
@@ -1218,9 +1577,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     private Future<Void> handlePaymentSubmit(int amount, PaymentAllocation[] paymentAllocations) {
         PaymentFormType preferredFormType =
-            // Temporarily hardcoded: using embedded payment form for STTP (because the redirected payment form doesn't work)
-            Entities.samePrimaryKey(getEvent().getType(), 48) ? PaymentFormType.EMBEDDED
-                // and the redirected payment form for other events
+            // Using embedded payment form for STTP (type 48) and US Festival (type 38)
+            Entities.samePrimaryKey(getEvent().getType(), 48) // STTP
+            || Entities.samePrimaryKey(getEvent().getType(), 38) // US Festival
+                ? PaymentFormType.EMBEDDED
                 : PaymentFormType.REDIRECTED;
         return ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(amount, paymentAllocations, preferredFormType)
             .onSuccess(webPaymentForm -> {
@@ -1233,14 +1593,61 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         if (paymentStatus.isSuccessful())
                             handleEmbeddedPaymentSuccess(amount);
                     });
-                    Node paymentFormView = gatewayPaymentForm.getView();
-                    // TODO: display this in a new page
+                    // Display the embedded payment form
+                    displayEmbeddedPaymentForm(gatewayPaymentForm, amount);
                 }
             })
             .mapEmpty();
     }
 
-        // TODO: once embedded payment is implemented, call back this method on payment success
+    /**
+     * Displays the embedded gateway payment form using CompositeBookingFormPage.
+     * Follows the same pattern as PaymentPage.displayGatewayPaymentForm().
+     *
+     * @param gatewayPaymentForm The payment form to display (contains Pay/Cancel buttons)
+     * @param amount The payment amount for success handling
+     */
+    private void displayEmbeddedPaymentForm(GatewayPaymentForm gatewayPaymentForm, int amount) {
+        // Wrap in GrowingPane like PaymentPage does (maintains size when unloaded)
+        GrowingPane growingPane = new GrowingPane(gatewayPaymentForm.getView());
+
+        // Create wrapper section for the payment form
+        BookingFormSection paymentFormSection = new BookingFormSection() {
+            @Override
+            public Object getTitleI18nKey() { return BookingPageI18nKeys.Payment; }
+
+            @Override
+            public Node getView() { return growingPane; }
+
+            @Override
+            public void setWorkingBookingProperties(WorkingBookingProperties props) { }
+        };
+
+        // Create page using CompositeBookingFormPage API
+        CompositeBookingFormPage embeddedPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            paymentFormSection
+        );
+
+        // Configure page:
+        // - setStep(false): Stay on the same header navigation step
+        // - setShowingOwnSubmitButton(true): ProvidedGatewayPaymentForm has its own Pay/Cancel buttons
+        // - setCanGoBack(false): Prevent back navigation during payment (like PaymentPage)
+        embeddedPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        // Handle cancel: show cancellation message and unload form (like PaymentPage)
+        gatewayPaymentForm.setCancelPaymentResultHandler(ar -> {
+            growingPane.setContent(null); // Unload payment form
+            navigateToConfirmation(); // Navigate to confirmation with cancellation state
+        });
+
+        // Display the page
+        navigateToSpecialPage(embeddedPaymentPage);
+    }
+
     private void handleEmbeddedPaymentSuccess(int amount) {
         // Convert to callbacks result type
         StandardBookingFormCallbacks.PaymentResult result = new StandardBookingFormCallbacks.PaymentResult(amount);
@@ -1330,6 +1737,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultSummarySection.clearPriceLines();
         defaultSummarySection.clearAdditionalOptions();
 
+        // Set working booking properties for event-aware currency formatting
+        defaultSummarySection.setWorkingBookingProperties(workingBookingProperties);
+
+        // Let callbacks book items into WorkingBooking before populating price lines
+        // This ensures form-specific items (accommodation, meals, options) appear in the breakdown
+        if (callbacks != null) {
+            callbacks.onBeforeSummary();
+        }
+
         // Add default price lines from WorkingBooking document lines
         addDefaultSummaryPriceLines();
 
@@ -1341,6 +1757,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     /**
      * Adds default price lines from WorkingBooking.
+     * Shows itemized breakdown from document lines (accommodation, meals, teaching, etc.)
      * Uses the PriceCalculator for proper price computation including any discounts.
      */
     private void addDefaultSummaryPriceLines() {
@@ -1371,24 +1788,66 @@ public class StandardBookingForm extends MultiPageBookingForm {
             Console.log("addDefaultSummaryPriceLines: after bookWholeEvent, attendances count = " + (attendances != null ? attendances.size() : 0));
         }
 
-        // Use PriceCalculator to compute the total price (handles complex pricing rules)
+        // Get the document lines to show itemized breakdown
+        List<DocumentLine> documentLines = documentAggregate.getDocumentLines();
+        Console.log("addDefaultSummaryPriceLines: documentLines count = " + (documentLines != null ? documentLines.size() : 0));
+
+        // Create PriceCalculator for computing line prices (needed for new bookings where prices aren't stored yet)
         PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-        int totalPrice = priceCalculator.calculateTotalPrice();
-        Console.log("addDefaultSummaryPriceLines: totalPrice = " + totalPrice);
 
-        // Get the event name for the price line description
-        Event event = getEvent();
-        String eventName = event != null && event.getName() != null ? event.getName() : "Event";
+        if (documentLines != null && !documentLines.isEmpty()) {
+            // Add itemized price lines from document lines
+            for (DocumentLine line : documentLines) {
+                Item item = line.getItem();
+                if (item == null) continue;
 
-        // Add a single price line for the total
-        if (totalPrice > 0) {
-            defaultSummarySection.addPriceLine(eventName, null, totalPrice);
+                ItemFamily family = item.getFamily();
+                // Skip items where family has summaryHidden = true (e.g., rounding)
+                if (family != null && Boolean.TRUE.equals(family.isSummaryHidden())) {
+                    continue;
+                }
+
+                // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
+                String familyName = (family != null && family.getName() != null) ? family.getName() : null;
+                String itemName = item.getName() != null ? item.getName() : "Item";
+
+                // Get price: use stored price if available, otherwise calculate dynamically
+                Integer linePriceObj = line.getPriceNet();
+                int linePrice;
+                if (linePriceObj != null && linePriceObj != 0) {
+                    linePrice = linePriceObj;
+                } else {
+                    // Calculate price dynamically using PriceCalculator (for new bookings)
+                    linePrice = priceCalculator.calculateDocumentLinePrice(line);
+                }
+
+                // Compute dates from attendances (uses centralized formatting)
+                String lineDates = computeDatesFromAttendances(workingBooking, line);
+
+                Console.log("  Price line: " + familyName + " - " + itemName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
+
+                // Add the price line using new API with separate family/item for consistent formatting via UnifiedPriceDisplay
+                if (linePrice != 0 || (family != null && !Boolean.TRUE.equals(family.isSummaryHidden()))) {
+                    defaultSummarySection.addPriceLine(familyName, itemName, lineDates, linePrice);
+                }
+            }
+        } else {
+            // Fallback: add a single price line with the total if no line items available
+            int totalPrice = priceCalculator.calculateTotalPrice();
+            Console.log("addDefaultSummaryPriceLines: totalPrice (fallback) = " + totalPrice);
+
+            Event event = getEvent();
+            String eventName = event != null && event.getName() != null ? event.getName() : "Event";
+
+            if (totalPrice > 0) {
+                defaultSummarySection.addPriceLine(null, eventName, null, totalPrice);
+            }
         }
     }
 
     /**
      * Computes a formatted dates string from the attendances associated with a document line.
-     * Returns dates in a user-friendly format like "Jan 15, 22, 29" or "Jan 15 - Feb 2".
+     * Returns dates in a user-friendly format like "15 Jan - 20 Jan" or "Jan 15, 22, 29".
      */
     private String computeDatesFromAttendances(WorkingBooking workingBooking, DocumentLine line) {
         if (workingBooking == null || line == null) return null;
@@ -1404,9 +1863,45 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .distinct()
             .collect(java.util.stream.Collectors.toList());
 
+        // Use centralized formatting
+        return formatDateList(dates);
+    }
+
+    /**
+     * Computes formatted dates for a document line from a DocumentAggregate.
+     * Uses the same formatting logic as computeDatesFromAttendances for consistency.
+     * This is the centralized date formatting method for existing bookings.
+     */
+    private String computeDatesForDocumentLine(DocumentAggregate documentAggregate, DocumentLine line) {
+        if (documentAggregate == null || line == null) return null;
+
+        // First check if dates are stored in the database
+        String storedDates = line.getDates();
+        if (storedDates != null && !storedDates.isEmpty()) {
+            return storedDates;
+        }
+
+        // Compute dates from attendances
+        List<LocalDate> dates = documentAggregate.getLineAttendancesStream(line)
+            .map(a -> a.getScheduledItem() != null ? a.getScheduledItem().getDate() : null)
+            .filter(Objects::nonNull)
+            .sorted()
+            .distinct()
+            .collect(java.util.stream.Collectors.toList());
+
         if (dates.isEmpty()) return null;
 
-        // Format dates - if consecutive range use "Jan 15 - Jan 20", otherwise list individual dates
+        // Use centralized formatting logic (same as computeDatesFromAttendances)
+        return formatDateList(dates);
+    }
+
+    /**
+     * Centralized date list formatting - formats dates as range if consecutive, otherwise as list.
+     * Used by both computeDatesFromAttendances and computeDatesForDocumentLine.
+     */
+    private String formatDateList(List<LocalDate> dates) {
+        if (dates == null || dates.isEmpty()) return null;
+
         if (dates.size() == 1) {
             return formatSingleDate(dates.get(0));
         }
@@ -1421,7 +1916,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         if (consecutive) {
-            // Format as range: "Jan 15 - Jan 20"
+            // Format as range: "15 Jan - 20 Jan"
             return formatSingleDate(dates.get(0)) + " - " + formatSingleDate(dates.get(dates.size() - 1));
         } else {
             // Format as list of dates, grouping by month
@@ -1540,19 +2035,22 @@ public class StandardBookingForm extends MultiPageBookingForm {
                             continue;
                         }
                         String familyCode = family != null ? family.getCode() : "";
-                        String displayName = (family != null && family.getName() != null) ? family.getName() : (item.getName() != null ? item.getName() : "Item");
+                        // Pass family and item names separately - sections use UnifiedPriceDisplay for consistent formatting
+                        String familyName = (family != null && family.getName() != null) ? family.getName() : null;
+                        String itemName = item.getName() != null ? item.getName() : "Item";
                         Integer linePriceObj = line.getPriceNet();
                         int linePrice = linePriceObj != null ? linePriceObj : 0;
 
-                        // Compute dates from attendances
+                        // Compute dates from attendances (uses centralized formatting)
                         String lineDates = computeDatesFromAttendances(workingBooking, line);
-                        Console.log("  Line item: " + displayName + " = " + linePrice + ", dates: " + lineDates);
-                        bookingItem.addLineItem(displayName, familyCode, linePrice, lineDates);
+                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
+                        // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
+                        bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
                 }
             } else {
                 // Fallback: add a single line item with the total (no line item details available)
-                bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(eventName, total, false));
+                bookingItem.addLineItem(new HasPendingBookingsSection.BookingLineItem(null, eventName, total, false, null, null));
             }
         }
 
@@ -1731,6 +2229,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     /**
+     * Returns the sticky header if one was configured, or null otherwise.
+     * The caller is responsible for adding this to the appropriate overlay area
+     * (e.g., FXMainFrameOverlayArea.getOverlayChildren()).
+     */
+    public Node getStickyHeader() {
+        return stickyHeader;
+    }
+
+    /**
      * Updates the navigation header (e.g., to rebuild step list when login state changes).
      * Call this when page applicability conditions change (like user logging in/out).
      */
@@ -1741,5 +2248,29 @@ public class StandardBookingForm extends MultiPageBookingForm {
             header.forceRebuildSteps();
         }
         updateNavigationBar();
+    }
+
+    /**
+     * Sets the URL for the terms and conditions link.
+     * This URL will open when the user clicks on the terms link in the booking page.
+     *
+     * @param url The URL to the terms and conditions page
+     */
+    public void setTermsUrl(String url) {
+        if (defaultTermsSection != null) {
+            defaultTermsSection.setTermsUrl(url);
+        }
+    }
+
+    /**
+     * Sets custom text for the terms and conditions checkbox.
+     * This text appears before the terms link. If not set, uses the default i18n text.
+     *
+     * @param text The custom terms text (e.g., "I have read and agree to the terms, including the cancellation policy")
+     */
+    public void setTermsText(String text) {
+        if (defaultTermsSection != null) {
+            defaultTermsSection.setTermsText(text);
+        }
     }
 }

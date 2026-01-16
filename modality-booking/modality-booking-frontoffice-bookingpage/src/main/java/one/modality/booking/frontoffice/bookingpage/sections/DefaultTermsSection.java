@@ -93,7 +93,6 @@ public class DefaultTermsSection implements HasTermsSection {
     protected HBox createTermsCheckboxRow() {
         HBox row = new HBox(12);
         row.setAlignment(Pos.TOP_LEFT);
-        row.setCursor(Cursor.HAND);
         row.getStyleClass().addAll("booking-form-terms-checkbox", "bookingpage-checkbox-card");
         row.setPadding(new Insets(16, 20, 16, 16));
 
@@ -112,17 +111,24 @@ public class DefaultTermsSection implements HasTermsSection {
         // Listen for changes
         termsAcceptedProperty.addListener((obs, old, accepted) -> updateSelectedClass.run());
 
-        // Checkbox indicator
+        // Checkbox indicator - clicking on it toggles the checkbox
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(termsAcceptedProperty);
+        checkbox.setCursor(Cursor.HAND);
+        checkbox.setOnMouseClicked(e -> {
+            termsAcceptedProperty.set(!termsAcceptedProperty.get());
+            e.consume(); // Prevent event from propagating
+        });
 
-        // HTML text with terms text and link
+        // HTML text with terms text and link - link clicks are handled by HtmlText
         HtmlText htmlText = createTermsHtmlText();
         HBox.setHgrow(htmlText, Priority.ALWAYS);
 
         row.getChildren().addAll(checkbox, htmlText);
 
-        // Click on row toggles checkbox (HtmlText handles its own link clicks)
-        row.setOnMouseClicked(e -> termsAcceptedProperty.set(!termsAcceptedProperty.get()));
+        // Note: We do NOT add a click handler to the row, so that:
+        // 1. Clicking the checkbox toggles it
+        // 2. Clicking the link opens the terms URL
+        // 3. Clicking elsewhere on the row does nothing
 
         return row;
     }
@@ -131,12 +137,19 @@ public class DefaultTermsSection implements HasTermsSection {
         HtmlText htmlText = new HtmlText();
         htmlText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
 
-        // Build HTML with link that opens in new window, updating when language changes
+        // Build HTML with link that opens in new window, updating when language, URL, or custom text changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
-            String prefix = I18n.getI18nText(BookingPageI18nKeys.AcceptTermsText);
+            // Use custom text if set, otherwise use i18n text
+            String customText = customTermsTextProperty.get();
+            String prefix = customText != null ? customText : I18n.getI18nText(BookingPageI18nKeys.AcceptTermsText);
             String linkText = I18n.getI18nText(BookingPageI18nKeys.TermsLinkText);
-            htmlText.setText(prefix + " <a href=\"https://manjushri.org/booking\" target=\"_blank\" class=\"booking-form-terms-link\">" + linkText + "</a>");
-        }, I18n.dictionaryProperty());
+            String url = termsUrlProperty.get();
+            if (url == null || url.isEmpty()) {
+                // Fallback if no URL set
+                url = "#";
+            }
+            htmlText.setText(prefix + " <a href=\"" + url + "\" target=\"_blank\" class=\"booking-form-terms-link\">" + linkText + "</a>");
+        }, I18n.dictionaryProperty(), termsUrlProperty, customTermsTextProperty);
 
         return htmlText;
     }

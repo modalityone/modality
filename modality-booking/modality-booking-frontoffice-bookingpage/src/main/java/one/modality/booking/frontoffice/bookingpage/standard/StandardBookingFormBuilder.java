@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
+import javafx.scene.Node;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
@@ -82,6 +83,9 @@ public class StandardBookingFormBuilder {
 
     // Navigation configuration
     private boolean navigationClickable = true;
+
+    // Sticky header (appears fixed at top of the form, e.g., for price display)
+    private Node stickyHeader;
 
     /**
      * Creates a new builder for a standard booking form.
@@ -242,6 +246,19 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    /**
+     * Sets a sticky header component that appears fixed at the top of the form.
+     * Useful for displaying a running total, selected items, or other summary info
+     * that should remain visible as the user scrolls.
+     *
+     * @param stickyHeader The header node to display at the top
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withStickyHeader(Node stickyHeader) {
+        this.stickyHeader = stickyHeader;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -272,7 +289,8 @@ public class StandardBookingFormBuilder {
             callbacks,
             cardPaymentOnly,
             entryPoint,
-            navigationClickable
+            navigationClickable,
+            stickyHeader
         );
     }
 }

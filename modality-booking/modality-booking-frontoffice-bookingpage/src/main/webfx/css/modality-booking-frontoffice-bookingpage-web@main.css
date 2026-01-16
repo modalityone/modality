@@ -8,3 +8,10 @@
 .booking-form-event-header {
     overflow: hidden;
 }
+
+/* Sticky price header - positioning managed by Java via FXMainFrameOverlayArea */
+.sticky-price-header {
+    background: linear-gradient(to bottom, #FFFFFF, #FAFBFC);
+    border-bottom: 1px solid #E5E7EB;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}

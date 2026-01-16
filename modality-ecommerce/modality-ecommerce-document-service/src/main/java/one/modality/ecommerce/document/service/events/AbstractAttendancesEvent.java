@@ -5,6 +5,7 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.ScheduledItem;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 /**
@@ -12,9 +13,10 @@ import java.util.Arrays;
  */
 public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent {
 
-    protected Attendance[] attendances;                // Working entities on client-side only (not serialised)
-    private final Object[] attendancesPrimaryKeys;     // Their primary keys (serialised)
-    private final Object[] scheduledItemsPrimaryKeys;  // Their associated scheduledItems primary keys (serialised)
+    protected Attendance[] attendances;                // Working entities on the client-side only (not serialized)
+    private final Object[] attendancesPrimaryKeys;     // Their primary keys (serialized)
+    private final Object[] scheduledItemsPrimaryKeys;  // Case 1: Their associated scheduledItems primary keys (serialized) - when the associated item is scheduled
+    private final LocalDate[] dates;                   // Case 2: Alternatively, their dates - when the associated item is not scheduled
 
     protected boolean playedOnAttendances;
 
@@ -22,13 +24,20 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
         super(attendances[0].getDocumentLine());
         this.attendances = attendances;
         this.attendancesPrimaryKeys = Arrays.stream(attendances).map(Entities::getPrimaryKey).toArray();
-        this.scheduledItemsPrimaryKeys = Arrays.stream(attendances).map(a -> Entities.getPrimaryKey(a.getScheduledItem())).toArray();
+        if (attendances[0].getScheduledItem() != null) {
+            this.scheduledItemsPrimaryKeys = Arrays.stream(attendances).map(a -> Entities.getPrimaryKey(a.getScheduledItem())).toArray();
+            this.dates = null;
+        } else {
+            this.scheduledItemsPrimaryKeys = null;
+            this.dates = Arrays.stream(attendances).map(Attendance::getDate).toArray(LocalDate[]::new);
+        }
     }
 
-    public AbstractAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancesPrimaryKeys, Object[] scheduledItemsPrimaryKeys) {
+    public AbstractAttendancesEvent(Object documentPrimaryKey, Object documentLinePrimaryKey, Object[] attendancesPrimaryKeys, Object[] scheduledItemsPrimaryKeys, LocalDate[] dates) {
         super(documentPrimaryKey, documentLinePrimaryKey);
         this.attendancesPrimaryKeys = attendancesPrimaryKeys;
         this.scheduledItemsPrimaryKeys = scheduledItemsPrimaryKeys;
+        this.dates = dates;
     }
 
     public Attendance[] getAttendances() {
@@ -48,6 +57,10 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
         return scheduledItemsPrimaryKeys;
     }
 
+    public LocalDate[] getDates() {
+        return dates;
+    }
+
     @Override
     public void replayEvent() {
         setPlayed(false);
@@ -65,9 +78,11 @@ public abstract class AbstractAttendancesEvent extends AbstractDocumentLineEvent
         for (int i = 0; i < attendancesPrimaryKeys.length; i++) {
             Attendance attendance = createAttendance(attendancesPrimaryKeys[i]);
             attendance.setDocumentLine(documentLine);
-            if (scheduledItemsPrimaryKeys != null) { // RemoveAttendancesEvent doesn't memorise scheduledItemsPrimaryKeys
+            if (scheduledItemsPrimaryKeys != null) { // RemoveAttendancesEvent doesn't memorize scheduledItemsPrimaryKeys
                 attendance.setScheduledItem(isForSubmit() ? scheduledItemsPrimaryKeys[i] : entityStore.getOrCreateEntity(ScheduledItem.class, scheduledItemsPrimaryKeys[i]));
             }
+            if (dates != null)
+                attendance.setDate(dates[i]);
             attendances[i] = attendance;
         }
         playedOnAttendances = true;

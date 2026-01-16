@@ -175,7 +175,14 @@ public final class DocumentAggregate {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof AddRequestEvent)
             .map(e -> (AddRequestEvent) e)
-            .findFirst()
+            .findFirst().orElse(null);
+    }
+
+    public AddDocumentLineEvent findLatestAddDocumentLineEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof AddDocumentLineEvent)
+            .map(e -> (AddDocumentLineEvent) e)
+            .reduce((first, second) -> second) // to get the last one
             .orElse(null);
     }
 
@@ -183,16 +190,14 @@ public final class DocumentAggregate {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof PriceDocumentLineEvent)
             .map(e -> (PriceDocumentLineEvent) e)
-            .findFirst()
-            .orElse(null);
+            .findFirst().orElse(null);
     }
 
     public ApplyFacilityFeeEvent findApplyFacilityFeeEvent(boolean excludePreviousVersionEvents) {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof ApplyFacilityFeeEvent)
             .map(e -> (ApplyFacilityFeeEvent) e)
-            .findFirst()
-            .orElse(null);
+            .findFirst().orElse(null);
     }
 
     // Accessing event

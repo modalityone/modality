@@ -491,9 +491,10 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
             if (showAllocation) {
                 rebuildAllocationItems();
-                autoAllocate();
             }
         }
+        // Always auto-allocate, even for single booking items (allocation is required for payment)
+        autoAllocate();
     }
 
     // === ALLOCATION HELPER METHODS ===

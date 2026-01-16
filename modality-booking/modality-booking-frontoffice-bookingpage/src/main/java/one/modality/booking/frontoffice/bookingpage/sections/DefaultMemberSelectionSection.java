@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
@@ -211,8 +212,9 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
             }
         });
 
-        // Rebuild cards when list changes
-        householdMembers.addListener((ListChangeListener<MemberInfo>) change -> rebuildMemberCards());
+        // Rebuild cards when list changes (ensure UI thread for async member loading)
+        householdMembers.addListener((ListChangeListener<MemberInfo>) change ->
+            UiScheduler.runInUiThread(this::rebuildMemberCards));
     }
 
     protected HBox buildSectionHeader() {

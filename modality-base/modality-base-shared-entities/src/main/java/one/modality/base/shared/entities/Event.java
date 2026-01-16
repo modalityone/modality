@@ -50,6 +50,7 @@ public interface Event extends Entity,
     String repeatAudio = "repeatAudio";
     String repeatVideo = "repeatVideo";
     String timezone = "timezone";
+    String termsUrlEn = "termsUrlEn";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -341,6 +342,14 @@ public interface Event extends Entity,
 
     default LocalDate todayInEventTimezone() {
         return nowInEventTimezone().toLocalDate();
+    }
+
+    default void setTermsUrlEn(String value) {
+        setFieldValue(termsUrlEn, value);
+    }
+
+    default String getTermsUrlEn() {
+        return getStringFieldValue(termsUrlEn);
     }
 
 }

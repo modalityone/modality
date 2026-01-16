@@ -20,7 +20,7 @@ import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 
@@ -52,9 +52,17 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     private Future<DocumentAggregate[]> loadLatestDocumentsFromDatabase(LoadDocumentArgument argument, boolean limit1) {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
+            // 0 - Loading document
             new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
-            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount from DocumentLine where document=? and site!=null order by id", docPk),
-            new EntityStoreQuery("select documentLine,scheduledItem from Attendance where documentLine.document=? order by id", docPk),
+            // 1 - Loading document lines
+            new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
+                                 ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
+                                 ",share_mate,share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
+                                 ",resourceConfiguration,allocate" +
+                                 " from DocumentLine where document=? and site!=null order by id", docPk),
+            // 2 - Loading attendances
+            new EntityStoreQuery("select documentLine,scheduledItem,date from Attendance where documentLine.document=? order by id", docPk),
+            // 3 - Loading money transfers
             new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
         };
         boolean personProvided = argument.personPrimaryKey() != null;
@@ -87,23 +95,40 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         documentEvents.add(new AddRequestEvent(document, document.getRequest()));
                 });
                 // Aggregating document lines by adding AddDocumentLineEvent and PriceDocumentLineEvent for each document
-                ((List<DocumentLine>) entityLists[1]).forEach(dl -> {
-                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(dl.getDocument());
-                    documentEvents.add(new AddDocumentLineEvent(dl));
-                    documentEvents.add(new PriceDocumentLineEvent(dl));
+                ((List<DocumentLine>) entityLists[1]).forEach(documentLine -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(documentLine.getDocument());
+                    documentEvents.add(new AddDocumentLineEvent(documentLine, documentLine.isAllocate()));
+                    documentEvents.add(new PriceDocumentLineEvent(documentLine));
+                    if (documentLine.isShareOwner()) {
+                        documentEvents.add(new EditShareOwnerInfoDocumentLineEvent(documentLine, documentLine.getShareOwnerMatesNames()));
+                    }
+                    if (documentLine.isShareMate()) {
+                        documentEvents.add(new EditShareMateInfoDocumentLineEvent(documentLine, documentLine.getShareMateOwnerName()));
+                        DocumentLine ownerDocumentLine = documentLine.getShareMateOwnerDocumentLine();
+                        Person ownerPerson = documentLine.getShareMateOwnerPerson();
+                        if (ownerDocumentLine != null || ownerPerson != null) {
+                            documentEvents.add(new LinkMateToOwnerDocumentLineEvent(documentLine, ownerDocumentLine, ownerPerson));
+                        }
+                    }
+                    ResourceConfiguration resourceConfiguration = documentLine.getResourceConfiguration();
+                    if (resourceConfiguration != null) {
+                        documentEvents.add(new AllocateDocumentLineEvent(documentLine, resourceConfiguration));
+                    }
                 });
                 // Aggregating attendances by adding AddAttendancesEvent for each document line
                 ((List<Attendance>) entityLists[2]).stream().collect(Collectors.groupingBy(Attendance::getDocumentLine))
-                    .entrySet().forEach(entry -> {
-                        List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(entry.getKey().getDocument());
-                        documentEvents.add(new AddAttendancesEvent(entry.getValue().toArray(new Attendance[0])));
+                    .forEach((documentLine, attendances) -> {
+                        List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(documentLine.getDocument());
+                        documentEvents.add(new AddAttendancesEvent(attendances.toArray(new Attendance[0])));
                     });
                 // Aggregating money transfers by Adding AddMoneyTransferEvent
-                ((List<MoneyTransfer>) entityLists[3]).forEach(mt -> {
-                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(mt.getDocument());
-                    documentEvents.add(new AddMoneyTransferEvent(mt));
+                ((List<MoneyTransfer>) entityLists[3]).forEach(moneyTransfer -> {
+                    List<AbstractDocumentEvent> documentEvents = allDocumentEvents.get(moneyTransfer.getDocument());
+                    documentEvents.add(new AddMoneyTransferEvent(moneyTransfer));
                 });
-                return allDocumentEvents.values().stream().map(DocumentAggregate::new).toArray(DocumentAggregate[]::new);
+                return allDocumentEvents.values().stream()
+                    .map(DocumentAggregate::new)
+                    .toArray(DocumentAggregate[]::new);
             });
     }
 
@@ -155,9 +180,12 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.historyComment(), document, documentLine)
             .compose(histories -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, histories[0].getDocument()) // resolved through DB reading)
-                    .compose(result -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
-                            .map(ignoredVoid -> result)
+                    .compose(result -> { // Completing the history recording (changes column with resolved primary keys)
+                            if (result.isSuccessfullySubmitted())
+                                return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
+                                    .map(ignoredVoid -> result);
+                            return Future.succeededFuture(result); // No technical exception, but submit refused by logic (ex: sold-out)
+                        }
                     )
             );
     }
@@ -180,10 +208,39 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                             document.getPrimaryKey(),
                             document.getRef(),
                             document.getCart().getPrimaryKey(),
-                            document.getCart().getUuid()));
+                            document.getCart().getUuid(),
+                            false, null, null
+                        ));
                 }
-                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
+                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid, false, null, null));
+            })
+            // Detecting sold-out exception from the database
+            .recover(ex -> {
+                String message = ex.getMessage();
+                // If it's not a sold-out exception, we rethrow it
+                if (message == null || !message.toUpperCase().contains("SoldOut".toUpperCase()))
+                    return Future.failedFuture(ex);
+                Object sitePk = readSiteOrItemPrimaryKey(message, true);
+                Object itemPk = readSiteOrItemPrimaryKey(message, false);
+                return Future.succeededFuture(new SubmitDocumentChangesResult(null, null, null, null, true, sitePk, itemPk));
             });
+    }
+
+    private static Object readSiteOrItemPrimaryKey(String message, boolean isSite) {
+        // Here is the Postgres database code: RAISE EXCEPTION 'SOLDOUT site_id=%, item_id=% (no resource found)', NEW.site_id, NEW.item_id;
+        String token = isSite ? "site_id=" : "item_id=";
+        int index = message.indexOf(token);
+        if (index >= 0) {
+            int start = index + token.length();
+            int end = start;
+            while (end < message.length() && Character.isDigit(message.charAt(end))) {
+                end++;
+            }
+            if (end > start) {
+                return Integer.parseInt(message.substring(start, end));
+            }
+        }
+        return null;
     }
 
 }

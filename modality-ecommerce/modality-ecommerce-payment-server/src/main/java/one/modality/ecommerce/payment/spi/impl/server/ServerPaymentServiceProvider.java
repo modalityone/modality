@@ -131,15 +131,8 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
             return gatewayNotFoundFailedFuture(gatewayName);
         SystemUserId gatewayUserId = new SystemUserId(gatewayName);
 
-        // The following code is executed just after the call to the Payment Gateway (which will take a bit of time to
-        // finalize the payment and return the status). However, we add a record in the history to indicate that the
-        // booker submitted valid cc details.
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, paymentPrimaryKey);
-        DatabasePayment databasePayment = new DatabasePayment(moneyTransfer, null);
-        HistoryRecorder.preparePaymentHistoriesBeforeSubmit("Submitted card details to " + gatewayName + " for payment [amount]", databasePayment)
-            .onFailure(Console::log)
-            .onSuccess(x -> updateStore.submitChanges());
 
         return Future.all(
             loadPaymentGatewayParameters(paymentPrimaryKey, live),
@@ -163,7 +156,16 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                 document.getAdmin1Name(),
                 document.evaluate("coalesce(person_country.name,person_countryName)")
             );
+            DatabasePayment databasePayment = new DatabasePayment(moneyTransfer, null);
             GatewayOrder order = createGatewayOrder(databasePayment);
+
+            // The following code is executed just after the call to the Payment Gateway (which will take a bit of time to
+            // finalize the payment and return the status). However, we add a record in the history to indicate that the
+            // booker submitted valid cc details.
+            HistoryRecorder.preparePaymentHistoriesBeforeSubmit("Submitted card details to " + gatewayName + " for payment [amount]", databasePayment)
+                    .onFailure(Console::log)
+                    .onSuccess(x -> updateStore.submitChanges());
+
             // TODO check accessToken is set, otherwise return an error
             return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, order))
                 .onFailure(e -> {

@@ -2,6 +2,10 @@ package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.platform.async.Future;
 import one.modality.booking.frontoffice.bookingpage.sections.DefaultSummarySection;
+import one.modality.booking.frontoffice.bookingpage.sections.HasAccommodationSelectionSection;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Simplified callbacks interface for form-specific behavior in standard booking forms.
@@ -82,6 +86,23 @@ public interface StandardBookingFormCallbacks {
     }
 
     /**
+     * Called before the summary page is populated with price breakdown.
+     *
+     * <p>This hook is called immediately before updateSummaryWithAttendee(), which populates
+     * the price breakdown from WorkingBooking document lines. Override this to book
+     * form-specific items (accommodation, meals, options) into the WorkingBooking so they
+     * appear in the price breakdown.</p>
+     *
+     * <p>This is the recommended place for forms with custom option selection to call
+     * workingBooking.bookScheduledItems() for user-selected options.</p>
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    default void onBeforeSummary() {
+        // Default: no additional action needed
+    }
+
+    /**
      * Called after payment completes, before navigating to confirmation.
      *
      * <p>Override this to perform form-specific actions after payment.
@@ -104,6 +125,34 @@ public interface StandardBookingFormCallbacks {
         // Default: no additional action needed
     }
 
+    /**
+     * Called when accommodation selection needs to be updated due to sold-out error.
+     *
+     * <p>This callback is triggered when the server returns a SOLDOUT error during
+     * booking submission because the selected accommodation became unavailable.
+     * The form should update its accommodation selection with the new choice and
+     * then call the provided continueToSummary runnable to navigate back to the
+     * Summary page for retry.</p>
+     *
+     * <p>Override this to:</p>
+     * <ul>
+     *   <li>Update the form's accommodation section with the new selection</li>
+     *   <li>Re-book items with the new accommodation</li>
+     *   <li>Handle roommate info if provided (for double rooms or share accommodation)</li>
+     *   <li>Call continueToSummary.run() when ready to retry submission</li>
+     * </ul>
+     *
+     * <p>The default implementation just calls continueToSummary immediately.</p>
+     *
+     * @param newOption The newly selected accommodation option
+     * @param roommateInfo Roommate information collected in the sold-out recovery dialog (may be null)
+     * @param continueToSummary Runnable to call when ready to navigate back to Summary
+     */
+    default void onAccommodationSoldOutRecovery(HasAccommodationSelectionSection.AccommodationOption newOption, SoldOutRecoveryRoommateInfo roommateInfo, Runnable continueToSummary) {
+        // Default: just continue to summary (forms should override to handle re-booking)
+        continueToSummary.run();
+    }
+
     // === Section Factory Hooks ===
 
     // === Data Classes ===
@@ -119,5 +168,28 @@ public interface StandardBookingFormCallbacks {
         }
 
         public int getAmount() { return amount; }
+    }
+
+    /**
+     * Roommate information collected during sold-out recovery.
+     * Encapsulates data needed to persist roommate info on accommodation document lines.
+     */
+    class SoldOutRecoveryRoommateInfo {
+        private final boolean isRoomBooker;
+        private final List<String> roommateNames;  // For room booker mode
+        private final String roomOwnerName;        // For share accommodation mode
+
+        public SoldOutRecoveryRoommateInfo(boolean isRoomBooker, List<String> roommateNames, String roomOwnerName) {
+            this.isRoomBooker = isRoomBooker;
+            this.roommateNames = roommateNames != null ? roommateNames : Collections.emptyList();
+            this.roomOwnerName = roomOwnerName;
+        }
+
+        public boolean isRoomBooker() { return isRoomBooker; }
+        public List<String> getRoommateNames() { return roommateNames; }
+        public String getRoomOwnerName() { return roomOwnerName; }
+        public boolean hasData() {
+            return (isRoomBooker && !roommateNames.isEmpty()) || (!isRoomBooker && roomOwnerName != null && !roomOwnerName.isEmpty());
+        }
     }
 }

@@ -26,6 +26,7 @@ public class CompositeBookingFormPage implements BookingFormPage {
     private boolean isHeaderVisible = true;
     private boolean showingOwnSubmitButton = false;
     private BookingFormButton[] buttons;
+    private Node footerContent; // Extra content shown after all sections (e.g., validation warnings)
 
     public CompositeBookingFormPage(Object titleI18nKey, BookingFormSection... sections) {
         this.titleI18nKey = titleI18nKey;
@@ -95,6 +96,10 @@ public class CompositeBookingFormPage implements BookingFormPage {
                 container.getChildren().add(section.getView());
             }
         }
+        // Re-add footer content if set (e.g., validation warning zone)
+        if (footerContent != null) {
+            container.getChildren().add(footerContent);
+        }
     }
 
     @Override
@@ -158,5 +163,25 @@ public class CompositeBookingFormPage implements BookingFormPage {
      */
     public List<BookingFormSection> getSections() {
         return sections;
+    }
+
+    /**
+     * Sets extra content to display after all sections (e.g., validation warnings).
+     * This content persists through setWorkingBookingProperties calls.
+     *
+     * @param footerContent The node to display after sections, or null to remove
+     * @return this page for chaining
+     */
+    public CompositeBookingFormPage setFooterContent(Node footerContent) {
+        // Remove old footer content if present
+        if (this.footerContent != null) {
+            container.getChildren().remove(this.footerContent);
+        }
+        this.footerContent = footerContent;
+        // Add new footer content at the end
+        if (footerContent != null && !container.getChildren().contains(footerContent)) {
+            container.getChildren().add(footerContent);
+        }
+        return this;
     }
 }

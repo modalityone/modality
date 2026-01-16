@@ -12,6 +12,7 @@ module modality.ecommerce.payment.client {
     requires modality.base.client.error;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;
+    requires modality.crm.client.authn.fx;
     requires modality.ecommerce.payment;
     requires webfx.extras.panes;
     requires webfx.extras.util.control;

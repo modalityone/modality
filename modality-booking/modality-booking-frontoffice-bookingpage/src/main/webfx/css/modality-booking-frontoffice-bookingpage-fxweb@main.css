@@ -11,6 +11,11 @@
     -booking-form-text-primary: #292A33;
     -booking-form-text-secondary: #838788;
     -booking-form-text-on-primary: white;
+    /* Card and border colors */
+    -booking-form-card-bg: white;
+    -booking-form-card-border: #dee2e6;
+    -booking-form-card-disabled-bg: #fafafa;
+    -booking-form-card-disabled-border: #d1d5db;
 }
 
 /* Wisdom Blue theme */
@@ -813,6 +818,25 @@
     -fx-border-color: -booking-form-primary;
 }
 
+/* Pill Option - rounded pill button for options like dietary preferences */
+.bookingpage-pill-option {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.bookingpage-pill-option:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-pill-option.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
 /* Checkbox Indicator (CSS-based theming) */
 .booking-form-checkbox-indicator {
     -fx-cursor: hand;
@@ -1139,9 +1163,9 @@
 
 /* Passive Card - non-interactive, display only (new generic name for card-static) */
 .bookingpage-passive-card {
-    -fx-background-color: white;
+    -fx-background-color: -booking-form-card-bg;
     -fx-background-radius: 8;
-    -fx-border-color: #dee2e6;
+    -fx-border-color: -booking-form-card-border;
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-cursor: default;
@@ -1149,11 +1173,11 @@
 
 /* Selectable Card - card with checkmark badge in corner when selected */
 .bookingpage-selectable-card {
-    -fx-background-color: white;
-    -fx-background-radius: 8;
-    -fx-border-color: #dee2e6;
+    -fx-background-color: -booking-form-card-bg;
+    -fx-background-radius: 12;
+    -fx-border-color: -booking-form-card-border;
     -fx-border-width: 2;
-    -fx-border-radius: 8;
+    -fx-border-radius: 12;
     -fx-cursor: hand;
 }
 
@@ -1178,15 +1202,28 @@
 }
 
 .bookingpage-selectable-card.disabled:hover {
-    -fx-border-color: #dee2e6;
-    -fx-background-color: white;
+    -fx-border-color: -booking-form-card-border;
+    -fx-background-color: -booking-form-card-bg;
+}
+
+/* Sold out card - dashed border, muted colors */
+.bookingpage-selectable-card.soldout {
+    -fx-border-color: -booking-form-card-disabled-border;
+    -fx-border-style: dashed;
+    -fx-background-color: -booking-form-card-disabled-bg;
+    -fx-cursor: default;
+}
+
+.bookingpage-selectable-card.soldout:hover {
+    -fx-border-color: -booking-form-card-disabled-border;
+    -fx-background-color: -booking-form-card-disabled-bg;
 }
 
 /* Checkbox Card - card with embedded checkbox on left */
 .bookingpage-checkbox-card {
-    -fx-background-color: white;
+    -fx-background-color: -booking-form-card-bg;
     -fx-background-radius: 8;
-    -fx-border-color: #dee2e6;
+    -fx-border-color: -booking-form-card-border;
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-cursor: hand;
@@ -1204,9 +1241,9 @@
 
 /* Radio Card - card with embedded radio on left */
 .bookingpage-radio-card {
-    -fx-background-color: white;
+    -fx-background-color: -booking-form-card-bg;
     -fx-background-radius: 8;
-    -fx-border-color: #dee2e6;
+    -fx-border-color: -booking-form-card-border;
     -fx-border-width: 2;
     -fx-border-radius: 8;
     -fx-cursor: hand;
@@ -1516,6 +1553,13 @@
     -fx-background-radius: 8;
 }
 
+/* Info Box - Neutral (gray, for "Price includes" type messages) */
+.bookingpage-info-box-neutral {
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 1;
+}
+
 /* Info Box Icon */
 .bookingpage-info-box-icon {
     -fx-font-size: 18px;
@@ -1535,6 +1579,35 @@
 
 .bookingpage-info-box-info .bookingpage-info-box-icon {
     -fx-text-fill: -booking-form-primary;
+}
+
+.bookingpage-info-box-neutral .bookingpage-info-box-icon {
+    -fx-text-fill: #6c757d;
+}
+
+/* Price Includes Info Box */
+.bookingpage-price-includes-box {
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.bookingpage-price-includes-bold {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #495057;
+}
+
+.bookingpage-price-includes-primary {
+    -fx-font-size: 13px;
+    -fx-text-fill: #495057;
+}
+
+.bookingpage-price-includes-secondary {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
 }
 
 /* Info Box - Outline Primary (transparent bg, primary color border all around) */
@@ -1699,6 +1772,93 @@
     -fx-background-color: -booking-form-selected-bg;
     -fx-background-radius: 4;
     -fx-text-fill: -booking-form-primary;
+}
+
+/* Badge - coming soon (gray/muted) */
+.bookingpage-badge-coming-soon {
+    -fx-background-color: #e9ecef;
+    -fx-background-radius: 12;
+    -fx-text-fill: #6c757d;
+}
+
+/* Coming Soon Button Placeholder - styled like muted/disabled primary button */
+.bookingpage-btn-coming-soon {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 8;
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-cursor: default;
+}
+
+.bookingpage-btn-coming-soon-text {
+    -fx-text-fill: -booking-form-text-secondary;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+}
+
+/* Select Type Button - uses theme primary color */
+/* Note: Padding set in Java code (RegistrationTypeSection.java) */
+.bookingpage-btn-select-type {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.bookingpage-btn-select-type:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0, 0, 4);
+}
+
+.bookingpage-btn-select-type-text {
+    -fx-text-fill: -booking-form-text-on-primary;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
+}
+
+.bookingpage-btn-select-type-icon {
+    -fx-stroke: -booking-form-text-on-primary;
+    -fx-fill: transparent;
+}
+
+/* Badge - constraint (info badge with icon, uses theme colors) */
+.bookingpage-badge-constraint {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 6;
+}
+
+.bookingpage-badge-constraint-text {
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Badge - constraint disabled (for sold out items) */
+.bookingpage-badge-constraint.disabled {
+    -fx-background-color: #f0f0f0;
+}
+
+.bookingpage-badge-constraint.disabled .bookingpage-badge-constraint-text {
+    -fx-text-fill: #9ca3af;
+}
+
+.bookingpage-badge-constraint-icon {
+    -fx-stroke: -booking-form-primary-dark;
+    -fx-fill: -booking-form-primary-dark;
+    -fx-stroke-width: 2.5;
+}
+
+.bookingpage-badge-constraint.disabled .bookingpage-badge-constraint-icon {
+    -fx-stroke: #9ca3af;
+    -fx-fill: #9ca3af;
+}
+
+/* Badge - limited (yellow/amber - matches badge-warning) */
+.bookingpage-badge-limited {
+    -fx-background-color: #fff3cd;
+    -fx-background-radius: 6;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #856404;
 }
 
 /* Primary-colored divider for emphasis (uses theme color) */
@@ -2020,4 +2180,694 @@
 .booking-form-step-dot-completed {
     -fx-background-color: -booking-form-primary;
     -fx-background-radius: 5;
+}
+
+/* ==========================================
+   Registration Type Section (Festival Forms)
+   ========================================== */
+
+/* Registration type section container */
+.bookingpage-registration-type-section {
+    -fx-background-color: white;
+}
+
+/* Registration type card - base styling */
+.bookingpage-registration-type-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-cursor: hand;
+}
+
+/* Registration type card - hover state */
+.bookingpage-registration-type-card:hover {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 16, 0, 0, 6);
+}
+
+/* Registration type card - selected state */
+.bookingpage-registration-type-card.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Registration type card - disabled state (Coming Soon) */
+.bookingpage-registration-type-card.disabled {
+    -fx-opacity: 0.7;
+    -fx-cursor: default;
+}
+
+.bookingpage-registration-type-card.disabled:hover {
+    -fx-border-color: #dee2e6;
+    -fx-background-color: white;
+    -fx-effect: none;
+}
+
+/* Circular icon container for registration type cards */
+.bookingpage-registration-type-icon-circle {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 32;
+}
+
+/* ==========================================
+   Festival Day Section - Change Date Buttons
+   ========================================== */
+
+/* Change Arrival Button - uses primary theme color */
+.bookingpage-change-arrival-btn {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-primary;
+    -fx-cursor: hand;
+}
+
+.bookingpage-change-arrival-btn:hover {
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Change Departure Button - uses theme-aware dark color */
+.bookingpage-change-departure-btn {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-primary-dark;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-primary-dark;
+    -fx-cursor: hand;
+}
+
+.bookingpage-change-departure-btn:hover {
+    -fx-background-color: #f8f9fa;
+}
+
+/* ==========================================
+   Festival Day Section - Time Selection
+   ========================================== */
+
+/* Time section container - arrival */
+.bookingpage-time-section-arrival {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+/* Time section container - departure */
+.bookingpage-time-section-departure {
+    -fx-background-color: white;
+    -fx-border-color: -booking-form-primary-dark;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+/* Time section header title */
+.bookingpage-time-section-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -booking-form-text-primary;
+}
+
+/* Time section clock icon - arrival (primary color) */
+.bookingpage-time-section-icon-arrival {
+    -fx-fill: -booking-form-primary;
+}
+
+/* Time section clock icon - departure (dark theme color) */
+.bookingpage-time-section-icon-departure {
+    -fx-fill: -booking-form-primary-dark;
+}
+
+/* Time option card - base */
+.bookingpage-time-option {
+    -fx-background-color: white;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+/* Time option card - hover (arrival context - uses primary) */
+.bookingpage-time-option-arrival:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Time option card - hover (departure context - uses dark theme color) */
+.bookingpage-time-option-departure:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: -booking-form-primary-dark;
+}
+
+/* Time option card - selected (arrival) */
+.bookingpage-time-option-arrival.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Time option card - selected (departure) */
+.bookingpage-time-option-departure.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary-dark;
+}
+
+/* Time option label - default */
+.bookingpage-time-option-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -booking-form-text-primary;
+}
+
+/* Time option label - selected arrival */
+.bookingpage-time-option-arrival.selected .bookingpage-time-option-label {
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Time option label - selected departure */
+.bookingpage-time-option-departure.selected .bookingpage-time-option-label {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Time option range (subtitle showing time) */
+.bookingpage-time-option-range {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Time option meal note */
+.bookingpage-time-option-meal {
+    -fx-font-size: 11px;
+}
+
+/* Time option meal note - positive (has meals) */
+.bookingpage-time-option-meal-positive {
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Time option meal note - negative (no meals) */
+.bookingpage-time-option-meal-negative {
+    -fx-text-fill: #9ca3af;
+}
+
+/* ==========================================
+   Sticky Price Header Component
+   ========================================== */
+
+.sticky-price-header {
+    -fx-background-color: linear-gradient(to bottom, #FFFFFF, #FAFBFC);
+    -fx-border-color: #E5E7EB;
+    -fx-border-width: 0 0 1 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 3, 0, 0, 1);
+}
+
+.sticky-price-header-icon-container {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 8;
+}
+
+.sticky-price-header-separator {
+    -fx-font-size: 13px;
+    -fx-text-fill: #9CA3AF;
+}
+
+/* ==========================================
+   Sold Out Ribbon Component
+   ========================================== */
+
+.bookingpage-soldout-ribbon {
+    -fx-background-color: #78716c;
+}
+
+.bookingpage-soldout-ribbon-text {
+    -fx-font-size: 11px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #fafaf9;
+    /* Padding set in Java: new Insets(4, 40, 4, 40) */
+}
+
+/* ==========================================
+   Additional Text Utilities
+   ========================================== */
+
+/* Strikethrough text for prices */
+.bookingpage-text-strikethrough {
+    -fx-strikethrough: true;
+}
+
+/* Muted disabled text (lighter than text-muted) */
+.bookingpage-text-muted-light {
+    -fx-text-fill: #9ca3af;
+}
+
+/* Disabled muted text (for sold out items) */
+.bookingpage-text-muted-disabled {
+    -fx-text-fill: #b0b0b0;
+}
+
+/* ==========================================
+   Festival Day Card Component
+   ========================================== */
+
+/* Festival day card - base */
+.bookingpage-festival-day-card {
+    -fx-background-color: white;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+/* Festival day card - festival day (has teaching) */
+.bookingpage-festival-day-card.festival {
+    -fx-background-color: #FAFBFC;
+}
+
+/* Festival day card - arrival date */
+.bookingpage-festival-day-card.arrival {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Festival day card - departure date */
+.bookingpage-festival-day-card.departure {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary-dark;
+}
+
+/* Festival day card - in stay (between arrival and departure) */
+.bookingpage-festival-day-card.in-stay {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-hover-border;
+}
+
+/* Festival day card - changing mode (highlighted for selection) */
+.bookingpage-festival-day-card.changing {
+    -fx-background-color: #FFF4ED;
+    -fx-border-color: #FF6B35;
+}
+
+/* Festival day card - disabled */
+.bookingpage-festival-day-card.disabled {
+    -fx-background-color: #F5F5F5;
+    -fx-border-color: #D1D1D1;
+    -fx-opacity: 0.4;
+    -fx-cursor: default;
+}
+
+/* Festival day card labels - weekday */
+.bookingpage-festival-day-weekday {
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #838788;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-weekday {
+    -fx-text-fill: -booking-form-primary;
+}
+
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-weekday {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Festival day card labels - day number */
+.bookingpage-festival-day-number {
+    -fx-font-size: 22px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #292A33;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-number {
+    -fx-text-fill: -booking-form-primary;
+}
+
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-number {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Festival day card labels - month */
+.bookingpage-festival-day-month {
+    -fx-font-size: 9px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #838788;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-month {
+    -fx-text-fill: -booking-form-primary;
+}
+
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-month {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Festival day card - teaching title */
+.bookingpage-festival-day-title {
+    -fx-font-size: 10px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #495057;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-title,
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-title,
+.bookingpage-festival-day-card.in-stay .bookingpage-festival-day-title {
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Festival day card - teaching price */
+.bookingpage-festival-day-price {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2C3E50;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-price,
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-price,
+.bookingpage-festival-day-card.in-stay .bookingpage-festival-day-price {
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Festival day card - separator line */
+.bookingpage-festival-day-separator {
+    -fx-background-color: #E6E7E7;
+}
+
+.bookingpage-festival-day-card.arrival .bookingpage-festival-day-separator,
+.bookingpage-festival-day-card.departure .bookingpage-festival-day-separator,
+.bookingpage-festival-day-card.in-stay .bookingpage-festival-day-separator {
+    -fx-background-color: -booking-form-hover-border;
+}
+
+/* Festival day card badges */
+.bookingpage-festival-day-badge {
+    -fx-text-fill: white;
+    -fx-background-radius: 4;
+    -fx-font-size: 8px;
+    -fx-font-weight: 700;
+    /* Padding set in Java: new Insets(2, 6, 2, 6) */
+}
+
+.bookingpage-festival-day-badge.arrival {
+    -fx-background-color: -booking-form-primary;
+}
+
+.bookingpage-festival-day-badge.departure {
+    -fx-background-color: -booking-form-primary-dark;
+}
+
+.bookingpage-festival-day-badge.changing {
+    -fx-background-color: #FF6B35;
+}
+
+/* Non-festival day badges (arrival/departure/day-visit) */
+.bookingpage-festival-day-badge-large {
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 9px;
+    -fx-font-weight: 700;
+    /* Padding set in Java: new Insets(4, 8, 4, 8) or (4, 10, 4, 10) for day-visit */
+}
+
+.bookingpage-festival-day-badge-large.arrival {
+    -fx-background-color: -booking-form-primary;
+}
+
+.bookingpage-festival-day-badge-large.departure {
+    -fx-background-color: -booking-form-primary-dark;
+}
+
+.bookingpage-festival-day-badge-large.day-visit {
+    -fx-background-color: -booking-form-primary;
+    /* Extra padding (4, 10, 4, 10) set in Java for day-visit */
+}
+
+/* ==========================================
+   Time Section Component
+   ========================================== */
+
+.bookingpage-time-section-arrival {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 12;
+}
+
+.bookingpage-time-section-departure {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 12;
+}
+
+.bookingpage-time-section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: -booking-form-text-primary;
+}
+
+.bookingpage-time-section-icon-arrival {
+    -fx-fill: -booking-form-primary;
+}
+
+.bookingpage-time-section-icon-departure {
+    -fx-fill: -booking-form-primary-dark;
+}
+
+/* ==========================================
+   Additional Options Section
+   ========================================== */
+
+/* Parking type pill option */
+.bookingpage-parking-type {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.bookingpage-parking-type:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-parking-type.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* Shuttle section container */
+.bookingpage-shuttle-section {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 2;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+/* Shuttle option row */
+.bookingpage-shuttle-row {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.bookingpage-shuttle-row:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-shuttle-row.selected {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+}
+
+/* ==========================================
+   Roommate Section Text Inputs
+   ========================================== */
+
+/* Text input field with border styling */
+.bookingpage-text-input {
+    -fx-background-color: white;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-font-size: 14px;
+}
+
+.bookingpage-text-input:focused {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+}
+
+/* Form field label */
+.bookingpage-form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #374151;
+}
+
+/* Required asterisk */
+.bookingpage-required-asterisk {
+    -fx-fill: #dc3545;
+    -fx-font-weight: 600;
+}
+
+/* ==========================================
+   Shuttle Options Section
+   ========================================== */
+
+/* Main grouped container for shuttle options */
+.bookingpage-shuttle-container {
+    -fx-background-color: -booking-form-card-bg;
+    -fx-border-color: #e9ecef;
+    -fx-border-width: 1;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.bookingpage-shuttle-container.has-selection {
+    -fx-border-color: -booking-form-primary;
+    -fx-background-color: -booking-form-selected-bg;
+}
+
+/* Shuttle icon container (in header) */
+.bookingpage-shuttle-icon-container {
+    -fx-background-color: #f1f3f5;
+    -fx-background-radius: 8;
+}
+
+.bookingpage-shuttle-container.has-selection .bookingpage-shuttle-icon-container {
+    -fx-background-color: -booking-form-primary;
+}
+
+/* Shuttle icon stroke */
+.bookingpage-shuttle-icon {
+    -fx-stroke: #6c757d;
+}
+
+.bookingpage-shuttle-container.has-selection .bookingpage-shuttle-icon {
+    -fx-stroke: white;
+}
+
+/* Individual shuttle trip card */
+.bookingpage-shuttle-trip {
+    -fx-background-color: -booking-form-card-bg;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-cursor: hand;
+}
+
+.bookingpage-shuttle-trip:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-shuttle-trip.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+}
+
+/* Disabled shuttle trip (date doesn't match) */
+.bookingpage-shuttle-trip.disabled {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e9ecef;
+    -fx-cursor: default;
+}
+
+/* ==========================================
+   Unified Parking Card - Radio Pills
+   ========================================== */
+
+/* Parking sub-section (contains radio pills) */
+.bookingpage-parking-subsection {
+    -fx-border-color: -booking-form-hover-border;
+    -fx-border-width: 1 0 0 0;
+    /* Dashed borders not supported in JavaFX, using solid */
+}
+
+/* Radio pill button for parking type selection */
+.bookingpage-radio-pill {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+}
+
+.bookingpage-radio-pill:hover {
+    -fx-border-color: -booking-form-hover-border;
+}
+
+.bookingpage-radio-pill.selected {
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+}
+
+.bookingpage-radio-pill.disabled {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #d1d5db;
+    -fx-cursor: default;
+    -fx-opacity: 0.7;
+}
+
+/* Radio pill inner circle (outer ring) */
+.bookingpage-radio-pill-outer {
+    -fx-fill: white;
+    -fx-stroke: #dee2e6;
+    -fx-stroke-width: 2;
+}
+
+.bookingpage-radio-pill-outer.selected {
+    -fx-stroke: -booking-form-primary;
+    -fx-stroke-width: 4;
+}
+
+.bookingpage-radio-pill-outer.disabled {
+    -fx-stroke: #d1d5db;
+    -fx-fill: #f3f4f6;
+}
+
+/* Radio pill inner dot (visible when selected) */
+.bookingpage-radio-pill-inner {
+    -fx-fill: transparent;
+}
+
+.bookingpage-radio-pill-inner.selected {
+    -fx-fill: -booking-form-primary;
+}
+
+/* Inline sold out badge (inside radio pills) */
+.bookingpage-soldout-badge-inline {
+    -fx-background-color: #78716c;
+    -fx-background-radius: 4;
+    -fx-font-size: 9px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #fafaf9;
+}
+
+/* Strikethrough text style */
+.bookingpage-strikethrough {
+    -fx-strikethrough: true;
+}
+
+/* Sold out card overlay styling */
+.bookingpage-checkbox-card.soldout {
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 2;
+    -fx-background-color: #fafafa;
+    -fx-cursor: default;
+    -fx-opacity: 0.85;
 }

@@ -9,6 +9,7 @@ import one.modality.base.shared.entities.markers.EntityHasName;
 /**
  * @author Bruno Salmon
  */
+@Deprecated // Replaced by EventSelection, and more generally Period (concrete classes: SimplePeriod, EventPart, EventSelection, EventPhase, PhaseCoverage)
 public interface BookablePeriod extends Entity,
     EntityHasEvent,
     EntityHasName,
