@@ -446,6 +446,8 @@ public final class WorkingBooking {
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
         ).compose(result -> {
+            if (result.isSoldOut())
+                return Future.succeededFuture(result);
             // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
             return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.documentPrimaryKey()))
                 .map(documentAggregate -> {

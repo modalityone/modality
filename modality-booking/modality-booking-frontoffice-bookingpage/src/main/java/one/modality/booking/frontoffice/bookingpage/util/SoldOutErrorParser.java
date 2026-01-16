@@ -28,29 +28,29 @@ public final class SoldOutErrorParser {
      * Information extracted from a SOLDOUT error.
      */
     public static class SoldOutInfo {
-        private final int siteId;
-        private final int itemId;
+        private final Object sitePrimaryKey;
+        private final Object itemPrimaryKey;
         private final String reason;
 
-        public SoldOutInfo(int siteId, int itemId, String reason) {
-            this.siteId = siteId;
-            this.itemId = itemId;
+        public SoldOutInfo(Object sitePrimaryKey, Object itemPrimaryKey, String reason) {
+            this.sitePrimaryKey = sitePrimaryKey;
+            this.itemPrimaryKey = itemPrimaryKey;
             this.reason = reason;
         }
 
         /**
          * Returns the site ID where the sold-out item was requested.
          */
-        public int getSiteId() {
-            return siteId;
+        public Object getSitePrimaryKey() {
+            return sitePrimaryKey;
         }
 
         /**
          * Returns the item ID that is sold out.
          * This corresponds to the accommodation Item entity.
          */
-        public int getItemId() {
-            return itemId;
+        public Object getItemPrimaryKey() {
+            return itemPrimaryKey;
         }
 
         /**
@@ -63,7 +63,7 @@ public final class SoldOutErrorParser {
 
         @Override
         public String toString() {
-            return "SoldOutInfo{siteId=" + siteId + ", itemId=" + itemId +
+            return "SoldOutInfo{siteId=" + sitePrimaryKey + ", itemId=" + itemPrimaryKey +
                    (reason != null ? ", reason='" + reason + "'" : "") + "}";
         }
     }

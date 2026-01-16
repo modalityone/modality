@@ -11,12 +11,12 @@ import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
 import dev.webfx.stack.orm.entity.Entities;
+import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -24,6 +24,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.util.Attendances;
+import one.modality.base.shared.entities.util.DocumentLines;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
@@ -34,12 +37,14 @@ import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.LoadDocumentArgument;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -49,7 +54,6 @@ import one.modality.event.frontoffice.activities.book.event.EventBookingFormSett
 import one.modality.event.frontoffice.activities.book.event.slides.ProvidedGatewayPaymentForm;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
-import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -740,7 +744,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
-            .compose(ignored -> {
+            .compose(submitResult -> {
+                if (submitResult.isSoldOut()) {
+                    UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
+                        new SoldOutErrorParser.SoldOutInfo(
+                            submitResult.soldOutSitePrimaryKey(),
+                            submitResult.soldOutItemPrimaryKey(),
+                            null
+                        )
+                    ));
+                    return Future.failedFuture("Sold out"); // We still want to stop the flow here
+                }
                 // For new users (guest or creating account), skip loading bookings
                 // They're not logged in, so there's nothing to load
                 if (isNewUser) {
@@ -781,16 +795,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .onFailure(error -> {
                 Console.log("ERROR: " + error.getMessage());
 
-                // Check if this is a SOLDOUT error (accommodation became unavailable)
-                if (SoldOutErrorParser.isSoldOutError(error)) {
-                    SoldOutErrorParser.SoldOutInfo soldOutInfo = SoldOutErrorParser.parse(error);
-                    if (soldOutInfo != null) {
-                        Console.log("SOLDOUT error detected: " + soldOutInfo);
-                        UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(soldOutInfo));
-                        return;
-                    }
-                }
-
                 // Stay on current page - spinner will be hidden automatically
             });
     }
@@ -812,7 +816,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * @param soldOutInfo Information about the sold-out item
      */
     private void handleAccommodationSoldOut(SoldOutErrorParser.SoldOutInfo soldOutInfo) {
-        Console.log("handleAccommodationSoldOut() - itemId: " + soldOutInfo.getItemId());
+        Console.log("handleAccommodationSoldOut() - itemId: " + soldOutInfo.getItemPrimaryKey());
 
         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
         if (policyAggregate == null) {
@@ -838,79 +842,54 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Shows the sold-out recovery page after availabilities have been reloaded.
      */
     private void showSoldOutRecoveryPage(SoldOutErrorParser.SoldOutInfo soldOutInfo, PolicyAggregate policyAggregate) {
-        List<ScheduledItem> scheduledItems = policyAggregate.getScheduledItems();
-        if (scheduledItems == null || scheduledItems.isEmpty()) {
+        // Find the sold-out item
+        EntityStore entityStore = policyAggregate.getEntityStore();
+        Site soldOutSite = entityStore.getEntity(Site.class, soldOutInfo.getSitePrimaryKey());
+        Item soldOutItem = entityStore.getEntity(Item.class, soldOutInfo.getItemPrimaryKey());
+
+        if (soldOutSite == null || soldOutItem == null) {
             Console.log("No scheduled items in PolicyAggregate, cannot show alternatives");
             return;
         }
 
-        // Find the sold-out item
-        Item soldOutItem = scheduledItems.stream()
-            .map(ScheduledItem::getItem)
-            .filter(item -> item != null && Entities.getPrimaryKey(item) != null)
-            .filter(item -> {
-                Object pk = Entities.getPrimaryKey(item);
-                return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
-            })
-            .findFirst()
-            .orElse(null);
-
-        String soldOutItemName = soldOutItem != null ? soldOutItem.getName() : "Selected Room";
+        String soldOutItemName = I18nEntities.translateEntity(soldOutItem);
         int soldOutPrice = 0;
 
         // Get original price from WorkingBooking document lines
         WorkingBooking workingBooking = getWorkingBooking();
         if (workingBooking != null) {
-            // First try to get stored price from document lines
-            soldOutPrice = workingBooking.getDocumentLines().stream()
-                .filter(line -> line.getItem() != null)
-                .filter(line -> {
-                    Object pk = Entities.getPrimaryKey(line.getItem());
-                    return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
-                })
+            // First, try to get stored price from document lines
+            soldOutPrice = DocumentLines.filterOfSiteAndItem(workingBooking.getDocumentLines().stream(), soldOutSite, soldOutItem)
                 .mapToInt(line -> line.getPriceNet() != null ? line.getPriceNet() : 0)
                 .sum();
 
             // If stored price is 0, calculate dynamically using PriceCalculator
             if (soldOutPrice == 0) {
-                DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
-                if (documentAggregate != null) {
-                    PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
-                    for (DocumentLine line : documentAggregate.getDocumentLines()) {
-                        if (line.getItem() != null) {
-                            Object pk = Entities.getPrimaryKey(line.getItem());
-                            if (pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId()) {
-                                soldOutPrice += priceCalculator.calculateDocumentLinePrice(line);
-                            }
-                        }
-                    }
-                }
+                PriceCalculator priceCalculator = workingBooking.getLatestBookingPriceCalculator();
+                soldOutPrice = DocumentLines.filterOfSiteAndItem(workingBooking.getDocumentLines().stream(), soldOutSite, soldOutItem)
+                    .mapToInt(priceCalculator::calculateDocumentLinePrice)
+                    .sum();
             }
         }
         Console.log("Sold-out item: " + soldOutItemName + ", price: " + soldOutPrice);
 
         // Build list of ALL accommodation options (excluding only the originally selected sold-out item)
         // Other items that are also sold out will show with SOLD OUT ribbon
-        List<HasAccommodationSelectionSection.AccommodationOption> alternatives = buildAlternativeOptions(policyAggregate, soldOutInfo.getItemId());
+        List<HasAccommodationSelectionSection.AccommodationOption> alternatives =
+            buildAlternativeOptions(policyAggregate, soldOutInfo.getSitePrimaryKey(), soldOutInfo.getItemPrimaryKey());
         Console.log("Built " + alternatives.size() + " alternative options with refreshed availability");
 
         // Calculate number of nights from the booked accommodation dates
         int numberOfNights = 0;
         if (workingBooking != null) {
             DocumentAggregate docAggregate = workingBooking.getLastestDocumentAggregate();
-            if (docAggregate != null && docAggregate.getAttendances() != null) {
-                // Count unique dates for accommodation item (the sold-out item)
-                numberOfNights = (int) docAggregate.getAttendances().stream()
-                    .filter(a -> a.getScheduledItem() != null && a.getScheduledItem().getItem() != null)
-                    .filter(a -> {
-                        Object pk = Entities.getPrimaryKey(a.getScheduledItem().getItem());
-                        return pk instanceof Number && ((Number) pk).intValue() == soldOutInfo.getItemId();
-                    })
-                    .map(a -> a.getScheduledItem().getDate())
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .count();
-            }
+            // Count unique dates for accommodation item (the sold-out item)
+            numberOfNights = (int) docAggregate.getAttendances().stream()
+                .filter(a -> Attendances.isOfSiteAndItem(a, soldOutSite, soldOutItem))
+                .map(Attendances::getDate)
+                .filter(Objects::nonNull)
+                .distinct()
+                .count();
         }
         Console.log("Number of nights for sold-out item: " + numberOfNights);
 
@@ -997,31 +976,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Builds a list of alternative accommodation options, excluding the sold-out item.
      * Always includes a Day Visitor option as a fallback.
      */
-    private List<HasAccommodationSelectionSection.AccommodationOption> buildAlternativeOptions(PolicyAggregate policy, int excludeItemId) {
+    private List<HasAccommodationSelectionSection.AccommodationOption> buildAlternativeOptions(PolicyAggregate policy, Object excludeSiteId, Object excludeItemId) {
         List<HasAccommodationSelectionSection.AccommodationOption> options = new ArrayList<>();
 
         // Build accommodation options from scheduled items (if available)
         List<ScheduledItem> scheduledItems = policy.getScheduledItems();
         if (scheduledItems != null && !scheduledItems.isEmpty()) {
             // Group scheduled items by Item to find accommodation options
-            Map<Object, List<ScheduledItem>> itemGroups = scheduledItems.stream()
-                .filter(si -> si.getItem() != null)
-                .filter(si -> {
-                    Item item = si.getItem();
-                    // Filter for accommodation items (check family code matches KnownItemFamily.ACCOMMODATION)
-                    return item.getFamily() != null &&
-                           KnownItemFamily.ACCOMMODATION.getCode().equals(item.getFamily().getCode());
-                })
+            Map<Object, List<ScheduledItem>> itemGroups =
+                ScheduledItems.filterFamily(scheduledItems.stream(), KnownItemFamily.ACCOMMODATION)
                 .collect(Collectors.groupingBy(si -> Entities.getPrimaryKey(si.getItem())));
 
             for (Map.Entry<Object, List<ScheduledItem>> entry : itemGroups.entrySet()) {
                 Object itemId = entry.getKey();
-                List<ScheduledItem> itemScheduledItems = entry.getValue();
-
                 // Skip the sold-out item
-                if (itemId instanceof Number && ((Number) itemId).intValue() == excludeItemId) {
+                if (Entities.samePrimaryKey(itemId, excludeItemId))
                     continue;
-                }
+
+                List<ScheduledItem> itemScheduledItems = entry.getValue();
 
                 if (itemScheduledItems.isEmpty()) continue;
 
@@ -1122,7 +1094,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      *
      * @return Future that completes when submission is done (or immediately if no changes)
      */
-    private Future<Void> submitBookingAsync() {
+    private Future<SubmitDocumentChangesResult> submitBookingAsync() {
         WorkingBooking workingBooking = getWorkingBooking();
         Console.log("WorkingBooking hasNoChanges: " + workingBooking.hasNoChanges());
 
@@ -1142,18 +1114,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
-                Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
+                if (submitResult.isSoldOut()) {
+                    Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
 
-                // Store the booking reference
-                workingBookingProperties.setBookingReference(submitResult.documentRef());
+                    // Store the booking reference
+                    workingBookingProperties.setBookingReference(submitResult.documentRef());
 
-                // Reset reselection flag - booking is now confirmed
-                state.setAllowMemberReselection(false);
+                    // Reset reselection flag - booking is now confirmed
+                    state.setAllowMemberReselection(false);
 
-                // Clear pending new user data - booking is now associated with a Person in DB
-                state.setPendingNewUserData(null);
+                    // Clear pending new user data - booking is now associated with a Person in DB
+                    state.setPendingNewUserData(null);
+                }
 
-                return null;
+                return submitResult;
             });
     }
 

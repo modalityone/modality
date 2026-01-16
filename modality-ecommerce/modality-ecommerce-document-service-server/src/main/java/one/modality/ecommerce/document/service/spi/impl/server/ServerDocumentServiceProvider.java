@@ -205,10 +205,39 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                             document.getPrimaryKey(),
                             document.getRef(),
                             document.getCart().getPrimaryKey(),
-                            document.getCart().getUuid()));
+                            document.getCart().getUuid(),
+                            false, null, null
+                        ));
                 }
-                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid));
+                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid, false, null, null));
+            })
+            // Detecting sold-out exception from the database
+            .recover(ex -> {
+                String message = ex.getMessage();
+                // If it's not a sold-out exception, we rethrow it
+                if (message == null || !message.toUpperCase().contains("SoldOut".toUpperCase()))
+                    return Future.failedFuture(ex);
+                Object sitePk = readSiteOrItemPrimaryKey(message, true);
+                Object itemPk = readSiteOrItemPrimaryKey(message, false);
+                return Future.succeededFuture(new SubmitDocumentChangesResult(null, null, null, null, true, sitePk, itemPk));
             });
+    }
+
+    private static Object readSiteOrItemPrimaryKey(String message, boolean isSite) {
+        // Here is the Postgres database code: RAISE EXCEPTION 'SOLDOUT site_id=%, item_id=% (no resource found)', NEW.site_id, NEW.item_id;
+        String token = isSite ? "site_id=" : "item_id=";
+        int index = message.indexOf(token);
+        if (index >= 0) {
+            int start = index + token.length();
+            int end = start;
+            while (end < message.length() && Character.isDigit(message.charAt(end))) {
+                end++;
+            }
+            if (end > start) {
+                return Integer.parseInt(message.substring(start, end));
+            }
+        }
+        return null;
     }
 
 }

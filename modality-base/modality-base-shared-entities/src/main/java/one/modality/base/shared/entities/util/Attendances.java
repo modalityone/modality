@@ -1,10 +1,7 @@
 package one.modality.base.shared.entities.util;
 
 import dev.webfx.stack.orm.entity.Entities;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -26,6 +23,17 @@ public final class Attendances {
         return null;
     }
 
+    public static Site getSite(Attendance a) {
+        ScheduledItem scheduledItem = a.getScheduledItem();
+        Site site  = scheduledItem != null ? scheduledItem.getSite() : null;
+        if (site == null) {
+            DocumentLine documentLine = a.getDocumentLine();
+            if (documentLine != null)
+                site = documentLine.getSite();
+        }
+        return site;
+    }
+
     public static Item getItem(Attendance a) {
         ScheduledItem scheduledItem = a.getScheduledItem();
         Item item  = scheduledItem != null ? scheduledItem.getItem() : null;
@@ -35,6 +43,10 @@ public final class Attendances {
                 item = documentLine.getItem();
         }
         return item;
+    }
+
+    public static boolean isOfSiteAndItem(Attendance a, Site site, Item item) {
+        return Entities.samePrimaryKey(getSite(a), site) && Entities.samePrimaryKey(getItem(a), item);
     }
 
     public static boolean attendanceMatchesDateOrScheduledItem(Attendance a, Object dateOrScheduledItem) {
