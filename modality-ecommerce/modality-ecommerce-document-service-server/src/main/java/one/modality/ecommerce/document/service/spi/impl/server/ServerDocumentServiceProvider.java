@@ -180,9 +180,12 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.historyComment(), document, documentLine)
             .compose(histories -> // At this point, history.getDocument() is never null (it has eventually been
                 submitChangesAndPrepareResult(updateStore, histories[0].getDocument()) // resolved through DB reading)
-                    .compose(result -> // Completing the history recording (changes column with resolved primary keys)
-                        HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
-                            .map(ignoredVoid -> result)
+                    .compose(result -> { // Completing the history recording (changes column with resolved primary keys)
+                            if (result.isSuccessfullySubmitted())
+                                return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
+                                    .map(ignoredVoid -> result);
+                            return Future.succeededFuture(result); // No technical exception, but submit refused by logic (ex: sold-out)
+                        }
                     )
             );
     }
