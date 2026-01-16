@@ -46,7 +46,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event)" +
         ",itemFamily.ord" +
-        ",phaseCoverage1,phaseCoverage2,phaseCoverage3,phaseCoverage4" +
+        ",eventPhaseCoverage1,eventPhaseCoverage2,eventPhaseCoverage3,eventPhaseCoverage4" +
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event.termsUrlEn)" + // loading terms url for US Festival (way to load terms will change later)

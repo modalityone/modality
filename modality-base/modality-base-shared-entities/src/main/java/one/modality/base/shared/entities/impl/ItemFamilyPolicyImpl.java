@@ -15,26 +15,31 @@ import java.util.List;
  */
 public final class ItemFamilyPolicyImpl extends DynamicEntity implements ItemFamilyPolicy {
 
-    private List<EventPhaseCoverage> phaseCoverages;
+    private List<EventPhaseCoverage> eventPhaseCoverages;
 
     public ItemFamilyPolicyImpl(EntityId id, EntityStore store) {
         super(id, store);
     }
 
     @Override
-    public List<EventPhaseCoverage> getPhaseCoverages() {
-        if (phaseCoverages == null)
-            phaseCoverages = Collections.removeNulls(Collections.listOf(getPhaseCoverage1(), getPhaseCoverage2(), getPhaseCoverage3(), getPhaseCoverage4()));
-        return phaseCoverages;
+    public List<EventPhaseCoverage> getEventPhaseCoverages() {
+        if (eventPhaseCoverages == null)
+            eventPhaseCoverages = Collections.removeNulls(Collections.listOf(
+                getEventPhaseCoverage1(),
+                getEventPhaseCoverage2(),
+                getEventPhaseCoverage3(),
+                getEventPhaseCoverage4())
+            );
+        return eventPhaseCoverages;
     }
 
     @Override
-    public void setPhaseCoverages(List<EventPhaseCoverage> phaseCoverages) {
-        this.phaseCoverages = phaseCoverages;
-        setPhaseCoverage1(Collections.get(phaseCoverages, 0));
-        setPhaseCoverage2(Collections.get(phaseCoverages, 1));
-        setPhaseCoverage3(Collections.get(phaseCoverages, 2));
-        setPhaseCoverage4(Collections.get(phaseCoverages, 3));
+    public void setEventPhaseCoverages(List<EventPhaseCoverage> phaseCoverages) {
+        this.eventPhaseCoverages = phaseCoverages;
+        setEventPhaseCoverage1(Collections.get(phaseCoverages, 0));
+        setEventPhaseCoverage2(Collections.get(phaseCoverages, 1));
+        setEventPhaseCoverage3(Collections.get(phaseCoverages, 2));
+        setEventPhaseCoverage4(Collections.get(phaseCoverages, 3));
     }
 
     public static final class ProvidedFactory extends EntityFactoryProviderImpl<ItemFamilyPolicy> {

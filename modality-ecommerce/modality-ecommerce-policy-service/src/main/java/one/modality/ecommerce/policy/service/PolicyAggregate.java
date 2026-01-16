@@ -259,7 +259,7 @@ public final class PolicyAggregate {
     public List<EventPhaseCoverage> getAudioRecordingPhaseCoverages() {
         ItemFamilyPolicy audioRecordingPolicy = getItemFamilyPolicy(KnownItemFamily.AUDIO_RECORDING);
         if (audioRecordingPolicy == null) return Collections.emptyList();
-        return audioRecordingPolicy.getPhaseCoverages();
+        return audioRecordingPolicy.getEventPhaseCoverages();
     }
 
     public Map<Item, List<ScheduledItem>> groupScheduledItemsByAudioRecordingItems() {

@@ -14,10 +14,10 @@ public interface ItemFamilyPolicy extends Entity,
 {
 
     String scope = "scope";
-    String phaseCoverage1 = "phaseCoverage1";
-    String phaseCoverage2 = "phaseCoverage2";
-    String phaseCoverage3 = "phaseCoverage3";
-    String phaseCoverage4 = "phaseCoverage4";
+    String eventPhaseCoverage1 = "eventPhaseCoverage1";
+    String eventPhaseCoverage2 = "eventPhaseCoverage2";
+    String eventPhaseCoverage3 = "eventPhaseCoverage3";
+    String eventPhaseCoverage4 = "eventPhaseCoverage4";
 
     default void setScope(Object value) {
         setForeignField(scope, value);
@@ -31,56 +31,56 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntity(scope);
     }
 
-    default void setPhaseCoverage1(Object value) {
-        setFieldValue(phaseCoverage1, value);
+    default void setEventPhaseCoverage1(Object value) {
+        setFieldValue(eventPhaseCoverage1, value);
     }
 
-    default EntityId getPhaseCoverage1Id() {
-        return getForeignEntityId(phaseCoverage1);
+    default EntityId getEventPhaseCoverage1Id() {
+        return getForeignEntityId(eventPhaseCoverage1);
     }
 
-    default EventPhaseCoverage getPhaseCoverage1() {
-        return getForeignEntity(phaseCoverage1);
+    default EventPhaseCoverage getEventPhaseCoverage1() {
+        return getForeignEntity(eventPhaseCoverage1);
     }
 
-    default void setPhaseCoverage2(Object value) {
-        setFieldValue(phaseCoverage2, value);
+    default void setEventPhaseCoverage2(Object value) {
+        setFieldValue(eventPhaseCoverage2, value);
     }
 
-    default EntityId getPhaseCoverage2Id() {
-        return getForeignEntityId(phaseCoverage2);
+    default EntityId getEventPhaseCoverage2Id() {
+        return getForeignEntityId(eventPhaseCoverage2);
     }
 
-    default EventPhaseCoverage getPhaseCoverage2() {
-        return getForeignEntity(phaseCoverage2);
+    default EventPhaseCoverage getEventPhaseCoverage2() {
+        return getForeignEntity(eventPhaseCoverage2);
     }
 
-    default void setPhaseCoverage3(Object value) {
-        setFieldValue(phaseCoverage3, value);
+    default void setEventPhaseCoverage3(Object value) {
+        setFieldValue(eventPhaseCoverage3, value);
     }
 
-    default EntityId getPhaseCoverage3Id() {
-        return getForeignEntityId(phaseCoverage3);
+    default EntityId getEventPhaseCoverage3Id() {
+        return getForeignEntityId(eventPhaseCoverage3);
     }
 
-    default EventPhaseCoverage getPhaseCoverage3() {
-        return getForeignEntity(phaseCoverage3);
+    default EventPhaseCoverage getEventPhaseCoverage3() {
+        return getForeignEntity(eventPhaseCoverage3);
     }
 
-    default void setPhaseCoverage4(Object value) {
-        setFieldValue(phaseCoverage4, value);
+    default void setEventPhaseCoverage4(Object value) {
+        setFieldValue(eventPhaseCoverage4, value);
     }
 
-    default EntityId getPhaseCoverage4Id() {
-        return getForeignEntityId(phaseCoverage4);
+    default EntityId getEventPhaseCoverage4Id() {
+        return getForeignEntityId(eventPhaseCoverage4);
     }
 
-    default EventPhaseCoverage getPhaseCoverage4() {
-        return getForeignEntity(phaseCoverage4);
+    default EventPhaseCoverage getEventPhaseCoverage4() {
+        return getForeignEntity(eventPhaseCoverage4);
     }
 
-    List<EventPhaseCoverage> getPhaseCoverages(); // implemented in ItemFamilyPolicyImpl
+    List<EventPhaseCoverage> getEventPhaseCoverages(); // implemented in ItemFamilyPolicyImpl
 
-    void setPhaseCoverages(List<EventPhaseCoverage> phaseCoverages); // implemented in ItemFamilyPolicyImpl
+    void setEventPhaseCoverages(List<EventPhaseCoverage> phaseCoverages); // implemented in ItemFamilyPolicyImpl
 
 }
