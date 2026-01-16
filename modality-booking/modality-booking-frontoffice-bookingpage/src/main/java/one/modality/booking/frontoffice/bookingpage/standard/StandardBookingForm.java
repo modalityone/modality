@@ -17,6 +17,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
@@ -295,44 +296,47 @@ public class StandardBookingForm extends MultiPageBookingForm {
             FXProperties.onPropertySet(node.sceneProperty(), scene -> scene.getRoot().getStyleClass().add(themeClass));
         }
 
-        // If a sticky header is provided, add it as an unmanaged overlay
-        // For web: CSS position:fixed makes it stick to viewport top
-        // For JavaFX: positioned at top of StackPane via layoutY=0
-        if (stickyHeader != null && node != null) {
-            // Navigate through the structure: StackPane > BorderPane
-            if (node instanceof StackPane stackPane && !stackPane.getChildren().isEmpty()) {
-                Node firstChild = stackPane.getChildren().get(0);
+        // If a sticky header is provided, add it to the overlay area for fixed positioning
+        if (stickyHeader != null && node instanceof StackPane stackPane) {
+            // Position at top center using StackPane alignment
+            StackPane.setAlignment(stickyHeader, Pos.TOP_CENTER);
+
+            // Set max width for the header
+            if (stickyHeader instanceof Region stickyRegion) {
+                stickyRegion.setMaxWidth(800);
+            }
+
+            // Add sticky header to FXMainFrameOverlayArea when scene becomes available
+            // This places it outside the ScrollPane hierarchy for true fixed positioning
+            FXProperties.runOnPropertyChange(scene -> {
+                if (scene != null) {
+                    // Use reflection-free approach: access overlay through known static method
+                    try {
+                        Class<?> overlayClass = Class.forName("one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea");
+                        java.lang.reflect.Method getOverlayChildren = overlayClass.getMethod("getOverlayChildren");
+                        @SuppressWarnings("unchecked")
+                        javafx.collections.ObservableList<Node> overlayChildren =
+                            (javafx.collections.ObservableList<Node>) getOverlayChildren.invoke(null);
+                        if (!overlayChildren.contains(stickyHeader)) {
+                            overlayChildren.add(stickyHeader);
+                        }
+                    } catch (Exception e) {
+                        // Fallback: add to internal StackPane if overlay not available
+                        if (!stackPane.getChildren().contains(stickyHeader)) {
+                            stackPane.getChildren().add(stickyHeader);
+                        }
+                    }
+                }
+            }, node.sceneProperty());
+
+            // Listen for visibility changes to add/remove padding on the form content
+            // This prevents content from being hidden under the fixed header
+            if (stickyHeader instanceof StickyPriceHeader sph) {
+                Node firstChild = stackPane.getChildren().isEmpty() ? null : stackPane.getChildren().get(0);
                 if (firstChild instanceof BorderPane borderPane) {
-                    // Add sticky header to StackPane as an overlay (not to BorderPane)
-                    // It will float above all other content
-                    stackPane.getChildren().add(stickyHeader);
-
-                    // Ensure header stays unmanaged (doesn't affect StackPane layout)
-                    stickyHeader.setManaged(false);
-
-                    // Position at top for JavaFX (CSS position:fixed handles web)
-                    stickyHeader.setLayoutY(0);
-
-                    // Center horizontally and set max width
-                    if (stickyHeader instanceof Region stickyRegion) {
-                        stickyRegion.setMaxWidth(800);
-                        // Bind width to match BorderPane width (capped at max)
-                        stickyRegion.prefWidthProperty().bind(borderPane.widthProperty());
-                        // Center horizontally using listener (GWT-compatible, avoids DoubleBinding.divide)
-                        FXProperties.runNowAndOnPropertiesChange(() -> {
-                            double centerX = (stackPane.getWidth() - stickyRegion.getWidth()) / 2;
-                            stickyRegion.setLayoutX(Math.max(0, centerX));
-                        }, stackPane.widthProperty(), stickyRegion.widthProperty());
-                    }
-
-                    // Add padding to BorderPane when sticky header is visible
-                    // This prevents content from being hidden under the fixed header
-                    if (stickyHeader instanceof StickyPriceHeader sph) {
-                        // GWT-compatible listener (Bindings.when() not available in GWT)
-                        FXProperties.runNowAndOnPropertyChange(showHeader -> {
-                            borderPane.setPadding(showHeader ? new Insets(60, 0, 0, 0) : Insets.EMPTY);
-                        }, sph.showHeaderProperty());
-                    }
+                    FXProperties.runNowAndOnPropertyChange(showHeader -> {
+                        borderPane.setPadding(showHeader ? new Insets(60, 0, 0, 0) : Insets.EMPTY);
+                    }, sph.showHeaderProperty());
                 }
             }
         }
@@ -933,11 +937,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 HasAccommodationSelectionSection.AccommodationOption selectedOption = soldOutSection.getSelectedOption();
                 if (selectedOption != null) {
                     Console.log("User selected alternative: " + selectedOption.getName());
-                    callbacks.onAccommodationSoldOutRecovery(selectedOption, this::navigateToSummary);
+                    // Get roommate info if collected in the sold-out section
+                    StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo roommateInfo = soldOutSection.getRoommateInfo();
+                    callbacks.onAccommodationSoldOutRecovery(selectedOption, roommateInfo, this::navigateToSummary);
                 }
             },
             "btn-primary booking-form-btn-primary",
-            Bindings.not(soldOutSection.validProperty())  // Disable until selection made
+            Bindings.not(soldOutSection.validProperty())  // Disable until selection and roommate info valid
         );
 
         // Cancel Booking button - cancels the booking entirely (left side)
@@ -954,22 +960,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     /**
-     * Cancels the current booking and exits to the event page.
+     * Cancels the current booking and returns to the first page of the form.
      * Called when user chooses to cancel from the sold-out recovery page.
      */
     private void cancelBookingAndExit() {
-        Console.log("User cancelled booking from sold-out recovery");
+        Console.log("User cancelled booking from sold-out recovery - returning to first page");
 
         WorkingBooking workingBooking = getWorkingBooking();
         if (workingBooking != null) {
             workingBooking.cancelChanges();
         }
 
-        // Navigate back to event page
-        // Use the activity callback if available to close the booking form
-        if (activityCallback != null) {
-            activityCallback.onEndReached();  // This signals the form is complete/cancelled
-        }
+        // Navigate back to the first page of the form so the user can start fresh
+        navigateToPage(0);
     }
 
     /**
@@ -1018,6 +1021,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 int pricePerNight = rate != null && rate.getPrice() != null ? rate.getPrice() : 0;
                 boolean perPerson = rate == null || rate.isPerPerson();
 
+                // Get constraint from ItemPolicy
+                ItemPolicy itemPolicy = policy.getItemPolicy(item);
+                HasAccommodationSelectionSection.ConstraintType constraintType = HasAccommodationSelectionSection.ConstraintType.NONE;
+                String constraintLabel = null;
+                int minNights = 0;
+
+                if (itemPolicy != null && itemPolicy.getMinDay() != null && itemPolicy.getMinDay() > 0) {
+                    constraintType = HasAccommodationSelectionSection.ConstraintType.MIN_NIGHTS;
+                    minNights = itemPolicy.getMinDay();
+                    constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
+                }
+
                 HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
                     itemId,
                     item,
@@ -1025,9 +1040,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     null, // Item doesn't have a description field
                     pricePerNight,
                     status,
-                    HasAccommodationSelectionSection.ConstraintType.NONE,
-                    null,
-                    0,
+                    constraintType,
+                    constraintLabel,
+                    minNights,
                     false,
                     null,
                     perPerson
@@ -1042,6 +1057,35 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .comparing((HasAccommodationSelectionSection.AccommodationOption o) ->
                 o.getAvailability() == HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT ? 1 : 0)
             .thenComparingInt(HasAccommodationSelectionSection.AccommodationOption::getPricePerNight));
+
+        // Add Share Accommodation option if configured in the policy
+        ItemPolicy sharingAccommodationItemPolicy = policy.getSharingAccommodationItemPolicy();
+        if (sharingAccommodationItemPolicy != null) {
+            Item sharingItem = sharingAccommodationItemPolicy.getItem();
+            if (sharingItem != null) {
+                // Get rate for pricing
+                Rate shareRate = policy.filterDailyRatesStreamOfSiteAndItem(null, sharingItem)
+                    .findFirst()
+                    .orElse(null);
+                int sharePricePerNight = shareRate != null && shareRate.getPrice() != null ? shareRate.getPrice() : 0;
+
+                HasAccommodationSelectionSection.AccommodationOption shareAccommodation = new HasAccommodationSelectionSection.AccommodationOption(
+                    sharingItem.getPrimaryKey(),
+                    sharingItem,
+                    sharingItem.getName() != null ? sharingItem.getName() : I18n.getI18nText(BookingPageI18nKeys.ShareAccommodation),
+                    I18n.getI18nText(BookingPageI18nKeys.ShareAccommodationDescription),
+                    sharePricePerNight,
+                    HasAccommodationSelectionSection.AvailabilityStatus.AVAILABLE,
+                    HasAccommodationSelectionSection.ConstraintType.NONE,
+                    null,
+                    0,
+                    false,          // isDayVisitor = false
+                    null,
+                    true            // perPerson
+                );
+                options.add(shareAccommodation);
+            }
+        }
 
         // Always add Day Visitor option at the end as a fallback
         HasAccommodationSelectionSection.AccommodationOption dayVisitor = new HasAccommodationSelectionSection.AccommodationOption(
@@ -2155,6 +2199,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
      */
     public BookingFormState getState() {
         return state;
+    }
+
+    /**
+     * Returns the sticky header if one was configured, or null otherwise.
+     * The caller is responsible for adding this to the appropriate overlay area
+     * (e.g., FXMainFrameOverlayArea.getOverlayChildren()).
+     */
+    public Node getStickyHeader() {
+        return stickyHeader;
     }
 
     /**

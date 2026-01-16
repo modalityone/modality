@@ -18,11 +18,16 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ItemPolicy;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
+import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
+import one.modality.booking.frontoffice.bookingpage.standard.StandardBookingFormCallbacks;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +97,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     // === DATA ===
     private WorkingBookingProperties workingBookingProperties;
 
+    // === ROOMMATE SECTION ===
+    private VBox roommateContainer;
+    private DefaultRoommateInfoSection roommateSection;
+    private VBox body;  // Reference to add roommate section after options
+
     public DefaultAccommodationSoldOutSection() {
         buildUI();
         setupBindings();
@@ -102,40 +112,50 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         container.setSpacing(0);
         container.setMaxWidth(720);
 
-        // === HEADER SECTION (warm cream background) ===
-        VBox header = createHeader();
+        // === COMBINED HEADER SECTION (warm cream background with rounded corners) ===
+        // Merges the header title and "What happened" explanation into one cohesive box
+        VBox header = createCombinedHeader();
 
         // === BODY SECTION ===
-        VBox body = new VBox(24);
+        body = new VBox(24);
         body.setPadding(new Insets(24));
 
-        // What happened section
-        VBox whatHappened = createWhatHappenedSection();
-
-        // Section title for alternatives
-        VBox alternativesHeader = new VBox(4);
-        Label alternativesTitle = I18nControls.newLabel(BookingPageI18nKeys.ChooseNewAccommodation);
-        alternativesTitle.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
-        alternativesHeader.getChildren().add(alternativesTitle);
+        // Section title for alternatives using StyledSectionHeader with home icon
+        HBox alternativesHeader = new StyledSectionHeader(BookingPageI18nKeys.ChooseNewAccommodation, StyledSectionHeader.ICON_HOME);
 
         // Options container for alternative accommodations
         optionsContainer = new VBox(12);
         optionsContainer.setAlignment(Pos.TOP_CENTER);
         optionsContainer.setFillWidth(true);
 
-        body.getChildren().addAll(whatHappened, alternativesHeader, optionsContainer);
+        // Roommate section (shown when selecting Double Room or Share Accommodation)
+        roommateContainer = new VBox(16);
+        roommateContainer.setVisible(false);
+        roommateContainer.setManaged(false);
+        roommateSection = new DefaultRoommateInfoSection();
+        roommateContainer.getChildren().add(roommateSection.getView());
+
+        body.getChildren().addAll(alternativesHeader, optionsContainer, roommateContainer);
 
         container.getChildren().addAll(header, body);
     }
 
-    private VBox createHeader() {
-        VBox header = new VBox(6);
+    /**
+     * Creates a combined header section with warm cream background and rounded corners.
+     * Merges the title, explanation text, and original selection display into one cohesive box.
+     */
+    private VBox createCombinedHeader() {
+        VBox header = new VBox(16);
         header.setAlignment(Pos.CENTER);
-        header.setPadding(new Insets(20, 24, 20, 24));
-        // Warm cream background color (#FFF8E7) - matching JSX mockup
-        header.setStyle("-fx-background-color: #FFF8E7; -fx-border-color: #F0E4CC; -fx-border-width: 0 0 1 0;");
+        header.setPadding(new Insets(24));
+        // Warm cream background with rounded corners (CSS via inline style)
+        header.setStyle("-fx-background-color: #FFF8E7; -fx-background-radius: 12; -fx-border-color: #F0E4CC; -fx-border-radius: 12; -fx-border-width: 1;");
 
-        // Refresh icon in amber circle (smaller)
+        // === TOP SECTION: Icon and title ===
+        VBox topSection = new VBox(6);
+        topSection.setAlignment(Pos.CENTER);
+
+        // Refresh icon in amber circle
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(48, 48);
         iconCircle.setMaxSize(48, 48);
@@ -150,29 +170,25 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         refreshIcon.setScaleY(1.0);
         iconCircle.getChildren().add(refreshIcon);
 
-        // Title (smaller)
+        // Title
         Label title = I18nControls.newLabel(BookingPageI18nKeys.AccommodationUpdateNeeded);
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #5D4E37;");
 
-        // Subtitle (smaller)
+        // Subtitle
         Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.AccommodationNoLongerAvailable);
         subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #6B5D4D;");
         subtitle.setWrapText(true);
 
-        header.getChildren().addAll(iconCircle, title, subtitle);
+        topSection.getChildren().addAll(iconCircle, title, subtitle);
         VBox.setMargin(title, new Insets(8, 0, 2, 0));
 
-        return header;
-    }
-
-    private VBox createWhatHappenedSection() {
-        VBox section = new VBox(12);
-        section.setPadding(new Insets(16));
-        section.setStyle("-fx-background-color: #F7F6F3; -fx-background-radius: 12; -fx-border-color: #E8E6E1; -fx-border-radius: 12; -fx-border-width: 1;");
+        // === EXPLANATION SECTION ===
+        VBox explanationSection = new VBox(8);
+        explanationSection.setAlignment(Pos.CENTER_LEFT);
 
         // What happened header with icon
-        HBox headerRow = new HBox(8);
-        headerRow.setAlignment(Pos.CENTER_LEFT);
+        HBox whatHappenedRow = new HBox(8);
+        whatHappenedRow.setAlignment(Pos.CENTER_LEFT);
 
         SVGPath infoIcon = new SVGPath();
         infoIcon.setContent(ICON_INFO);
@@ -180,23 +196,25 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         infoIcon.setScaleY(0.75);
         infoIcon.setFill(Color.web("#5D4E37"));
 
-        Label headerLabel = I18nControls.newLabel(BookingPageI18nKeys.WhatHappened);
-        headerLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: 600; -fx-text-fill: #5D4E37;");
+        Label whatHappenedLabel = I18nControls.newLabel(BookingPageI18nKeys.WhatHappened);
+        whatHappenedLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #5D4E37;");
 
-        headerRow.getChildren().addAll(infoIcon, headerLabel);
+        whatHappenedRow.getChildren().addAll(infoIcon, whatHappenedLabel);
 
         // Explanation text
         eventNameLabel = new Label();
         eventNameLabel.setWrapText(true);
-        eventNameLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #6B5D4D;");
+        eventNameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #6B5D4D;");
         updateExplanationText();
 
-        // Original selection box (with SOLD OUT badge)
+        explanationSection.getChildren().addAll(whatHappenedRow, eventNameLabel);
+
+        // === ORIGINAL SELECTION BOX (with SOLD OUT badge) ===
         HBox originalBox = createOriginalSelectionBox();
 
-        section.getChildren().addAll(headerRow, eventNameLabel, originalBox);
+        header.getChildren().addAll(topSection, explanationSection, originalBox);
 
-        return section;
+        return header;
     }
 
     private HBox createOriginalSelectionBox() {
@@ -228,9 +246,6 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     private void setupBindings() {
         // Update validity and visual state when option is selected
         selectedOptionProperty.addListener((obs, oldOption, newOption) -> {
-            boolean isValid = newOption != null && newOption.isAvailable();
-            validProperty.set(isValid);
-
             // Update card styles
             if (oldOption != null) {
                 VBox oldCard = optionCardMap.get(oldOption);
@@ -253,15 +268,89 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
                 }
             }
 
+            // Configure roommate section based on selected option
+            configureRoommateSection(newOption);
+
+            // Update combined validity
+            updateCombinedValidity();
+
             // Notify callback
             if (onOptionSelected != null && newOption != null) {
                 onOptionSelected.accept(newOption);
             }
         });
 
+        // Listen for roommate section validity changes
+        roommateSection.validProperty().addListener((obs, oldVal, newVal) -> updateCombinedValidity());
+
         // Rebuild cards when list changes
         alternativeOptions.addListener((ListChangeListener<HasAccommodationSelectionSection.AccommodationOption>) change ->
             UiScheduler.runInUiThread(this::rebuildOptionCards));
+    }
+
+    /**
+     * Configures the roommate section based on the selected accommodation option.
+     * Shows roommate fields for Double Rooms and Share Accommodation.
+     */
+    private void configureRoommateSection(HasAccommodationSelectionSection.AccommodationOption option) {
+        if (option == null || !option.isAvailable()) {
+            hideRoommateSection();
+            return;
+        }
+
+        Item item = option.getItemEntity();
+        boolean isShareAccommodation = item != null && Boolean.TRUE.equals(item.isShare_mate());
+        boolean isDayVisitor = option.isDayVisitor();
+
+        if (isShareAccommodation) {
+            // Share Accommodation: show single field for room booker
+            roommateSection.reset();
+            roommateSection.setIsRoomBooker(false);
+            roommateSection.setVisible(true);
+            roommateContainer.setVisible(true);
+            roommateContainer.setManaged(true);
+        } else if (!isDayVisitor && item != null) {
+            // Check room capacity for multi-person rooms
+            Integer capacity = item.getCapacity();
+            if (capacity != null && capacity > 1) {
+                // Double Room: show roommate fields
+                roommateSection.reset();
+                roommateSection.setRoomCapacity(capacity);
+                // Get minOccupancy from ItemPolicy if available
+                ItemPolicy itemPolicy = workingBookingProperties != null
+                    ? workingBookingProperties.getPolicyAggregate().getItemPolicy(item)
+                    : null;
+                int minOccupancy = (itemPolicy != null && itemPolicy.getMinOccupancy() != null)
+                    ? itemPolicy.getMinOccupancy() : capacity;
+                roommateSection.setMinOccupancy(minOccupancy);
+                roommateSection.setIsRoomBooker(true);
+                roommateSection.setVisible(true);
+                roommateContainer.setVisible(true);
+                roommateContainer.setManaged(true);
+            } else {
+                // Single room: hide roommate section
+                hideRoommateSection();
+            }
+        } else {
+            // Day visitor: hide roommate section
+            hideRoommateSection();
+        }
+    }
+
+    private void hideRoommateSection() {
+        roommateSection.setVisible(false);
+        roommateContainer.setVisible(false);
+        roommateContainer.setManaged(false);
+    }
+
+    /**
+     * Updates the combined validity based on accommodation selection and roommate section.
+     */
+    private void updateCombinedValidity() {
+        HasAccommodationSelectionSection.AccommodationOption selected = selectedOptionProperty.get();
+        boolean accommodationValid = selected != null && selected.isAvailable();
+        boolean roommateValid = !roommateSection.isVisible() || roommateSection.validProperty().get();
+        validProperty.set(accommodationValid && roommateValid);
     }
 
     private void rebuildOptionCards() {
@@ -274,7 +363,16 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         HasAccommodationSelectionSection.AccommodationOption matchingOption = null;
 
-        for (HasAccommodationSelectionSection.AccommodationOption option : alternativeOptions) {
+        // Sort options by Item.ord field (null ord values go to end)
+        List<HasAccommodationSelectionSection.AccommodationOption> sortedOptions = alternativeOptions.stream()
+            .sorted(Comparator.comparing(
+                option -> {
+                    Item item = option.getItemEntity();
+                    return item != null && item.getOrd() != null ? item.getOrd() : Integer.MAX_VALUE;
+                }))
+            .toList();
+
+        for (HasAccommodationSelectionSection.AccommodationOption option : sortedOptions) {
             boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
             VBox card = createOptionCard(option, isSelected);
             optionsContainer.getChildren().add(card);
@@ -394,6 +492,15 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         contentBox.getChildren().add(headerRow);
 
+        // === BADGES ROW: Constraint badge (minimum nights, etc.) ===
+        if (option.hasConstraint()) {
+            HBox badgesRow = new HBox(8);
+            badgesRow.setAlignment(Pos.CENTER_LEFT);
+            HBox constraintBadge = createConstraintBadge(option, isSoldOut);
+            badgesRow.getChildren().add(constraintBadge);
+            contentBox.getChildren().add(badgesRow);
+        }
+
         // Description
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label descLabel = new Label(option.getDescription());
@@ -405,6 +512,24 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             }
             descLabel.setWrapText(true);
             contentBox.getChildren().add(descLabel);
+        }
+
+        // === SHARING NOTE for "Per room" accommodations with capacity > 1 ===
+        // Explains that one person books the room, roommates use "Share Accommodation"
+        if (!option.isDayVisitor() && !option.isPerPerson()) {
+            Item item = option.getItemEntity();
+            Integer capacity = item != null ? item.getCapacity() : null;
+            if (capacity != null && capacity > 1) {
+                Label sharingNote = new Label("One person books the room, roommate(s) select 'Share Accommodation'");
+                sharingNote.getStyleClass().add("bookingpage-text-sm");
+                if (isSoldOut) {
+                    sharingNote.getStyleClass().add("bookingpage-text-muted-disabled");
+                } else {
+                    sharingNote.getStyleClass().add("bookingpage-text-muted");
+                }
+                sharingNote.setWrapText(true);
+                contentBox.getChildren().add(sharingNote);
+            }
         }
 
         // Wrap content with checkmark badge or sold out ribbon
@@ -464,6 +589,43 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         ribbon.setTranslateY(18);
 
         return ribbon;
+    }
+
+    /**
+     * Creates a constraint badge for the accommodation option (e.g., "Minimum 2 nights").
+     * Copied from DefaultAccommodationSelectionSection to maintain consistency.
+     */
+    private HBox createConstraintBadge(HasAccommodationSelectionSection.AccommodationOption option, boolean isSoldOut) {
+        HBox badge = new HBox(5);
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setPadding(new Insets(4, 10, 4, 10));
+        badge.setMaxWidth(Region.USE_PREF_SIZE);
+        badge.getStyleClass().add("bookingpage-badge-constraint");
+
+        // Apply disabled class for sold out state - CSS handles colors
+        if (isSoldOut) {
+            badge.getStyleClass().add("disabled");
+        }
+
+        // Info icon (circle with "i" - using SVG path) - CSS handles colors
+        SVGPath infoIcon = new SVGPath();
+        infoIcon.setContent(ICON_INFO);
+        infoIcon.setScaleX(0.5);
+        infoIcon.setScaleY(0.5);
+        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
+
+        // Text
+        String constraintText = option.getConstraintLabel();
+        if (constraintText == null) {
+            constraintText = option.getConstraintType() == HasAccommodationSelectionSection.ConstraintType.FULL_EVENT_ONLY
+                ? I18n.getI18nText(BookingPageI18nKeys.FullFestivalOnly)
+                : I18n.getI18nText(BookingPageI18nKeys.MinNights, option.getMinNights());
+        }
+        Label textLabel = new Label(constraintText);
+        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+
+        badge.getChildren().addAll(infoIcon, textLabel);
+        return badge;
     }
 
     private void updateExplanationText() {
@@ -562,5 +724,21 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     @Override
     public String getValidationMessage() {
         return I18n.getI18nText(BookingPageI18nKeys.PleaseSelectAccommodation);
+    }
+
+    @Override
+    public StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo getRoommateInfo() {
+        if (roommateSection == null || !roommateSection.isVisible()) {
+            return null;
+        }
+
+        boolean isRoomBooker = roommateSection.isRoomBooker();
+        if (isRoomBooker) {
+            List<String> names = roommateSection.getAllRoommateNames();
+            return new StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo(true, names, null);
+        } else {
+            String ownerName = roommateSection.getRoommateName();
+            return new StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo(false, null, ownerName);
+        }
     }
 }

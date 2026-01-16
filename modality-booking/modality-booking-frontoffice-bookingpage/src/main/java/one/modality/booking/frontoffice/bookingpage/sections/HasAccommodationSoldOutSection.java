@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
+import one.modality.booking.frontoffice.bookingpage.standard.StandardBookingFormCallbacks;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.List;
@@ -116,4 +117,17 @@ public interface HasAccommodationSoldOutSection extends BookingFormSection {
      * Typically "Please select an accommodation option".
      */
     String getValidationMessage();
+
+    // === Roommate Information ===
+
+    /**
+     * Returns the roommate information collected in this section.
+     * This is used when the selected accommodation requires roommate info
+     * (e.g., Double Room or Share Accommodation).
+     *
+     * @return Roommate info if collected, or null if no roommate section is visible
+     */
+    default StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo getRoommateInfo() {
+        return null;  // Default: no roommate section
+    }
 }
