@@ -6,18 +6,18 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
 import dev.webfx.stack.orm.entity.impl.EntityFactoryProviderImpl;
 import one.modality.base.shared.entities.EventPhase;
-import one.modality.base.shared.entities.PhaseCoverage;
+import one.modality.base.shared.entities.EventPhaseCoverage;
 
 import java.util.List;
 
 /**
  * @author Bruno Salmon
  */
-public final class PhaseCoverageImpl extends DynamicEntity implements PhaseCoverage {
+public final class EventPhaseCoverageImpl extends DynamicEntity implements EventPhaseCoverage {
 
     private List<EventPhase> phases;
 
-    public PhaseCoverageImpl(EntityId id, EntityStore store) {
+    public EventPhaseCoverageImpl(EntityId id, EntityStore store) {
         super(id, store);
     }
 
@@ -37,9 +37,9 @@ public final class PhaseCoverageImpl extends DynamicEntity implements PhaseCover
         setPhase4(Collections.get(phases, 3));
     }
 
-    public static final class ProvidedFactory extends EntityFactoryProviderImpl<PhaseCoverage> {
+    public static final class ProvidedFactory extends EntityFactoryProviderImpl<EventPhaseCoverage> {
         public ProvidedFactory() {
-            super(PhaseCoverage.class, PhaseCoverageImpl::new);
+            super(EventPhaseCoverage.class, EventPhaseCoverageImpl::new);
         }
     }
 }

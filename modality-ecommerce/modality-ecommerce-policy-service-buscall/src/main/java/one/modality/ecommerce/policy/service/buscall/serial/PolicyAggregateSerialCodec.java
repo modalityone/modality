@@ -21,8 +21,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
     private static final String EVENT_SELECTIONS_QUERY_RESULT_KEY = "esqr";
     private static final String EVENT_PHASES_QUERY_BASE_KEY = "ephqb";
     private static final String EVENT_PHASES_QUERY_RESULT_KEY = "ephqr";
-    private static final String PHASE_COVERAGES_QUERY_BASE_KEY = "pcqb";
-    private static final String PHASE_COVERAGES_QUERY_RESULT_KEY = "pcqr";
+    private static final String EVENT_PHASE_COVERAGES_QUERY_BASE_KEY = "epcqb";
+    private static final String EVENT_PHASE_COVERAGES_QUERY_RESULT_KEY = "epcqr";
     private static final String RATES_QUERY_BASE_KEY = "rqb";
     private static final String RATES_QUERY_RESULT_KEY = "rqr";
     private static final String ITEM_FAMILY_POLICIES_QUERY_BASE_KEY = "ifpqb";
@@ -49,8 +49,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
         encodeObject(serial, EVENT_SELECTIONS_QUERY_RESULT_KEY,      pa.getEventSelectionsQueryResult());
         encodeString(serial, EVENT_PHASES_QUERY_BASE_KEY,            pa.getEventPhasesQueryBase());
         encodeObject(serial, EVENT_PHASES_QUERY_RESULT_KEY,          pa.getEventPhasesQueryResult());
-        encodeString(serial, PHASE_COVERAGES_QUERY_BASE_KEY,         pa.getPhaseCoveragesQueryBase());
-        encodeObject(serial, PHASE_COVERAGES_QUERY_RESULT_KEY,       pa.getPhaseCoveragesQueryResult());
+        encodeString(serial, EVENT_PHASE_COVERAGES_QUERY_BASE_KEY,   pa.getEventPhaseCoveragesQueryBase());
+        encodeObject(serial, EVENT_PHASE_COVERAGES_QUERY_RESULT_KEY, pa.getEventPhaseCoveragesQueryResult());
         encodeString(serial, ITEM_FAMILY_POLICIES_QUERY_BASE_KEY,    pa.getItemFamilyPoliciesQueryBase());
         encodeObject(serial, ITEM_FAMILY_POLICIES_QUERY_RESULT_KEY,  pa.getItemFamilyPoliciesQueryResult());
         encodeString(serial, ITEM_POLICIES_QUERY_BASE_KEY,           pa.getItemPoliciesQueryBase());
@@ -74,8 +74,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
             decodeObject(serial, EVENT_SELECTIONS_QUERY_RESULT_KEY),
             decodeString(serial, EVENT_PHASES_QUERY_BASE_KEY),
             decodeObject(serial, EVENT_PHASES_QUERY_RESULT_KEY),
-            decodeString(serial, PHASE_COVERAGES_QUERY_BASE_KEY),
-            decodeObject(serial, PHASE_COVERAGES_QUERY_RESULT_KEY),
+            decodeString(serial, EVENT_PHASE_COVERAGES_QUERY_BASE_KEY),
+            decodeObject(serial, EVENT_PHASE_COVERAGES_QUERY_RESULT_KEY),
             decodeString(serial, ITEM_FAMILY_POLICIES_QUERY_BASE_KEY),
             decodeObject(serial, ITEM_FAMILY_POLICIES_QUERY_RESULT_KEY),
             decodeString(serial, ITEM_POLICIES_QUERY_BASE_KEY),

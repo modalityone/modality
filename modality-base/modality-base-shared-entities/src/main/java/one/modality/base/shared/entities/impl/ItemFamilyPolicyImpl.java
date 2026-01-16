@@ -6,7 +6,7 @@ import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.impl.DynamicEntity;
 import dev.webfx.stack.orm.entity.impl.EntityFactoryProviderImpl;
 import one.modality.base.shared.entities.ItemFamilyPolicy;
-import one.modality.base.shared.entities.PhaseCoverage;
+import one.modality.base.shared.entities.EventPhaseCoverage;
 
 import java.util.List;
 
@@ -15,21 +15,21 @@ import java.util.List;
  */
 public final class ItemFamilyPolicyImpl extends DynamicEntity implements ItemFamilyPolicy {
 
-    private List<PhaseCoverage> phaseCoverages;
+    private List<EventPhaseCoverage> phaseCoverages;
 
     public ItemFamilyPolicyImpl(EntityId id, EntityStore store) {
         super(id, store);
     }
 
     @Override
-    public List<PhaseCoverage> getPhaseCoverages() {
+    public List<EventPhaseCoverage> getPhaseCoverages() {
         if (phaseCoverages == null)
             phaseCoverages = Collections.removeNulls(Collections.listOf(getPhaseCoverage1(), getPhaseCoverage2(), getPhaseCoverage3(), getPhaseCoverage4()));
         return phaseCoverages;
     }
 
     @Override
-    public void setPhaseCoverages(List<PhaseCoverage> phaseCoverages) {
+    public void setPhaseCoverages(List<EventPhaseCoverage> phaseCoverages) {
         this.phaseCoverages = phaseCoverages;
         setPhaseCoverage1(Collections.get(phaseCoverages, 0));
         setPhaseCoverage2(Collections.get(phaseCoverages, 1));

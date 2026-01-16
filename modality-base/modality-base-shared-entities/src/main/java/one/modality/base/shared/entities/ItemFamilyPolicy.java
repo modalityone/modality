@@ -39,7 +39,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntityId(phaseCoverage1);
     }
 
-    default PhaseCoverage getPhaseCoverage1() {
+    default EventPhaseCoverage getPhaseCoverage1() {
         return getForeignEntity(phaseCoverage1);
     }
 
@@ -51,7 +51,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntityId(phaseCoverage2);
     }
 
-    default PhaseCoverage getPhaseCoverage2() {
+    default EventPhaseCoverage getPhaseCoverage2() {
         return getForeignEntity(phaseCoverage2);
     }
 
@@ -63,7 +63,7 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntityId(phaseCoverage3);
     }
 
-    default PhaseCoverage getPhaseCoverage3() {
+    default EventPhaseCoverage getPhaseCoverage3() {
         return getForeignEntity(phaseCoverage3);
     }
 
@@ -75,12 +75,12 @@ public interface ItemFamilyPolicy extends Entity,
         return getForeignEntityId(phaseCoverage4);
     }
 
-    default PhaseCoverage getPhaseCoverage4() {
+    default EventPhaseCoverage getPhaseCoverage4() {
         return getForeignEntity(phaseCoverage4);
     }
 
-    List<PhaseCoverage> getPhaseCoverages(); // implemented in ItemFamilyPolicyImpl
+    List<EventPhaseCoverage> getPhaseCoverages(); // implemented in ItemFamilyPolicyImpl
 
-    void setPhaseCoverages(List<PhaseCoverage> phaseCoverages); // implemented in ItemFamilyPolicyImpl
+    void setPhaseCoverages(List<EventPhaseCoverage> phaseCoverages); // implemented in ItemFamilyPolicyImpl
 
 }

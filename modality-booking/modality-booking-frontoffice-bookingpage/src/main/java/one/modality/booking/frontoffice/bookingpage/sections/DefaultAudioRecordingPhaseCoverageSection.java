@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.PhaseCoverage;
+import one.modality.base.shared.entities.EventPhaseCoverage;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -418,7 +418,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         clearOptions();
 
         // Get audio recording phase coverages
-        List<PhaseCoverage> phaseCoverages = policyAggregate.getAudioRecordingPhaseCoverages();
+        List<EventPhaseCoverage> phaseCoverages = policyAggregate.getAudioRecordingPhaseCoverages();
         if (phaseCoverages == null || phaseCoverages.isEmpty()) {
             Console.log("DefaultAudioRecordingPhaseCoverageSection: No phase coverages found");
             rebuildUI();
@@ -445,7 +445,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         addOption(noRecordingOption);
 
         // Create options for each phase coverage + language combination
-        for (PhaseCoverage pc : phaseCoverages) {
+        for (EventPhaseCoverage pc : phaseCoverages) {
             LocalDate phaseStartDate = pc.getStartDate();
             LocalDate phaseEndDate = pc.getEndDate();
 

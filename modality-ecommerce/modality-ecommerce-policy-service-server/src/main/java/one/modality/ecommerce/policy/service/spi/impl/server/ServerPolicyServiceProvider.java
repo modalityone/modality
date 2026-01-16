@@ -40,9 +40,9 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private final static String EVENT_PHASES_QUERY_BASE =
         "select event,name,label,startBoundary,endBoundary" +
         " from EventPhase eph";
-    private final static String PHASE_COVERAGES_QUERY_BASE =
+    private final static String EVENT_PHASE_COVERAGES_QUERY_BASE =
         "select event,name,label,phase1,phase2,phase3,phase4" +
-        " from PhaseCoverage pc";
+        " from EventPhaseCoverage epc";
     private final static String ITEM_FAMILY_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event)" +
         ",itemFamily.ord" +
@@ -92,7 +92,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " order by id", eventPk)
                     // 5 - Loading phase coverages (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
-                    PHASE_COVERAGES_QUERY_BASE + " where (select pc.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
+                    EVENT_PHASE_COVERAGES_QUERY_BASE + " where (select epc.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by id", eventPk) // Will introduce an ord later
                     // 6 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
@@ -133,7 +133,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                 EVENT_PARTS_QUERY_BASE, batch.get(2),
                 EVENT_SELECTIONS_QUERY_BASE, batch.get(3),
                 EVENT_PHASES_QUERY_BASE, batch.get(4),
-                PHASE_COVERAGES_QUERY_BASE, batch.get(5),
+                EVENT_PHASE_COVERAGES_QUERY_BASE, batch.get(5),
                 ITEM_FAMILY_POLICIES_QUERY_BASE, batch.get(6),
                 ITEM_POLICIES_QUERY_BASE, batch.get(7),
                 RATES_QUERY_BASE, batch.get(8),

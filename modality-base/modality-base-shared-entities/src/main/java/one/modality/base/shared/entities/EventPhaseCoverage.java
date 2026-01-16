@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * @author Bruno Salmon
  */
-public interface PhaseCoverage extends Entity,
+public interface EventPhaseCoverage extends Entity,
     EntityHasEvent,
     EntityHasName,
     EntityHasLabel,

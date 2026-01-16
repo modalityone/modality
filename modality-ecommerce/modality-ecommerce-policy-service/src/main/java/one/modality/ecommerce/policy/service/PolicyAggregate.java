@@ -39,8 +39,8 @@ public final class PolicyAggregate {
     private final QueryResult eventSelectionsQueryResult;
     private final String eventPhasesQueryBase;
     private final QueryResult eventPhasesQueryResult;
-    private final String phaseCoveragesQueryBase;
-    private final QueryResult phaseCoveragesQueryResult;
+    private final String eventPhaseCoveragesQueryBase;
+    private final QueryResult eventPhaseCoveragesQueryResult;
     private final String itemFamilyPoliciesQueryBase;
     private final QueryResult itemFamilyPoliciesQueryResult;
     private final String itemPoliciesQueryBase;
@@ -60,7 +60,7 @@ public final class PolicyAggregate {
     private EntityList<EventPart> eventParts;
     private EntityList<EventSelection> eventSelections;
     private EntityList<EventPhase> eventPhases;
-    private EntityList<PhaseCoverage> phaseCoverages;
+    private EntityList<EventPhaseCoverage> phaseCoverages;
     private EntityList<ItemFamilyPolicy> itemFamilyPolicies;
     private EntityList<ItemPolicy> itemPolicies;
     private EntityList<Rate> rates;
@@ -72,7 +72,7 @@ public final class PolicyAggregate {
                            String eventPartsQueryBase, QueryResult eventPartsQueryResult,
                            String eventSelectionsQueryBase, QueryResult eventSelectionsQueryResult,
                            String eventPhasesQueryBase, QueryResult eventPhasesQueryResult,
-                           String phaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
+                           String eventPhaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
                            String itemFamilyPoliciesQueryBase, QueryResult itemFamilyPoliciesQueryResult,
                            String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
                            String ratesQueryBase, QueryResult ratesQueryResult,
@@ -88,8 +88,8 @@ public final class PolicyAggregate {
         this.eventSelectionsQueryResult = eventSelectionsQueryResult;
         this.eventPhasesQueryBase = eventPhasesQueryBase;
         this.eventPhasesQueryResult = eventPhasesQueryResult;
-        this.phaseCoveragesQueryBase = phaseCoveragesQueryBase;
-        this.phaseCoveragesQueryResult = phaseCoveragesQueryResult;
+        this.eventPhaseCoveragesQueryBase = eventPhaseCoveragesQueryBase;
+        this.eventPhaseCoveragesQueryResult = phaseCoveragesQueryResult;
         this.ratesQueryBase = ratesQueryBase;
         this.ratesQueryResult = ratesQueryResult;
         this.itemFamilyPoliciesQueryBase = itemFamilyPoliciesQueryBase;
@@ -113,8 +113,8 @@ public final class PolicyAggregate {
         eventSelections = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventSelectionsQueryResult, queryMapping, entityStore, "eventSelections");
         queryMapping = dataSourceModel.parseAndCompileSelect(eventPhasesQueryBase).getQueryMapping();
         eventPhases = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventPhasesQueryResult, queryMapping, entityStore, "eventPhases");
-        queryMapping = dataSourceModel.parseAndCompileSelect(phaseCoveragesQueryBase).getQueryMapping();
-        phaseCoverages = QueryResultToEntitiesMapper.mapQueryResultToEntities(phaseCoveragesQueryResult, queryMapping, entityStore, "phaseCoverages");
+        queryMapping = dataSourceModel.parseAndCompileSelect(eventPhaseCoveragesQueryBase).getQueryMapping();
+        phaseCoverages = QueryResultToEntitiesMapper.mapQueryResultToEntities(eventPhaseCoveragesQueryResult, queryMapping, entityStore, "phaseCoverages");
         queryMapping = dataSourceModel.parseAndCompileSelect(itemFamilyPoliciesQueryBase).getQueryMapping();
         itemFamilyPolicies = QueryResultToEntitiesMapper.mapQueryResultToEntities(itemFamilyPoliciesQueryResult, queryMapping, entityStore, "itemFamilyPolicies");
         queryMapping = dataSourceModel.parseAndCompileSelect(itemPoliciesQueryBase).getQueryMapping();
@@ -182,7 +182,7 @@ public final class PolicyAggregate {
         return eventPhases;
     }
 
-    public EntityList<PhaseCoverage> getPhaseCoverages() {
+    public EntityList<EventPhaseCoverage> getPhaseCoverages() {
         return phaseCoverages;
     }
 
@@ -256,7 +256,7 @@ public final class PolicyAggregate {
             .findFirst().orElse(null);
     }
 
-    public List<PhaseCoverage> getAudioRecordingPhaseCoverages() {
+    public List<EventPhaseCoverage> getAudioRecordingPhaseCoverages() {
         ItemFamilyPolicy audioRecordingPolicy = getItemFamilyPolicy(KnownItemFamily.AUDIO_RECORDING);
         if (audioRecordingPolicy == null) return Collections.emptyList();
         return audioRecordingPolicy.getPhaseCoverages();
@@ -435,12 +435,12 @@ public final class PolicyAggregate {
         return eventPhasesQueryResult;
     }
 
-    public String getPhaseCoveragesQueryBase() {
-        return phaseCoveragesQueryBase;
+    public String getEventPhaseCoveragesQueryBase() {
+        return eventPhaseCoveragesQueryBase;
     }
 
-    public QueryResult getPhaseCoveragesQueryResult() {
-        return phaseCoveragesQueryResult;
+    public QueryResult getEventPhaseCoveragesQueryResult() {
+        return eventPhaseCoveragesQueryResult;
     }
 
     public String getItemFamilyPoliciesQueryBase() {

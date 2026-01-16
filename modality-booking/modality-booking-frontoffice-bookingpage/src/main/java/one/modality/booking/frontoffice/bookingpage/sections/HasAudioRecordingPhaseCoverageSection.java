@@ -4,7 +4,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.PhaseCoverage;
+import one.modality.base.shared.entities.EventPhaseCoverage;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.ResettableSection;
@@ -31,7 +31,7 @@ import java.util.function.Consumer;
  *
  * @author Bruno Salmon
  * @see BookingFormSection
- * @see PhaseCoverage
+ * @see EventPhaseCoverage
  */
 public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSection, ResettableSection {
 
@@ -41,7 +41,7 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
      * and the list of ScheduledItems to book when selected.
      */
     class AudioRecordingPhaseOption {
-        private final PhaseCoverage phaseCoverage;
+        private final EventPhaseCoverage phaseCoverage;
         private final Item audioRecordingItem;  // The Item (language) for this option
         private final List<ScheduledItem> scheduledItems;  // ScheduledItems to book when selected
         private final String name;
@@ -62,9 +62,9 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
          * @param endDate end date of the phase
          * @param price calculated price for this option
          */
-        public AudioRecordingPhaseOption(PhaseCoverage phaseCoverage, Item audioRecordingItem,
-                                          List<ScheduledItem> scheduledItems, String name,
-                                          LocalDate startDate, LocalDate endDate, int price) {
+        public AudioRecordingPhaseOption(EventPhaseCoverage phaseCoverage, Item audioRecordingItem,
+                                         List<ScheduledItem> scheduledItems, String name,
+                                         LocalDate startDate, LocalDate endDate, int price) {
             this.phaseCoverage = phaseCoverage;
             this.audioRecordingItem = audioRecordingItem;
             this.scheduledItems = scheduledItems != null ? scheduledItems : Collections.emptyList();
@@ -87,7 +87,7 @@ public interface HasAudioRecordingPhaseCoverageSection extends BookingFormSectio
             this.price = 0;
         }
 
-        public PhaseCoverage getPhaseCoverage() { return phaseCoverage; }
+        public EventPhaseCoverage getPhaseCoverage() { return phaseCoverage; }
         public Item getAudioRecordingItem() { return audioRecordingItem; }
         public List<ScheduledItem> getScheduledItems() { return scheduledItems; }
         public String getName() { return name; }
