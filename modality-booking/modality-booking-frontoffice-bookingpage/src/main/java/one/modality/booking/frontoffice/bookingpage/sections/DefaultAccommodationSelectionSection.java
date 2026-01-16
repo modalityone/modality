@@ -111,10 +111,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AccommodationOptions, StyledSectionHeader.ICON_HOME);
 
         // Info box explaining what price includes (per JSX mockup)
-        // Note: Price shown is teachings + accommodation only (meals are selected in the next step)
         priceIncludesInfoBox = BookingPageUIBuilder.createPriceIncludesInfoBox(
-            "All teachings and accommodation for the full event.",
-            "You can adjust dates and options like meals in the next step"
+            I18n.getI18nText(BookingPageI18nKeys.PriceIncludesTeachingsAccommodationMeals),
+            I18n.getI18nText(BookingPageI18nKeys.AdjustDatesAndOptionsNextStep)
         );
 
         // Options container - VBox for full-width cards (changed from FlowPane)

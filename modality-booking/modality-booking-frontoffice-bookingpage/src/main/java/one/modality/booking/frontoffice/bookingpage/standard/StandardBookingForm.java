@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.panes.GrowingPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -306,28 +307,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 stickyRegion.setMaxWidth(800);
             }
 
-            // Add sticky header to FXMainFrameOverlayArea when scene becomes available
-            // This places it outside the ScrollPane hierarchy for true fixed positioning
-            FXProperties.runOnPropertyChange(scene -> {
-                if (scene != null) {
-                    // Use reflection-free approach: access overlay through known static method
-                    try {
-                        Class<?> overlayClass = Class.forName("one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea");
-                        java.lang.reflect.Method getOverlayChildren = overlayClass.getMethod("getOverlayChildren");
-                        @SuppressWarnings("unchecked")
-                        javafx.collections.ObservableList<Node> overlayChildren =
-                            (javafx.collections.ObservableList<Node>) getOverlayChildren.invoke(null);
-                        if (!overlayChildren.contains(stickyHeader)) {
-                            overlayChildren.add(stickyHeader);
-                        }
-                    } catch (Exception e) {
-                        // Fallback: add to internal StackPane if overlay not available
-                        if (!stackPane.getChildren().contains(stickyHeader)) {
-                            stackPane.getChildren().add(stickyHeader);
-                        }
-                    }
-                }
-            }, node.sceneProperty());
 
             // Listen for visibility changes to add/remove padding on the form content
             // This prevents content from being hidden under the fixed header
@@ -1598,9 +1577,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     private Future<Void> handlePaymentSubmit(int amount, PaymentAllocation[] paymentAllocations) {
         PaymentFormType preferredFormType =
-            // Temporarily hardcoded: using embedded payment form for STTP (because the redirected payment form doesn't work)
-            Entities.samePrimaryKey(getEvent().getType(), 48) ? PaymentFormType.EMBEDDED
-                // and the redirected payment form for other events
+            // Using embedded payment form for STTP (type 48) and US Festival (type 38)
+            Entities.samePrimaryKey(getEvent().getType(), 48) // STTP
+            || Entities.samePrimaryKey(getEvent().getType(), 38) // US Festival
+                ? PaymentFormType.EMBEDDED
                 : PaymentFormType.REDIRECTED;
         return ClientPaymentUtil.initiateRedirectedPaymentAndRedirectToGatewayPaymentPage(amount, paymentAllocations, preferredFormType)
             .onSuccess(webPaymentForm -> {
@@ -1613,14 +1593,61 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         if (paymentStatus.isSuccessful())
                             handleEmbeddedPaymentSuccess(amount);
                     });
-                    Node paymentFormView = gatewayPaymentForm.getView();
-                    // TODO: display this in a new page
+                    // Display the embedded payment form
+                    displayEmbeddedPaymentForm(gatewayPaymentForm, amount);
                 }
             })
             .mapEmpty();
     }
 
-        // TODO: once embedded payment is implemented, call back this method on payment success
+    /**
+     * Displays the embedded gateway payment form using CompositeBookingFormPage.
+     * Follows the same pattern as PaymentPage.displayGatewayPaymentForm().
+     *
+     * @param gatewayPaymentForm The payment form to display (contains Pay/Cancel buttons)
+     * @param amount The payment amount for success handling
+     */
+    private void displayEmbeddedPaymentForm(GatewayPaymentForm gatewayPaymentForm, int amount) {
+        // Wrap in GrowingPane like PaymentPage does (maintains size when unloaded)
+        GrowingPane growingPane = new GrowingPane(gatewayPaymentForm.getView());
+
+        // Create wrapper section for the payment form
+        BookingFormSection paymentFormSection = new BookingFormSection() {
+            @Override
+            public Object getTitleI18nKey() { return BookingPageI18nKeys.Payment; }
+
+            @Override
+            public Node getView() { return growingPane; }
+
+            @Override
+            public void setWorkingBookingProperties(WorkingBookingProperties props) { }
+        };
+
+        // Create page using CompositeBookingFormPage API
+        CompositeBookingFormPage embeddedPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            paymentFormSection
+        );
+
+        // Configure page:
+        // - setStep(false): Stay on the same header navigation step
+        // - setShowingOwnSubmitButton(true): ProvidedGatewayPaymentForm has its own Pay/Cancel buttons
+        // - setCanGoBack(false): Prevent back navigation during payment (like PaymentPage)
+        embeddedPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        // Handle cancel: show cancellation message and unload form (like PaymentPage)
+        gatewayPaymentForm.setCancelPaymentResultHandler(ar -> {
+            growingPane.setContent(null); // Unload payment form
+            navigateToConfirmation(); // Navigate to confirmation with cancellation state
+        });
+
+        // Display the page
+        navigateToSpecialPage(embeddedPaymentPage);
+    }
+
     private void handleEmbeddedPaymentSuccess(int amount) {
         // Convert to callbacks result type
         StandardBookingFormCallbacks.PaymentResult result = new StandardBookingFormCallbacks.PaymentResult(amount);

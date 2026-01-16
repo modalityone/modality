@@ -21,6 +21,7 @@ public interface BookingPageI18nKeys {
     Object AddOptionsToBooking = "AddOptionsToBooking";
     Object AddToBasketAndContinue = "AddToBasketAndContinue";
     Object AdditionalOptions = "AdditionalOptions";
+    Object AdjustDatesAndOptionsNextStep = "AdjustDatesAndOptionsNextStep";
     Object Afternoon = "Afternoon";
     Object AirportShuttle = "AirportShuttle";
     Object AllMealsVegetarian = "AllMealsVegetarian";
@@ -256,6 +257,7 @@ public interface BookingPageI18nKeys {
     Object PleaseSelectAccommodation = "PleaseSelectAccommodation";
     Object Prerequisite = "Prerequisite";
     Object PriceBreakdown = "PriceBreakdown";
+    Object PriceIncludesTeachingsAccommodationMeals = "PriceIncludesTeachingsAccommodationMeals";
     Object PricesReflectRate = "PricesReflectRate";
     Object ProceedToPayment = "ProceedToPayment";
     Object ProceedToPaymentArrow = "ProceedToPaymentArrow";

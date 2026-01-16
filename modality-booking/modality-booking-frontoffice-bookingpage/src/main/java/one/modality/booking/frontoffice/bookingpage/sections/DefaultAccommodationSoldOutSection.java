@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of the accommodation sold out recovery section.
@@ -370,7 +372,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
                     Item item = option.getItemEntity();
                     return item != null && item.getOrd() != null ? item.getOrd() : Integer.MAX_VALUE;
                 }))
-            .toList();
+            .collect(Collectors.toList());
 
         for (HasAccommodationSelectionSection.AccommodationOption option : sortedOptions) {
             boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
