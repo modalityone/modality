@@ -176,7 +176,7 @@ public final class WorkingBooking {
         documentChanges.addAll(workingBooking.documentChanges);
     }
 
-    public DocumentLine bookAtemporalItem(Site site, Item item) {
+    public DocumentLine bookNonTemporalItem(Site site, Item item) {
         return bookItem(site, item, false);
     }
 
