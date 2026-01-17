@@ -125,6 +125,19 @@ public interface HasPaymentSection extends BookingFormSection {
     void setDepositAmount(int amount);
 
     /**
+     * Sets the amount already paid (for display in booking summary).
+     * When set to a value > 0, a "Payments Made" row will be displayed
+     * in the booking summary section showing this amount.
+     * @param amount the amount already paid in cents
+     */
+    void setPaymentsMade(int amount);
+
+    /**
+     * Returns the amount already paid.
+     */
+    int getPaymentsMade();
+
+    /**
      * Adds a booking item to the payment summary.
      */
     void addBookingItem(PaymentBookingItem item);

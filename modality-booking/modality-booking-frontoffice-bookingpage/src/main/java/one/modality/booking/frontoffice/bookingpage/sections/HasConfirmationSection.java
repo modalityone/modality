@@ -74,4 +74,13 @@ public interface HasConfirmationSection extends BookingFormSection {
      * Sets the callback for when "Make Another Booking" is clicked.
      */
     void setOnMakeAnotherBooking(Runnable callback);
+
+    /**
+     * Sets whether this is a payment-only confirmation (PAY_BOOKING entry point).
+     * When true:
+     * - Hides the "What's Next?" section (user already knows next steps)
+     * - Simplifies the confirmation message (removes email receipt mention)
+     * @param paymentOnly true for payment-only confirmation
+     */
+    void setPaymentOnly(boolean paymentOnly);
 }

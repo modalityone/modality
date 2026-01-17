@@ -241,9 +241,11 @@ public interface BookingPageI18nKeys {
     Object PaymentConfirmedMessage = "PaymentConfirmedMessage";
     Object PaymentDeclined = "PaymentDeclined";
     Object PaymentNotCompleted = "PaymentNotCompleted";
+    Object PaymentOnlyConfirmedMessage = "PaymentOnlyConfirmedMessage";
     Object PaymentReceived = "PaymentReceived";
     Object PaymentReceivedProcessing = "PaymentReceivedProcessing";
     Object PaymentSummary = "PaymentSummary";
+    Object PaymentsMade = "PaymentsMade";
     Object Pending = "Pending";
     Object PendingAuthorizationDesc = "PendingAuthorizationDesc";
     Object PendingAuthorizationTimeline = "PendingAuthorizationTimeline";
