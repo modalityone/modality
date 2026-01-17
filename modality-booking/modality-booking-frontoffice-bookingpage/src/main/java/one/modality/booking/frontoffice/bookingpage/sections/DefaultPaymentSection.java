@@ -18,6 +18,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -58,12 +59,15 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected int totalAmount = 0;
     protected int depositAmount = 0;
     protected int depositPercentage = 0; // Calculated from depositAmount/totalAmount
+    protected int paymentsMade = 0; // Amount already paid (for display in booking summary)
     protected Set<PaymentOption> availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
     protected Set<PaymentMethod> availablePaymentMethods = EnumSet.of(PaymentMethod.CARD, PaymentMethod.BANK); // PAYPAL not implemented
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
     protected VBox bookingSummaryContainer;
+    protected HBox paymentsMadeRow; // Row showing "Payments Made" (hidden when paymentsMade == 0)
+    protected Label paymentsMadeAmountLabel; // Label showing the payments made amount
     protected VBox paymentAmountSection;
     protected VBox paymentMethodsSection;
     protected HBox paymentOptionsContainer;
@@ -152,6 +156,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // (needed when buildUI is called after items were already added, e.g., PAY_BOOKING flow)
         rebuildBookingSummary();
         updateTotalDisplay();
+        // Update custom amount section visibility based on selected payment option
+        // (needed when CUSTOM is selected by default, e.g., when min deposit is already paid)
+        updateCustomAmountSectionVisibility();
     }
 
     /**
@@ -183,7 +190,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Booking items container
         bookingSummaryContainer = new VBox(12);
 
-        // Total row
+        // Payments Made row (initially hidden, shown when paymentsMade > 0)
+        paymentsMadeRow = createPaymentsMadeRow();
+        updatePaymentsMadeRowVisibility();
+
+        // Total row (shows balance / amount due)
         HBox totalRow = new HBox();
         totalRow.setAlignment(Pos.CENTER_LEFT);
         totalRow.setPadding(new Insets(16, 0, 0, 0));
@@ -200,8 +211,54 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
 
-        section.getChildren().addAll(titleLabel, bookingSummaryContainer, totalRow);
+        section.getChildren().addAll(titleLabel, bookingSummaryContainer, paymentsMadeRow, totalRow);
         return section;
+    }
+
+    /**
+     * Creates the "Payments Made" row for the booking summary.
+     * This row shows previous payments and is only visible when paymentsMade > 0.
+     */
+    protected HBox createPaymentsMadeRow() {
+        HBox row = new HBox();
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(12, 0, 0, 0));
+
+        Label textLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentsMade);
+        textLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Show payment as a deduction (e.g., "- $30")
+        paymentsMadeAmountLabel = new Label();
+        updatePaymentsMadeAmountLabel();
+        paymentsMadeAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+
+        row.getChildren().addAll(textLabel, spacer, paymentsMadeAmountLabel);
+        return row;
+    }
+
+    /**
+     * Updates the visibility of the "Payments Made" row based on paymentsMade value.
+     */
+    protected void updatePaymentsMadeRowVisibility() {
+        if (paymentsMadeRow != null) {
+            boolean hasPayments = paymentsMade > 0;
+            paymentsMadeRow.setVisible(hasPayments);
+            paymentsMadeRow.setManaged(hasPayments);
+        }
+    }
+
+    /**
+     * Updates the "Payments Made" amount label with formatted value.
+     */
+    protected void updatePaymentsMadeAmountLabel() {
+        if (paymentsMadeAmountLabel != null) {
+            String formattedAmount = EventPriceFormatter.formatWithCurrency(paymentsMade,
+                workingBookingProperties != null ? workingBookingProperties.getEvent() : null);
+            // Show as negative/deduction with "- " prefix
+            paymentsMadeAmountLabel.setText("- " + formattedAmount);
+        }
     }
 
     protected void rebuildBookingSummary() {
@@ -224,7 +281,19 @@ public class DefaultPaymentSection implements HasPaymentSection {
         row.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded");
 
         VBox infoBox = new VBox(8);
-        Label nameLabel = new Label(index + ". " + item.getPersonName());
+        // For existing bookings (PAY_BOOKING/MODIFY_BOOKING), show "Name (registration #ref)"
+        // For new bookings, show numbered list "1. Name"
+        String nameText;
+        Document doc = item.getDocument();
+        Object ref = doc != null ? doc.getRef() : null;
+        if (ref != null && !ref.toString().isEmpty()) {
+            // Existing booking with registration reference
+            nameText = item.getPersonName() + " (registration #" + ref + ")";
+        } else {
+            // New booking - use numbered format
+            nameText = index + ". " + item.getPersonName();
+        }
+        Label nameLabel = new Label(nameText);
         nameLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         Label detailsLabel = new Label(item.getDetails());
@@ -318,14 +387,15 @@ public class DefaultPaymentSection implements HasPaymentSection {
         inputRow.getChildren().addAll(currencyLabel, customAmountTextField);
 
         // Range helper text
+        int minCustomAmount = getMinimumCustomAmount();
         customAmountRangeLabel = I18nControls.newLabel(BookingPageI18nKeys.CustomAmountRange);
         I18nControls.bindI18nProperties(customAmountRangeLabel, BookingPageI18nKeys.CustomAmountRange,
-            EventPriceFormatter.formatWithCurrency(depositAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null),
+            EventPriceFormatter.formatWithCurrency(minCustomAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null),
             EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
         customAmountRangeLabel.getStyleClass().add("bookingpage-label-small");
 
-        // Slider
-        customAmountSlider = new Slider(depositAmount, totalAmount, customAmountProperty.get());
+        // Slider - min is max((minDeposit - alreadyPaid), $1)
+        customAmountSlider = new Slider(minCustomAmount, totalAmount, customAmountProperty.get());
         // Note: setShowTickMarks and setShowTickLabels are not supported in WebFX
         // Slider track color requires CSS styling in JavaFX
 
@@ -459,6 +529,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
         return row;
     }
 
+    /**
+     * Returns the minimum custom amount.
+     * Formula: max((minDeposit - alreadyPaid), 100) where 100 = $1 in cents
+     */
+    protected int getMinimumCustomAmount() {
+        return Math.max(depositAmount - paymentsMade, 100); // 100 cents = $1 minimum
+    }
+
     protected void updateCustomAmountSectionVisibility() {
         if (customAmountSection != null) {
             boolean showCustom = paymentOptionProperty.get() == PaymentOption.CUSTOM;
@@ -466,9 +544,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
             customAmountSection.setManaged(showCustom);
 
             if (showCustom) {
+                int minCustomAmount = getMinimumCustomAmount();
                 // Update slider range
-                customAmountSlider.setMin(depositAmount);
+                customAmountSlider.setMin(minCustomAmount);
                 customAmountSlider.setMax(totalAmount);
+                // Ensure current value is within bounds
+                if (customAmountProperty.get() < minCustomAmount) {
+                    customAmountProperty.set(minCustomAmount);
+                }
                 customAmountSlider.setValue(customAmountProperty.get());
 
                 // Update range label text
@@ -476,7 +559,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
                     Event event = workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null
                         ? workingBookingProperties.getWorkingBooking().getEvent() : null;
                     I18nControls.bindI18nProperties(customAmountRangeLabel, BookingPageI18nKeys.CustomAmountRange,
-                        EventPriceFormatter.formatWithCurrency(depositAmount, event),
+                        EventPriceFormatter.formatWithCurrency(minCustomAmount, event),
                         EventPriceFormatter.formatWithCurrency(totalAmount, event));
                 }
             }
@@ -571,7 +654,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     protected void handleCustomAmountChange(int value) {
         int rounded = roundToWholeCurrencyUnit(value);
-        int bounded = Math.max(depositAmount, Math.min(totalAmount, rounded));
+        int bounded = Math.max(getMinimumCustomAmount(), Math.min(totalAmount, rounded));
         customAmountProperty.set(bounded);
         autoAllocate();
         rebuildPaymentOptions(); // To update displayed amount
@@ -864,9 +947,24 @@ public class DefaultPaymentSection implements HasPaymentSection {
         updatePayButtonText();
     }
 
+    @Override
+    public void setPaymentsMade(int amount) {
+        this.paymentsMade = amount;
+        updatePaymentsMadeRowVisibility();
+        updatePaymentsMadeAmountLabel();
+        updateDepositPercentageAndOptions(); // May need to hide DEPOSIT option
+        rebuildPaymentOptions();
+    }
+
+    @Override
+    public int getPaymentsMade() {
+        return paymentsMade;
+    }
+
     /**
      * Updates the deposit percentage and adjusts available payment options.
      * If deposit equals total, only "Pay in Full" option is available.
+     * If the minimum deposit has already been paid, hide the DEPOSIT option.
      */
     protected void updateDepositPercentageAndOptions() {
         if (totalAmount > 0) {
@@ -876,14 +974,25 @@ public class DefaultPaymentSection implements HasPaymentSection {
             depositPercentage = 0;
         }
 
+        // Determine which payment options should be available
+        Set<PaymentOption> newOptions = EnumSet.allOf(PaymentOption.class);
+
         // If deposit equals total (100%), only "Pay in Full" is available
         if (depositAmount >= totalAmount) {
-            availablePaymentOptions = EnumSet.of(PaymentOption.FULL);
-            paymentOptionProperty.set(PaymentOption.FULL);
-        } else {
-            // Reset to all options if previously restricted
-            if (availablePaymentOptions.size() == 1 && availablePaymentOptions.contains(PaymentOption.FULL)) {
-                availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
+            newOptions = EnumSet.of(PaymentOption.FULL);
+        }
+        // If minimum deposit has already been paid, hide the DEPOSIT option
+        // (user has already met the minimum, so show only CUSTOM and FULL)
+        else if (paymentsMade >= depositAmount && depositAmount > 0) {
+            newOptions = EnumSet.of(PaymentOption.CUSTOM, PaymentOption.FULL);
+        }
+
+        // Only update if options changed
+        if (!newOptions.equals(availablePaymentOptions)) {
+            availablePaymentOptions = newOptions;
+            // If current selection is no longer available, switch to first available
+            if (!availablePaymentOptions.contains(paymentOptionProperty.get())) {
+                paymentOptionProperty.set(availablePaymentOptions.iterator().next());
             }
         }
 

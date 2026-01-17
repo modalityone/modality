@@ -1212,8 +1212,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Add each document as a booking
         for (DocumentAggregate documentAggregate : documentAggregates) {
             Document doc = documentAggregate.getDocument();
-            String personName = documentAggregate.getAttendeeFullName();
-            String personEmail = documentAggregate.getAttendeeEmail();
+            // Get person info from Document entity (safer than getAttendeeFullName() which relies on AddDocumentEvent)
+            String personName = getDocumentPersonName(doc);
+            String personEmail = getDocumentPersonEmail(doc);
 
             // Use stored values from Document for database-loaded bookings
             // These values were calculated and stored when the booking was submitted
@@ -1304,8 +1305,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void populatePaymentFromWorkingBooking() {
         if (defaultPaymentSection == null) return;
 
-        WorkingBooking workingBooking = getWorkingBooking();
-        DocumentAggregate documentAggregate = workingBooking.getInitialDocumentAggregate();
+        DocumentAggregate documentAggregate = workingBookingProperties.getWorkingBooking().getInitialDocumentAggregate();
         if (documentAggregate == null) {
             Console.log("populatePaymentFromWorkingBooking: No initial document aggregate");
             return;
@@ -1319,21 +1319,30 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String personName = getDocumentPersonName(doc);
         String eventName = getEvent() != null ? getEvent().getName() : "";
 
-        // Use the workingBooking's built-in price calculator (already has policyAggregate set)
-        int totalPrice = workingBooking.calculateTotal();
-        int minDeposit = workingBooking.calculateMinDeposit();
+        // Use WorkingBooking's balance calculation (calculates from MoneyTransfers which are loaded)
+        // Note: Document.priceNet/priceDeposit fields are NOT loaded by DocumentService
+        int totalPrice = workingBookingProperties.getTotal();
+        int paidDeposit = workingBookingProperties.getDeposit();
+        int remainingAmount = totalPrice - paidDeposit;  // Balance to pay = total - deposit
+        int minDeposit = Math.min(workingBookingProperties.getMinDeposit(), Math.max(0, remainingAmount));
 
+        // Add booking item with TOTAL PRICE (not remaining) for display in booking summary
         defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
             doc,
             personName,
             eventName,
-            totalPrice
+            totalPrice  // Show total price in booking summary
         ));
 
-        defaultPaymentSection.setTotalAmount(totalPrice);
-        defaultPaymentSection.setDepositAmount(minDeposit);
+        // Set payment amounts for the payment section:
+        // - totalAmount = remaining balance (what user needs to pay now)
+        // - paymentsMade = previous payments (shown as deduction in booking summary)
+        // - depositAmount = minimum deposit (may be hidden if already paid)
+        defaultPaymentSection.setTotalAmount(remainingAmount);  // Balance to pay (Total Amount Due)
+        defaultPaymentSection.setPaymentsMade(paidDeposit);     // Previous payments (for display)
+        defaultPaymentSection.setDepositAmount(minDeposit);     // Minimum deposit (may be hidden if already paid)
 
-        Console.log("Payment section populated from WorkingBooking: " + personName + ", total: " + totalPrice);
+        Console.log("Payment section populated from WorkingBooking: " + personName + ", balance: " + remainingAmount + " (total: " + totalPrice + ", paid: " + paidDeposit + ")");
     }
 
     /**
@@ -1342,7 +1351,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private String getPersonFullName(Person person) {
         if (person == null) return "";
         String firstName = person.getFirstName() != null ? person.getFirstName() : "";
-        String lastName = person.getLastName() != null ? person.getLastName() : "";
+    String lastName = person.getLastName() != null ? person.getLastName() : "";
         return (firstName + " " + lastName).trim();
     }
 
@@ -1370,6 +1379,25 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Fall back to Person entity
         return getPersonFullName(doc.getPerson());
+    }
+
+    /**
+     * Get person email from Document entity.
+     * Document has personal details copied directly via EntityHasPersonalDetailsCopy interface.
+     * Falls back to Person entity if Document doesn't have the email.
+     */
+    private String getDocumentPersonEmail(Document doc) {
+        if (doc == null) return "";
+
+        // Try to get email from Document directly (personal details are copied to Document)
+        String email = doc.getEmail();
+        if (email != null) {
+            return email;
+        }
+
+        // Fall back to Person entity
+        Person person = doc.getPerson();
+        return person != null ? person.getEmail() : "";
     }
 
     // === Payment Page Handlers ===
@@ -1968,22 +1996,30 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultPaymentSection == null || defaultPendingBookingsSection == null) return;
 
         defaultPaymentSection.clearBookingItems();
-        int total = 0;
+        int totalBalance = 0;
+        int totalPaid = 0;
         int totalMinDeposit = 0;
 
         for (HasPendingBookingsSection.BookingItem booking : defaultPendingBookingsSection.getBookings()) {
+            int bookingTotal = booking.getTotalAmount();
+            int bookingPaid = (int) booking.getPaidAmount();
+            int bookingBalance = bookingTotal - bookingPaid;
+
             defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
                 booking.getDocument(),
                 booking.getPersonName(),
                 booking.getEventName(),
-                booking.getTotalAmount()));
-            total += booking.getTotalAmount();
+                bookingTotal));  // Show full price in booking summary
+
+            totalBalance += Math.max(0, bookingBalance);  // Remaining balance to pay
+            totalPaid += bookingPaid;
             totalMinDeposit += booking.getMinDeposit();
         }
 
-        defaultPaymentSection.setTotalAmount(total);
-        // Use the calculated minDeposit from the booking items (comes from API/database)
-        defaultPaymentSection.setDepositAmount(totalMinDeposit);
+        defaultPaymentSection.setTotalAmount(totalBalance);  // Balance to pay (not full total)
+        defaultPaymentSection.setPaymentsMade(totalPaid);    // Show previous payments if any
+        // Adjust minDeposit to not exceed remaining balance
+        defaultPaymentSection.setDepositAmount(Math.min(totalMinDeposit, totalBalance));
     }
 
     /**
@@ -2062,6 +2098,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void updateConfirmationSection(StandardBookingFormCallbacks.PaymentResult result) {
         if (defaultConfirmationSection == null) return;
 
+        // Set payment-only mode for PAY_BOOKING entry point (hides "What's Next?" section and simplifies message)
+        defaultConfirmationSection.setPaymentOnly(entryPoint == BookingFormEntryPoint.PAY_BOOKING);
+
         defaultConfirmationSection.clearConfirmedBookings();
 
         // Add confirmed bookings - either from pending bookings or from new user data
@@ -2075,6 +2114,40 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     booking.getPersonName(),
                     booking.getPersonEmail(),
                     booking.getBookingReference()));
+            }
+        } else if (entryPoint == BookingFormEntryPoint.PAY_BOOKING) {
+            // PAY_BOOKING entry point: get person info from Document entity
+            String bookingRef = Strings.toString(workingBookingProperties.getBookingReference());
+            DocumentAggregate docAggregate = workingBookingProperties.getDocumentAggregate();
+            if (docAggregate != null) {
+                String personName = "";
+                String personEmail = "";
+                Document doc = docAggregate.getDocument();
+                if (doc != null) {
+                    // Get from Document's personal details fields (copied from Person via EntityHasPersonalDetailsCopy)
+                    String firstName = doc.getFirstName();
+                    String lastName = doc.getLastName();
+                    if (firstName != null || lastName != null) {
+                        personName = ((firstName != null ? firstName : "") + " " + (lastName != null ? lastName : "")).trim();
+                    }
+                    personEmail = doc.getEmail();
+                    // Fall back to Person entity if Document fields are empty
+                    if (personName.isEmpty() || personEmail == null) {
+                        Person person = doc.getPerson();
+                        if (person != null) {
+                            if (personName.isEmpty()) {
+                                personName = person.getFullName();
+                            }
+                            if (personEmail == null) {
+                                personEmail = person.getEmail();
+                            }
+                        }
+                    }
+                }
+                defaultConfirmationSection.addConfirmedBooking(new HasConfirmationSection.ConfirmedBooking(
+                    personName != null ? personName : "",
+                    personEmail != null ? personEmail : "",
+                    bookingRef));
             }
         } else {
             // New users (guest or account creation): use stored info from payment flow
