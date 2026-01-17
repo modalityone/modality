@@ -125,7 +125,7 @@ public final class PolicyAggregate {
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
         // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
         // additional fields such as termsUrlEn
-        this.event = entityStore.getEntity(event.getId());
+        this.event = entityStore.getOrCreateEntity(event.getId());
     }
 
     public Future<Void> reloadAvailabilities() {
