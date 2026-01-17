@@ -50,7 +50,7 @@ public final class RegistrationRouting {
 
         @Override
         public Object getI18nKey() {
-            return RegistrationI18nKeys.RegistrationMenu;
+            return RegistrationI18nKeys.RegistrationTile;
         }
     }
 

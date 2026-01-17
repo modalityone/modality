@@ -3,6 +3,6 @@ package one.modality.booking.backoffice.activities.registration;
 
 public interface RegistrationI18nKeys {
 
-    Object RegistrationMenu = "RegistrationMenu";
+    Object RegistrationTile = "RegistrationTile";
 
 }

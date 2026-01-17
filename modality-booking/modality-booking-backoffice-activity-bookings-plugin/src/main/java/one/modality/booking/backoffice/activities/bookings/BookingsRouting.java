@@ -77,7 +77,7 @@ public final class BookingsRouting {
 
         @Override
         public Object getI18nKey() {
-            return BookingsI18nKeys.BookingsAndSearch;
+            return BookingsI18nKeys.BookingsTile;
         }
     }
 
