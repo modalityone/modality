@@ -49,7 +49,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return loadLatestDocumentsFromDatabase(argument, false);
     }
 
-    private Future<DocumentAggregate[]> loadLatestDocumentsFromDatabase(LoadDocumentArgument argument, boolean limit1) {
+    private Future<DocumentAggregate[]> loadLatestDocumentsFromDatabase(LoadDocumentArgument argument, boolean limitTo1) {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
             // 0 - Loading document
@@ -70,7 +70,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         if (personProvided || accountProvided) {
             String queryReplacement = " in (select Document where !cancelled and (%field%=? and event=?) order by id desc %limit%)"
                 .replace("%field%", personProvided ? "person" : "person.frontendAccount")
-                .replace("%limit%", limit1 ? "limit 1" : "");
+                .replace("%limit%", limitTo1 ? "limit 1" : "");
             Object[] queryArguments = {personProvided ? argument.personPrimaryKey() : argument.accountPrimaryKey(), argument.eventPrimaryKey()};
             if (docPk != null) {
                 queryReplacement = queryReplacement.replace(") order by", " or id=?) order by");
@@ -173,7 +173,10 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             }
         }
 
-        if (document == null && documentLine == null)
+        if (document == null && documentLine != null)
+            document = documentLine.getDocument();
+
+        if (document == null)
             return Future.failedFuture("No document changes to submit");
 
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
@@ -204,15 +207,14 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 }
                 if (cartUuid == null || documentRef == null) {
                     return document.onExpressionLoaded("ref,cart.uuid")
-                        .map(x -> new SubmitDocumentChangesResult(
+                        .map(x -> SubmitDocumentChangesResult.createSuccessfulSubmittedResult(
                             document.getPrimaryKey(),
                             document.getRef(),
                             document.getCart().getPrimaryKey(),
-                            document.getCart().getUuid(),
-                            false, null, null
+                            document.getCart().getUuid()
                         ));
                 }
-                return Future.succeededFuture(new SubmitDocumentChangesResult(documentPk, documentRef, cartPk, cartUuid, false, null, null));
+                return Future.succeededFuture(SubmitDocumentChangesResult.createSuccessfulSubmittedResult(documentPk, documentRef, cartPk, cartUuid));
             })
             // Detecting sold-out exception from the database
             .recover(ex -> {
@@ -222,7 +224,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                     return Future.failedFuture(ex);
                 Object sitePk = readSiteOrItemPrimaryKey(message, true);
                 Object itemPk = readSiteOrItemPrimaryKey(message, false);
-                return Future.succeededFuture(new SubmitDocumentChangesResult(null, null, null, null, true, sitePk, itemPk));
+                return Future.succeededFuture(SubmitDocumentChangesResult.createSoldOutResult(sitePk, itemPk));
             });
     }
 

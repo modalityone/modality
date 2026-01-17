@@ -22,4 +22,12 @@ public record SubmitDocumentChangesResult(
     public boolean isSoldOut() {
         return soldOut;
     }
+
+    public static SubmitDocumentChangesResult createSuccessfulSubmittedResult(Object documentPrimaryKey, Object documentRef, Object cartPrimaryKey, String cartUuid) {
+        return new SubmitDocumentChangesResult(documentPrimaryKey, documentRef, cartPrimaryKey, cartUuid, false, null, null);
+    }
+
+    public static SubmitDocumentChangesResult createSoldOutResult(Object soldOutSitePrimaryKey, Object soldOutItemPrimaryKey) {
+        return new SubmitDocumentChangesResult(null, null, null, null, true, soldOutSitePrimaryKey, soldOutItemPrimaryKey);
+    }
 }
