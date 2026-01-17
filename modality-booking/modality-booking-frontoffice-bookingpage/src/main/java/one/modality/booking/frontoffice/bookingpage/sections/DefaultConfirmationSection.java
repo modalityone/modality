@@ -42,7 +42,9 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     protected final ObjectProperty<LocalDate> eventStartDateProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<LocalDate> eventEndDateProperty = new SimpleObjectProperty<>();
     protected int totalAmount = 0;
-    protected int paidAmount = 0;
+    protected int previouslyPaidAmount = 0; // Amount paid before this transaction
+    protected int paidAmount = 0; // Amount paid in this transaction
+    protected boolean isPaymentOnly = false; // True for PAY_BOOKING entry point
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -77,16 +79,19 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Payment Summary section
         VBox paymentSummarySection = buildPaymentSummarySection();
 
-        // What's Next section
-        VBox whatsNextSection = buildWhatsNextSection();
-
         // Note: Action buttons are managed via composite API (ButtonNavigation)
         // not created inside this section
 
         container.getChildren().addAll(
                 successHeader, bookingReferencesSection, detailsSection,
-                paymentSummarySection, whatsNextSection
+                paymentSummarySection
         );
+
+        // What's Next section - only show for new bookings, not for PAY_BOOKING (payment-only)
+        if (!isPaymentOnly) {
+            VBox whatsNextSection = buildWhatsNextSection();
+            container.getChildren().add(whatsNextSection);
+        }
     }
 
     protected void setupBindings() {
@@ -124,13 +129,19 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         titleLabel.getStyleClass().addAll("bookingpage-text-3xl", "bookingpage-font-bold", "bookingpage-text-primary");
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
-        // Subtitle - dynamic based on payment status
+        // Subtitle - dynamic based on payment status and entry point
         Label subtitleLabel = new Label();
         if (paidAmount <= 0) {
             // No payment - show generic booking submitted message
             I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.BookingSubmittedMessage);
+        } else if (isPaymentOnly) {
+            // PAY_BOOKING entry point - simplified message without email receipt mention
+            String formattedAmount = unifiedPriceDisplay != null
+                    ? unifiedPriceDisplay.formatPrice(paidAmount)
+                    : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(paidAmount, event);
+            I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.PaymentOnlyConfirmedMessage, formattedAmount);
         } else {
-            // Payment made - show payment confirmed message with amount and email
+            // New booking with payment - show full message with amount and email
             String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
             String formattedAmount = unifiedPriceDisplay != null
                     ? unifiedPriceDisplay.formatPrice(paidAmount)
@@ -158,7 +169,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         bookingReferencesContent = new VBox(0);
         bookingReferencesContent.setPadding(new Insets(16));
-        bookingReferencesContent.getStyleClass().add("bookingpage-card");
+        bookingReferencesContent.getStyleClass().add("bookingpage-card-static");
 
         section.getChildren().addAll(header, bookingReferencesContent);
         VBox.setMargin(header, new Insets(0, 0, 16, 0));
@@ -217,7 +228,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(12);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card");
+        content.getStyleClass().add("bookingpage-card-static");
 
         // Event
         VBox eventBox = new VBox(4);
@@ -294,7 +305,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(12);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card");
+        content.getStyleClass().add("bookingpage-card-static");
 
         // Total Amount row
         String formattedTotal = unifiedPriceDisplay != null
@@ -302,15 +313,26 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
                 : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(totalAmount, event);
         HBox totalRow = createPaymentRow(BookingPageI18nKeys.TotalAmount, formattedTotal, false);
 
+        content.getChildren().add(totalRow);
+
+        // Already Paid row (only show if there were previous payments)
+        if (previouslyPaidAmount > 0) {
+            String formattedPreviouslyPaid = unifiedPriceDisplay != null
+                    ? unifiedPriceDisplay.formatPrice(previouslyPaidAmount)
+                    : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(previouslyPaidAmount, event);
+            HBox alreadyPaidRow = createPaymentRow(BookingPageI18nKeys.AlreadyPaid, formattedPreviouslyPaid, false);
+            content.getChildren().add(alreadyPaidRow);
+        }
+
         // Paid Today row
         String formattedPaid = unifiedPriceDisplay != null
                 ? unifiedPriceDisplay.formatPrice(paidAmount)
                 : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(paidAmount, event);
         HBox paidRow = createPaymentRow(BookingPageI18nKeys.PaidToday, formattedPaid, false);
 
-        content.getChildren().addAll(totalRow, paidRow);
+        content.getChildren().add(paidRow);
 
-        int balanceDue = totalAmount - paidAmount;
+        int balanceDue = totalAmount - previouslyPaidAmount - paidAmount;
         if (balanceDue > 0) {
             // Divider
             Region divider = new Region();
@@ -384,7 +406,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(16);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card");
+        content.getStyleClass().add("bookingpage-card-static");
 
         // Check Your Email
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
@@ -517,9 +539,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     @Override
-    public void setPaymentAmounts(int total, int paid) {
+    public void setPaymentAmounts(int total, int previouslyPaid, int paidToday) {
         this.totalAmount = total;
-        this.paidAmount = paid;
+        this.previouslyPaidAmount = previouslyPaid;
+        this.paidAmount = paidToday;
         rebuildUI();
     }
 
@@ -538,5 +561,11 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     @Override
     public void setOnMakeAnotherBooking(Runnable callback) {
         this.onMakeAnotherBooking = callback;
+    }
+
+    @Override
+    public void setPaymentOnly(boolean paymentOnly) {
+        this.isPaymentOnly = paymentOnly;
+        // Note: rebuildUI() will be called later when setPaymentAmounts() is invoked
     }
 }

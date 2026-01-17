@@ -58,6 +58,7 @@ public interface HasPaymentSection extends BookingFormSection {
         private final String personName;
         private final String details;
         private final int amount;
+        private int balanceToMinDeposit; // How much more is needed to reach min deposit
 
         /**
          * Creates a booking item with a specific ID.
@@ -67,6 +68,7 @@ public interface HasPaymentSection extends BookingFormSection {
             this.personName = personName;
             this.details = details;
             this.amount = amount;
+            this.balanceToMinDeposit = 0;
         }
 
 
@@ -74,6 +76,8 @@ public interface HasPaymentSection extends BookingFormSection {
         public String getPersonName() { return personName; }
         public String getDetails() { return details; }
         public int getAmount() { return amount; }
+        public int getBalanceToMinDeposit() { return balanceToMinDeposit; }
+        public void setBalanceToMinDeposit(int balanceToMinDeposit) { this.balanceToMinDeposit = balanceToMinDeposit; }
         Object getDocumentPrimaryKey() { return document.getPrimaryKey(); }
     }
 
@@ -123,6 +127,19 @@ public interface HasPaymentSection extends BookingFormSection {
      * Sets the minimum deposit amount.
      */
     void setDepositAmount(int amount);
+
+    /**
+     * Sets the amount already paid (for display in booking summary).
+     * When set to a value > 0, a "Payments Made" row will be displayed
+     * in the booking summary section showing this amount.
+     * @param amount the amount already paid in cents
+     */
+    void setPaymentsMade(int amount);
+
+    /**
+     * Returns the amount already paid.
+     */
+    int getPaymentsMade();
 
     /**
      * Adds a booking item to the payment summary.

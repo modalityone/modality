@@ -18,6 +18,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -52,18 +53,22 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     // === ALLOCATION STATE ===
     protected final Map<Object, IntegerProperty> allocationProperties = new HashMap<>();
+    protected final SimpleBooleanProperty allocationErrorProperty = new SimpleBooleanProperty(false);
 
     // === BOOKING DATA ===
     protected final ObservableList<PaymentBookingItem> bookingItems = FXCollections.observableArrayList();
     protected int totalAmount = 0;
     protected int depositAmount = 0;
     protected int depositPercentage = 0; // Calculated from depositAmount/totalAmount
+    protected int paymentsMade = 0; // Amount already paid (for display in booking summary)
     protected Set<PaymentOption> availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
     protected Set<PaymentMethod> availablePaymentMethods = EnumSet.of(PaymentMethod.CARD, PaymentMethod.BANK); // PAYPAL not implemented
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
     protected VBox bookingSummaryContainer;
+    protected HBox paymentsMadeRow; // Row showing "Payments Made" (hidden when paymentsMade == 0)
+    protected Label paymentsMadeAmountLabel; // Label showing the payments made amount
     protected VBox paymentAmountSection;
     protected VBox paymentMethodsSection;
     protected HBox paymentOptionsContainer;
@@ -91,9 +96,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     protected void setupBindings() {
-        // Pay button is disabled while processing
+        // Pay button is disabled while processing or when there's an allocation error
         // Note: Terms acceptance is now validated on the Pending Bookings page
-        payButtonDisabled.bind(processingProperty);
+        payButtonDisabled.bind(processingProperty.or(allocationErrorProperty));
 
         // Validity depends on not processing
         processingProperty.addListener((obs, old, val) -> updateValidity());
@@ -152,6 +157,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // (needed when buildUI is called after items were already added, e.g., PAY_BOOKING flow)
         rebuildBookingSummary();
         updateTotalDisplay();
+        // Update custom amount section visibility based on selected payment option
+        // (needed when CUSTOM is selected by default, e.g., when min deposit is already paid)
+        updateCustomAmountSectionVisibility();
     }
 
     /**
@@ -183,7 +191,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Booking items container
         bookingSummaryContainer = new VBox(12);
 
-        // Total row
+        // Payments Made row (initially hidden, shown when paymentsMade > 0)
+        paymentsMadeRow = createPaymentsMadeRow();
+        updatePaymentsMadeRowVisibility();
+
+        // Total row (shows balance / amount due)
         HBox totalRow = new HBox();
         totalRow.setAlignment(Pos.CENTER_LEFT);
         totalRow.setPadding(new Insets(16, 0, 0, 0));
@@ -200,8 +212,54 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
 
-        section.getChildren().addAll(titleLabel, bookingSummaryContainer, totalRow);
+        section.getChildren().addAll(titleLabel, bookingSummaryContainer, paymentsMadeRow, totalRow);
         return section;
+    }
+
+    /**
+     * Creates the "Payments Made" row for the booking summary.
+     * This row shows previous payments and is only visible when paymentsMade > 0.
+     */
+    protected HBox createPaymentsMadeRow() {
+        HBox row = new HBox();
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.setPadding(new Insets(12, 0, 0, 0));
+
+        Label textLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentsMade);
+        textLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        // Show payment as a deduction (e.g., "- $30")
+        paymentsMadeAmountLabel = new Label();
+        updatePaymentsMadeAmountLabel();
+        paymentsMadeAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+
+        row.getChildren().addAll(textLabel, spacer, paymentsMadeAmountLabel);
+        return row;
+    }
+
+    /**
+     * Updates the visibility of the "Payments Made" row based on paymentsMade value.
+     */
+    protected void updatePaymentsMadeRowVisibility() {
+        if (paymentsMadeRow != null) {
+            boolean hasPayments = paymentsMade > 0;
+            paymentsMadeRow.setVisible(hasPayments);
+            paymentsMadeRow.setManaged(hasPayments);
+        }
+    }
+
+    /**
+     * Updates the "Payments Made" amount label with formatted value.
+     */
+    protected void updatePaymentsMadeAmountLabel() {
+        if (paymentsMadeAmountLabel != null) {
+            String formattedAmount = EventPriceFormatter.formatWithCurrency(paymentsMade,
+                workingBookingProperties != null ? workingBookingProperties.getEvent() : null);
+            // Show as negative/deduction with "- " prefix
+            paymentsMadeAmountLabel.setText("- " + formattedAmount);
+        }
     }
 
     protected void rebuildBookingSummary() {
@@ -224,7 +282,19 @@ public class DefaultPaymentSection implements HasPaymentSection {
         row.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded");
 
         VBox infoBox = new VBox(8);
-        Label nameLabel = new Label(index + ". " + item.getPersonName());
+        // For existing bookings (PAY_BOOKING/MODIFY_BOOKING), show "Name (registration #ref)"
+        // For new bookings, show numbered list "1. Name"
+        String nameText;
+        Document doc = item.getDocument();
+        Object ref = doc != null ? doc.getRef() : null;
+        if (ref != null && !ref.toString().isEmpty()) {
+            // Existing booking with registration reference
+            nameText = item.getPersonName() + " (registration #" + ref + ")";
+        } else {
+            // New booking - use numbered format
+            nameText = index + ". " + item.getPersonName();
+        }
+        Label nameLabel = new Label(nameText);
         nameLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         Label detailsLabel = new Label(item.getDetails());
@@ -268,6 +338,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         section.getChildren().addAll(titleLabel, paymentOptionsContainer, customAmountSection, allocationSection);
         rebuildPaymentOptions();
+        updateAllocationSectionVisibility();
 
         return section;
     }
@@ -318,14 +389,15 @@ public class DefaultPaymentSection implements HasPaymentSection {
         inputRow.getChildren().addAll(currencyLabel, customAmountTextField);
 
         // Range helper text
+        int minCustomAmount = getMinimumCustomAmount();
         customAmountRangeLabel = I18nControls.newLabel(BookingPageI18nKeys.CustomAmountRange);
         I18nControls.bindI18nProperties(customAmountRangeLabel, BookingPageI18nKeys.CustomAmountRange,
-            EventPriceFormatter.formatWithCurrency(depositAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null),
+            EventPriceFormatter.formatWithCurrency(minCustomAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null),
             EventPriceFormatter.formatWithCurrency(totalAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
         customAmountRangeLabel.getStyleClass().add("bookingpage-label-small");
 
-        // Slider
-        customAmountSlider = new Slider(depositAmount, totalAmount, customAmountProperty.get());
+        // Slider - min is max((minDeposit - alreadyPaid), $1)
+        customAmountSlider = new Slider(minCustomAmount, totalAmount, customAmountProperty.get());
         // Note: setShowTickMarks and setShowTickLabels are not supported in WebFX
         // Slider track color requires CSS styling in JavaFX
 
@@ -388,11 +460,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         allocationWarningLabel.setVisible(false);
         allocationWarningLabel.setManaged(false);
 
-        // Auto-allocate button - use themed hyperlink helper
-        Hyperlink autoAllocateLink = BookingPageUIBuilder.createThemedHyperlink(BookingPageI18nKeys.AutoAllocateProportionally);
-        autoAllocateLink.setOnAction(e -> autoAllocate());
-
-        section.getChildren().addAll(titleLabel, subtitleLabel, allocationItemsContainer, footerRow, allocationWarningLabel, autoAllocateLink);
+        section.getChildren().addAll(titleLabel, subtitleLabel, allocationItemsContainer, footerRow, allocationWarningLabel);
         return section;
     }
 
@@ -435,18 +503,20 @@ public class DefaultPaymentSection implements HasPaymentSection {
         allocationField.setPadding(new Insets(8, 12, 8, 12));
         allocationField.setAlignment(Pos.CENTER_RIGHT);
 
-        // Update property when text changes
+        // Update property when text changes - store actual typed value for validation
         allocationField.textProperty().addListener((obs, old, newVal) -> {
             try {
-                int value = Math.max(0, Math.min(item.getAmount(), PriceFormatter.parsePrice(newVal)));
+                int parsedValue = PriceFormatter.parsePrice(newVal);
+                // Clamp to max (can't allocate more than booking total) but allow values below minimum for validation
+                int value = Math.min(item.getAmount(), parsedValue);
                 allocationProp.set(value);
-                updateAllocationTotal();
+                updateAllocationTotal(); // This will show warning if below minimum
             } catch (NumberFormatException ignored) {
                 // Ignore invalid input
             }
         });
 
-        // Update text when property changes
+        // Update text when property changes (for programmatic changes like auto-allocate)
         allocationProp.addListener((obs, old, newVal) -> {
             String newText = PriceFormatter.formatPriceNoCurrencyNoDecimals(newVal.intValue());
             if (!allocationField.getText().equals(newText)) {
@@ -459,6 +529,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
         return row;
     }
 
+    /**
+     * Returns the minimum custom amount.
+     * depositAmount is already the remaining min deposit (per-booking calculation).
+     */
+    protected int getMinimumCustomAmount() {
+        return Math.max(depositAmount, 100); // 100 cents = $1 minimum
+    }
+
     protected void updateCustomAmountSectionVisibility() {
         if (customAmountSection != null) {
             boolean showCustom = paymentOptionProperty.get() == PaymentOption.CUSTOM;
@@ -466,9 +544,14 @@ public class DefaultPaymentSection implements HasPaymentSection {
             customAmountSection.setManaged(showCustom);
 
             if (showCustom) {
+                int minCustomAmount = getMinimumCustomAmount();
                 // Update slider range
-                customAmountSlider.setMin(depositAmount);
+                customAmountSlider.setMin(minCustomAmount);
                 customAmountSlider.setMax(totalAmount);
+                // Ensure current value is within bounds
+                if (customAmountProperty.get() < minCustomAmount) {
+                    customAmountProperty.set(minCustomAmount);
+                }
                 customAmountSlider.setValue(customAmountProperty.get());
 
                 // Update range label text
@@ -476,7 +559,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
                     Event event = workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null
                         ? workingBookingProperties.getWorkingBooking().getEvent() : null;
                     I18nControls.bindI18nProperties(customAmountRangeLabel, BookingPageI18nKeys.CustomAmountRange,
-                        EventPriceFormatter.formatWithCurrency(depositAmount, event),
+                        EventPriceFormatter.formatWithCurrency(minCustomAmount, event),
                         EventPriceFormatter.formatWithCurrency(totalAmount, event));
                 }
             }
@@ -491,6 +574,9 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
             if (showAllocation) {
                 rebuildAllocationItems();
+            } else {
+                // Clear allocation error when section is hidden
+                allocationErrorProperty.set(false);
             }
         }
         // Always auto-allocate, even for single booking items (allocation is required for payment)
@@ -506,12 +592,42 @@ public class DefaultPaymentSection implements HasPaymentSection {
     }
 
     protected void autoAllocate() {
-        double paymentAmount = PriceFormatter.centsPriceToDoublePrice(getPaymentAmount());
+        int paymentAmountCents = getPaymentAmount();
 
         if (bookingItems.isEmpty() || totalAmount <= 0) {
             updateAllocationTotal();
             return;
         }
+
+        // For DEPOSIT option: allocate to meet min deposit requirements first
+        if (paymentOptionProperty.get() == PaymentOption.DEPOSIT) {
+            autoAllocateForDeposit(paymentAmountCents);
+        } else {
+            // For CUSTOM and FULL: proportional allocation
+            autoAllocateProportionally(paymentAmountCents);
+        }
+
+        updateAllocationTotal();
+    }
+
+    /**
+     * Allocates payment to bookings that haven't reached their min deposit yet.
+     * Each booking gets exactly its balanceToMinDeposit amount.
+     */
+    protected void autoAllocateForDeposit(int paymentAmountCents) {
+        for (PaymentBookingItem item : bookingItems) {
+            IntegerProperty prop = allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
+            // Allocate exactly the balance to min deposit for each booking
+            int allocation = Math.min(item.getBalanceToMinDeposit(), paymentAmountCents);
+            prop.setValue(allocation);
+        }
+    }
+
+    /**
+     * Allocates payment proportionally based on booking amounts, ensuring min deposit requirements are met.
+     */
+    protected void autoAllocateProportionally(int paymentAmountCents) {
+        double paymentAmount = PriceFormatter.centsPriceToDoublePrice(paymentAmountCents);
 
         // Step 1: Calculate initial allocations using floor to avoid exceeding payment amount
         double[] exactAllocations = new double[bookingItems.size()];
@@ -530,35 +646,35 @@ public class DefaultPaymentSection implements HasPaymentSection {
         double remainder = Math.round(paymentAmount - sumFloored);
 
         // Step 3: Distribute remainder to items with largest fractional parts
-        // Create array of indices sorted by fractional part (descending)
         Integer[] indices = new Integer[bookingItems.size()];
         for (int i = 0; i < indices.length; i++) {
             indices[i] = i;
         }
 
-        // Sort by fractional part (largest first)
         final double[] exactAlloc = exactAllocations;
         final double[] floorAlloc = flooredAllocations;
         java.util.Arrays.sort(indices, (a, b) -> {
             double fracA = exactAlloc[a] - floorAlloc[a];
             double fracB = exactAlloc[b] - floorAlloc[b];
-            return Double.compare(fracB, fracA); // Descending order
+            return Double.compare(fracB, fracA);
         });
 
-        // Distribute remainder (1 unit at a time to items with largest fractional parts)
         for (int i = 0; i < remainder && i < indices.length; i++) {
             flooredAllocations[indices[i]] += 1;
         }
 
-        // Step 4: Apply allocations to properties
+        // Step 4: Apply allocations (ensuring minimum deposit requirements are met)
         for (int i = 0; i < bookingItems.size(); i++) {
             PaymentBookingItem item = bookingItems.get(i);
             IntegerProperty prop = allocationProperties.computeIfAbsent(item.getDocumentPrimaryKey(), k -> new SimpleIntegerProperty(0));
             int allocatedAmount = PriceFormatter.doublePriceToCentsPrice(flooredAllocations[i]);
+            // Ensure allocation meets minimum deposit requirement
+            int minRequired = item.getBalanceToMinDeposit();
+            if (allocatedAmount < minRequired && minRequired > 0) {
+                allocatedAmount = minRequired;
+            }
             prop.setValue(allocatedAmount);
         }
-
-        updateAllocationTotal();
     }
 
     /**
@@ -571,7 +687,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     protected void handleCustomAmountChange(int value) {
         int rounded = roundToWholeCurrencyUnit(value);
-        int bounded = Math.max(depositAmount, Math.min(totalAmount, rounded));
+        int bounded = Math.max(getMinimumCustomAmount(), Math.min(totalAmount, rounded));
         customAmountProperty.set(bounded);
         autoAllocate();
         rebuildPaymentOptions(); // To update displayed amount
@@ -586,12 +702,33 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Compare rounded values since allocations are whole numbers
         boolean matches = allocatedTotal == paymentAmount;
 
+        // Check if any allocation is below minimum deposit requirement
+        boolean minDepositViolation = false;
+        for (PaymentBookingItem item : bookingItems) {
+            IntegerProperty allocationProp = allocationProperties.get(item.getDocumentPrimaryKey());
+            int allocated = allocationProp != null ? allocationProp.get() : 0;
+            if (allocated < item.getBalanceToMinDeposit()) {
+                minDepositViolation = true;
+                break;
+            }
+        }
+
         allocationTotalLabel.setText(EventPriceFormatter.formatWithCurrency(allocatedTotal, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
         // Update CSS classes for match/mismatch state
         allocationTotalLabel.getStyleClass().removeAll("bookingpage-text-primary", "bookingpage-text-danger");
-        allocationTotalLabel.getStyleClass().add(matches ? "bookingpage-text-primary" : "bookingpage-text-danger");
+        allocationTotalLabel.getStyleClass().add((matches && !minDepositViolation) ? "bookingpage-text-primary" : "bookingpage-text-danger");
 
-        if (!matches) {
+        // Update allocation error property (blocks pay button when there's a validation error)
+        // Only check allocation errors when allocation section is visible (multiple bookings and not paying full)
+        boolean allocationSectionVisible = bookingItems.size() > 1 && paymentOptionProperty.get() != PaymentOption.FULL;
+        allocationErrorProperty.set(allocationSectionVisible && (minDepositViolation || !matches));
+
+        if (minDepositViolation) {
+            // Show min deposit warning (takes priority over mismatch warning)
+            I18nControls.bindI18nProperties(allocationWarningLabel, BookingPageI18nKeys.AllocationMinDepositWarning);
+            allocationWarningLabel.setVisible(true);
+            allocationWarningLabel.setManaged(true);
+        } else if (!matches) {
             I18nControls.bindI18nProperties(allocationWarningLabel, BookingPageI18nKeys.AllocationMismatchWarning,
                 EventPriceFormatter.formatWithCurrency(paymentAmount, workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null));
             allocationWarningLabel.setVisible(true);
@@ -609,8 +746,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Only add cards for available payment options
         if (availablePaymentOptions.contains(PaymentOption.DEPOSIT)) {
-            // Pass the deposit percentage to the description
-            String depositDescription = I18n.getI18nText(BookingPageI18nKeys.DepositRequiredPercent, depositPercentage);
+            String depositDescription = I18n.getI18nText(BookingPageI18nKeys.MeetMinimumRequirement);
             VBox depositCard = createPaymentOptionCard(PaymentOption.DEPOSIT, BookingPageI18nKeys.MinimumDeposit, depositDescription);
             HBox.setHgrow(depositCard, Priority.ALWAYS);
             paymentOptionsContainer.getChildren().add(depositCard);
@@ -864,9 +1000,24 @@ public class DefaultPaymentSection implements HasPaymentSection {
         updatePayButtonText();
     }
 
+    @Override
+    public void setPaymentsMade(int amount) {
+        this.paymentsMade = amount;
+        updatePaymentsMadeRowVisibility();
+        updatePaymentsMadeAmountLabel();
+        updateDepositPercentageAndOptions(); // May need to hide DEPOSIT option
+        rebuildPaymentOptions();
+    }
+
+    @Override
+    public int getPaymentsMade() {
+        return paymentsMade;
+    }
+
     /**
      * Updates the deposit percentage and adjusts available payment options.
      * If deposit equals total, only "Pay in Full" option is available.
+     * If the minimum deposit has already been paid, hide the DEPOSIT option.
      */
     protected void updateDepositPercentageAndOptions() {
         if (totalAmount > 0) {
@@ -876,14 +1027,25 @@ public class DefaultPaymentSection implements HasPaymentSection {
             depositPercentage = 0;
         }
 
+        // Determine which payment options should be available
+        Set<PaymentOption> newOptions = EnumSet.allOf(PaymentOption.class);
+
         // If deposit equals total (100%), only "Pay in Full" is available
         if (depositAmount >= totalAmount) {
-            availablePaymentOptions = EnumSet.of(PaymentOption.FULL);
-            paymentOptionProperty.set(PaymentOption.FULL);
-        } else {
-            // Reset to all options if previously restricted
-            if (availablePaymentOptions.size() == 1 && availablePaymentOptions.contains(PaymentOption.FULL)) {
-                availablePaymentOptions = EnumSet.allOf(PaymentOption.class);
+            newOptions = EnumSet.of(PaymentOption.FULL);
+        }
+        // If all minimum deposits have been met (remaining = 0), hide the DEPOSIT option
+        // (user has already met the minimum, so show only CUSTOM and FULL)
+        else if (depositAmount == 0) {
+            newOptions = EnumSet.of(PaymentOption.CUSTOM, PaymentOption.FULL);
+        }
+
+        // Only update if options changed
+        if (!newOptions.equals(availablePaymentOptions)) {
+            availablePaymentOptions = newOptions;
+            // If current selection is no longer available, switch to first available
+            if (!availablePaymentOptions.contains(paymentOptionProperty.get())) {
+                paymentOptionProperty.set(availablePaymentOptions.iterator().next());
             }
         }
 

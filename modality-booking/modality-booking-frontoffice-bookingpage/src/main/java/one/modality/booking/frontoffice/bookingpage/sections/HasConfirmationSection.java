@@ -56,9 +56,12 @@ public interface HasConfirmationSection extends BookingFormSection {
     void setEventDates(LocalDate start, LocalDate end);
 
     /**
-     * Sets the payment amounts (total and paid).
+     * Sets the payment amounts (total, previously paid, and paid today).
+     * @param total the total booking amount
+     * @param previouslyPaid amount paid before this payment (0 for new bookings)
+     * @param paidToday amount paid in this transaction
      */
-    void setPaymentAmounts(int total, int paid);
+    void setPaymentAmounts(int total, int previouslyPaid, int paidToday);
 
     /**
      * Adds a confirmed booking to display.
@@ -74,4 +77,13 @@ public interface HasConfirmationSection extends BookingFormSection {
      * Sets the callback for when "Make Another Booking" is clicked.
      */
     void setOnMakeAnotherBooking(Runnable callback);
+
+    /**
+     * Sets whether this is a payment-only confirmation (PAY_BOOKING entry point).
+     * When true:
+     * - Hides the "What's Next?" section (user already knows next steps)
+     * - Simplifies the confirmation message (removes email receipt mention)
+     * @param paymentOnly true for payment-only confirmation
+     */
+    void setPaymentOnly(boolean paymentOnly);
 }
