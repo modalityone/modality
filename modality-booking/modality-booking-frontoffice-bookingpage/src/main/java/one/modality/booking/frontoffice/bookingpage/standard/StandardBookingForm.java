@@ -478,7 +478,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set payment amounts from the money transfer (with null safety)
         Integer amountObj = moneyTransfer.getAmount();
         int amount = amountObj != null ? amountObj : 0;
-        defaultConfirmationSection.setPaymentAmounts(amount, amount);
+        // For resumed payments, total = paid amount (no previous payments tracked here)
+        defaultConfirmationSection.setPaymentAmounts(amount, 0, amount);
     }
 
     /**
@@ -1337,10 +1338,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set payment amounts for the payment section:
         // - totalAmount = remaining balance (what user needs to pay now)
         // - paymentsMade = previous payments (shown as deduction in booking summary)
-        // - depositAmount = minimum deposit (may be hidden if already paid)
+        // - depositAmount = remaining min deposit (what still needs to be paid to meet min deposit)
         defaultPaymentSection.setTotalAmount(remainingAmount);  // Balance to pay (Total Amount Due)
         defaultPaymentSection.setPaymentsMade(paidDeposit);     // Previous payments (for display)
-        defaultPaymentSection.setDepositAmount(minDeposit);     // Minimum deposit (may be hidden if already paid)
+        int remainingMinDeposit = Math.max(0, minDeposit - paidDeposit);
+        defaultPaymentSection.setDepositAmount(remainingMinDeposit);  // Remaining min deposit needed
 
         Console.log("Payment section populated from WorkingBooking: " + personName + ", balance: " + remainingAmount + " (total: " + totalPrice + ", paid: " + paidDeposit + ")");
     }
@@ -1589,8 +1591,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
             defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
         }
 
-        // Set payment amounts (both zero for free booking)
-        defaultConfirmationSection.setPaymentAmounts(0, 0);
+        // Set payment amounts (all zero for free booking)
+        defaultConfirmationSection.setPaymentAmounts(0, 0, 0);
     }
 
     private Future<Void> handlePaymentSubmit(HasPaymentSection.PaymentResult sectionResult) {
@@ -2004,16 +2006,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
             int bookingTotal = booking.getTotalAmount();
             int bookingPaid = (int) booking.getPaidAmount();
             int bookingBalance = bookingTotal - bookingPaid;
+            int bookingBalanceToMinDeposit = booking.getBalanceToMinDeposit();
 
-            defaultPaymentSection.addBookingItem(new HasPaymentSection.PaymentBookingItem(
+            HasPaymentSection.PaymentBookingItem paymentItem = new HasPaymentSection.PaymentBookingItem(
                 booking.getDocument(),
                 booking.getPersonName(),
                 booking.getEventName(),
-                bookingTotal));  // Show full price in booking summary
+                bookingTotal);  // Show full price in booking summary
+            paymentItem.setBalanceToMinDeposit(bookingBalanceToMinDeposit);
+            defaultPaymentSection.addBookingItem(paymentItem);
 
             totalBalance += Math.max(0, bookingBalance);  // Remaining balance to pay
             totalPaid += bookingPaid;
-            totalMinDeposit += booking.getMinDeposit();
+            totalMinDeposit += bookingBalanceToMinDeposit;  // Only remaining deposit needed
         }
 
         defaultPaymentSection.setTotalAmount(totalBalance);  // Balance to pay (not full total)
@@ -2177,7 +2182,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
             // Get total from WorkingBookingProperties for new users
             totalAmount = workingBookingProperties.getTotal();
         }
-        defaultConfirmationSection.setPaymentAmounts(totalAmount, result.getAmount());
+        // Get previously paid amount (payments made before this transaction)
+        int previouslyPaid = defaultPaymentSection != null ? defaultPaymentSection.getPaymentsMade() : 0;
+        defaultConfirmationSection.setPaymentAmounts(totalAmount, previouslyPaid, result.getAmount());
     }
 
     // === Helper Methods ===

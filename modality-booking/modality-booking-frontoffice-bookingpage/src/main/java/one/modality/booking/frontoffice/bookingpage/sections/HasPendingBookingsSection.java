@@ -187,6 +187,8 @@ public interface HasPendingBookingsSection extends BookingFormSection {
 
         public double getBalance() { return totalAmount - paidAmount; }
 
+        public int getBalanceToMinDeposit() { return Math.max(0, minDeposit - paidAmount); }
+
         public String getBookingReference() { return bookingReference; }
         public void setBookingReference(String bookingReference) { this.bookingReference = bookingReference; }
     }

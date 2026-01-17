@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.service.MultipleServiceProviders;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -24,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Labeled;
 import javafx.scene.text.Font;
+import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.frontoffice.mainframe.fx.FXCollapseMenu;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
@@ -229,6 +231,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             if (Objects.areEquals(modifyOrPayOrderDocumentId, loadingModifyOrPayOrderDocumentId))
                 return;
             loadingModifyOrPayOrderDocumentId = modifyOrPayOrderDocumentId;
+            // Show loading spinner ONLY for PAY_BOOKING (not MODIFY_BOOKING)
+            if (payOrderDocumentId != null) {
+                activityContainer.setContent(Controls.createSectionSizeSpinner());
+                activityContainer.setAlignment(Pos.CENTER);
+            }
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(LoadDocumentArgument.ofDocument(modifyOrPayOrderDocumentId))
                 .onFailure(Console::log)
@@ -318,6 +325,11 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                         // Trigger the form to initialize with the working booking
                         // This is especially important for RESUME_PAYMENT to navigate to confirmation
                         bookingForm.onWorkingBookingLoaded();
+                        // Add sticky header to the main frame overlay area (if the form has one)
+                        Node stickyHeader = bookingForm.getStickyHeader();
+                        if (stickyHeader != null && !FXMainFrameOverlayArea.getOverlayChildren().contains(stickyHeader)) {
+                            FXMainFrameOverlayArea.getOverlayChildren().add(stickyHeader);
+                        }
                     }
                 }
             }

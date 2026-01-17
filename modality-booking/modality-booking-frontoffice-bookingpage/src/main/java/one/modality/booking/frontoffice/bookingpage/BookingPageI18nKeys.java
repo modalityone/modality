@@ -28,6 +28,7 @@ public interface BookingPageI18nKeys {
     Object AllocatePaymentAcrossBookings = "AllocatePaymentAcrossBookings";
     Object AllocatePaymentSubtitle = "AllocatePaymentSubtitle";
     Object AllocatedTotal = "AllocatedTotal";
+    Object AllocationMinDepositWarning = "AllocationMinDepositWarning";
     Object AllocationMismatchWarning = "AllocationMismatchWarning";
     Object AlreadyBookedForEvent = "AlreadyBookedForEvent";
     Object AlreadyIncluded = "AlreadyIncluded";
@@ -197,6 +198,7 @@ public interface BookingPageI18nKeys {
     Object LimitedParkingAvailable = "LimitedParkingAvailable";
     Object Lunch = "Lunch";
     Object Meals = "Meals";
+    Object MeetMinimumRequirement = "MeetMinimumRequirement";
     Object MemberRate = "MemberRate";
     Object MemberSelection = "MemberSelection";
     Object MemberSelectionInfoText = "MemberSelectionInfoText";

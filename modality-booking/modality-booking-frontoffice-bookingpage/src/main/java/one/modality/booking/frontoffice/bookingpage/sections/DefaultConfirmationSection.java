@@ -42,7 +42,8 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     protected final ObjectProperty<LocalDate> eventStartDateProperty = new SimpleObjectProperty<>();
     protected final ObjectProperty<LocalDate> eventEndDateProperty = new SimpleObjectProperty<>();
     protected int totalAmount = 0;
-    protected int paidAmount = 0;
+    protected int previouslyPaidAmount = 0; // Amount paid before this transaction
+    protected int paidAmount = 0; // Amount paid in this transaction
     protected boolean isPaymentOnly = false; // True for PAY_BOOKING entry point
 
     // === UI COMPONENTS ===
@@ -312,15 +313,26 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
                 : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(totalAmount, event);
         HBox totalRow = createPaymentRow(BookingPageI18nKeys.TotalAmount, formattedTotal, false);
 
+        content.getChildren().add(totalRow);
+
+        // Already Paid row (only show if there were previous payments)
+        if (previouslyPaidAmount > 0) {
+            String formattedPreviouslyPaid = unifiedPriceDisplay != null
+                    ? unifiedPriceDisplay.formatPrice(previouslyPaidAmount)
+                    : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(previouslyPaidAmount, event);
+            HBox alreadyPaidRow = createPaymentRow(BookingPageI18nKeys.AlreadyPaid, formattedPreviouslyPaid, false);
+            content.getChildren().add(alreadyPaidRow);
+        }
+
         // Paid Today row
         String formattedPaid = unifiedPriceDisplay != null
                 ? unifiedPriceDisplay.formatPrice(paidAmount)
                 : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(paidAmount, event);
         HBox paidRow = createPaymentRow(BookingPageI18nKeys.PaidToday, formattedPaid, false);
 
-        content.getChildren().addAll(totalRow, paidRow);
+        content.getChildren().add(paidRow);
 
-        int balanceDue = totalAmount - paidAmount;
+        int balanceDue = totalAmount - previouslyPaidAmount - paidAmount;
         if (balanceDue > 0) {
             // Divider
             Region divider = new Region();
@@ -527,9 +539,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
     }
 
     @Override
-    public void setPaymentAmounts(int total, int paid) {
+    public void setPaymentAmounts(int total, int previouslyPaid, int paidToday) {
         this.totalAmount = total;
-        this.paidAmount = paid;
+        this.previouslyPaidAmount = previouslyPaid;
+        this.paidAmount = paidToday;
         rebuildUI();
     }
 
