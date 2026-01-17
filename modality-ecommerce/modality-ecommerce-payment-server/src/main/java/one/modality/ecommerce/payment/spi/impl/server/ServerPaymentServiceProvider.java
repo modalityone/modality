@@ -7,11 +7,9 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityId;
-import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.UpdateStore;
+import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.session.state.SystemUserId;
 import dev.webfx.stack.session.state.ThreadLocalStateHolder;
 import one.modality.base.shared.entities.*;
@@ -134,29 +132,38 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
         UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
         MoneyTransfer moneyTransfer = updateStore.updateEntity(MoneyTransfer.class, paymentPrimaryKey);
 
+        String moneyTransferFieldsToLoad = "amount,spread,document.(ref,person,person_firstName,person_lastName,person_email,person_phone,person_street,person_postCode,person_cityName,person_admin1Name,person_country.name,person_countryName,event.name)";
         return Future.all(
             loadPaymentGatewayParameters(paymentPrimaryKey, live),
             // We also load the amount and customer info to pass it to gateways like Authorize.net that set the amount on completion
             // TODO: Should we skip this unnecessary loading for other gateways like Square?
-            moneyTransfer.onExpressionLoaded("amount,document.(ref,person,person_firstName,person_lastName,person_email,person_phone,person_street,person_postCode,person_cityName,person_admin1Name,person_country.name,person_countryName,event.name)")
+            moneyTransfer.onExpressionLoaded(moneyTransferFieldsToLoad),
+            updateStore.executeQuery("select " + moneyTransferFieldsToLoad + " from MoneyTransfer where parent=$1 order by id", moneyTransfer)
         ).compose(cf -> {
             Map<String, String> parameters = (Map<String, String>) cf.list().get(0); // result of loadPaymentGatewayParameters(paymentPrimaryKey, live)
+            EntityList<MoneyTransfer> allocatedTransfers = (EntityList<MoneyTransfer>) cf.list().get(2);
             String accessToken = parameters.get("access_token");
             int amount = moneyTransfer.getAmount();
-            Document document = moneyTransfer.getDocument();
-            GatewayCustomer customer = new GatewayCustomer(
-                Strings.toString(Entities.getPrimaryKey(document.getPersonId())),
-                document.getFirstName(),
-                document.getLastName(),
-                document.getEmail(),
-                document.getPhone(),
-                document.getStreet(),
-                document.getCityName(),
-                document.getPostCode(),
-                document.getAdmin1Name(),
-                document.evaluate("coalesce(person_country.name,person_countryName)")
+            Document billingDocument = moneyTransfer.getDocument();
+            if (billingDocument == null) {
+                MoneyTransfer firstChild = Collections.first(allocatedTransfers);
+                if (firstChild != null) {
+                    billingDocument = firstChild.getDocument();
+                }
+            }
+            GatewayCustomer billingCustomer = billingDocument == null ? null : new GatewayCustomer(
+                Strings.toString(Entities.getPrimaryKey(billingDocument.getPersonId())),
+                billingDocument.getFirstName(),
+                billingDocument.getLastName(),
+                billingDocument.getEmail(),
+                billingDocument.getPhone(),
+                billingDocument.getStreet(),
+                billingDocument.getCityName(),
+                billingDocument.getPostCode(),
+                billingDocument.getAdmin1Name(),
+                billingDocument.evaluate("coalesce(person_country.name,person_countryName)")
             );
-            DatabasePayment databasePayment = new DatabasePayment(moneyTransfer, null);
+            DatabasePayment databasePayment = new DatabasePayment(moneyTransfer, allocatedTransfers.toArray(MoneyTransfer[]::new));
             GatewayOrder order = createGatewayOrder(databasePayment);
 
             // The following code is executed just after the call to the Payment Gateway (which will take a bit of time to
@@ -167,7 +174,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                     .onSuccess(x -> updateStore.submitChanges());
 
             // TODO check accessToken is set, otherwise return an error
-            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, customer, order))
+            return paymentGateway.completePayment(new GatewayCompletePaymentArgument(live, accessToken, argument.gatewayCompletePaymentPayload(), parameters, amount, billingCustomer, order))
                 .onFailure(e -> {
                     Console.log("An error occurred while completing payment: " + e.getMessage());
                     // We finally update the payment status through the payment service (this will also create a history entry)
