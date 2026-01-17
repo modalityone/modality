@@ -71,6 +71,10 @@ public final class PriceCalculator {
         return calculateTotalPrice() - calculateDeposit();
     }
 
+    public int calculateBalanceToMinDeposit() {
+        return Math.max(0, calculateMinDeposit() - calculateDeposit());
+    }
+
     public int calculateDocumentLinesPrice(Stream<DocumentLine> stream) {
         DocumentAggregate documentAggregate = getDocumentAggregate();
         if (documentAggregate == null)

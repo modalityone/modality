@@ -126,6 +126,10 @@ public final class WorkingBooking {
         return getLatestBookingPriceCalculator().calculateBalance();
     }
 
+    public int calculateBalanceToMinDeposit() {
+        return getLatestBookingPriceCalculator().calculateBalanceToMinDeposit();
+    }
+
     public int calculatePreviousTotal() {
         return getPreviousBookingPriceCalculator().calculateTotalPrice();
     }
