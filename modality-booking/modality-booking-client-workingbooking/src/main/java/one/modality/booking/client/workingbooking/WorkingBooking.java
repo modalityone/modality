@@ -439,8 +439,10 @@ public final class WorkingBooking {
     }
 
     private void applyPersonalDetails(String firstName, String lastName, String email, Person person) {
+        if (!document.isNew())
+            throw new IllegalStateException("Cannot change the personal details of a booking that has already been submitted");
         AddDocumentEvent addDocumentEvent = findAddDocumentEvent(true);
-        if (addDocumentEvent != null) {
+        if (addDocumentEvent != null) { // Always true
             addDocumentEvent.setFirstName(firstName);
             addDocumentEvent.setLastName(lastName);
             addDocumentEvent.setEmail(email);
@@ -448,10 +450,16 @@ public final class WorkingBooking {
                 addDocumentEvent.setPersonPrimaryKey(Entities.getPrimaryKey(person));
             }
             addDocumentEvent.setPersonLang(Strings.toString(I18n.getLanguage()));
+            // Applying the changes to the document entity
+            addDocumentEvent.replayEventOnDocument();
         }
     }
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
+        if (document.isNew()) {
+            if (document.getPerson() == null && (Strings.isEmpty(document.getFirstName()) || Strings.isEmpty(document.getLastName()) || Strings.isEmpty(document.getEmail())))
+                throw new IllegalStateException("Cannot submit a new booking with incomplete personal details");
+        }
         // We submit the booking changes
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
