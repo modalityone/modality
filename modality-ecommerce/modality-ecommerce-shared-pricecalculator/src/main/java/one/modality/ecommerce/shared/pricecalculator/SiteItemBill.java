@@ -222,8 +222,16 @@ public final class SiteItemBill {
         Document document = documentAggregate.getDocument();
         Person person = document.getPerson();
         Integer age = document.getAge();
-        if (age == null && person != null)
+        if (age == null && person != null) {
             age = person.getAge();
+            if (age == null) {
+                LocalDate birthDate = person.getBirthDate();
+                if (birthDate != null) {
+                    LocalDate startDate = documentAggregate.getEvent().getStartDate();
+                    age = birthDate.until(startDate).getYears();
+                }
+            }
+        }
         boolean unemployed = Booleans.isTrue(document.isUnemployed());
         if (person != null && Booleans.isTrue(person.isUnemployed()))
             unemployed = true;
