@@ -15,6 +15,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.base.shared.entities.util.Attendances;
 import one.modality.base.shared.entities.util.DocumentLines;
 import one.modality.base.shared.entities.util.ScheduledItems;
@@ -428,24 +429,25 @@ public final class WorkingBooking {
         cancelChanges(); // Will create a new Document because initialDocumentAggregate is null
     }
 
-    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
-        // In case the booking is not linked to the booker account - because the user was not logged in at the start of
-        // the booking process - we set it now. (the front-office probably forced the user to log in before submit).
-        if (document.isNew()) {
-            documentChanges.forEach(e -> {
-                if (e instanceof AddDocumentEvent ade) {
-                    ade.setPersonLang(Strings.toString(I18n.getLanguage()));
-                    Person personToBook = FXPersonToBook.getPersonToBook();
-                    if (personToBook != null)
-                        ade.setPersonPrimaryKey(Entities.getPrimaryKey(personToBook));
-                    // If booked as a guest
-                    ade.setFirstName(document.getFirstName());
-                    ade.setLastName(document.getLastName());
-                    ade.setEmail(document.getEmail());
-                }
-            });
-        }
+    public void applyPersonalDetails(HasPersonalDetails hasPersonalDetails) {
+        Person person = hasPersonalDetails instanceof Person person1 ? person1 : null;
+        applyPersonalDetails(hasPersonalDetails.getFirstName(), hasPersonalDetails.getLastName(), hasPersonalDetails.getEmail(), person);
+    }
 
+    public void applyPersonalDetails(String firstName, String lastName, String email, Person person) {
+        AddDocumentEvent addDocumentEvent = findAddDocumentEvent(true);
+        if (addDocumentEvent != null) {
+            addDocumentEvent.setFirstName(firstName);
+            addDocumentEvent.setLastName(lastName);
+            addDocumentEvent.setEmail(email);
+            if (person != null) {
+                addDocumentEvent.setPersonPrimaryKey(Entities.getPrimaryKey(person));
+            }
+            addDocumentEvent.setPersonLang(Strings.toString(I18n.getLanguage()));
+        }
+    }
+
+    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
         // We submit the booking changes
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
@@ -562,6 +564,10 @@ public final class WorkingBooking {
 
     public List<Attendance> getAttendancesRemoved(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().getAttendancesRemoved(fromChangesOnly);
+    }
+
+    public AddDocumentEvent findAddDocumentEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findAddDocumentEvent(fromChangesOnly);
     }
 
     public AddRequestEvent findAddRequestEvent(boolean fromChangesOnly) {

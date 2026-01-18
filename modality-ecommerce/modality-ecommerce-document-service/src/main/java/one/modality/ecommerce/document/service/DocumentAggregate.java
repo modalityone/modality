@@ -171,6 +171,13 @@ public final class DocumentAggregate {
             .collect(Collectors.toList());
     }
 
+    public AddDocumentEvent findAddDocumentEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof AddDocumentEvent)
+            .map(e -> (AddDocumentEvent) e)
+            .findFirst().orElse(null);
+    }
+
     public AddRequestEvent findAddRequestEvent(boolean excludePreviousVersionEvents) {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof AddRequestEvent)
