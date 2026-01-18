@@ -1,5 +1,6 @@
 package one.modality.ecommerce.shared.pricecalculator;
 
+import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 
@@ -46,6 +47,11 @@ public final class DocumentBill {
 
     public Collection<SiteItemBill> getSiteItemBills() {
         return siteItemBills;
+    }
+
+    public boolean isChildRateApplied() {
+        // Note: this doesn't consider already priced lines
+        return Collections.anyMatch(siteItemBills, SiteItemBill::isChildRateApplied);
     }
 
     private int computePrice(boolean minDeposit) {

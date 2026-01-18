@@ -24,6 +24,7 @@ public final class SiteItemBill {
 
     private final SiteItem siteItem;
     private final List<AttendanceBill> attendanceBills = new ArrayList<>();
+    private boolean childRateApplied;
 
     private int totalPrice = -1;
     private int minDeposit = -1;
@@ -46,6 +47,10 @@ public final class SiteItemBill {
 
     public int getMinDeposit() {
         return minDeposit;
+    }
+
+    public boolean isChildRateApplied() {
+        return childRateApplied;
     }
 
     void addAttendanceBill(AttendanceBill attendanceBill) {
@@ -245,12 +250,16 @@ public final class SiteItemBill {
         var discoveryReduced = document.person_discoveryReduced || document.person && document.person.discoveryReduced;
         var discovery = document.person_discovery || document.person && document.person.discovery;*/
         if (age != null) {
-            if (rate.getAge1Max() != null && age <= rate.getAge1Max())
+            if (rate.getAge1Max() != null && age <= rate.getAge1Max()) {
                 price = rate.getAge1Price() != null ? rate.getAge1Price() : price * (100 - rate.getAge1Discount()) / 100;
-            else if (rate.getAge2Max() != null && age <= rate.getAge2Max())
+                childRateApplied = true; // To improve as it's not yet certain at this point this rate will be finally applied
+            } else if (rate.getAge2Max() != null && age <= rate.getAge2Max()) {
                 price = rate.getAge2Price() != null ? rate.getAge2Price() : price * (100 - rate.getAge2Discount()) / 100;
-            else if (rate.getAge3Max() != null && age <= rate.getAge3Max())
+                childRateApplied = true; // To improve as it's not yet certain at this point this rate will be finally applied
+            } else if (rate.getAge3Max() != null && age <= rate.getAge3Max()) {
                 price = rate.getAge3Price() != null ? rate.getAge3Price() : price * (100 - rate.getAge3Discount()) / 100;
+                childRateApplied = true; // To improve as it's not yet certain at this point this rate will be finally applied
+            }
         } /*else if (workingVisit && (rate.workingVisit_price || rate.workingVisit_discount))
             price = (rate.workingVisit_price || rate.workingVisit_price === 0) ? rate.workingVisit_price : price * (100 - rate.workingVisit_discount) / 100;
         else if (guest && (rate.guest_price || rate.guest_discount))
