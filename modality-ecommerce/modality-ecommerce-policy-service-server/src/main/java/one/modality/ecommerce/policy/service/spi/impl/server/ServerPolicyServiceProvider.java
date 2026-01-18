@@ -23,7 +23,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         // We also compute the remaining available space for guests
         ",(select sum(" +
             "coalesce((select quantity from PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1 limit 1), max, configuration.max)" +
-            " - coalesce((select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and documentLine.(!frontend_released and poolAllocation.(resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + "))), 0)" +
+            " - coalesce((select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and documentLine.(!frontend_released and (pool = null or pool= " + GENERAL_GUESTS_EVENT_POOL_ID + "))), 0)" +
             ") from ScheduledResource sr" +
             // We consider only the resources allocated to the general guest pool for this event
             " where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)" +
