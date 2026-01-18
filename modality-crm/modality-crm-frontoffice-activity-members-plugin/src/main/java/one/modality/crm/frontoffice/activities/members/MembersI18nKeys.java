@@ -29,6 +29,7 @@ public interface MembersI18nKeys {
     Object BadgeNeedsApproval = "BadgeNeedsApproval";
     Object BadgeNeedsValidation = "BadgeNeedsValidation";
     Object BadgePending = "BadgePending";
+    Object BirthdateWarning = "BirthdateWarning";
     Object CancelAction = "CancelAction";
     Object CancelInvitationMessage = "CancelInvitationMessage";
     Object CancelInvitationTitle = "CancelInvitationTitle";
@@ -71,6 +72,7 @@ public interface MembersI18nKeys {
     Object FirstName = "FirstName";
     Object FirstNamePlaceholder = "FirstNamePlaceholder";
     Object GoToMembers = "GoToMembers";
+    Object InvalidBirthdateFormat = "InvalidBirthdateFormat";
     Object InvalidInvitationLink = "InvalidInvitationLink";
     Object InvalidInvitationLinkDescription = "InvalidInvitationLinkDescription";
     Object InvitationResentSuccessfully = "InvitationResentSuccessfully";

@@ -409,10 +409,14 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
     /**
          * Data class to hold member information from Add Member dialog.
          */
-        public record AddMemberData(String firstName, String lastName, String email) {
+        public record AddMemberData(String firstName, String lastName, String email, java.time.LocalDate birthDate) {
     }
 
     public void showAddMemberDialog(Consumer<AddMemberData> onDataEntered) {
+        // Create form content container
+        VBox formContent = new VBox(16);
+        formContent.setPadding(new Insets(20, 0, 20, 0));
+
         // Create MaterialDesign form fields
         TextField firstNameField = newMaterialTextField(MembersI18nKeys.FirstName);
         MaterialUtil.getMaterialTextField(firstNameField).setAnimateLabel(false);
@@ -423,6 +427,22 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         TextField emailField = newMaterialTextField(MembersI18nKeys.AddMemberEmailLabel);
         MaterialUtil.getMaterialTextField(emailField).setAnimateLabel(false);
 
+        // Birthdate field (optional text field with format validation)
+        TextField birthDateField = new TextField();
+        birthDateField.setPromptText(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT);
+        MaterialUtil.makeMaterial(birthDateField);
+        dev.webfx.extras.styles.materialdesign.textfield.MaterialTextField materialBirthDateField = MaterialUtil.getMaterialTextField(birthDateField);
+        materialBirthDateField.setAnimateLabel(false);
+        I18n.bindI18nTextProperty(materialBirthDateField.labelTextProperty(), CrmI18nKeys.BirthDate);
+
+        // Warning box for birthdate
+        VBox birthdateWarning = new VBox(8);
+        birthdateWarning.setPadding(new Insets(12));
+        birthdateWarning.getStyleClass().addAll("alert", "alert-warning");
+        Label birthdateWarningLabel = I18nControls.newLabel(MembersI18nKeys.BirthdateWarning);
+        birthdateWarningLabel.setWrapText(true);
+        birthdateWarning.getChildren().add(birthdateWarningLabel);
+
         // Create validation support
         ValidationSupport validationSupport = new ValidationSupport();
         validationSupport.addRequiredInput(firstNameField);
@@ -430,13 +450,20 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         // Email is required and must be valid format
         validationSupport.addRequiredInput(emailField);
         validationSupport.addEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
+        // Birthdate is optional but must be valid format if entered
+        validationSupport.addDateOrEmptyValidation(
+                birthDateField,
+                LocalizedTime.dateTimeFormatter(FrontOfficeTimeFormats.BIRTH_DATE_FORMAT),
+                birthDateField,
+                I18n.i18nTextProperty(MembersI18nKeys.InvalidBirthdateFormat));
 
-        // Create form content
-        VBox formContent = new VBox(16,
+        // Add fields to form content
+        formContent.getChildren().addAll(
                 firstNameField,
                 lastNameField,
-                emailField);
-        formContent.setPadding(new Insets(20, 0, 20, 0));
+                emailField,
+                birthDateField,
+                birthdateWarning);
 
         // Create dialog using factory method
         DialogContent dialog = DialogContent.createInformationDialogWithTwoActions(
@@ -460,8 +487,14 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
             String firstName = firstNameField.getText().trim();
             String lastName = lastNameField.getText().trim();
             String email = emailField.getText().trim();
+            // Parse birthdate if entered (already validated by ValidationSupport)
+            java.time.LocalDate birthDate = null;
+            String birthDateText = birthDateField.getText().trim();
+            if (!birthDateText.isEmpty()) {
+                birthDate = LocalizedTime.parseLocalDate(birthDateText, FrontOfficeTimeFormats.BIRTH_DATE_FORMAT);
+            }
 
-            onDataEntered.accept(new AddMemberData(firstName, lastName, email));
+            onDataEntered.accept(new AddMemberData(firstName, lastName, email, birthDate));
             dialogCallback.closeDialog();
         });
     }
