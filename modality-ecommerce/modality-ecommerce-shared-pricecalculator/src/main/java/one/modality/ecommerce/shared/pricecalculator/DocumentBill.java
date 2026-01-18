@@ -51,6 +51,7 @@ public final class DocumentBill {
 
     public boolean isChildRateApplied() {
         // Note: this doesn't consider already priced lines
+        getTotalPrice(); // To force the price algorithm to compute if not already done
         return Collections.anyMatch(siteItemBills, SiteItemBill::isChildRateApplied);
     }
 
