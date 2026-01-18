@@ -427,8 +427,9 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         ValidationSupport validationSupport = new ValidationSupport();
         validationSupport.addRequiredInput(firstNameField);
         validationSupport.addRequiredInput(lastNameField);
-        // Email is optional, but if provided, must be valid format
-        validationSupport.addOptionalEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
+        // Email is required and must be valid format
+        validationSupport.addRequiredInput(emailField);
+        validationSupport.addEmailValidation(emailField, emailField, I18n.i18nTextProperty(MembersI18nKeys.ValidationError));
 
         // Create form content
         VBox formContent = new VBox(16,
