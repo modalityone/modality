@@ -15,3 +15,13 @@
     border-bottom: 1px solid #E5E7EB;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
+
+/* Fix for SVG icons - override :root --fx-svg-path-stroke which defaults to transparent.
+   The unified CSS sets --fx-stroke and --fx-fill, but SVG paths use --fx-svg-path-stroke/fill
+   as primary with --fx-stroke/fill only as fallback. Since :root sets --fx-svg-path-stroke: transparent,
+   we need to explicitly bridge the variables for proper color inheritance. */
+.bookingpage-icon-primary,
+.bookingpage-btn-select-type-icon {
+    --fx-svg-path-stroke: var(--fx-stroke);
+    --fx-svg-path-fill: var(--fx-fill);
+}
