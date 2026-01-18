@@ -7,18 +7,13 @@ import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.com.serial.SerialCodecManager;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.triggers.Triggers;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.LoadDocumentArgument;
-import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
-import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
+import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
-import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.*;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
@@ -34,6 +29,11 @@ import java.util.stream.Collectors;
  * @author Bruno Salmon
  */
 public class ServerDocumentServiceProvider implements DocumentServiceProvider {
+
+
+    /*------------------------------------------------------------------------------------------------------------------
+    |                                                  LOAD                                                            |
+    ------------------------------------------------------------------------------------------------------------------*/
 
     @Override
     public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
@@ -157,35 +157,35 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             });
     }
 
+
+
+    /*------------------------------------------------------------------------------------------------------------------
+    |                                                 SUBMIT                                                           |
+    ------------------------------------------------------------------------------------------------------------------*/
+
     @Override
     public Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
-        UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
-        Document document = null;
-        DocumentLine documentLine = null;
-        AbstractDocumentEvent[] documentEvents = argument.documentEvents();
-        for (AbstractDocumentEvent e : documentEvents) {
-            e.setEntityStore(updateStore); // This indicates it's for submission
-            e.replayEvent();
-            if (document == null)
-                document = e.getDocument();
-            if (documentLine == null && e instanceof AbstractDocumentLineEvent) {
-                documentLine = ((AbstractDocumentLineEvent) e).getDocumentLine();
-            }
-        }
-
-        if (document == null && documentLine != null)
-            document = documentLine.getDocument();
-
-        if (document == null)
+        DocumentSubmitRequest request = DocumentSubmitRequest.create(argument);
+        if (request.document() == null)
             return Future.failedFuture("No document changes to submit");
 
+        // Delegating the call to DocumentSubmitController, which will handle the complexity of the event queue (on big
+        // events bookings openings). If no event queue is required, it will call back submitDocumentChangesNow()
+        // straight away. Otherwise it will enqueue the submission for later processing but immediately return a result
+        // with status ENQUEUED. At the booking opening time, the queue will process the enqueued submissions and call
+        // submitDocumentChangesNow() for each of them, and communicate the final result to the clients using push
+        // notification.
+        return DocumentSubmitController.submitDocumentChanges(request);
+    }
+
+    static Future<SubmitDocumentChangesResult> submitDocumentChangesNow(DocumentSubmitRequest request) {
         // Note: At this point, the document may be null, but in that case we at least have documentLine not null
-        return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(argument.historyComment(), document, documentLine)
+        return HistoryRecorder.prepareDocumentHistoriesBeforeSubmit(request.argument().historyComment(), request.document(), request.documentLine())
             .compose(histories -> // At this point, history.getDocument() is never null (it has eventually been
-                submitChangesAndPrepareResult(updateStore, histories[0].getDocument()) // resolved through DB reading)
+                submitChangesAndPrepareResult(request.updateStore(), histories[0].getDocument()) // resolved through DB reading)
                     .compose(result -> { // Completing the history recording (changes column with resolved primary keys)
-                            if (result.isSuccessfullySubmitted())
-                                return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, argument.documentEvents())
+                            if (result.status() == DocumentChangesStatus.APPROVED)
+                                return HistoryRecorder.completeDocumentHistoriesAfterSubmit(histories, request.argument().documentEvents())
                                     .map(ignoredVoid -> result);
                             return Future.succeededFuture(result); // No technical exception, but submit refused by logic (ex: sold-out)
                         }
@@ -193,7 +193,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             );
     }
 
-    private Future<SubmitDocumentChangesResult> submitChangesAndPrepareResult(UpdateStore updateStore, Document document) {
+    private static Future<SubmitDocumentChangesResult> submitChangesAndPrepareResult(UpdateStore updateStore, Document document) {
         return updateStore.submitChanges(Triggers.frontOfficeTransaction(updateStore))
             .compose(batch -> {
                 Object documentPk = document.getPrimaryKey();
@@ -207,14 +207,14 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                 }
                 if (cartUuid == null || documentRef == null) {
                     return document.onExpressionLoaded("ref,cart.uuid")
-                        .map(x -> SubmitDocumentChangesResult.createSuccessfulSubmittedResult(
+                        .map(x -> SubmitDocumentChangesResult.createApprovedResult(
                             document.getPrimaryKey(),
                             document.getRef(),
                             document.getCart().getPrimaryKey(),
                             document.getCart().getUuid()
                         ));
                 }
-                return Future.succeededFuture(SubmitDocumentChangesResult.createSuccessfulSubmittedResult(documentPk, documentRef, cartPk, cartUuid));
+                return Future.succeededFuture(SubmitDocumentChangesResult.createApprovedResult(documentPk, documentRef, cartPk, cartUuid));
             })
             // Detecting sold-out exception from the database
             .recover(ex -> {

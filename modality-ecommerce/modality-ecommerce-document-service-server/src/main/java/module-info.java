@@ -8,10 +8,14 @@ module modality.ecommerce.document.service.server {
     requires modality.ecommerce.history.server;
     requires webfx.platform.ast;
     requires webfx.platform.async;
+    requires webfx.platform.scheduler;
     requires webfx.platform.util;
+    requires webfx.stack.com.bus;
     requires webfx.stack.com.serial;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.push.server;
+    requires webfx.stack.session.state;
 
     // Exported packages
     exports one.modality.ecommerce.document.service.spi.impl.server;

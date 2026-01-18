@@ -43,10 +43,7 @@ import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
-import one.modality.ecommerce.document.service.DocumentAggregate;
-import one.modality.ecommerce.document.service.DocumentService;
-import one.modality.ecommerce.document.service.LoadDocumentArgument;
-import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
+import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
@@ -729,7 +726,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
             .compose(submitResult -> {
-                if (submitResult.isSoldOut()) {
+                if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
                     UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
                         new SoldOutErrorParser.SoldOutInfo(
                             submitResult.soldOutSitePrimaryKey(),
@@ -1138,7 +1135,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
-                if (submitResult.isSoldOut()) {
+                if (submitResult.status() == DocumentChangesStatus.APPROVED) {
                     Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
 
                     // Store the booking reference
