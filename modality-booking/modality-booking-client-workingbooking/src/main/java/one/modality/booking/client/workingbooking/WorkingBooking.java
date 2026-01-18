@@ -27,6 +27,7 @@ import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.*;
 import one.modality.ecommerce.document.service.util.DocumentEvents;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
+import one.modality.ecommerce.shared.pricecalculator.DocumentBill;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.time.LocalDate;
@@ -139,6 +140,10 @@ public final class WorkingBooking {
         return getPreviousBookingPriceCalculator().calculateBalance();
     }
 
+    public boolean isChildRateApplied() {
+        DocumentBill documentBill = getLatestBookingPriceCalculator().computeDocumentBill();
+        return documentBill != null && documentBill.isChildRateApplied();
+    }
 
     public int getVersion() {
         return versionProperty.get();
@@ -464,9 +469,9 @@ public final class WorkingBooking {
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
         ).compose(result -> {
-            if (result.isSoldOut())
+            if (result.status() != DocumentChangesStatus.APPROVED) // SOLD_OUT or ENQUEUED
                 return Future.succeededFuture(result);
-            // The submitting was successful at this point, and we reload the latest version of the booking TODO: make this as on option in SubmitDocumentChangesArgument
+            // The submitting was approved at this point, so we reload the latest version of the booking TODO: make this optional
             return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.documentPrimaryKey()))
                 .map(documentAggregate -> {
                     // We set the polityAggregate (was already loaded), and this also rebuilds internal entities (document, changes)
