@@ -93,6 +93,7 @@ public interface BookingPageI18nKeys {
     Object CheckYourEmailDesc = "CheckYourEmailDesc";
     Object CheckYourEmailTitle = "CheckYourEmailTitle";
     Object Checking = "Checking";
+    Object ChildRate = "ChildRate";
     Object ChooseNewAccommodation = "ChooseNewAccommodation";
     Object ChooseYourAmount = "ChooseYourAmount";
     Object ComingSoon = "ComingSoon";
