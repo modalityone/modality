@@ -1022,17 +1022,45 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         if (changingDateMode.equals("arrival") && departure != null) {
             // Can't arrive after departure
             if (date.isAfter(departure)) return true;
-            // Check min nights constraint
-            long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(date, departure);
+            // Check min nights constraint - only count nights within main event period
+            long nightsIfSelected = calculateNightsWithinMainEvent(date, departure);
             if (nightsIfSelected < effectiveMinNights) return true;
         } else if (changingDateMode.equals("departure") && arrival != null) {
             // Can't depart before arrival
             if (date.isBefore(arrival)) return true;
-            // Check min nights constraint
-            long nightsIfSelected = java.time.temporal.ChronoUnit.DAYS.between(arrival, date);
+            // Check min nights constraint - only count nights within main event period
+            long nightsIfSelected = calculateNightsWithinMainEvent(arrival, date);
             if (nightsIfSelected < effectiveMinNights) return true;
         }
         return false;
+    }
+
+    /**
+     * Calculates the number of nights that overlap with the main event period.
+     * Only nights within the main event (mainEventStartDate to mainEventEndDate) count
+     * toward the minimum nights constraint. Early arrival and late departure nights
+     * do NOT count.
+     *
+     * @param arrival   The arrival date
+     * @param departure The departure date
+     * @return Number of nights within the main event period
+     */
+    protected long calculateNightsWithinMainEvent(LocalDate arrival, LocalDate departure) {
+        // Fall back to total nights if main event boundaries not set
+        if (mainEventStartDate == null || mainEventEndDate == null) {
+            return java.time.temporal.ChronoUnit.DAYS.between(arrival, departure);
+        }
+
+        // Calculate overlap: max(arrival, eventStart) to min(departure, eventEnd)
+        LocalDate overlapStart = arrival.isAfter(mainEventStartDate) ? arrival : mainEventStartDate;
+        LocalDate overlapEnd = departure.isBefore(mainEventEndDate) ? departure : mainEventEndDate;
+
+        // No overlap if start >= end
+        if (!overlapStart.isBefore(overlapEnd)) {
+            return 0;
+        }
+
+        return java.time.temporal.ChronoUnit.DAYS.between(overlapStart, overlapEnd);
     }
 
     protected boolean isDateClickable(LocalDate date, LocalDate arrival, LocalDate departure) {
