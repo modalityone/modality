@@ -434,7 +434,11 @@ public final class WorkingBooking {
         applyPersonalDetails(hasPersonalDetails.getFirstName(), hasPersonalDetails.getLastName(), hasPersonalDetails.getEmail(), person);
     }
 
-    public void applyPersonalDetails(String firstName, String lastName, String email, Person person) {
+    public void applyGuestPersonalDetails(String firstName, String lastName, String email) {
+        applyPersonalDetails(firstName, lastName, email, null);
+    }
+
+    private void applyPersonalDetails(String firstName, String lastName, String email, Person person) {
         AddDocumentEvent addDocumentEvent = findAddDocumentEvent(true);
         if (addDocumentEvent != null) {
             addDocumentEvent.setFirstName(firstName);
