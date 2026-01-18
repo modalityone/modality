@@ -14,7 +14,8 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     private final Object eventPrimaryKey;
     private String personLang;
     // Booking with an account
-    private Object personPrimaryKey;
+    private Person person; // not serialized
+    private Object personPrimaryKey; // serialized
     // Booking as a guest
     private String firstName;
     private String lastName;
@@ -54,6 +55,15 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     public void setPersonLang(String personLang) {
         this.personLang = personLang;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+        setPersonPrimaryKey(Entities.getPrimaryKey(person));
     }
 
     public Object getPersonPrimaryKey() {
@@ -111,10 +121,10 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         super.replayEventOnDocument();
         document.setEvent(isForSubmit() ? getEventPrimaryKey() : entityStore.getOrCreateEntity(Event.class, getEventPrimaryKey()));
         document.setPersonLang(personLang);
-        Object personPrimaryKey = getPersonPrimaryKey();
-        if (personPrimaryKey != null) {
+        if (person != null)
+            document.setPerson(person);
+        else if (personPrimaryKey != null)
             document.setPerson(isForSubmit() ? personPrimaryKey : entityStore.getOrCreateEntity(Person.class, personPrimaryKey));
-        }
         document.setFirstName(firstName);
         document.setLastName(lastName);
         document.setEmail(email);
