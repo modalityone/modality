@@ -447,7 +447,7 @@ public final class WorkingBooking {
             addDocumentEvent.setLastName(lastName);
             addDocumentEvent.setEmail(email);
             if (person != null) {
-                addDocumentEvent.setPersonPrimaryKey(Entities.getPrimaryKey(person));
+                addDocumentEvent.setPerson(person);
             }
             addDocumentEvent.setPersonLang(Strings.toString(I18n.getLanguage()));
             // Applying the changes to the document entity
