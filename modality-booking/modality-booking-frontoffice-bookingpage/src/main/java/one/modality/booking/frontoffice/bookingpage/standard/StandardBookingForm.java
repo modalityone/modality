@@ -1822,6 +1822,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Create PriceCalculator for computing line prices (needed for new bookings where prices aren't stored yet)
         PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
 
+        // Check if child rate was applied and update summary section
+        // This must happen AFTER onBeforeSummary() has applied person details (including age)
+        // Always set the rate type to ensure it's refreshed when switching between attendees
+        defaultSummarySection.setRateType(workingBooking.isChildRateApplied() ? "Child" : "Standard");
+
         if (documentLines != null && !documentLines.isEmpty()) {
             // Add itemized price lines from document lines
             for (DocumentLine line : documentLines) {

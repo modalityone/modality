@@ -819,10 +819,20 @@ final class CustomizeTabView {
 
         content.getChildren().addAll(header, infoBanner, capacitySection, typeSection, genderSection, notesSection);
 
-        // Create footer with Save and Cancel buttons
+        // Create footer with Reset, Cancel, and Save buttons
         HBox buttonBar = new HBox(12);
-        buttonBar.setAlignment(Pos.CENTER_RIGHT);
+        buttonBar.setAlignment(Pos.CENTER_LEFT);
         buttonBar.setPadding(new Insets(16, 20, 20, 20));
+
+        // Reset button - only enabled when an event-specific override exists
+        Button resetButton = I18nControls.newButton(EventRoomSetupI18nKeys.ResetToDefault);
+        Bootstrap.dangerButton(resetButton);
+        resetButton.setPadding(new Insets(10, 24, 10, 24));
+        resetButton.setDisable(eventConfig == null);
+
+        // Spacer to push Cancel/Save to the right
+        Region buttonSpacer = new Region();
+        HBox.setHgrow(buttonSpacer, Priority.ALWAYS);
 
         Button cancelButton = I18nControls.newButton(EventRoomSetupI18nKeys.Cancel);
         Bootstrap.secondaryButton(cancelButton);
@@ -832,7 +842,7 @@ final class CustomizeTabView {
         Bootstrap.primaryButton(saveButton);
         saveButton.setPadding(new Insets(10, 24, 10, 24));
 
-        buttonBar.getChildren().addAll(cancelButton, saveButton);
+        buttonBar.getChildren().addAll(resetButton, buttonSpacer, cancelButton, saveButton);
 
         // Wrap in BorderPane for proper layout
         BorderPane dialogPane = new BorderPane();
@@ -847,6 +857,11 @@ final class CustomizeTabView {
 
         // Wire up button actions
         cancelButton.setOnAction(e -> dialogCallback.closeDialog());
+
+        resetButton.setOnAction(e -> {
+            deleteOverride(room);
+            dialogCallback.closeDialog();
+        });
 
         saveButton.setOnAction(e -> {
             boolean allowsFemale = !"male".equals(genderState[0]);
@@ -896,6 +911,32 @@ final class CustomizeTabView {
                 // The reactive mapper's entity handler will call notifyBedConfigurationChanged()
                 // when the new data arrives, ensuring all tabs refresh with correct data
                 dataModel.refreshChangedEntities(Collections.singletonList(changedConfig));
+                Platform.runLater(this::refreshUI);
+            });
+    }
+
+    /**
+     * Deletes the event-specific override for a room, restoring it to default configuration.
+     *
+     * This deletes the ResourceConfiguration from eventRoomConfigs (where event=currentEvent),
+     * NOT the permanent configuration (where event is null and no date range).
+     * After deletion, the room will use its permanent/default configuration.
+     */
+    private void deleteOverride(Resource room) {
+        // getConfiguration() returns the event-specific override from eventRoomConfigs
+        // (NOT the permanent config from permanentRoomConfigs)
+        ResourceConfiguration eventOverride = getConfiguration(room);
+        if (eventOverride == null) {
+            return; // No override to delete
+        }
+
+        getUpdateStore().deleteEntity(eventOverride);
+
+        getUpdateStore().submitChanges()
+            .onFailure(Console::log)
+            .onSuccess(r -> {
+                // Refresh event data to remove the deleted override from the list
+                dataModel.refreshEventData();
                 Platform.runLater(this::refreshUI);
             });
     }

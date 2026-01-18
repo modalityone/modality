@@ -1078,12 +1078,13 @@ public class MembersController {
             String firstName = data.firstName();
             String lastName = data.lastName();
             String email = data.email();
+            java.time.LocalDate birthDate = data.birthDate();
 
             if (email.isEmpty()) {
                 // No email - create member without account directly
-                addMemberDirectly(firstName, lastName, null);
+                addMemberDirectly(firstName, lastName, null, birthDate);
             } else {
-                addMemberWithEmailValidation(firstName, lastName, email);
+                addMemberWithEmailValidation(firstName, lastName, email, birthDate);
             }
         });
     }
@@ -1091,7 +1092,7 @@ public class MembersController {
     /**
      * Add member with email validation workflow.
      */
-    private void addMemberWithEmailValidation(String firstName, String lastName, String email) {
+    private void addMemberWithEmailValidation(String firstName, String lastName, String email, java.time.LocalDate birthDate) {
         ModalityUserPrincipal principal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
         if (principal == null) {
             view.showErrorDialog("Error", "Not authenticated");
@@ -1115,7 +1116,7 @@ public class MembersController {
                 // Email matches current user - create directly (no validation)
                 if (email.equalsIgnoreCase(currentUserEmail)) {
                     UiScheduler.scheduleDeferred(() ->
-                        addMemberDirectly(firstName, lastName, email));
+                        addMemberDirectly(firstName, lastName, email, birthDate));
                     return;
                 }
 
@@ -1131,7 +1132,7 @@ public class MembersController {
                     .onSuccess(persons -> UiScheduler.scheduleDeferred(() -> {
                         if (persons.isEmpty()) {
                             // Email doesn't exist as account owner - create directly
-                            addMemberDirectly(firstName, lastName, email);
+                            addMemberDirectly(firstName, lastName, email, birthDate);
                         } else {
                             // Email matches an account owner - send authorization request
                             Person matchedPerson = persons.get(0);
@@ -1144,7 +1145,7 @@ public class MembersController {
     /**
      * Add a member directly (creates Person entity in current user's account).
      */
-    private void addMemberDirectly(String firstName, String lastName, String email) {
+    private void addMemberDirectly(String firstName, String lastName, String email, java.time.LocalDate birthDate) {
         ModalityUserPrincipal principal = FXModalityUserPrincipal.modalityUserPrincipalProperty().get();
         if (principal == null) {
             view.showErrorDialog("Error", "Not authenticated");
@@ -1157,6 +1158,9 @@ public class MembersController {
         newPerson.setLastName(lastName);
         if (email != null && !email.isEmpty()) {
             newPerson.setEmail(email);
+        }
+        if (birthDate != null) {
+            newPerson.setBirthDate(birthDate);
         }
         newPerson.setFrontendAccount(principal.getUserAccountId());
         newPerson.setOwner(false);

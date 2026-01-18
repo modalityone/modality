@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ItemPolicy;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
@@ -563,6 +564,61 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
             addOption(option);
             Console.log("DefaultAdditionalOptionsSection: Added option '" + name + "' (" + family.name() + ") price=" + price);
+        }
+
+        // === PART 2: Load translation items from ItemPolicies ===
+        // TODO: Extend this to handle other atemporal item families (accessibility, etc.) in the future
+        for (ItemPolicy policy : policyAggregate.getTranslationItemPolicies()) {
+            Item item = policy.getItem();
+            if (item == null) continue;
+
+            KnownItemFamily family = item.getItemFamilyType();
+
+            // Get price from rate (try fixed rates first, then daily)
+            int price = policyAggregate.filterFixedRatesStreamOfSiteAndItem(null, item)
+                .findFirst()
+                .map(Rate::getPrice)
+                .orElseGet(() -> policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
+                    .findFirst()
+                    .map(Rate::getPrice)
+                    .orElse(0));
+
+            // Atemporal items are NOT per-day
+            boolean perDay = false;
+
+            // Get per-person flag from rate
+            boolean perPerson = policyAggregate.filterRatesStreamOfSiteAndItem(null, item)
+                .findFirst()
+                .map(r -> !Boolean.FALSE.equals(r.isPerPerson()))
+                .orElse(false);
+
+            // Get item name and description
+            String name = item.getName() != null ? item.getName() : "";
+            String description = "";
+            if (item.getLabel() != null && item.getLabel().getEn() != null) {
+                description = item.getLabel().getEn();
+            }
+
+            // Get icon
+            String iconSvg = getDefaultIconForFamily(family);
+            if (item.getIcon() != null && !item.getIcon().isEmpty()) {
+                iconSvg = item.getIcon();
+            }
+
+            AdditionalOption option = new AdditionalOption(
+                item.getPrimaryKey(),
+                item,
+                name,
+                description,
+                price,
+                family,
+                perDay,
+                perPerson,
+                iconSvg
+            );
+
+            addOption(option);
+            Console.log("DefaultAdditionalOptionsSection: Added translation option '" + name + "' price=" + price);
         }
 
         Console.log("DefaultAdditionalOptionsSection: Loaded " + options.size() + " options from PolicyAggregate");

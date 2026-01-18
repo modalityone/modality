@@ -117,7 +117,7 @@ public final class HouseholdMemberLoader {
             DefaultMemberSelectionSection memberSection) {
 
         return entityStore.<Invitation>executeQuery(
-                "select id,invitee.(id,fullName,firstName,lastName,email) from Invitation " +
+                "select id,invitee.(id,fullName,firstName,lastName,email,birthdate) from Invitation " +
                 "where inviter=? and pending=true and inviterPayer=true",
                 personId)
             .map(pendingInvitations -> {
@@ -156,7 +156,7 @@ public final class HouseholdMemberLoader {
             String ownerEmail) {
 
         return entityStore.<Person>executeQuery(
-                "select id,fullName,firstName,lastName,email,accountPerson.(id,fullName,email) " +
+                "select id,fullName,firstName,lastName,email,birthdate,accountPerson.(id,fullName,email) " +
                 "from Person " +
                 "where frontendAccount=? and owner=false and removed!=true",
                 accountId)
