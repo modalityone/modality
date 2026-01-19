@@ -951,11 +951,13 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         Label subtitle = I18nControls.newLabel(subtitleKey);
         subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        subtitle.setWrapText(true);
 
         textContent.getChildren().addAll(title, subtitle);
 
         // Price display - supports stacked pricing for early arrival/late departure
         VBox priceContainer = createMealPriceDisplay(pricePerDay, titleKey);
+        priceContainer.setMinWidth(Region.USE_PREF_SIZE);  // Prevent compression on narrow screens
 
         card.getChildren().addAll(checkbox, iconNode, textContent, priceContainer);
 
@@ -1092,12 +1094,14 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.IncludedWithAccommodation);
         subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        subtitle.setWrapText(true);
 
         textContent.getChildren().addAll(title, subtitle);
 
         // Price/status label
         Label priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
         priceLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        priceLabel.setMinWidth(Region.USE_PREF_SIZE);  // Prevent compression on narrow screens
 
         card.getChildren().addAll(checkbox, coffeeIcon, textContent, priceLabel);
 

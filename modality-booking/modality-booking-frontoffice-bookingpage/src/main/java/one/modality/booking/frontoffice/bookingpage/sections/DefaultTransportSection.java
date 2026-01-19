@@ -285,6 +285,7 @@ public class DefaultTransportSection implements HasTransportSection {
         Label title = new Label();
         title.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.RegisterForParkingPass));
         title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium");
+        title.setWrapText(true);
         if (allSoldOut) {
             title.getStyleClass().add("bookingpage-text-muted");
         } else {
@@ -292,6 +293,7 @@ public class DefaultTransportSection implements HasTransportSection {
         }
 
         Label subtitle = new Label();
+        subtitle.setWrapText(true);
         if (allSoldOut) {
             subtitle.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.ParkingSoldOutMessage));
             subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
@@ -491,7 +493,7 @@ public class DefaultTransportSection implements HasTransportSection {
         }
         String priceStr = "$" + (option.getPrice() / 100);
         if (option.isPerDay()) {
-            priceStr += "/day/vehicle";
+            priceStr += "/day";
         }
         return priceStr;
     }

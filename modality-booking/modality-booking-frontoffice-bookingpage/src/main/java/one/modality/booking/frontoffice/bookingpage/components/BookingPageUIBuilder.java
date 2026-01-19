@@ -1281,34 +1281,31 @@ public final class BookingPageUIBuilder {
         box.setPadding(new Insets(14, 18, 14, 18));
         box.getStyleClass().add("bookingpage-price-includes-box");
 
-        // Create a TextFlow-like layout using HBox with wrapping label
+        // Create a TextFlow-like layout using VBox with wrapping labels
         // Since TextFlow may have GWT compatibility issues, use labels
-
-        // Bold "Price includes:" label
-        Label boldLabel = new Label("Price includes: ");
-        boldLabel.getStyleClass().add("bookingpage-price-includes-bold");
-
-        // Primary text
-        Label primaryLabel = new Label(primaryText);
-        primaryLabel.getStyleClass().add("bookingpage-price-includes-primary");
-        primaryLabel.setWrapText(true);
 
         // VBox to stack the text properly for wrapping
         VBox textContainer = new VBox(2);
         textContainer.setAlignment(Pos.CENTER_LEFT);
 
-        // First line with bold + primary
-        HBox firstLine = new HBox(0);
-        firstLine.setAlignment(Pos.CENTER_LEFT);
-        firstLine.getChildren().addAll(boldLabel, primaryLabel);
+        // Bold "Price includes:" label on its own line
+        Label boldLabel = new Label("Price includes:");
+        boldLabel.getStyleClass().add("bookingpage-price-includes-bold");
 
-        textContainer.getChildren().add(firstLine);
+        // Primary text on next line, will wrap naturally
+        Label primaryLabel = new Label(primaryText);
+        primaryLabel.getStyleClass().add("bookingpage-price-includes-primary");
+        primaryLabel.setWrapText(true);
+        primaryLabel.setMaxWidth(Double.MAX_VALUE);
+
+        textContainer.getChildren().addAll(boldLabel, primaryLabel);
 
         // Secondary text (if provided)
         if (secondaryText != null && !secondaryText.isEmpty()) {
             Label secondaryLabel = new Label("(" + secondaryText + ")");
             secondaryLabel.getStyleClass().add("bookingpage-price-includes-secondary");
             secondaryLabel.setWrapText(true);
+            secondaryLabel.setMaxWidth(Double.MAX_VALUE);
             textContainer.getChildren().add(secondaryLabel);
         }
 
