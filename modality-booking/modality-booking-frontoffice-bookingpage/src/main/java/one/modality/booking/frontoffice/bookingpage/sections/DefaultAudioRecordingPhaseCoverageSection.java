@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.platform.console.Console;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -238,8 +237,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         option.setSelected(true);
         selectedOption.set(option);
 
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Selected - " + option.getName());
-
         // Notify callback
         if (onOptionSelected != null) {
             onOptionSelected.accept(option);
@@ -319,8 +316,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         LocalDate arrival = arrivalDateProperty.get();
         LocalDate departure = departureDateProperty.get();
 
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Updating availability - arrival=" + arrival + ", departure=" + departure);
-
         for (AudioRecordingPhaseOption option : options) {
             // "No Audio Recordings" is always available
             if (option.isNoRecordingOption()) {
@@ -330,10 +325,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
 
             // Check if user's stay covers ALL days in the phase
             boolean available = isStayCoveringPhase(arrival, departure, option.getStartDate(), option.getEndDate());
-
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: Option '" + option.getName() +
-                "' (" + option.getStartDate() + " to " + option.getEndDate() + ") available=" + available);
-
             option.setAvailable(available);
         }
     }
@@ -410,7 +401,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
     @Override
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: PolicyAggregate is null");
             return;
         }
 
@@ -420,23 +410,16 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         // Get audio recording phase coverages
         List<EventPhaseCoverage> phaseCoverages = policyAggregate.getAudioRecordingPhaseCoverages();
         if (phaseCoverages == null || phaseCoverages.isEmpty()) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: No phase coverages found");
             rebuildUI();
             return;
         }
-
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Found " + phaseCoverages.size() + " phase coverages");
 
         // Group audio recording scheduled items by Item (language)
         Map<Item, List<ScheduledItem>> audioItemsMap = policyAggregate.groupScheduledItemsByAudioRecordingItems();
         if (audioItemsMap.isEmpty()) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: No audio recording items found");
             rebuildUI();
             return;
         }
-
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Found " + audioItemsMap.size() +
-            " audio recording languages");
 
         boolean hasMultipleLanguages = audioItemsMap.size() > 1;
 
@@ -449,11 +432,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
             LocalDate phaseStartDate = pc.getStartDate();
             LocalDate phaseEndDate = pc.getEndDate();
 
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: Processing phase '" + pc.getName() +
-                "' dates: " + phaseStartDate + " to " + phaseEndDate);
-
             if (phaseStartDate == null || phaseEndDate == null) {
-                Console.log("DefaultAudioRecordingPhaseCoverageSection: Phase " + pc.getName() + " has no date range, skipping");
                 continue;
             }
 
@@ -466,13 +445,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
                 // Filter scheduled items within this phase's date range (simple date-only filtering)
                 List<ScheduledItem> phaseScheduledItems = ScheduledItems.filterOverPeriod(allScheduledItems, pc);
 
-                Console.log("DefaultAudioRecordingPhaseCoverageSection: Found " + phaseScheduledItems.size() +
-                    " scheduled items for " + audioItem.getName() + " in phase " + phaseName +
-                    " (from " + allScheduledItems.size() + " total)");
-
                 if (phaseScheduledItems.isEmpty()) {
-                    Console.log("DefaultAudioRecordingPhaseCoverageSection: No scheduled items for " +
-                        audioItem.getName() + " in phase " + phaseName);
                     continue;
                 }
 
@@ -495,16 +468,11 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
                 );
 
                 addOption(option);
-                Console.log("DefaultAudioRecordingPhaseCoverageSection: Added option '" + optionName +
-                    "' (" + phaseStartDate + " to " + phaseEndDate + ") " +
-                    phaseScheduledItems.size() + " items, price=" + price);
             }
         }
 
         // Default to "No Audio Recordings" selected
         selectOption(noRecordingOption);
-
-        Console.log("DefaultAudioRecordingPhaseCoverageSection: Loaded " + options.size() + " options");
 
         // Rebuild UI to show new options
         rebuildUI();
@@ -521,7 +489,6 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         }
 
         if (workingBookingProperties == null || workingBookingProperties.getWorkingBooking() == null) {
-            Console.log("DefaultAudioRecordingPhaseCoverageSection: WorkingBooking not available for price calculation");
             return 0;
         }
 

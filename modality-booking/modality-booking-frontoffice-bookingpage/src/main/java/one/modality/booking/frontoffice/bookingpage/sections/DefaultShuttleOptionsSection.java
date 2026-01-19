@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.platform.console.Console;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -358,21 +357,15 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         LocalDate arrivalDate = arrivalDateProperty.get();
         LocalDate departureDate = departureDateProperty.get();
 
-        Console.log("DefaultShuttleOptionsSection: Updating availability - arrival=" + arrivalDate + ", departure=" + departureDate);
-
         for (ShuttleOption option : options) {
             boolean available = false;
 
             if (option.isOutbound() && arrivalDate != null) {
                 // Outbound shuttle available if scheduled date matches arrival date
                 available = arrivalDate.equals(option.getScheduledDate());
-                Console.log("DefaultShuttleOptionsSection: Outbound '" + option.getName() +
-                    "' scheduled=" + option.getScheduledDate() + " available=" + available);
             } else if (option.isReturn() && departureDate != null) {
                 // Return shuttle available if scheduled date matches departure date
                 available = departureDate.equals(option.getScheduledDate());
-                Console.log("DefaultShuttleOptionsSection: Return '" + option.getName() +
-                    "' scheduled=" + option.getScheduledDate() + " available=" + available);
             }
 
             option.setAvailable(available);
@@ -537,7 +530,6 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
     @Override
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultShuttleOptionsSection: PolicyAggregate is null");
             return;
         }
 
@@ -549,12 +541,9 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         // Get transport scheduled items
         List<ScheduledItem> transportItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.TRANSPORT);
         if (transportItems == null || transportItems.isEmpty()) {
-            Console.log("DefaultShuttleOptionsSection: No transport scheduled items found");
             rebuildUI();
             return;
         }
-
-        Console.log("DefaultShuttleOptionsSection: Found " + transportItems.size() + " transport scheduled items");
 
         // Group by Item
         Map<Item, List<ScheduledItem>> itemMap = transportItems.stream()
@@ -601,11 +590,7 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
             );
 
             addOption(option);
-            Console.log("DefaultShuttleOptionsSection: Added shuttle option '" + name +
-                "' direction=" + direction + " date=" + scheduledDate + " price=" + price);
         }
-
-        Console.log("DefaultShuttleOptionsSection: Loaded " + options.size() + " shuttle options");
 
         // Initial availability check
         updateAvailability();
@@ -627,8 +612,7 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
             return ShuttleDirection.RETURN;
         }
 
-        // Default: try to infer from context or default to outbound
-        Console.log("DefaultShuttleOptionsSection: Could not determine direction for '" + name + "', defaulting to OUTBOUND");
+        // Default: infer from context or default to outbound
         return ShuttleDirection.OUTBOUND;
     }
 

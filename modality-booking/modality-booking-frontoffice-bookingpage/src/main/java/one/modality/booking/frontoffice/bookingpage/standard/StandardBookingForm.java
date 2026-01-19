@@ -446,8 +446,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         boolean isSuccessful = moneyTransfer.isSuccessful();
         boolean isPending = moneyTransfer.isPending();
 
-        Console.log("Resume payment - successful: " + isSuccessful + ", pending: " + isPending);
-
         if (isSuccessful && !isPending) {
             // Payment successful - show confirmation content
             updateConfirmationForResumedPayment(moneyTransfer);
@@ -700,13 +698,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     private Future<?> handleSummaryContinueAsync() {
-        Console.log("StandardBookingForm.handleSummaryContinueAsync() called");
-
         // Step 1: Set the person to book in FXPersonToBook before booking items
         HasMemberSelectionSection.MemberInfo member = state.getSelectedMember();
         if (member != null && member.getPersonEntity() != null) {
             FXPersonToBook.setPersonToBook(member.getPersonEntity());
-            Console.log("FXPersonToBook set to: " + member.getName());
         }
 
         // Step 1b: For new users (guests OR creating account), set personal details on the document
@@ -725,8 +720,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 }
                 // Maintain guest session for payment/confirmation
                 FXGuestToBook.setGuestToBook(document);
-                Console.log("New user details set on document and FXGuestToBook: " +
-                            newUser.firstName + " " + newUser.lastName + " (" + newUser.email + ")");
             }
         }
 
@@ -739,7 +732,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
             if (commentText != null && !commentText.trim().isEmpty()) {
                 WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
                 if (workingBooking != null) {
-                    Console.log("StandardBookingForm: Adding user comment to request: " + commentText.trim());
                     workingBooking.addRequest(commentText.trim());
                 }
             }
@@ -776,7 +768,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .onSuccess(ignored -> {
                 // Send account creation email if user opted to create an account
                 if (wantsAccountCreation && newUserEmail != null) {
-                    Console.log("Sending account creation email to: " + newUserEmail);
                     InitiateAccountCreationCredentials credentials = new InitiateAccountCreationCredentials(
                         newUserEmail,
                         WindowLocation.getOrigin(),  // clientOrigin
@@ -785,28 +776,19 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         false,                        // verificationCodeOnly
                         null                          // context
                     );
-                    AuthenticationService.authenticate(credentials)
-                        .onFailure(error -> Console.log("Failed to send account creation email: " + error.getMessage()))
-                        .onSuccess(v -> Console.log("Account creation email sent successfully"));
+                    AuthenticationService.authenticate(credentials);
                 }
 
                 UiScheduler.runInUiThread(() -> {
                     if (isNewUser) {
                         // Both guests and account creation users go to pending bookings
                         // (populated from WorkingBooking, not from database)
-                        Console.log("New user submission successful, navigating to Pending Bookings");
                         populatePendingBookingsForNewUser(newUserName, newUserEmail);
                         navigateToPendingBookings();
                     } else {
-                        Console.log("Logged-in user submission successful, navigating to Pending Bookings");
                         navigateToPendingBookings();
                     }
                 });
-            })
-            .onFailure(error -> {
-                Console.log("ERROR: " + error.getMessage());
-
-                // Stay on current page - spinner will be hidden automatically
             });
     }
 
@@ -827,24 +809,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * @param soldOutInfo Information about the sold-out item
      */
     private void handleAccommodationSoldOut(SoldOutErrorParser.SoldOutInfo soldOutInfo) {
-        Console.log("handleAccommodationSoldOut() - itemId: " + soldOutInfo.getItemPrimaryKey());
-
         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
         if (policyAggregate == null) {
-            Console.log("PolicyAggregate is null, cannot show sold-out recovery");
             return;
         }
 
         // Reload availabilities from the server to get current availability data
-        Console.log("Reloading availabilities from server...");
         policyAggregate.reloadAvailabilities()
             .onFailure(error -> {
-                Console.log("Failed to reload availabilities: " + error.getMessage());
                 // Continue anyway with existing data
                 UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
             })
             .onSuccess(v -> {
-                Console.log("Availabilities reloaded successfully");
                 UiScheduler.runInUiThread(() -> showSoldOutRecoveryPage(soldOutInfo, policyAggregate));
             });
     }
@@ -859,7 +835,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         Item soldOutItem = entityStore.getEntity(Item.class, soldOutInfo.getItemPrimaryKey());
 
         if (soldOutSite == null || soldOutItem == null) {
-            Console.log("No scheduled items in PolicyAggregate, cannot show alternatives");
             return;
         }
 
@@ -882,13 +857,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     .sum();
             }
         }
-        Console.log("Sold-out item: " + soldOutItemName + ", price: " + soldOutPrice);
 
         // Build list of ALL accommodation options (excluding only the originally selected sold-out item)
         // Other items that are also sold out will show with SOLD OUT ribbon
         List<HasAccommodationSelectionSection.AccommodationOption> alternatives =
             buildAlternativeOptions(policyAggregate, soldOutInfo.getSitePrimaryKey(), soldOutInfo.getItemPrimaryKey());
-        Console.log("Built " + alternatives.size() + " alternative options with refreshed availability");
 
         // Calculate number of nights from the booked accommodation dates
         int numberOfNights = 0;
@@ -902,7 +875,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 .distinct()
                 .count();
         }
-        Console.log("Number of nights for sold-out item: " + numberOfNights);
 
         // Create the sold-out recovery section
         DefaultAccommodationSoldOutSection soldOutSection = new DefaultAccommodationSoldOutSection();
@@ -943,7 +915,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
             e -> {
                 HasAccommodationSelectionSection.AccommodationOption selectedOption = soldOutSection.getSelectedOption();
                 if (selectedOption != null) {
-                    Console.log("User selected alternative: " + selectedOption.getName());
                     // Get roommate info if collected in the sold-out section
                     StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo roommateInfo = soldOutSection.getRoommateInfo();
                     callbacks.onAccommodationSoldOutRecovery(selectedOption, roommateInfo, this::navigateToSummary);
@@ -971,8 +942,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Called when user chooses to cancel from the sold-out recovery page.
      */
     private void cancelBookingAndExit() {
-        Console.log("User cancelled booking from sold-out recovery - returning to first page");
-
         WorkingBooking workingBooking = getWorkingBooking();
         if (workingBooking != null) {
             workingBooking.cancelChanges();
@@ -1122,22 +1091,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * selection) should book items when the user makes selections, not at submission time.
      */
     private void bookSelectedItemsInWorkingBooking() {
-        Console.log("bookSelectedItemsInWorkingBooking() called");
-
         WorkingBooking workingBooking = getWorkingBooking();
-        Console.log("WorkingBooking obtained, hasChanges: " + workingBooking.hasChanges());
 
         // Only book the whole event if nothing has been booked yet
         // This is the default fallback for simple forms without custom option selection
         if (workingBooking.hasNoChanges()) {
-            Console.log("No items booked yet, booking whole event as default...");
             workingBooking.bookWholeEvent();
-            Console.log("Whole event booked");
-        } else {
-            Console.log("Items already booked in WorkingBooking, using existing selections");
         }
-
-        Console.log("bookSelectedItemsInWorkingBooking() completed");
     }
 
     /**
@@ -1147,27 +1107,20 @@ public class StandardBookingForm extends MultiPageBookingForm {
      */
     private Future<SubmitDocumentChangesResult> submitBookingAsync() {
         WorkingBooking workingBooking = getWorkingBooking();
-        Console.log("WorkingBooking hasNoChanges: " + workingBooking.hasNoChanges());
 
         // Check if there are changes to submit
         if (workingBooking.hasNoChanges()) {
-            Console.log("No booking changes to submit");
             return Future.succeededFuture();
         }
-
-        Console.log("Generating history comment and submitting to database...");
 
         // Generate history comment for the booking
         WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
         String historyComment = historyHelper.generateHistoryComment();
-        Console.log("History comment: " + historyComment);
 
         // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.APPROVED) {
-                    Console.log("Booking submitted successfully. Reference: " + submitResult.documentRef());
-
                     // Store the booking reference
                     workingBookingProperties.setBookingReference(submitResult.documentRef());
 
@@ -1199,8 +1152,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * @param onComplete Callback to run when loading is complete
      */
     private void loadAllBookingsForEvent(Runnable onComplete) {
-        Console.log("loadAllBookingsForEvent() called");
-
         Object accountId = ModalityUserPrincipal.getUserAccountId(FXModalityUserPrincipal.getModalityUserPrincipal());
 
         DocumentService.loadDocuments(LoadDocumentArgument.ofDocumentOrAccount(getWorkingBooking().getDocument(), accountId, getEvent()))
@@ -1220,11 +1171,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Populate PendingBookingsSection from database documents.
      */
     private void populateBookingsFromDocuments(DocumentAggregate[] documentAggregates) {
-
-        Console.log("populateBookingsFromDocuments() called with " + documentAggregates.length + " documents");
-
         if (defaultPendingBookingsSection == null) {
-            Console.log("defaultPendingBookingsSection is null - skipping population");
             return;
         }
 
@@ -1301,13 +1248,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
                         // Use centralized date formatting (same logic as Summary section)
                         String lineDates = computeDatesForDocumentLine(documentAggregate, line);
-                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
                         // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
                         bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
                 }
-            } else {
-                Console.log("  No document lines found for document ID: " + doc.getId());
             }
 
             defaultPendingBookingsSection.addBooking(bookingItem);
@@ -1322,8 +1266,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultMemberSelectionSection != null) {
             defaultMemberSelectionSection.setAlreadyBookedPersonIds(bookedPersonIds);
         }
-
-        Console.log("Added " + documentAggregates.length + " bookings to pending bookings section");
     }
 
     /**
@@ -1335,7 +1277,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         DocumentAggregate documentAggregate = workingBookingProperties.getWorkingBooking().getInitialDocumentAggregate();
         if (documentAggregate == null) {
-            Console.log("populatePaymentFromWorkingBooking: No initial document aggregate");
             return;
         }
 
@@ -1370,8 +1311,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         defaultPaymentSection.setPaymentsMade(paidDeposit);     // Previous payments (for display)
         int remainingMinDeposit = Math.max(0, minDeposit - paidDeposit);
         defaultPaymentSection.setDepositAmount(remainingMinDeposit);  // Remaining min deposit needed
-
-        Console.log("Payment section populated from WorkingBooking: " + personName + ", balance: " + remainingAmount + " (total: " + totalPrice + ", paid: " + paidDeposit + ")");
     }
 
     /**
@@ -1822,32 +1761,22 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         DocumentAggregate documentAggregate = workingBooking.getLastestDocumentAggregate();
         if (documentAggregate == null) {
-            Console.log("addDefaultSummaryPriceLines: documentAggregate is null");
             return;
         }
 
         List<Attendance> attendances = documentAggregate.getAttendances();
-        Console.log("addDefaultSummaryPriceLines: attendances count = " + (attendances != null ? attendances.size() : 0));
 
         // Book whole event if no attendances exist yet (for simple forms without custom option selection)
         // This ensures prices are calculated correctly for forms like STTP that don't have date selection
         if (workingBooking.isNewBooking() && (attendances == null || attendances.isEmpty())) {
-            Console.log("addDefaultSummaryPriceLines: No attendances yet, booking whole event...");
-            PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
-            List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems();
-            Console.log("addDefaultSummaryPriceLines: teachingItems count = " + teachingItems.size());
-            List<Rate> rates = policyAggregate.getRates();
-            Console.log("addDefaultSummaryPriceLines: rates count = " + rates.size());
             workingBooking.bookWholeEvent();
             // Refresh documentAggregate and attendances after booking
             documentAggregate = workingBooking.getLastestDocumentAggregate();
             attendances = documentAggregate.getAttendances();
-            Console.log("addDefaultSummaryPriceLines: after bookWholeEvent, attendances count = " + (attendances != null ? attendances.size() : 0));
         }
 
         // Get the document lines to show itemized breakdown
         List<DocumentLine> documentLines = documentAggregate.getDocumentLines();
-        Console.log("addDefaultSummaryPriceLines: documentLines count = " + (documentLines != null ? documentLines.size() : 0));
 
         // Create PriceCalculator for computing line prices (needed for new bookings where prices aren't stored yet)
         PriceCalculator priceCalculator = new PriceCalculator(documentAggregate);
@@ -1962,8 +1891,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     Console.log("=== END DEBUG ===");
                 }
 
-                Console.log("  Price line: " + familyName + " - " + itemName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
-
                 // Add the price line using new API with separate family/item for consistent formatting via UnifiedPriceDisplay
                 if (linePrice != 0 || (family != null && !Boolean.TRUE.equals(family.isSummaryHidden()))) {
                     defaultSummarySection.addPriceLine(familyName, itemName, lineDates, linePrice);
@@ -1972,7 +1899,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         } else {
             // Fallback: add a single price line with the total if no line items available
             int totalPrice = priceCalculator.calculateTotalPrice();
-            Console.log("addDefaultSummaryPriceLines: totalPrice (fallback) = " + totalPrice);
 
             Event event = getEvent();
             String eventName = event != null && event.getName() != null ? event.getName() : "Event";
@@ -2266,7 +2192,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
                         // Compute dates from attendances (uses centralized formatting)
                         String lineDates = computeDatesFromAttendances(workingBooking, line);
-                        Console.log("  Line item: " + familyName + " - " + itemName + " = " + linePrice + ", dates: " + lineDates);
                         // Use new API with separate family/item for consistent formatting via UnifiedPriceDisplay
                         bookingItem.addLineItem(familyName, itemName, familyCode, linePrice, lineDates);
                     }
@@ -2278,8 +2203,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         defaultPendingBookingsSection.addBooking(bookingItem);
-
-        Console.log("Pending bookings populated for new user: " + userName + ", total: " + total);
     }
 
     private void updateConfirmationSection(StandardBookingFormCallbacks.PaymentResult result) {

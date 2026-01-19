@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.platform.console.Console;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -746,19 +745,13 @@ public class DefaultTransportSection implements HasTransportSection {
         LocalDate arrivalDate = arrivalDateProperty.get();
         LocalDate departureDate = departureDateProperty.get();
 
-        Console.log("DefaultTransportSection: Updating shuttle availability - arrival=" + arrivalDate + ", departure=" + departureDate);
-
         for (ShuttleOption option : shuttleOptions) {
             boolean available = false;
 
             if (option.isOutbound() && arrivalDate != null) {
                 available = arrivalDate.equals(option.getScheduledDate());
-                Console.log("DefaultTransportSection: Outbound '" + option.getName() +
-                    "' scheduled=" + option.getScheduledDate() + " available=" + available);
             } else if (option.isReturn() && departureDate != null) {
                 available = departureDate.equals(option.getScheduledDate());
-                Console.log("DefaultTransportSection: Return '" + option.getName() +
-                    "' scheduled=" + option.getScheduledDate() + " available=" + available);
             }
 
             option.setAvailable(available);
@@ -972,7 +965,6 @@ public class DefaultTransportSection implements HasTransportSection {
     @Override
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultTransportSection: PolicyAggregate is null");
             return;
         }
 
@@ -986,9 +978,6 @@ public class DefaultTransportSection implements HasTransportSection {
 
         // Load shuttle options
         loadShuttleOptions(policyAggregate);
-
-        Console.log("DefaultTransportSection: Loaded " + parkingOptions.size() + " parking options and " +
-            shuttleOptions.size() + " shuttle options");
 
         // Update shuttle availability based on current dates
         updateShuttleAvailability();
@@ -1004,11 +993,8 @@ public class DefaultTransportSection implements HasTransportSection {
     protected void loadParkingOptions(PolicyAggregate policyAggregate) {
         List<ScheduledItem> parkingItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.PARKING);
         if (parkingItems == null || parkingItems.isEmpty()) {
-            Console.log("DefaultTransportSection: No parking scheduled items found");
             return;
         }
-
-        Console.log("DefaultTransportSection: Found " + parkingItems.size() + " parking scheduled items");
 
         // Group by Item
         Map<Item, List<ScheduledItem>> itemMap = parkingItems.stream()
@@ -1084,9 +1070,6 @@ public class DefaultTransportSection implements HasTransportSection {
             );
 
             addParkingOption(option);
-            Console.log("DefaultTransportSection: Added parking option '" + name +
-                "' price=" + price + " availability=" + availabilityStatus +
-                " isDefault=" + isDefault + " minAvailability=" + minAvailability);
         }
     }
 
@@ -1096,11 +1079,8 @@ public class DefaultTransportSection implements HasTransportSection {
     protected void loadShuttleOptions(PolicyAggregate policyAggregate) {
         List<ScheduledItem> transportItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.TRANSPORT);
         if (transportItems == null || transportItems.isEmpty()) {
-            Console.log("DefaultTransportSection: No transport scheduled items found");
             return;
         }
-
-        Console.log("DefaultTransportSection: Found " + transportItems.size() + " transport scheduled items");
 
         // Group by Item
         Map<Item, List<ScheduledItem>> itemMap = transportItems.stream()
@@ -1154,9 +1134,6 @@ public class DefaultTransportSection implements HasTransportSection {
             );
 
             addShuttleOption(option);
-            Console.log("DefaultTransportSection: Added shuttle option '" + name +
-                "' direction=" + direction + " date=" + scheduledDate +
-                " time=" + departureTimeStr + " price=" + price);
         }
     }
 
@@ -1220,7 +1197,6 @@ public class DefaultTransportSection implements HasTransportSection {
             return ShuttleDirection.RETURN;
         }
 
-        Console.log("DefaultTransportSection: Could not determine direction for '" + name + "', defaulting to OUTBOUND");
         return ShuttleDirection.OUTBOUND;
     }
 

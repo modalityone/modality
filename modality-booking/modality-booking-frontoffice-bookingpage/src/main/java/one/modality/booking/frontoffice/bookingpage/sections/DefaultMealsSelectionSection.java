@@ -1,7 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.platform.console.Console;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
@@ -491,9 +490,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         Label label = new Label(sb.toString());
         label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
         summaryBox.getChildren().add(label);
-
-        Console.log("DefaultMealsSelectionSection: Added DocumentBill summary for " + mealType +
-            " - count=" + count + ", totalPrice=" + totalPrice);
     }
 
     /**
@@ -838,7 +834,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setArrivalTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
         this.arrivalTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
-        Console.log("DefaultMealsSelectionSection.setArrivalTime: " + this.arrivalTime);
         rebuildMealCards();
     }
 
@@ -849,7 +844,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setDepartureTime(HasFestivalDaySelectionSection.ArrivalDepartureTime time) {
         this.departureTime = time != null ? time : HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON;
-        Console.log("DefaultMealsSelectionSection.setDepartureTime: " + this.departureTime);
         rebuildMealCards();
     }
 
@@ -878,7 +872,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setEventBoundaryStartMeal(MealBoundary meal) {
         this.eventBoundaryStartMeal = meal != null ? meal : MealBoundary.BREAKFAST;
-        Console.log("DefaultMealsSelectionSection.setEventBoundaryStartMeal: " + this.eventBoundaryStartMeal);
     }
 
     /**
@@ -888,7 +881,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setEventBoundaryEndMeal(MealBoundary meal) {
         this.eventBoundaryEndMeal = meal != null ? meal : MealBoundary.DINNER;
-        Console.log("DefaultMealsSelectionSection.setEventBoundaryEndMeal: " + this.eventBoundaryEndMeal);
     }
 
     /**
@@ -899,9 +891,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setMainEventPeriod(Period period) {
         this.mainEventPeriod = period;
-        Console.log("DefaultMealsSelectionSection.setMainEventPeriod: " +
-            (period != null ? "start=" + period.getStartDate() + " " + period.getStartTime() +
-                ", end=" + period.getEndDate() + " " + period.getEndTime() : "null"));
     }
 
     /**
@@ -912,7 +901,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void setMealScheduledItems(List<ScheduledItem> scheduledItems) {
         this.mealScheduledItems = scheduledItems != null ? new ArrayList<>(scheduledItems) : new ArrayList<>();
-        Console.log("DefaultMealsSelectionSection.setMealScheduledItems: " + this.mealScheduledItems.size() + " items");
     }
 
     protected HBox createMealToggle(Object titleKey, Object subtitleKey, BooleanProperty selectedProperty, int pricePerDay) {
@@ -1024,26 +1012,17 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             latePrice = lunchLateDeparturePrice;
             hasEarlyMeal = hasEarlyArrivalLunch();
             hasLateMeal = hasLateDepartureLunch();
-            Console.log("DefaultMealsSelectionSection: Lunch - earlyPrice=" + earlyPrice + ", latePrice=" + latePrice
-                + ", hasEarlyLunch=" + hasEarlyMeal + ", hasLateLunch=" + hasLateMeal
-                + ", arrivalTime=" + arrivalTime + ", departureTime=" + departureTime
-                + ", arrivalDate=" + arrivalDate + ", eventBoundaryStart=" + eventBoundaryStartDate
-                + ", showEarlyPricing=" + showEarlyArrivalPricing);
         } else if (isDinner) {
             earlyPrice = dinnerEarlyArrivalPrice;
             latePrice = dinnerLateDeparturePrice;
             hasEarlyMeal = hasEarlyArrivalDinner();
             hasLateMeal = hasLateDepartureDinner();
-            Console.log("DefaultMealsSelectionSection: Dinner - earlyPrice=" + earlyPrice + ", latePrice=" + latePrice
-                + ", hasEarlyDinner=" + hasEarlyMeal + ", hasLateDinner=" + hasLateMeal
-                + ", arrivalTime=" + arrivalTime + ", departureTime=" + departureTime);
         }
 
         // Only show secondary prices when this specific meal type has early/late meals
         // based on both the selected dates AND times
         boolean showEarly = hasEarlyMeal && earlyPrice > 0 && earlyPrice != pricePerDay;
         boolean showLate = hasLateMeal && latePrice > 0 && latePrice != pricePerDay;
-        Console.log("DefaultMealsSelectionSection: showEarly=" + showEarly + ", showLate=" + showLate + ", pricePerDay=" + pricePerDay);
 
         if (showEarly || showLate) {
             // If early and late prices are the same, show single line "Outside event: $X/meal"
@@ -1315,7 +1294,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void populateFromDocumentBill() {
         if (workingBooking == null) {
-            Console.log("DefaultMealsSelectionSection: No WorkingBooking set, cannot populate from DocumentBill");
             return;
         }
 
@@ -1326,16 +1304,12 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Get the DocumentBill from the latest booking state
         DocumentBill documentBill = workingBooking.getLatestBookingPriceCalculator().computeDocumentBill();
         if (documentBill == null) {
-            Console.log("DefaultMealsSelectionSection: DocumentBill is null");
             return;
         }
 
-        Console.log("DefaultMealsSelectionSection: Processing DocumentBill with " + documentBill.getSiteItemBills().size() + " SiteItemBills");
-
         // IMPORTANT: Trigger price computation by calling getTotalPrice() first
         // This populates the totalPrice field on each SiteItemBill (lazy computation)
-        int documentTotal = documentBill.getTotalPrice();
-        Console.log("DefaultMealsSelectionSection: DocumentBill total = " + documentTotal);
+        documentBill.getTotalPrice();
 
         // Process each SiteItemBill to find MEALS items
         for (SiteItemBill siteItemBill : documentBill.getSiteItemBills()) {
@@ -1364,14 +1338,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                     totalPrice += ab.getPrice();
                 }
                 mealBillPrices.put(mealType, totalPrice);
-
-                Console.log("DefaultMealsSelectionSection: " + mealType + " - totalPrice=" + totalPrice +
-                    " (summed from " + attendanceBills.size() + " days)");
-
-                // Log per-day prices for debugging
-                for (AttendanceBill ab : attendanceBills) {
-                    Console.log("  " + ab.getDate() + ": " + ab.getPrice());
-                }
             }
         }
 
@@ -1696,13 +1662,11 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultMealsSelectionSection: PolicyAggregate is null, using default prices");
             return;
         }
 
         // Get all MEALS scheduled items
         List<ScheduledItem> mealsItems = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.MEALS);
-        Console.log("DefaultMealsSelectionSection: Found " + mealsItems.size() + " meals scheduled items");
 
         // Group by Item to get unique meal types
         Map<Item, List<ScheduledItem>> itemMap = mealsItems.stream()
@@ -1727,11 +1691,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             int lateRate = 0;
 
             if (itemRates.isEmpty()) {
-                Console.log("DefaultMealsSelectionSection: No rates found for " + item.getName());
+                // No rates found
             } else if (itemRates.size() == 1) {
                 // Only one rate - use it as the main rate
                 mainRate = itemRates.get(0).getPrice();
-                Console.log("DefaultMealsSelectionSection: Single rate for " + item.getName() + " = " + mainRate);
             } else {
                 // Multiple rates - find the lowest price as main, others as early/late
                 // First, try to classify by date boundaries if available
@@ -1744,9 +1707,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                     LocalDate rateEnd = rate.getEndDate();
                     int price = rate.getPrice();
 
-                    Console.log("DefaultMealsSelectionSection: Checking rate for " + item.getName() +
-                        " - price=" + price + ", start=" + rateStart + ", end=" + rateEnd);
-
                     // Try to classify by date boundaries
                     boolean isEarlyRate = eventBoundaryStartDate != null && rateEnd != null
                         && !rateEnd.isAfter(eventBoundaryStartDate.minusDays(1));
@@ -1755,15 +1715,12 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
                     if (isEarlyRate) {
                         earlyArrivalRate = rate;
-                        Console.log("DefaultMealsSelectionSection: -> Classified as early arrival rate");
                     } else if (isLateRate) {
                         lateDepartureRate = rate;
-                        Console.log("DefaultMealsSelectionSection: -> Classified as late departure rate");
                     } else {
                         // Could be main rate - keep track for later selection
                         if (mainEventRate == null || price < mainEventRate.getPrice()) {
                             mainEventRate = rate;
-                            Console.log("DefaultMealsSelectionSection: -> Candidate for main event rate");
                         }
                     }
                 }
@@ -1781,7 +1738,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                         }
                     }
                     mainRate = lowestPrice;
-                    Console.log("DefaultMealsSelectionSection: Using lowest price as main rate: " + mainRate);
                 }
 
                 // Set early/late rates
@@ -1800,34 +1756,25 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                             // This higher price is the early/late rate
                             earlyRate = rate.getPrice();
                             lateRate = rate.getPrice();
-                            Console.log("DefaultMealsSelectionSection: Using higher price as early/late rate: " + earlyRate);
                             break;
                         }
                     }
                 }
             }
 
-            Console.log("DefaultMealsSelectionSection: Meal item '" + item.getName() +
-                "' mainRate=" + mainRate + ", earlyRate=" + earlyRate + ", lateRate=" + lateRate);
-
             // Determine if this is breakfast, lunch, or dinner based on item name
             if (itemName.contains("breakfast") || itemName.contains("morning")) {
                 setBreakfastPricePerDay(mainRate);
                 breakfastEarlyArrivalPrice = earlyRate;
                 breakfastLateDeparturePrice = lateRate;
-                Console.log("DefaultMealsSelectionSection: Set breakfast price to " + mainRate);
             } else if (itemName.contains("lunch") || itemName.contains("midday")) {
                 setLunchPricePerDay(mainRate);
                 setLunchEarlyArrivalPrice(earlyRate);
                 setLunchLateDeparturePrice(lateRate);
-                Console.log("DefaultMealsSelectionSection: Set lunch price to " + mainRate +
-                    " (early=" + earlyRate + ", late=" + lateRate + ")");
             } else if (itemName.contains("dinner") || itemName.contains("evening") || itemName.contains("supper")) {
                 setDinnerPricePerDay(mainRate);
                 setDinnerEarlyArrivalPrice(earlyRate);
                 setDinnerLateDeparturePrice(lateRate);
-                Console.log("DefaultMealsSelectionSection: Set dinner price to " + mainRate +
-                    " (early=" + earlyRate + ", late=" + lateRate + ")");
             }
         }
 
@@ -1849,7 +1796,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // Get all DIET item policies directly from PolicyAggregate
         List<ItemPolicy> dietPolicies = policyAggregate.getDietItemPolicies();
-        Console.log("DefaultMealsSelectionSection: Found " + dietPolicies.size() + " diet item policies");
 
         // Extract Items from policies and find default
         dietaryOptions.clear();
@@ -1859,27 +1805,20 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             Item item = policy.getItem();
             if (item != null) {
                 dietaryOptions.add(item);
-                Console.log("DefaultMealsSelectionSection: Dietary option: " + item.getName() +
-                    (Boolean.TRUE.equals(policy.isDefault()) ? " (DEFAULT)" : ""));
 
                 // Check if this is the default
                 if (Boolean.TRUE.equals(policy.isDefault())) {
                     defaultDiet = item;
-                    Console.log("DefaultMealsSelectionSection: Found default diet from ItemPolicy: " + item.getName());
                 }
             }
         }
-
-        Console.log("DefaultMealsSelectionSection: Loaded " + dietaryOptions.size() + " unique dietary options");
 
         // Auto-select: prefer default from ItemPolicy, fallback to first option
         if (selectedDietaryItem.get() == null) {
             if (defaultDiet != null) {
                 selectedDietaryItem.set(defaultDiet);
-                Console.log("DefaultMealsSelectionSection: Auto-selected default dietary option: " + defaultDiet.getName());
             } else if (!dietaryOptions.isEmpty()) {
                 selectedDietaryItem.set(dietaryOptions.get(0));
-                Console.log("DefaultMealsSelectionSection: No default set, auto-selected first dietary option: " + dietaryOptions.get(0).getName());
             }
         }
     }
@@ -1908,12 +1847,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Recalculate early arrival / late departure pricing flags based on current dates, times, and boundaries
         recalculatePricingFlags();
 
-        Console.log("DefaultMealsSelectionSection.rebuildMealCards() called - " +
-            "arrivalTime=" + arrivalTime + ", departureTime=" + departureTime +
-            ", showEarly=" + showEarlyArrivalPricing + ", showLate=" + showLateDeparturePricing +
-            ", arrivalDate=" + arrivalDate + ", departureDate=" + departureDate +
-            ", eventBoundaryStart=" + eventBoundaryStartDate + ", eventBoundaryEnd=" + eventBoundaryEndDate +
-            ", startMeal=" + eventBoundaryStartMeal + ", endMeal=" + eventBoundaryEndMeal);
         // Use the mealsContainer field directly
         if (mealsContainer == null) return;
 
@@ -1959,19 +1892,9 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // If we have the main event period and meal ScheduledItems, use isInPeriod for accurate check
         if (mainEventPeriod != null && !mealScheduledItems.isEmpty()) {
-            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: Using isInPeriod with " +
-                mealScheduledItems.size() + " meal items, mainEventPeriod=" +
-                mainEventPeriod.getStartDate() + " " + mainEventPeriod.getStartTime() + " to " +
-                mainEventPeriod.getEndDate() + " " + mainEventPeriod.getEndTime());
-
             // Create a Period representing the user's stay
             // The start/end times are derived from the meal ScheduledItems based on arrival/departure selection
             Period userStayPeriod = createUserStayPeriod();
-            if (userStayPeriod != null) {
-                Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: userStayPeriod=" +
-                    userStayPeriod.getStartDate() + " " + userStayPeriod.getStartTime() + " to " +
-                    userStayPeriod.getEndDate() + " " + userStayPeriod.getEndTime());
-            }
 
             // Check each meal ScheduledItem
             for (ScheduledItem mealItem : mealScheduledItems) {
@@ -1990,8 +1913,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
                 // Use isInPeriod to check if this meal is within the main event period
                 boolean isInMainEvent = ScheduledItems.isInPeriod(mealItem, mainEventPeriod);
-                Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: Meal '" + itemName +
-                    "' on " + mealDate + " isInUserStay=" + isInUserStay + ", isInMainEvent=" + isInMainEvent);
 
                 if (!isInMainEvent) {
                     // This meal is within user's stay but outside the main event period
@@ -2003,24 +1924,18 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                         // Before or on start date - early arrival
                         if (hasEarlyPrices) {
                             showEarlyArrivalPricing = true;
-                            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: " +
-                                "Found early arrival meal: " + itemName + " on " + mealDate);
                         }
                     }
                     if (periodEnd != null && (mealDate.isAfter(periodEnd) || mealDate.equals(periodEnd))) {
                         // After or on end date - late departure
                         if (hasLatePrices) {
                             showLateDeparturePricing = true;
-                            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: " +
-                                "Found late departure meal: " + itemName + " on " + mealDate);
                         }
                     }
                 }
             }
         } else {
             // Fallback: use date-based heuristics if we don't have the Period/ScheduledItems
-            Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: No mainEventPeriod or mealScheduledItems, using date-based fallback");
-
             if (hasEarlyPrices && arrivalDate != null && eventBoundaryStartDate != null) {
                 if (arrivalDate.isBefore(eventBoundaryStartDate)) {
                     showEarlyArrivalPricing = true;
@@ -2032,9 +1947,6 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                 }
             }
         }
-
-        Console.log("DefaultMealsSelectionSection.recalculatePricingFlags: showEarly=" + showEarlyArrivalPricing +
-            ", showLate=" + showLateDeparturePricing);
     }
 
     /**

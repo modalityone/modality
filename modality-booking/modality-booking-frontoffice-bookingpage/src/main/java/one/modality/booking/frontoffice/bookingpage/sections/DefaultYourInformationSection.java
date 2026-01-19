@@ -1335,7 +1335,6 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
             .<Person>executeQuery("select id from Person where lower(email)=? and owner=true and removed!=true limit 1", email)
             .onFailure(error -> UiScheduler.runInUiThread(() -> {
-                Console.log("Error checking email existence: " + error.getMessage());
                 // On error, default to new user flow (guest checkout)
                 emailExists = false;
                 flowStateProperty.set(FlowState.NEW_USER);
@@ -1460,8 +1459,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
             null                           // context
         );
 
-        AuthenticationService.authenticate(credentials)
-            .onFailure(error -> Console.log("Failed to send verification code: " + error.getMessage()));
+        AuthenticationService.authenticate(credentials);
 
         // Start the cooldown timer (email is being sent, so user should wait before resending)
         // Delay slightly to ensure the view and resendLink are ready
@@ -1492,7 +1490,6 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         AuthenticationService.authenticate(credentials)
             .onFailure(error -> {
-                Console.log("Verification failed: " + error.getMessage());
                 UiScheduler.runInUiThread(() -> {
                     // Track failed attempt
                     codeAttemptCount++;
@@ -1507,7 +1504,6 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                 });
             })
             .onSuccess(userId -> {
-                Console.log("Verification successful, user authenticated");
                 UiScheduler.runInUiThread(() -> {
                     // Reset rate limiting on success
                     resetCodeAttempts();
@@ -1549,8 +1545,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
             null
         );
 
-        AuthenticationService.authenticate(credentials)
-            .onFailure(error -> Console.log("Failed to resend verification code: " + error.getMessage()));
+        AuthenticationService.authenticate(credentials);
 
         // Start the cooldown timer
         startResendCooldown();

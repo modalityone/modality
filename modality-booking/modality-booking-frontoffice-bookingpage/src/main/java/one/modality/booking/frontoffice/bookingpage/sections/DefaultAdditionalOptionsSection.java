@@ -1,6 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections;
 
-import dev.webfx.platform.console.Console;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -466,7 +465,6 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     @Override
     public void populateFromPolicyAggregate(PolicyAggregate policyAggregate) {
         if (policyAggregate == null) {
-            Console.log("DefaultAdditionalOptionsSection: PolicyAggregate is null");
             return;
         }
 
@@ -476,7 +474,6 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         // Load all scheduled items and group by item family
         List<ScheduledItem> allScheduledItems = policyAggregate.getScheduledItems();
         if (allScheduledItems == null || allScheduledItems.isEmpty()) {
-            Console.log("DefaultAdditionalOptionsSection: No scheduled items found");
             rebuildUI();
             return;
         }
@@ -506,19 +503,16 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
             // Skip audio recording items if they're handled by dedicated phase section
             if (excludeAudioRecording && family == KnownItemFamily.AUDIO_RECORDING) {
-                Console.log("DefaultAdditionalOptionsSection: Excluding audio recording item (handled by phase section)");
                 continue;
             }
 
             // Skip transport items if they're handled by dedicated transport section
             if (excludeTransport && family == KnownItemFamily.TRANSPORT) {
-                Console.log("DefaultAdditionalOptionsSection: Excluding transport item (handled by transport section)");
                 continue;
             }
 
             // Skip parking items if they're handled by dedicated transport section
             if (excludeParking && family == KnownItemFamily.PARKING) {
-                Console.log("DefaultAdditionalOptionsSection: Excluding parking item (handled by transport section)");
                 continue;
             }
 
@@ -563,7 +557,6 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             );
 
             addOption(option);
-            Console.log("DefaultAdditionalOptionsSection: Added option '" + name + "' (" + family.name() + ") price=" + price);
         }
 
         // === PART 2: Load translation items from ItemPolicies ===
@@ -618,10 +611,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             );
 
             addOption(option);
-            Console.log("DefaultAdditionalOptionsSection: Added translation option '" + name + "' price=" + price);
         }
-
-        Console.log("DefaultAdditionalOptionsSection: Loaded " + options.size() + " options from PolicyAggregate");
 
         // Rebuild UI to show new options
         rebuildUI();
