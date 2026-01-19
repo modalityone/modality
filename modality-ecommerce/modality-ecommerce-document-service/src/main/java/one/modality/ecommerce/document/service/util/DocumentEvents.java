@@ -103,6 +103,51 @@ public final class DocumentEvents {
         Attendance[] initialAttendances = event.getAttendances(); // removed or added attendances
         Attendance[] reducedAttendances = initialAttendances; // reduced
         DocumentLine documentLine = event.getDocumentLine();
+
+
+        //CLAUDE ANALYSIS ON THE BUG THAT REMOVED SONETINE SOME ATTENDANCE:
+        /*  Root Cause Analysis
+        The bug was in DocumentEvents.simplifyAttendancesEvent() in DocumentEvents.java:102-173.
+
+        The Problem:
+        When rebooking transport options, the flow is:
+
+        unbookScheduledItems() creates a RemoveAttendancesEvent for existing shuttle attendances
+        bookScheduledItems() creates new AddAttendancesEvent for each selected shuttle
+        When the new AddAttendancesEvent([A2']) for the RETURN shuttle was integrated:
+
+        The code found an OLD AddAttendancesEvent([A2]) with the same DocumentLine
+        It excluded A2' because it had the same ScheduledItem primary key as A2
+        Bug: It didn't account for the fact that A2 was already marked for removal by a RemoveAttendancesEvent
+        The new attendance was incorrectly excluded, resulting in the RETURN shuttle having no attendance at summary time
+        The Fix:
+        Added pre-collection of removed ScheduledItem primary keys before the simplification loop. When processing AddAttendancesEvent entries with the same DocumentLine, the code now filters out attendances that have been removed by RemoveAttendancesEvent entries, so they don't cause false exclusions.
+
+        Key changes:
+
+        Before the loop, collect all ScheduledItem PKs from RemoveAttendancesEvents for the same DocumentLine
+        When comparing against existing AddAttendancesEvents, filter out attendances whose ScheduledItems are in the removed set
+        Only exclude new attendances based on "effective" (not-removed) existing attendances
+        This ensures that when you unbook and rebook a shuttle, the new attendance is correctly added rather than being incorrectly excluded as a "duplicate" of an attendance that was actually removed.
+   */
+
+
+                // When adding attendances, we need to know which ScheduledItems have been removed by RemoveAttendancesEvents
+        // so we don't incorrectly exclude new attendances that are re-adding previously removed ones.
+        // We pre-collect removed ScheduledItem primary keys to avoid exclusion based on stale AddAttendancesEvents.
+        java.util.Set<Object> removedScheduledItemPks = new java.util.HashSet<>();
+        if (event instanceof AddAttendancesEvent) {
+            for (AbstractDocumentEvent e : documentEvents) {
+                if (e instanceof RemoveAttendancesEvent rae && DocumentLines.sameDocumentLine(rae.getDocumentLine(), documentLine)) {
+                    for (Attendance a : rae.getAttendances()) {
+                        if (a.getScheduledItem() != null) {
+                            removedScheduledItemPks.add(Entities.getPrimaryKey(a.getScheduledItem()));
+                        }
+                    }
+                }
+            }
+        }
+
         // Since this event may undo previous events, we simplify by removing the undone events (partially or totally)
         for (int i = 0; i < documentEvents.size() && reducedAttendances.length > 0; i++) {
             AbstractDocumentEvent e = documentEvents.get(i);
@@ -124,7 +169,17 @@ public final class DocumentEvents {
                 // In the same way, the new event can be reduced, and we can remove the overlapping period too.
                 // This is true for both exclusive events and joining events (no need to repeat the same attendance
                 // in the later case).
-                reducedAttendances = excludeAttendances(reducedAttendances, eventAttendances);
+                // However, when adding attendances, don't exclude based on AddAttendancesEvent entries whose
+                // attendances have been subsequently removed by a RemoveAttendancesEvent.
+                if (event instanceof AddAttendancesEvent && aae instanceof AddAttendancesEvent && !removedScheduledItemPks.isEmpty()) {
+                    // Filter eventAttendances to only include those not removed
+                    Attendance[] effectiveEventAttendances = Arrays.filter(eventAttendances,
+                        ea -> ea.getScheduledItem() == null || !removedScheduledItemPks.contains(Entities.getPrimaryKey(ea.getScheduledItem())),
+                        Attendance[]::new);
+                    reducedAttendances = excludeAttendances(reducedAttendances, effectiveEventAttendances);
+                } else {
+                    reducedAttendances = excludeAttendances(reducedAttendances, eventAttendances);
+                }
                 // TODO: if there are still attendances on both joining events, we should merge them into 1 single event
             }
         }
