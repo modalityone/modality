@@ -32,16 +32,8 @@ final class DocumentSubmitController {
     }
 
     private static Future<SubmitDocumentChangesResult> executeOrEnqueueSubmitDocumentChanges(DocumentSubmitRequest info, DocumentSubmitEventQueue eventQueue) {
-        if (eventQueue.getQueueStartExecutionDateTime() == null) {
-            return ServerDocumentServiceProvider.submitDocumentChangesNow(info);
-        }
-
-        eventQueue.addRequest(info);
-        if (eventQueue.getScheduled() == null) {
-            long delayMs = eventQueue.getQueueStartExecutionDateTime().toInstant(ZoneOffset.UTC).toEpochMilli() - System.currentTimeMillis();
-            eventQueue.setScheduled(Scheduler.scheduleDelay(Math.max(0, delayMs), () -> processNextEnqueuedRequest(eventQueue)));
-        }
-        return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult("toto"));
+        Object queueToken = eventQueue.addRequest(info);
+        return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult(queueToken));
     }
 
     private static void processNextEnqueuedRequest(DocumentSubmitEventQueue eventQueue) {
@@ -52,14 +44,12 @@ final class DocumentSubmitController {
                     pushResultToClient(ar.result() != null ? ar.result() : SubmitDocumentChangesResult.createSoldOutResult(null, null), request.runId());
                     processNextEnqueuedRequest(eventQueue);
                 });
-        } else {
-            eventQueue.setScheduled(null);
-        }
+        }}
     }
 
     private static Future<DocumentSubmitEventQueue> createEventSubmitQueue(Object eventPrimaryKey) {
         // Temporary implementation (will be read from the database in the next version)
-        return Future.succeededFuture(new DocumentSubmitEventQueue(null));
+        return Future.succeededFuture(new DocumentSubmitEventQueue(null, null));
         //return Future.succeededFuture(new EventSubmitQueue(LocalDateTime.now().plusMinutes(1)));
     }
 
