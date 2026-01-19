@@ -18,7 +18,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
 
     private static final int GENERAL_GUESTS_EVENT_POOL_ID = 4; // temporarily hardcoded
 
-    private final static String EVENT_QUERY_BASE = "select venue, state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn from event"; // loading terms url for US Festival (way to load terms will change later)
+    private final static String EVENT_QUERY_BASE = "select venue.(name,label), state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn from Event"; // loading terms url for US Festival (way to load terms will change later)
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
         "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests

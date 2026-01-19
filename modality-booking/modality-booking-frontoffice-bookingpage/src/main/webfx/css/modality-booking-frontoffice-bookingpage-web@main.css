@@ -25,3 +25,8 @@
     --fx-svg-path-stroke: var(--fx-stroke);
     --fx-svg-path-fill: var(--fx-fill);
 }
+
+/* Increasing the line height for the event description */
+.bookingpage-text-base {
+    line-height: 1.8;
+}
