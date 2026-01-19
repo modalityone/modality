@@ -11,6 +11,8 @@ import one.modality.ecommerce.policy.service.PolicyAggregate;
 public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggregate> {
 
     private static final String CODEC_ID = "PolicyAggregate";
+    private static final String EVENT_QUERY_BASE_KEY = "eqb";
+    private static final String EVENT_QUERY_RESULT_KEY = "eqr";
     private static final String SCHEDULED_ITEMS_QUERY_BASE_KEY = "siqb";
     private static final String SCHEDULED_ITEMS_QUERY_RESULT_KEY = "siqr";
     private static final String SCHEDULED_BOUNDARIES_QUERY_BASE_KEY = "sbqb";
@@ -39,6 +41,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
 
     @Override
     public void encode(PolicyAggregate pa, AstObject serial) {
+        encodeString(serial, EVENT_QUERY_BASE_KEY,                   pa.getEventQueryBase());
+        encodeObject(serial, EVENT_QUERY_RESULT_KEY,                 pa.getEventQueryResult());
         encodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY,         pa.getScheduledItemsQueryBase());
         encodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY,       pa.getScheduledItemsQueryResult());
         encodeString(serial, SCHEDULED_BOUNDARIES_QUERY_BASE_KEY,    pa.getScheduledBoundariesQueryBase());
@@ -64,6 +68,8 @@ public final class PolicyAggregateSerialCodec extends SerialCodecBase<PolicyAggr
     @Override
     public PolicyAggregate decode(ReadOnlyAstObject serial) {
         return new PolicyAggregate(
+            decodeString(serial, EVENT_QUERY_BASE_KEY),
+            decodeObject(serial, EVENT_QUERY_RESULT_KEY),
             decodeString(serial, SCHEDULED_ITEMS_QUERY_BASE_KEY),
             decodeObject(serial, SCHEDULED_ITEMS_QUERY_RESULT_KEY),
             decodeString(serial, SCHEDULED_BOUNDARIES_QUERY_BASE_KEY),

@@ -18,6 +18,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
 
     private static final int GENERAL_GUESTS_EVENT_POOL_ID = 4; // temporarily hardcoded
 
+    private final static String EVENT_QUERY_BASE = "select venue, state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn from event"; // loading terms url for US Festival (way to load terms will change later)
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
         "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
@@ -51,7 +52,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         ",eventPhaseCoverage1,eventPhaseCoverage2,eventPhaseCoverage3,eventPhaseCoverage4" +
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
-        "select scope.(organization,site,eventType,event.termsUrlEn)" + // loading terms url for US Festival (way to load terms will change later)
+        "select scope.(organization,site,eventType,event)" +
         ",item.(name,label,code,family.(code,name,label),capacity,share_mate,ord)" +
         ",descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy,forceSoldOut" +
         " from ItemPolicy ip";
@@ -72,31 +73,34 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         Object eventPk = argument.getEventPk();
         return QueryService.executeQueryBatch(
                 new Batch<>(new QueryArgument[]{
-                    // 0 - Loading scheduled items (of this event or of the repeated event if set)
+                    // 0 - Loading event
+                    DqlQueries.newQueryArgumentForDefaultDataSource(
+                        EVENT_QUERY_BASE + " where id=$1", eventPk),
+                    // 1 - Loading scheduled items (of this event or of the repeated event if set)
                     DqlQueries.newQueryArgumentForDefaultDataSource(
                         SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
                         " order by site..ord,item..ord,date", eventPk)
-                    // 1 - Loading scheduled boundaries (of this event or of the repeated event if set)
+                    // 2 - Loading scheduled boundaries (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     SCHEDULED_BOUNDARIES_QUERY_BASE + " where (select sb.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by scheduledItem.date", eventPk)
-                    // 2 - Loading event parts (of this event or of the repeated event if set)
+                    // 3 - Loading event parts (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_PARTS_QUERY_BASE + " where (select epa.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by startBoundary.id", eventPk)
-                    // 3 - Loading event selections (of this event or of the repeated event if set)
+                    // 4 - Loading event selections (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_SELECTIONS_QUERY_BASE + " where (select es.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by id", eventPk) // Will introduce an ord later
-                    // 4 - Loading event phases (of this event or of the repeated event if set)
+                    // 5 - Loading event phases (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_PHASES_QUERY_BASE + " where (select eph.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by id", eventPk)
-                    // 5 - Loading phase coverages (of this event or of the repeated event if set)
+                    // 6 - Loading phase coverages (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     EVENT_PHASE_COVERAGES_QUERY_BASE + " where (select epc.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by id", eventPk) // Will introduce an ord later
-                    // 6 - Loading item policies (of this event or of the repeated event if set)
+                    // 7 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_FAMILY_POLICIES_QUERY_BASE + " where (select ifp.scope.(" +
                     " organization = e.organization" +
@@ -105,7 +109,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
                     " order by itemFamily.ord,id", eventPk)
-                    // 7 - Loading item policies (of this event or of the repeated event if set)
+                    // 8 - Loading item policies (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
                     " organization = e.organization" +
@@ -114,7 +118,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
                     " order by item.family.ord,item.ord,id", eventPk)
-                    // 8 - Loading rates (of this event or of the repeated event if set)
+                    // 9 - Loading rates (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     RATES_QUERY_BASE + " where (" +
                     // Sites dedicated to this event
@@ -124,22 +128,23 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     " from Event e where id=$1)" +
                     // Note: TeachingsPricing relies on the following order to work properly
                     " order by site,item,perDay desc,startDate,endDate,price", eventPk)
-                    // 9 (deprecated) - Loading bookable periods (of this event or of the repeated event if set)
+                    // 10 (deprecated) - Loading bookable periods (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     BOOKABLE_PERIODS_QUERY_BASE + " where (select bp.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
                     " order by startScheduledItem.date,endScheduledItem.date", eventPk)
                 }))
             .map(batch -> new PolicyAggregate(
-                SCHEDULED_ITEMS_QUERY_BASE, batch.get(0),
-                SCHEDULED_BOUNDARIES_QUERY_BASE, batch.get(1),
-                EVENT_PARTS_QUERY_BASE, batch.get(2),
-                EVENT_SELECTIONS_QUERY_BASE, batch.get(3),
-                EVENT_PHASES_QUERY_BASE, batch.get(4),
-                EVENT_PHASE_COVERAGES_QUERY_BASE, batch.get(5),
-                ITEM_FAMILY_POLICIES_QUERY_BASE, batch.get(6),
-                ITEM_POLICIES_QUERY_BASE, batch.get(7),
-                RATES_QUERY_BASE, batch.get(8),
-                BOOKABLE_PERIODS_QUERY_BASE, batch.get(9)
+                EVENT_QUERY_BASE, batch.get(0),
+                SCHEDULED_ITEMS_QUERY_BASE, batch.get(1),
+                SCHEDULED_BOUNDARIES_QUERY_BASE, batch.get(2),
+                EVENT_PARTS_QUERY_BASE, batch.get(3),
+                EVENT_SELECTIONS_QUERY_BASE, batch.get(4),
+                EVENT_PHASES_QUERY_BASE, batch.get(5),
+                EVENT_PHASE_COVERAGES_QUERY_BASE, batch.get(6),
+                ITEM_FAMILY_POLICIES_QUERY_BASE, batch.get(7),
+                ITEM_POLICIES_QUERY_BASE, batch.get(8),
+                RATES_QUERY_BASE, batch.get(9),
+                BOOKABLE_PERIODS_QUERY_BASE, batch.get(10)
             ));
     }
 
