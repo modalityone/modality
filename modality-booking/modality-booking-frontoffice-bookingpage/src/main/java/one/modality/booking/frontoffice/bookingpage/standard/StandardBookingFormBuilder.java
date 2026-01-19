@@ -87,6 +87,9 @@ public class StandardBookingFormBuilder {
     // Sticky header (appears fixed at top of the form, e.g., for price display)
     private Node stickyHeader;
 
+    // Comments section configuration
+    private boolean showCommentsSection = false;
+
     /**
      * Creates a new builder for a standard booking form.
      *
@@ -259,6 +262,20 @@ public class StandardBookingFormBuilder {
         return this;
     }
 
+    /**
+     * Sets whether to show a comments/special requests section on the Summary page.
+     * When enabled, users can enter free-text comments that are stored in the
+     * Document's request field.
+     * Default is false (comments section is hidden).
+     *
+     * @param show true to show the comments section, false to hide it
+     * @return This builder for chaining
+     */
+    public StandardBookingFormBuilder withShowCommentsSection(boolean show) {
+        this.showCommentsSection = show;
+        return this;
+    }
+
     // === Build ===
 
     /**
@@ -282,6 +299,7 @@ public class StandardBookingFormBuilder {
             memberSelectionPageSupplier,
             skipMemberSelection,
             summaryPageSupplier,
+            showCommentsSection,
             pendingBookingsPageSupplier,
             isPayBookingEntryPoint && !StandardBookingForm.PAY_BOOKING_CAN_BE_MULTIPLE, // Skipping pending bookings when entry point is for paying a single booking
             paymentPageSupplier,

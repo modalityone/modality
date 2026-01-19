@@ -97,6 +97,8 @@ public interface BookingPageI18nKeys {
     Object ChooseNewAccommodation = "ChooseNewAccommodation";
     Object ChooseYourAmount = "ChooseYourAmount";
     Object ComingSoon = "ComingSoon";
+    Object CommentsAndSpecialRequests = "CommentsAndSpecialRequests";
+    Object CommentsAndSpecialRequestsInfo = "CommentsAndSpecialRequestsInfo";
     Object CompletePayment = "CompletePayment";
     Object CompleteYourInformationToContinue = "CompleteYourInformationToContinue";
     Object ConfirmBooking = "ConfirmBooking";

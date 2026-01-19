@@ -114,10 +114,14 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private DefaultYourInformationSection defaultYourInformationSection;
     private DefaultMemberSelectionSection defaultMemberSelectionSection;
     private DefaultSummarySection defaultSummarySection;
+    private DefaultCommentsSection defaultCommentsSection;
     private DefaultPendingBookingsSection defaultPendingBookingsSection;
     private DefaultTermsSection defaultTermsSection;
     private DefaultPaymentSection defaultPaymentSection;
     private DefaultConfirmationSection defaultConfirmationSection;
+
+    // Configuration flags
+    private boolean showCommentsSection;
 
     // Stored new user info for payment/confirmation flow (persists after submission clears state)
     private String storedNewUserName;
@@ -145,6 +149,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         Supplier<BookingFormPage> memberSelectionPageSupplier,
         boolean skipMemberSelection,
         Supplier<BookingFormPage> summaryPageSupplier,
+        boolean showCommentsSection,
         Supplier<BookingFormPage> pendingBookingsPageSupplier,
         boolean skipPendingBookings,
         Supplier<BookingFormPage> paymentPageSupplier,
@@ -160,6 +165,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         this.stickyHeader = stickyHeader;
         this.colorScheme = colorScheme;
         this.showUserBadge = showUserBadge;
+        this.showCommentsSection = showCommentsSection;
         this.callbacks = callbacks;
         this.cardPaymentOnly = cardPaymentOnly;
         this.entryPoint = entryPoint;
@@ -346,6 +352,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Terms section is shown on Summary page, before submitting registration
         defaultTermsSection = new DefaultTermsSection();
         defaultTermsSection.setColorScheme(colorScheme);
+
+        // Comments section (optional - enabled via builder)
+        if (showCommentsSection) {
+            defaultCommentsSection = new DefaultCommentsSection();
+            defaultCommentsSection.setColorScheme(colorScheme);
+            return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
+                defaultSummarySection,
+                defaultCommentsSection,
+                defaultTermsSection)
+                .setStep(true);
+        }
+
         return new CompositeBookingFormPage(BookingPageI18nKeys.Summary,
             defaultSummarySection,
             defaultTermsSection)
@@ -714,6 +732,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Step 2: Book selected items into the WorkingBooking (default behavior)
         bookSelectedItemsInWorkingBooking();
+
+        // Step 2.5: Save user comment from comments section (if enabled)
+        if (defaultCommentsSection != null) {
+            String commentText = defaultCommentsSection.getCommentText();
+            if (commentText != null && !commentText.trim().isEmpty()) {
+                WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
+                if (workingBooking != null) {
+                    Console.log("StandardBookingForm: Adding user comment to request: " + commentText.trim());
+                    workingBooking.addRequest(commentText.trim());
+                }
+            }
+        }
 
         // Step 3: Let the form-specific code do any additional booking if needed
         // New users (both guests AND account creation) have no logged-in session
@@ -1856,6 +1886,82 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 // Compute dates from attendances (uses centralized formatting)
                 String lineDates = computeDatesFromAttendances(workingBooking, line);
 
+                // DEBUG: Detailed logging for transport items
+                if (familyName != null && familyName.toLowerCase().contains("transport")) {
+                    Console.log("=== DEBUG Transport: " + itemName + " ===");
+                    Console.log("  line.getId() = " + line.getId());
+                    Console.log("  line.getSite() = " + (line.getSite() != null ? line.getSite().getPrimaryKey() : "null"));
+                    Console.log("  line.getItem() = " + (line.getItem() != null ? line.getItem().getPrimaryKey() : "null"));
+                    Console.log("  line.getPriceNet() = " + linePriceObj);
+                    Console.log("  priceCalculator.calculateDocumentLinePrice() = " + linePrice);
+
+                    // Check standard getLineAttendances
+                    List<Attendance> stdAttendances = documentAggregate.getLineAttendances(line);
+                    Console.log("  Standard getLineAttendances count = " + (stdAttendances != null ? stdAttendances.size() : "null"));
+
+                    // Check robust matching
+                    List<Attendance> robustAttendances = getLineAttendancesRobust(documentAggregate, line);
+                    Console.log("  Robust getLineAttendances count = " + robustAttendances.size());
+
+                    // Show all attendances and their documentLine info
+                    List<Attendance> allAtts = documentAggregate.getAttendances();
+                    Console.log("  Total attendances in DocumentAggregate = " + (allAtts != null ? allAtts.size() : "null"));
+                    if (allAtts != null) {
+                        for (Attendance att : allAtts) {
+                            DocumentLine attLine = att.getDocumentLine();
+                            if (attLine != null) {
+                                Item attItem = attLine.getItem();
+                                String attItemName = attItem != null ? attItem.getName() : "null";
+                                // Only show transport attendances
+                                if (attItemName != null && (attItemName.contains("Newark") || attItemName.contains("KMCNY"))) {
+                                    Site attSite = attLine.getSite();
+                                    Console.log("    Attendance: item='" + attItemName + "', attLine.site=" +
+                                        (attSite != null ? attSite.getPrimaryKey() : "null") +
+                                        ", attLine.item=" + (attItem != null ? attItem.getPrimaryKey() : "null") +
+                                        ", att.date=" + att.getDate() +
+                                        ", att.scheduledItem=" + (att.getScheduledItem() != null ? att.getScheduledItem().getPrimaryKey() : "null"));
+
+                                    // Check if this attendance matches the current line
+                                    boolean stdMatch = java.util.Objects.equals(attLine, line);
+                                    boolean siteMatch = attSite != null && line.getSite() != null &&
+                                        Entities.samePrimaryKey(attSite, line.getSite());
+                                    boolean itemMatch = attItem != null && line.getItem() != null &&
+                                        Entities.samePrimaryKey(attItem, line.getItem());
+                                    Console.log("      -> stdMatch=" + stdMatch + ", siteMatch=" + siteMatch + ", itemMatch=" + itemMatch);
+                                }
+                            }
+                        }
+                    }
+
+                    // Check rates for this Site+Item
+                    PolicyAggregate pa = workingBooking.getPolicyAggregate();
+                    if (pa != null) {
+                        List<Rate> rates = pa.getRates();
+                        Console.log("  Checking rates (total " + (rates != null ? rates.size() : 0) + "):");
+                        if (rates != null) {
+                            Site lineSite = line.getSite();
+                            Item lineItem = line.getItem();
+                            Item rateItem = lineItem != null && lineItem.getRateAliasItem() != null ?
+                                lineItem.getRateAliasItem() : lineItem;
+                            for (Rate rate : rates) {
+                                Site rateSite = rate.getSite();
+                                Item rateItemFromRate = rate.getItem();
+                                if (rateSite != null && rateItemFromRate != null) {
+                                    boolean siteMatch = Entities.samePrimaryKey(rateSite, lineSite);
+                                    boolean itemMatch = Entities.samePrimaryKey(rateItemFromRate, rateItem);
+                                    if (siteMatch || itemMatch) {
+                                        Console.log("    Rate: site=" + rateSite.getPrimaryKey() +
+                                            ", item=" + rateItemFromRate.getPrimaryKey() +
+                                            ", price=" + rate.getPrice() +
+                                            " -> siteMatch=" + siteMatch + ", itemMatch=" + itemMatch);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Console.log("=== END DEBUG ===");
+                }
+
                 Console.log("  Price line: " + familyName + " - " + itemName + " = " + linePrice + (lineDates != null ? ", dates: " + lineDates : ""));
 
                 // Add the price line using new API with separate family/item for consistent formatting via UnifiedPriceDisplay
@@ -1884,7 +1990,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private String computeDatesFromAttendances(WorkingBooking workingBooking, DocumentLine line) {
         if (workingBooking == null || line == null) return null;
 
-        List<Attendance> lineAttendances = workingBooking.getLastestDocumentAggregate().getLineAttendances(line);
+        // Get attendances using robust matching (by Site+Item primary keys)
+        List<Attendance> lineAttendances = getLineAttendancesRobust(workingBooking.getLastestDocumentAggregate(), line);
         if (lineAttendances == null || lineAttendances.isEmpty()) return null;
 
         // Collect and sort all dates
@@ -1994,6 +2101,79 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Gets attendances for a document line using robust matching.
+     * First tries the standard getLineAttendances (which uses Objects.equals on DocumentLine).
+     * If that returns empty, falls back to matching by Site+Item primary keys.
+     * This handles cases where DocumentLine entities are in different EntityStores and
+     * standard equals comparison fails even for logically equivalent lines.
+     */
+    private List<Attendance> getLineAttendancesRobust(DocumentAggregate documentAggregate, DocumentLine line) {
+        if (documentAggregate == null || line == null) return Collections.emptyList();
+
+        // First try the standard method
+        List<Attendance> attendances = documentAggregate.getLineAttendances(line);
+        if (attendances != null && !attendances.isEmpty()) {
+            return attendances;
+        }
+
+        // Fallback: match by Site+Item primary keys (more robust across EntityStores)
+        Site lineSite = line.getSite();
+        Item lineItem = line.getItem();
+        if (lineSite == null || lineItem == null) return Collections.emptyList();
+
+        Object lineSitePk = lineSite.getPrimaryKey();
+        Object lineItemPk = lineItem.getPrimaryKey();
+        if (lineSitePk == null || lineItemPk == null) return Collections.emptyList();
+
+        return documentAggregate.getAttendances().stream()
+            .filter(a -> {
+                DocumentLine attLine = a.getDocumentLine();
+                if (attLine == null) return false;
+                Site attSite = attLine.getSite();
+                Item attItem = attLine.getItem();
+                if (attSite == null || attItem == null) return false;
+                return Entities.samePrimaryKey(attSite, lineSite) && Entities.samePrimaryKey(attItem, lineItem);
+            })
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Calculates price from PolicyAggregate's rates for a given Site+Item.
+     * Used as a fallback when PriceCalculator returns 0 due to EntityStore mismatch issues.
+     */
+    private int calculatePriceFromRates(PolicyAggregate policyAggregate, Site site, Item item, int attendanceCount) {
+        if (policyAggregate == null || site == null || item == null) return 0;
+
+        // Look for a Rate matching this Site+Item
+        List<Rate> rates = policyAggregate.getRates();
+        if (rates == null || rates.isEmpty()) return 0;
+
+        // If item has a rate alias, use that for the lookup
+        Item rateItem = item.getRateAliasItem() != null ? item.getRateAliasItem() : item;
+
+        for (Rate rate : rates) {
+            if (rate.getSite() != null && rate.getItem() != null &&
+                Entities.samePrimaryKey(rate.getSite(), site) &&
+                Entities.samePrimaryKey(rate.getItem(), rateItem)) {
+                // Found matching rate
+                Integer ratePrice = rate.getPrice();
+                if (ratePrice != null) {
+                    // For daily rates, multiply by attendance count
+                    // For fixed rates (perDay = false or not set), return the rate price directly
+                    Boolean perDay = rate.isPerDay();
+                    if (Boolean.TRUE.equals(perDay)) {
+                        return ratePrice * attendanceCount;
+                    } else {
+                        return ratePrice;
+                    }
+                }
+            }
+        }
+
+        return 0; // No matching rate found
     }
 
     private void updatePaymentFromPendingBookings() {
