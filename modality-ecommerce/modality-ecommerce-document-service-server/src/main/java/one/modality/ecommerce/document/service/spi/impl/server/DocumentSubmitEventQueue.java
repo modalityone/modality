@@ -1,10 +1,7 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
-import dev.webfx.platform.scheduler.Scheduler;
-import dev.webfx.platform.util.uuid.Uuid;
-
+import dev.webfx.platform.scheduler.Scheduled;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,31 +11,19 @@ import java.util.List;
 final class DocumentSubmitEventQueue {
 
     private final LocalDateTime queueStartExecutionDateTime;
-    private final Runnable onReadyListener;
     private final List<DocumentSubmitRequest> queue = new ArrayList<>();
+    private Scheduled scheduled;
 
-    public DocumentSubmitEventQueue(LocalDateTime queueStartExecutionDateTime, Runnable onReadyListener) {
+    public DocumentSubmitEventQueue(LocalDateTime queueStartExecutionDateTime) {
         this.queueStartExecutionDateTime = queueStartExecutionDateTime;
-        this.onReadyListener = onReadyListener;
-        long delayMs = queueStartExecutionDateTime == null ? 0 : queueStartExecutionDateTime.toInstant(ZoneOffset.UTC).toEpochMilli() - System.currentTimeMillis();
-        if (delayMs > 0) {
-            Scheduler.scheduleDelay(delayMs, this::fireOnReadyIfApplicable);
-        }
     }
 
     public LocalDateTime getQueueStartExecutionDateTime() {
         return queueStartExecutionDateTime;
     }
 
-    public Object addRequest(DocumentSubmitRequest request) {
+    public void addRequest(DocumentSubmitRequest request) {
         queue.add(request);
-        fireOnReadyIfApplicable();
-        return Uuid.randomUuid();
-    }
-
-    private void fireOnReadyIfApplicable() {
-        if (!queue.isEmpty() && onReadyListener != null)
-            onReadyListener.run();
     }
 
     public DocumentSubmitRequest pollRequest() {
@@ -47,4 +32,11 @@ final class DocumentSubmitEventQueue {
         return queue.remove(0);
     }
 
+    public Scheduled getScheduled() {
+        return scheduled;
+    }
+
+    public void setScheduled(Scheduled scheduled) {
+        this.scheduled = scheduled;
+    }
 }
