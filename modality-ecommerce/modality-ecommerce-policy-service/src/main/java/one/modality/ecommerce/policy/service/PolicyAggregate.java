@@ -29,6 +29,8 @@ import java.util.stream.Stream;
 public final class PolicyAggregate {
 
     // Fields intended for serialisation
+    private final String eventQueryBase;
+    private final QueryResult eventQueryResult;
     private final String scheduledItemsQueryBase;
     private final QueryResult scheduledItemsQueryResult;
     private final String scheduledBoundariesQueryBase;
@@ -67,17 +69,21 @@ public final class PolicyAggregate {
     @Deprecated
     private EntityList<BookablePeriod> bookablePeriods;
 
-    public PolicyAggregate(String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult,
-                           String scheduledBoundariesQueryBase, QueryResult scheduledBoundariesQueryResult,
-                           String eventPartsQueryBase, QueryResult eventPartsQueryResult,
-                           String eventSelectionsQueryBase, QueryResult eventSelectionsQueryResult,
-                           String eventPhasesQueryBase, QueryResult eventPhasesQueryResult,
-                           String eventPhaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
-                           String itemFamilyPoliciesQueryBase, QueryResult itemFamilyPoliciesQueryResult,
-                           String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
-                           String ratesQueryBase, QueryResult ratesQueryResult,
-                           String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult
+    public PolicyAggregate(
+        String eventQueryBase, QueryResult eventQueryResult,
+        String scheduledItemsQueryBase, QueryResult scheduledItemsQueryResult,
+        String scheduledBoundariesQueryBase, QueryResult scheduledBoundariesQueryResult,
+        String eventPartsQueryBase, QueryResult eventPartsQueryResult,
+        String eventSelectionsQueryBase, QueryResult eventSelectionsQueryResult,
+        String eventPhasesQueryBase, QueryResult eventPhasesQueryResult,
+        String eventPhaseCoveragesQueryBase, QueryResult phaseCoveragesQueryResult,
+        String itemFamilyPoliciesQueryBase, QueryResult itemFamilyPoliciesQueryResult,
+        String itemPoliciesQueryBase, QueryResult itemPoliciesQueryResult,
+        String ratesQueryBase, QueryResult ratesQueryResult,
+        String bookablePeriodsQueryBase, QueryResult bookablePeriodsQueryResult
     ) {
+        this.eventQueryBase = eventQueryBase;
+        this.eventQueryResult = eventQueryResult;
         this.scheduledItemsQueryBase = scheduledItemsQueryBase;
         this.scheduledItemsQueryResult = scheduledItemsQueryResult;
         this.scheduledBoundariesQueryBase = scheduledBoundariesQueryBase;
@@ -103,7 +109,11 @@ public final class PolicyAggregate {
     public void rebuildEntities(Event event) {
         entityStore = EntityStore.createAbove(event.getStore());
         DataSourceModel dataSourceModel = entityStore.getDataSourceModel();
-        QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
+        QueryRowToEntityMapping queryMapping = dataSourceModel.parseAndCompileSelect(eventQueryBase).getQueryMapping();
+        // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
+        // additional fields such as termsUrlEn
+        this.event = Collections.first(QueryResultToEntitiesMapper.mapQueryResultToEntities(eventQueryResult, queryMapping, entityStore, "events"));
+        queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledBoundariesQueryBase).getQueryMapping();
         scheduledBoundaries = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledBoundariesQueryResult, queryMapping, entityStore, "scheduledBoundaries");
@@ -123,9 +133,6 @@ public final class PolicyAggregate {
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
-        // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
-        // additional fields such as termsUrlEn
-        this.event = entityStore.getOrCreateEntity(event.getId());
     }
 
     public Future<Void> reloadAvailabilities() {
@@ -394,6 +401,15 @@ public final class PolicyAggregate {
     }
 
     // The following methods are meant to be used for serialization, not by the application code
+
+
+    public String getEventQueryBase() {
+        return eventQueryBase;
+    }
+
+    public QueryResult getEventQueryResult() {
+        return eventQueryResult;
+    }
 
     public String getScheduledItemsQueryBase() {
         return scheduledItemsQueryBase;
