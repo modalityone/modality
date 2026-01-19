@@ -1,5 +1,6 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
+import dev.webfx.platform.util.uuid.Uuid;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
@@ -19,7 +20,8 @@ record DocumentSubmitRequest(
     UpdateStore updateStore,
     Document document,
     DocumentLine documentLine,
-    Object eventPrimaryKey
+    Object eventPrimaryKey,
+    Object queueToken
 ) {
 
     static DocumentSubmitRequest create(SubmitDocumentChangesArgument argument) {
@@ -44,8 +46,9 @@ record DocumentSubmitRequest(
             document = documentLine.getDocument();
 
         Object eventPrimaryKey = document == null ? null : Entities.getPrimaryKey(document.getEventId());
+        Object queueToken = Uuid.randomUuid();
 
-        return new DocumentSubmitRequest(argument, runId, updateStore, document, documentLine, eventPrimaryKey);
+        return new DocumentSubmitRequest(argument, runId, updateStore, document, documentLine, eventPrimaryKey, queueToken);
     }
 
 }

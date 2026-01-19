@@ -8,6 +8,7 @@ module modality.ecommerce.document.service.server {
     requires modality.ecommerce.history.server;
     requires webfx.platform.ast;
     requires webfx.platform.async;
+    requires webfx.platform.console;
     requires webfx.platform.scheduler;
     requires webfx.platform.util;
     requires webfx.stack.com.bus;
