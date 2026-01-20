@@ -40,8 +40,11 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
+import one.modality.ecommerce.document.service.DocumentAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
@@ -840,168 +843,96 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     /**
      * Builds a container that dynamically shows either the optional "Create Account" checkbox
      * or the "Account Required" info box based on the forceAccountCreation property.
+     * The account creation requirements (age/terms, password, verification) are shared between both views.
      */
     protected StackPane buildAccountCreationContainer() {
         StackPane container = new StackPane();
         container.setAlignment(Pos.TOP_LEFT);
 
-        // Build both versions
-        VBox optionalCheckbox = buildCreateAccountBox();
-        VBox requiredInfoBox = buildAccountRequiredBox();
+        // Build the shared account requirements section
+        VBox accountRequirements = buildAccountCreationRequirements();
 
-        // Update visibility based on property
-        Runnable updateVisibility = () -> {
+        // Build both header versions (these methods now return headers WITHOUT the requirements)
+        VBox optionalCheckboxView = buildCreateAccountBoxHeaderOnly();
+        VBox requiredInfoBoxView = buildAccountRequiredBoxHeaderOnly();
+
+        // Find the content VBox inside the optional checkbox view where requirements should be added
+        VBox optionalContent = findContentVBox(optionalCheckboxView);
+
+        // Update visibility and move accountRequirements to correct parent based on property
+        Runnable updateLayout = () -> {
             boolean forced = forceAccountCreationProperty.get();
-            optionalCheckbox.setVisible(!forced);
-            optionalCheckbox.setManaged(!forced);
-            requiredInfoBox.setVisible(forced);
-            requiredInfoBox.setManaged(forced);
+            optionalCheckboxView.setVisible(!forced);
+            optionalCheckboxView.setManaged(!forced);
+            requiredInfoBoxView.setVisible(forced);
+            requiredInfoBoxView.setManaged(forced);
+
+            // Move accountRequirements to the correct parent (JavaFX nodes can only have one parent)
+            if (forced) {
+                // Remove from optional view and add to required view
+                if (optionalContent != null) {
+                    optionalContent.getChildren().remove(accountRequirements);
+                }
+                if (!requiredInfoBoxView.getChildren().contains(accountRequirements)) {
+                    requiredInfoBoxView.getChildren().add(accountRequirements);
+                }
+                // In forced mode, requirements are always visible
+                accountRequirements.visibleProperty().unbind();
+                accountRequirements.managedProperty().unbind();
+                accountRequirements.setVisible(true);
+                accountRequirements.setManaged(true);
+            } else {
+                // Remove from required view and add to optional view content
+                requiredInfoBoxView.getChildren().remove(accountRequirements);
+                if (optionalContent != null && !optionalContent.getChildren().contains(accountRequirements)) {
+                    optionalContent.getChildren().add(accountRequirements);
+                }
+                // In optional mode, requirements are visible only when checkbox is checked
+                accountRequirements.visibleProperty().bind(createAccountProperty);
+                accountRequirements.managedProperty().bind(createAccountProperty);
+            }
         };
 
-        forceAccountCreationProperty.addListener((obs, old, newVal) -> updateVisibility.run());
-        updateVisibility.run();
+        forceAccountCreationProperty.addListener((obs, old, newVal) -> updateLayout.run());
+        updateLayout.run();
 
-        container.getChildren().addAll(optionalCheckbox, requiredInfoBox);
+        container.getChildren().addAll(optionalCheckboxView, requiredInfoBoxView);
         return container;
     }
 
     /**
-     * Builds an info box explaining that account creation is required.
-     * Used for online programs that require login access to resources.
+     * Helper to find the content VBox inside the optional checkbox header.
+     * The structure is: header (VBox) -> contentRow (HBox) -> [checkbox, content (VBox)]
      */
-    protected VBox buildAccountRequiredBox() {
-        VBox box = new VBox(12);
-        box.setPadding(new Insets(24));
-        box.getStyleClass().add("bookingpage-info-box-info");
-
-        HBox contentRow = new HBox(16);
-        contentRow.setAlignment(Pos.TOP_LEFT);
-
-        // Info icon circle
-        StackPane iconCircle = BookingPageUIBuilder.createThemedIconCircle(28);
-        iconCircle.getStyleClass().add("bookingpage-icon-circle-primary");
-
-        // Info "i" icon
-        SVGPath infoIcon = new SVGPath();
-        infoIcon.setContent("M12 16v-4 M12 8h.01");
-        infoIcon.setStroke(Color.WHITE);
-        infoIcon.setStrokeWidth(2.5);
-        infoIcon.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
-        infoIcon.setFill(Color.TRANSPARENT);
-        infoIcon.setScaleX(0.9);
-        infoIcon.setScaleY(0.9);
-        iconCircle.getChildren().add(infoIcon);
-
-        // Content
-        VBox content = new VBox(8);
-
-        // Title
-        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequired);
-        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
-
-        // Description
-        Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequiredDescription);
-        descLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
-        descLabel.setWrapText(true);
-
-        // Email note about password setup (non-interactive, no hover effect)
-        HBox noteBox = new HBox(10);
-        noteBox.setPadding(new Insets(12, 14, 12, 14));
-        noteBox.getStyleClass().addAll("bookingpage-rounded", "bookingpage-bg-muted");
-        noteBox.setAlignment(Pos.TOP_LEFT);
-        noteBox.setCursor(javafx.scene.Cursor.DEFAULT);
-
-        SVGPath emailNoteIcon = new SVGPath();
-        emailNoteIcon.setContent("M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6");
-        emailNoteIcon.getStyleClass().add("bookingpage-icon-primary");
-        emailNoteIcon.setStrokeWidth(2);
-        emailNoteIcon.setFill(Color.TRANSPARENT);
-        emailNoteIcon.setScaleX(0.65);
-        emailNoteIcon.setScaleY(0.65);
-
-        Label noteText = I18nControls.newLabel(BookingPageI18nKeys.WeWillSendEmailToSetPassword);
-        noteText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-        noteText.setWrapText(true);
-
-        noteBox.getChildren().addAll(emailNoteIcon, noteText);
-        HBox.setHgrow(noteText, Priority.ALWAYS);
-
-        content.getChildren().addAll(titleLabel, descLabel, noteBox);
-
-        contentRow.getChildren().addAll(iconCircle, content);
-        HBox.setHgrow(content, Priority.ALWAYS);
-        box.getChildren().add(contentRow);
-
-        return box;
+    private VBox findContentVBox(VBox header) {
+        for (Node child : header.getChildren()) {
+            if (child instanceof HBox) {
+                HBox contentRow = (HBox) child;
+                for (Node rowChild : contentRow.getChildren()) {
+                    if (rowChild instanceof VBox) {
+                        return (VBox) rowChild;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
-    protected VBox buildCreateAccountBox() {
-        BookingFormColorScheme colors = colorScheme.get();
-
-        // Clear any existing references
-        benefitCheckIcons.clear();
-        benefitLabels.clear();
-
-        VBox box = new VBox(0);
-        box.setPadding(new Insets(24));
-        updateCreateAccountBoxStyle(box);
-
-        HBox contentRow = new HBox(16);
-        contentRow.setAlignment(Pos.TOP_LEFT);
-
-        // Custom checkbox (clickable)
-        StackPane checkbox = createCustomCheckbox();
-
-        // Content
-        VBox content = new VBox(8);
-
-        // Title with icon
-        HBox titleRow = new HBox(8);
-        titleRow.setAlignment(Pos.CENTER_LEFT);
-
-        createAccountUserIcon = new SVGPath();
-        createAccountUserIcon.setContent("M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 3a4 4 0 100 8 4 4 0 000-8z");
-        createAccountUserIcon.getStyleClass().add("bookingpage-icon-primary");
-        createAccountUserIcon.setStrokeWidth(2);
-        createAccountUserIcon.setFill(Color.TRANSPARENT);
-        createAccountUserIcon.setScaleX(0.8);
-        createAccountUserIcon.setScaleY(0.8);
-
-        createAccountTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.CreateAnAccount);
-        createAccountTitleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
-
-        titleRow.getChildren().addAll(createAccountUserIcon, createAccountTitleLabel);
-
-        // Description
-        Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.CreateAccountBenefit);
-        descLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
-        descLabel.setWrapText(true);
-
-        // Benefits tags
-        HBox benefitsRow = new HBox(8);
-        benefitsRow.setAlignment(Pos.CENTER_LEFT);
-        benefitsRow.getChildren().addAll(
-                createBenefitTag(BookingPageI18nKeys.SkipFormsNextTime, colors),
-                createBenefitTag(BookingPageI18nKeys.BookForFamilyAndFriends, colors),
-                createBenefitTag(BookingPageI18nKeys.ViewBookingHistory, colors)
-        );
-
-        content.getChildren().addAll(titleRow, descLabel, benefitsRow);
-
-        // Account creation requirements (shown when checked)
-        VBox accountCreationRequirements = new VBox(16);
-        accountCreationRequirements.setPadding(new Insets(16, 0, 0, 0));
-        accountCreationRequirements.visibleProperty().bind(createAccountProperty);
-        accountCreationRequirements.managedProperty().bind(createAccountProperty);
+    /**
+     * Builds the shared account creation requirements section (age/terms, password, verification).
+     * This section is shared between the optional and required account views.
+     */
+    protected VBox buildAccountCreationRequirements() {
+        VBox accountRequirements = new VBox(16);
+        accountRequirements.setPadding(new Insets(16, 0, 0, 0));
 
         // Age/Terms container (white card with toggle)
         VBox ageTermsCard = new VBox(0);
         ageTermsCard.setPadding(new Insets(16));
         ageTermsCard.getStyleClass().addAll("bookingpage-card", "bookingpage-rounded");
         ageTermsCard.setOnMouseClicked(e -> e.consume()); // Prevent toggling main checkbox
-
         ageTermsCard.getChildren().add(ageTermsToggleContainer);
-        accountCreationRequirements.getChildren().add(ageTermsCard);
+        accountRequirements.getChildren().add(ageTermsCard);
 
         // Password fields section (shown when age/terms accepted)
         VBox passwordSection = new VBox(16);
@@ -1035,7 +966,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         confirmPasswordContainer.getChildren().addAll(confirmPasswordLabelBox, confirmPwdStack);
 
         passwordSection.getChildren().addAll(passwordFieldContainer, passwordStrengthHint, confirmPasswordContainer);
-        accountCreationRequirements.getChildren().add(passwordSection);
+        accountRequirements.getChildren().add(passwordSection);
 
         // Email verification section (shown when age/terms accepted)
         VBox verificationSection = new VBox(16);
@@ -1102,9 +1033,117 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         verificationSuccessBox.managedProperty().bind(emailVerificationCompleteProperty);
 
         verificationSection.getChildren().addAll(sendCodeContainer, codeEntryContainer, verificationSuccessBox);
-        accountCreationRequirements.getChildren().add(verificationSection);
+        accountRequirements.getChildren().add(verificationSection);
 
-        content.getChildren().add(accountCreationRequirements);
+        return accountRequirements;
+    }
+
+    /**
+     * Builds an info box explaining that account creation is required (header only).
+     * The account requirements are added dynamically by buildAccountCreationContainer().
+     * Used when forceAccountCreation is true.
+     */
+    protected VBox buildAccountRequiredBoxHeaderOnly() {
+        VBox box = new VBox(16);
+        box.setPadding(new Insets(24));
+        box.getStyleClass().add("bookingpage-info-box-info");
+
+        // Header row with icon and title/description
+        HBox headerRow = new HBox(16);
+        headerRow.setAlignment(Pos.TOP_LEFT);
+
+        // Info icon circle
+        StackPane iconCircle = BookingPageUIBuilder.createThemedIconCircle(28);
+        iconCircle.getStyleClass().add("bookingpage-icon-circle-primary");
+
+        // Info "i" icon
+        SVGPath infoIcon = new SVGPath();
+        infoIcon.setContent("M12 16v-4 M12 8h.01");
+        infoIcon.setStroke(Color.WHITE);
+        infoIcon.setStrokeWidth(2.5);
+        infoIcon.setStrokeLineCap(javafx.scene.shape.StrokeLineCap.ROUND);
+        infoIcon.setFill(Color.TRANSPARENT);
+        infoIcon.setScaleX(0.9);
+        infoIcon.setScaleY(0.9);
+        iconCircle.getChildren().add(infoIcon);
+
+        // Title and description
+        VBox headerContent = new VBox(8);
+        Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequired);
+        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+
+        Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.AccountRequiredDescription);
+        descLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        descLabel.setWrapText(true);
+
+        headerContent.getChildren().addAll(titleLabel, descLabel);
+        headerRow.getChildren().addAll(iconCircle, headerContent);
+        HBox.setHgrow(headerContent, Priority.ALWAYS);
+
+        box.getChildren().add(headerRow);
+        // Note: accountRequirements is added dynamically by buildAccountCreationContainer()
+
+        return box;
+    }
+
+    /**
+     * Builds the optional "Create an Account" checkbox box (header only).
+     * The account requirements are added dynamically by buildAccountCreationContainer().
+     * Used when forceAccountCreation is false.
+     */
+    protected VBox buildCreateAccountBoxHeaderOnly() {
+        BookingFormColorScheme colors = colorScheme.get();
+
+        // Clear any existing references
+        benefitCheckIcons.clear();
+        benefitLabels.clear();
+
+        VBox box = new VBox(0);
+        box.setPadding(new Insets(24));
+        updateCreateAccountBoxStyle(box);
+
+        HBox contentRow = new HBox(16);
+        contentRow.setAlignment(Pos.TOP_LEFT);
+
+        // Custom checkbox (clickable)
+        StackPane checkbox = createCustomCheckbox();
+
+        // Content
+        VBox content = new VBox(8);
+
+        // Title with icon
+        HBox titleRow = new HBox(8);
+        titleRow.setAlignment(Pos.CENTER_LEFT);
+
+        createAccountUserIcon = new SVGPath();
+        createAccountUserIcon.setContent("M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2 M12 3a4 4 0 100 8 4 4 0 000-8z");
+        createAccountUserIcon.getStyleClass().add("bookingpage-icon-primary");
+        createAccountUserIcon.setStrokeWidth(2);
+        createAccountUserIcon.setFill(Color.TRANSPARENT);
+        createAccountUserIcon.setScaleX(0.8);
+        createAccountUserIcon.setScaleY(0.8);
+
+        createAccountTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.CreateAnAccount);
+        createAccountTitleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+
+        titleRow.getChildren().addAll(createAccountUserIcon, createAccountTitleLabel);
+
+        // Description
+        Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.CreateAccountBenefit);
+        descLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        descLabel.setWrapText(true);
+
+        // Benefits tags
+        HBox benefitsRow = new HBox(8);
+        benefitsRow.setAlignment(Pos.CENTER_LEFT);
+        benefitsRow.getChildren().addAll(
+                createBenefitTag(BookingPageI18nKeys.SkipFormsNextTime, colors),
+                createBenefitTag(BookingPageI18nKeys.BookForFamilyAndFriends, colors),
+                createBenefitTag(BookingPageI18nKeys.ViewBookingHistory, colors)
+        );
+
+        content.getChildren().addAll(titleRow, descLabel, benefitsRow);
+        // Note: accountRequirements is added dynamically by buildAccountCreationContainer()
 
         contentRow.getChildren().addAll(checkbox, content);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -1112,8 +1151,6 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Update style when checkbox changes
         createAccountProperty.addListener((obs, old, checked) -> updateCreateAccountBoxStyle(box));
-
-        // Note: Color scheme listener removed - CSS handles theme changes via CSS variables
 
         return box;
     }
@@ -2317,6 +2354,44 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     @Override
     public void setWorkingBookingProperties(WorkingBookingProperties workingBookingProperties) {
         this.workingBookingProperties = workingBookingProperties;
+
+        if (workingBookingProperties != null) {
+            // Configure account creation requirement from event's noAccountBooking field
+            Event event = workingBookingProperties.getEvent();
+            if (event != null) {
+                Boolean noAccountBooking = event.isNoAccountBooking();
+                // If noAccountBooking is null or false, force account creation
+                // If noAccountBooking is true, guest checkout is allowed
+                setForceAccountCreation(noAccountBooking == null || !noAccountBooking);
+            }
+
+            // Configure gender field requirement from item policies
+            updateGenderFieldRequirement();
+        }
+    }
+
+    /**
+     * Updates the gender field visibility based on selected items' ItemPolicy.genderInfoRequired.
+     * Called when workingBookingProperties is set or when booking selections change.
+     */
+    protected void updateGenderFieldRequirement() {
+        if (workingBookingProperties == null) return;
+
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) return;
+
+        WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+        DocumentAggregate documentAggregate = workingBooking != null ?
+            workingBooking.getLastestDocumentAggregate() : null;
+
+        if (documentAggregate != null && documentAggregate.getDocumentLines() != null) {
+            boolean genderRequired = documentAggregate.getDocumentLines().stream()
+                .map(line -> policyAggregate.getItemPolicy(line.getItem()))
+                .filter(Objects::nonNull)
+                .anyMatch(policy -> Boolean.TRUE.equals(policy.isGenderInfoRequired()));
+
+            setShowGenderField(genderRequired);
+        }
     }
 
     @Override
