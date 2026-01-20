@@ -19,21 +19,21 @@ import java.util.function.Consumer;
 /**
  * @author Bruno Salmon
  */
-final class EventQueueNotification {
+public final class EventQueueNotification {
 
     private static final Map<Object /* eventPk */, EventQueueNotification> NOTIFICATIONS = new HashMap<>();
     private static final Map<Object /* queueToken */, Consumer<SubmitDocumentChangesResult>> ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS = new HashMap<>();
 
     static {
         BusCallService.registerBusCallEndpoint(
-            DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_CLIENT_PUSH_ADDRESS,
-            (SubmitDocumentChangesResult result) -> {
-                Consumer<SubmitDocumentChangesResult> handler = ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS.remove(result.queueToken());
+            DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
+            (SubmitDocumentChangesResult finalResult) -> {
+                Consumer<SubmitDocumentChangesResult> handler = ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS.remove(finalResult.queueToken());
                 if (handler != null) {
-                    handler.accept(result);
+                    handler.accept(finalResult);
                     return "OK";
                 }
-                Console.log("🪣 No handler found for queue token: " + result.queueToken());
+                Console.log("🪣 No handler found for queue token: " + finalResult.queueToken());
                 return "KO";
             }
         );
@@ -41,7 +41,7 @@ final class EventQueueNotification {
 
     private final ObjectProperty<EventQueueProgress> progressProperty = new SimpleObjectProperty<>();
 
-    EventQueueNotification(Event event) {
+    private EventQueueNotification(Event event) {
         // The document service is publishing the progress of the event queue through the "queueProgress" virtual field
         // of the event. So we listen to it to receive updates on the event queue progress.
         ModalityEntityMessageReceiver.getFrontOfficeEntityMessageReceiver().listenEntityChanges(event.getStore());
@@ -66,19 +66,19 @@ final class EventQueueNotification {
         //
     }
 
-    EventQueueProgress getProgress() {
+    public EventQueueProgress getProgress() {
         return progressProperty.get();
     }
 
-    ObjectProperty<EventQueueProgress> progressProperty() {
+    public ObjectProperty<EventQueueProgress> progressProperty() {
         return progressProperty;
     }
 
-    static void setEnqueuedBookingFinalResultHandler(Object queueToken, Consumer<SubmitDocumentChangesResult> handler) {
+    public static void setEnqueuedBookingFinalResultHandler(Object queueToken, Consumer<SubmitDocumentChangesResult> handler) {
         ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS.put(queueToken, handler);
     }
 
-    static EventQueueNotification create(Event event) {
+    public static EventQueueNotification getOrCreate(Event event) {
         return NOTIFICATIONS.computeIfAbsent(event.getPrimaryKey(), ignored -> new EventQueueNotification(event));
     }
 

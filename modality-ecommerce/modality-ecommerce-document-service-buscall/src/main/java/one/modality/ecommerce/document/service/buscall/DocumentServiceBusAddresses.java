@@ -11,5 +11,5 @@ public interface DocumentServiceBusAddresses {
 
     String SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS = "modality/service/document/submitDocumentChanges";
 
-    String SUBMIT_DOCUMENT_CHANGES_CLIENT_PUSH_ADDRESS = "modality/client/document/submitDocumentChangesPush";
+    String SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS = "modality/service/document/push";
 }
