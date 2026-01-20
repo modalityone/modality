@@ -41,7 +41,7 @@ final class DocumentSubmitController {
     }
 
     private static Future<DocumentSubmitEventQueue> createEventSubmitQueue(DocumentSubmitRequest request) {
-        return request.document().getEvent().<Event>onExpressionLoaded("name,openingDate,bookingProcessStart")
+        return request.updateStore().getOrCreateEntity(Event.class, request.eventPrimaryKey()).<Event>onExpressionLoaded("name,openingDate,bookingProcessStart")
             .map(DocumentSubmitEventQueue::new);
     }
 

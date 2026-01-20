@@ -2,7 +2,9 @@ package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
 import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entity.message.sender.ModalityEntityMessageSender;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -22,7 +24,7 @@ final class DocumentSubmitEventQueue {
 
     public DocumentSubmitEventQueue(Event event) {
         this.event = event;
-        LocalDateTime bookingProcessStart = event.getLocalDateTimeFieldValue("bookingProcessStart");
+        LocalDateTime bookingProcessStart = event.getBookingProcessStart();
         if (bookingProcessStart == null)
             bookingProcessStart = event.getOpeningDate();
         long delayMs = bookingProcessStart == null ? 0 : bookingProcessStart.toInstant(ZoneOffset.UTC).toEpochMilli() - System.currentTimeMillis();
@@ -30,7 +32,7 @@ final class DocumentSubmitEventQueue {
         if (!ready) {
             Scheduler.scheduleDelay(delayMs, this::setReady);
         }
-        Console.log("Created queue for event " + event.getPrimaryKey() + " (" + event.getName() + ")");
+        log("Created - Start delay: " + delayMs + "ms");
     }
 
     Object getEventPrimaryKey() {
@@ -78,15 +80,15 @@ final class DocumentSubmitEventQueue {
                 DocumentSubmitController.processRequestAndNotifyClient(nextRequest, this);
             } else {
                 DocumentSubmitController.releaseEventQueue(this);
-                Console.log("Released queue for event " + event.getPrimaryKey() + " (" + event.getName() + ")");
+                log("Released after processing " + processedRequestCount + " request(s)");
             }
         }
     }
 
     public void removedProcessedRequest(DocumentSubmitRequest processedRequest) {
         processedRequestCount++;
-        publishProgress();
         removeRequest(processedRequest);
+        publishProgress();
         if (this.processingRequest == processedRequest) {
             this.processingRequest = null;
             processNextRequestIfReadyAndNotProcessing();
@@ -104,7 +106,21 @@ final class DocumentSubmitEventQueue {
     void publishProgress() {
         int remainingRequests = queue.size();
         int totalRequests = processedRequestCount + remainingRequests;
-        Console.log("Queue for event " + event.getPrimaryKey() + " (" + event.getName() + ") has processed " + processedRequestCount + " requests over " + totalRequests + " (" + remainingRequests + " remaining)");
+        log("Processed " + processedRequestCount + " request(s) over " + totalRequests + " (" + remainingRequests + " remaining)");
+        // We don't publish the progress for a single request in a non-waiting queue (as it will be processed
+        // immediately), and this should be actually most of the cases.
+        if (ready && totalRequests == 1)
+            return;
+        // But for events with big opening, we do publish the progress so the front-office can animate a progress bar
+        ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
+            EntityChangesBuilder.create()
+                .addFieldChange(event, Event.queueProgress, processedRequestCount + "/" + totalRequests)
+                .build()
+        );
+    }
+
+    private void log(String message) {
+        Console.log("🪣 [EVENT-QUEUE-" + event.getPrimaryKey() + "-" + event.getName() + "] " + message);
     }
 
 }
