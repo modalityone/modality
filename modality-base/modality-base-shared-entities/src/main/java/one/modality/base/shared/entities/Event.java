@@ -54,7 +54,11 @@ public interface Event extends Entity,
     String termsUrlEn = "termsUrlEn";
     String noAccountBooking = "noAccountBooking";
 
-    // Dynamic field used for messaging purpose only (not persisted in the database)
+    // Virtual dynamic fields
+    String secondsToOpeningDate = "secondsToOpeningDate";
+    String secondsToBookingProcessStart = "secondsToBookingProcessStart";
+
+    // Virtual dynamic field used for messaging purpose only (not persisted in the database)
     String queueProgress = "queueProgress";
 
     default void setState(Object value) {
@@ -371,6 +375,14 @@ public interface Event extends Entity,
 
     default Boolean isNoAccountBooking() {
         return getBooleanFieldValue(noAccountBooking);
+    }
+
+    default Double getSecondsToOpeningDate() {
+        return getDoubleFieldValue(secondsToOpeningDate);
+    }
+
+    default Double getSecondsToBookingProcessStart() {
+        return getDoubleFieldValue(secondsToBookingProcessStart);
     }
 
 }

@@ -6,6 +6,7 @@ import dev.webfx.stack.db.query.QueryArgument;
 import dev.webfx.stack.db.query.QueryResult;
 import dev.webfx.stack.db.query.QueryService;
 import dev.webfx.stack.orm.entity.DqlQueries;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.ecommerce.policy.service.LoadPolicyArgument;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
@@ -18,7 +19,11 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
 
     private static final int GENERAL_GUESTS_EVENT_POOL_ID = 4; // temporarily hardcoded
 
-    private final static String EVENT_QUERY_BASE = "select venue.(name,label), state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn, organization.privacyUrlLabel, openingDate, bookingProcessStart, timezone, noAccountBooking from Event"; // loading terms url for US Festival (way to load terms will change later)
+    private final static String EVENT_QUERY_BASE =
+        "select venue.(name,label), state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn, organization.privacyUrlLabel, openingDate, bookingProcessStart, timezone, noAccountBooking" +
+        ", date_part('epoch', openingDate - now()) as " + Event.secondsToOpeningDate +
+        ", date_part('epoch', coalesce(bookingProcessStart, openingDate) - now()) as " + Event.secondsToBookingProcessStart +
+        " from Event"; // loading terms url for US Festival (way to load terms will change later)
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
         "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
