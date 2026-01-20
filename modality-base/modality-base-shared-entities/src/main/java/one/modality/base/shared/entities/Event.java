@@ -54,11 +54,11 @@ public interface Event extends Entity,
     String termsUrlEn = "termsUrlEn";
     String noAccountBooking = "noAccountBooking";
 
-    // Virtual dynamic fields
+    // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate.getEvent() - loaded/computed by ServerPolicyServiceProvider
     String secondsToOpeningDate = "secondsToOpeningDate";
     String secondsToBookingProcessStart = "secondsToBookingProcessStart";
 
-    // Virtual dynamic field used for messaging purpose only (not persisted in the database)
+    // Virtual dynamic field (not persisted in the database) used for messaging purpose only
     String queueProgress = "queueProgress";
 
     default void setState(Object value) {

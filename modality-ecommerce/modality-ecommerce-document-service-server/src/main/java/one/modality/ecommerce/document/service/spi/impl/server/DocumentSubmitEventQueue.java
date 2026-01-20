@@ -126,7 +126,7 @@ final class DocumentSubmitEventQueue {
     static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
         if (clientRunId != null)
             PushServerService.push(
-                DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_CLIENT_PUSH_ADDRESS,
+                DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
                 result,
                 new DeliveryOptions(),
                 clientRunId);
