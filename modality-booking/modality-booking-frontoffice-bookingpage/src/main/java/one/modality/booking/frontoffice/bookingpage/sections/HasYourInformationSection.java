@@ -31,13 +31,17 @@ public interface HasYourInformationSection extends BookingFormSection {
         public final String email;
         public final String firstName;
         public final String lastName;
+        public final Boolean gender; // null | false (Female) | true (Male)
         public final boolean createAccount;
+        public final boolean emailVerified;
 
-        public NewUserData(String email, String firstName, String lastName, boolean createAccount) {
+        public NewUserData(String email, String firstName, String lastName, Boolean gender, boolean createAccount, boolean emailVerified) {
             this.email = email;
             this.firstName = firstName;
             this.lastName = lastName;
+            this.gender = gender;
             this.createAccount = createAccount;
+            this.emailVerified = emailVerified;
         }
     }
 

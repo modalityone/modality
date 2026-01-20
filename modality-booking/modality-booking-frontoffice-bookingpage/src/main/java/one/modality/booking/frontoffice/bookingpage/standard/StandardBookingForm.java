@@ -136,6 +136,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Sticky header (optional - appears at top of form)
     private final Node stickyHeader;
 
+    // Tracks whether a user was logged in (to detect logout)
+    private boolean hadLoggedInUser = false;
+
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
      */
@@ -607,6 +610,17 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultConfirmationSection != null) {
             defaultConfirmationSection.setOnMakeAnotherBooking(this::handleMakeAnotherBooking);
         }
+
+        // Listen for user logout to reset the form
+        FXProperties.runNowAndOnPropertyChange(userPerson -> {
+            if (userPerson != null) {
+                // User logged in - remember we had a logged-in user
+                hadLoggedInUser = true;
+            } else if (hadLoggedInUser) {
+                // User logged out (was logged in, now null) - reset the form
+                UiScheduler.runInUiThread(this::handleLogout);
+            }
+        }, FXUserPerson.userPersonProperty());
     }
 
     // === Page Button Configuration ===
@@ -1686,6 +1700,86 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Navigate to first custom step
         navigateToFirstCustomStep();
+    }
+
+    /**
+     * Handles user logout by completely resetting the form.
+     * Called when the user logs out (FXUserPerson transitions from non-null to null).
+     * This resets the WorkingBooking to a fresh state and navigates to the first page.
+     */
+    private void handleLogout() {
+        // Start a completely new booking (fresh Document entity)
+        state.prepareForNewBooking();
+
+        // Reset the hadLoggedInUser flag since we're starting fresh
+        hadLoggedInUser = false;
+
+        // Clear stored new user info
+        storedNewUserName = null;
+        storedNewUserEmail = null;
+
+        // Reset the Your Information section to email input state
+        if (defaultYourInformationSection != null) {
+            defaultYourInformationSection.resetToEmailInput();
+        }
+
+        // Clear member selection section
+        if (defaultMemberSelectionSection != null) {
+            defaultMemberSelectionSection.clearMembers();
+            defaultMemberSelectionSection.clearAlreadyBooked();
+            defaultMemberSelectionSection.clearSelection();
+        }
+
+        // Clear summary section
+        if (defaultSummarySection != null) {
+            defaultSummarySection.clearPriceLines();
+            defaultSummarySection.clearAdditionalOptions();
+        }
+
+        // Clear pending bookings section
+        if (defaultPendingBookingsSection != null) {
+            defaultPendingBookingsSection.clearBookings();
+        }
+
+        // Clear confirmation section
+        if (defaultConfirmationSection != null) {
+            defaultConfirmationSection.clearConfirmedBookings();
+        }
+
+        // Reset sections in custom pages (audio recording, prerequisite, etc.)
+        resetCustomPageSections();
+
+        // Notify callbacks for any additional custom reset logic
+        if (callbacks != null) {
+            callbacks.onPrepareNewBooking();
+        }
+
+        // Navigate to the first applicable page of the form
+        // We need to find the first page that is applicable to the new (empty) booking
+        navigateToFirstApplicablePage();
+    }
+
+    /**
+     * Navigates to the first applicable page of the form.
+     * This is used when completely resetting the form (e.g., after logout).
+     * It finds the first page where isApplicableToBooking() returns true.
+     */
+    private void navigateToFirstApplicablePage() {
+        WorkingBooking workingBooking = getWorkingBooking();
+        BookingFormPage[] allPages = getPages();
+
+        // Find the first applicable page
+        for (int i = 0; i < allPages.length; i++) {
+            if (allPages[i].isApplicableToBooking(workingBooking)) {
+                navigateToPage(i);
+                return;
+            }
+        }
+
+        // Fallback: if no page is applicable (shouldn't happen), go to page 0
+        if (allPages.length > 0) {
+            navigateToPage(0);
+        }
     }
 
     // === Summary and Payment Updates ===

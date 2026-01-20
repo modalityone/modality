@@ -41,6 +41,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
     private static final String CREATE_ACCOUNT_MAIL_FROM = "kbs@kadampa.net";
     private static final String CREATE_ACCOUNT_MAIL_SUBJECT = "Account creation - Kadampa Booking System";
     private static final String CREATE_ACCOUNT_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationMailBody.html", ModalityPasswordAuthenticationGateway.class));
+    private static final String CREATE_ACCOUNT_WITH_VERIFICATION_CODE_MAIL_BODY = Resource.getText(Resource.toUrl("AccountCreationWithVerificationCodeMailBody.html", ModalityPasswordAuthenticationGateway.class));
 
     private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM = "kbs@kadampa.net";
     private static final String CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT = "Account already exists - Kadampa Booking System";
@@ -155,10 +156,15 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         // "Account creation" email as requested. But if it exists, we send an "Account already exists" email instead.
         // For this later case, we still create a login link that will actually act as a magic link.
         String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
+        boolean verificationCodeOnly = credentials.isVerificationCodeOnly();
         return EntityStore.create(dataSourceModel)
             .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, credentials.getEmail())
             .compose(accounts -> {
                     boolean doesntExists = accounts.isEmpty();
+                    // Choose the appropriate email body based on verificationCodeOnly flag
+                    String emailBody = doesntExists
+                        ? (verificationCodeOnly ? CREATE_ACCOUNT_WITH_VERIFICATION_CODE_MAIL_BODY : CREATE_ACCOUNT_MAIL_BODY)
+                        : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY;
                     return MagicLinkService.createAndSendMagicLink(
                         loginRunId,
                         credentials,
@@ -166,7 +172,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
                         doesntExists ? CREATE_ACCOUNT_ACTIVITY_PATH_FULL : ModalityMagicLinkAuthenticationGateway.MAGIC_LINK_ACTIVITY_PATH_FULL,
                         doesntExists ? CREATE_ACCOUNT_MAIL_FROM : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_FROM,
                         doesntExists ? CREATE_ACCOUNT_MAIL_SUBJECT : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_SUBJECT,
-                        doesntExists ? CREATE_ACCOUNT_MAIL_BODY : CREATE_ACCOUNT_ALREADY_EXISTS_MAIL_BODY,
+                        emailBody,
                         dataSourceModel
                     );
                 }

@@ -110,8 +110,8 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         // Section header with icon
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AccommodationOptions, StyledSectionHeader.ICON_HOME);
 
-        // Info box explaining what price includes (per JSX mockup)
-        priceIncludesInfoBox = BookingPageUIBuilder.createPriceIncludesInfoBox(
+        // Info box explaining what price includes (per JSX mockup - amber style)
+        priceIncludesInfoBox = BookingPageUIBuilder.createAmberPriceIncludesInfoBox(
             I18n.getI18nText(BookingPageI18nKeys.PriceIncludesTeachingsAccommodationMeals),
             I18n.getI18nText(BookingPageI18nKeys.AdjustDatesAndOptionsNextStep)
         );
@@ -175,7 +175,36 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
         AccommodationOption matchingOption = null;
 
-        for (AccommodationOption option : accommodationOptions) {
+        // Separate options into accommodation and day visitor groups
+        List<AccommodationOption> accommodationOpts = accommodationOptions.stream()
+            .filter(opt -> !opt.isDayVisitor())
+            .collect(Collectors.toList());
+
+        List<AccommodationOption> dayVisitorOpts = accommodationOptions.stream()
+            .filter(AccommodationOption::isDayVisitor)
+            .collect(Collectors.toList());
+
+        // Add accommodation cards first
+        for (AccommodationOption option : accommodationOpts) {
+            boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
+            VBox card = createOptionCard(option, isSelected);
+            optionsContainer.getChildren().add(card);
+            optionCardMap.put(option, card);
+
+            if (isSelected) {
+                matchingOption = option;
+            }
+        }
+
+        // Add separator if both groups exist
+        if (!accommodationOpts.isEmpty() && !dayVisitorOpts.isEmpty()) {
+            HBox separator = BookingPageUIBuilder.createNoAccommodationSeparator();
+            VBox.setMargin(separator, new Insets(28, 0, 20, 0));
+            optionsContainer.getChildren().add(separator);
+        }
+
+        // Add day visitor cards
+        for (AccommodationOption option : dayVisitorOpts) {
             boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
             VBox card = createOptionCard(option, isSelected);
             optionsContainer.getChildren().add(card);

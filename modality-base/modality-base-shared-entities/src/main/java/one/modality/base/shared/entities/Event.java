@@ -52,6 +52,7 @@ public interface Event extends Entity,
     String repeatVideo = "repeatVideo";
     String timezone = "timezone";
     String termsUrlEn = "termsUrlEn";
+    String noAccountBooking = "noAccountBooking";
 
     // Dynamic field used for messaging purpose only (not persisted in the database)
     String queueProgress = "queueProgress";
@@ -362,6 +363,14 @@ public interface Event extends Entity,
 
     default String getTermsUrlEn() {
         return getStringFieldValue(termsUrlEn);
+    }
+
+    default void setNoAccountBooking(Boolean value) {
+        setFieldValue(noAccountBooking, value);
+    }
+
+    default Boolean isNoAccountBooking() {
+        return getBooleanFieldValue(noAccountBooking);
     }
 
 }
