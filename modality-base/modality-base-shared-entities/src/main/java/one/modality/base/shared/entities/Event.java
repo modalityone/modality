@@ -51,6 +51,7 @@ public interface Event extends Entity,
     String repeatVideo = "repeatVideo";
     String timezone = "timezone";
     String termsUrlEn = "termsUrlEn";
+    String noAccountBooking = "noAccountBooking";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -350,6 +351,14 @@ public interface Event extends Entity,
 
     default String getTermsUrlEn() {
         return getStringFieldValue(termsUrlEn);
+    }
+
+    default void setNoAccountBooking(Boolean value) {
+        setFieldValue(noAccountBooking, value);
+    }
+
+    default Boolean isNoAccountBooking() {
+        return getBooleanFieldValue(noAccountBooking);
     }
 
 }
