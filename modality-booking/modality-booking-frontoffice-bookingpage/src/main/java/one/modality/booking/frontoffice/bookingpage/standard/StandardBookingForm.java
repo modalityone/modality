@@ -1754,8 +1754,32 @@ public class StandardBookingForm extends MultiPageBookingForm {
             callbacks.onPrepareNewBooking();
         }
 
-        // Navigate to the first page of the form
-        navigateToPage(0);
+        // Navigate to the first applicable page of the form
+        // We need to find the first page that is applicable to the new (empty) booking
+        navigateToFirstApplicablePage();
+    }
+
+    /**
+     * Navigates to the first applicable page of the form.
+     * This is used when completely resetting the form (e.g., after logout).
+     * It finds the first page where isApplicableToBooking() returns true.
+     */
+    private void navigateToFirstApplicablePage() {
+        WorkingBooking workingBooking = getWorkingBooking();
+        BookingFormPage[] allPages = getPages();
+
+        // Find the first applicable page
+        for (int i = 0; i < allPages.length; i++) {
+            if (allPages[i].isApplicableToBooking(workingBooking)) {
+                navigateToPage(i);
+                return;
+            }
+        }
+
+        // Fallback: if no page is applicable (shouldn't happen), go to page 0
+        if (allPages.length > 0) {
+            navigateToPage(0);
+        }
     }
 
     // === Summary and Payment Updates ===
