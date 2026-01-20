@@ -698,26 +698,33 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     private Future<?> handleSummaryContinueAsync() {
-        // Step 1: Set the person to book in FXPersonToBook before booking items
+        WorkingBooking workingBooking = getWorkingBooking();
+
+        // Step 1: Set the person to book in FXPersonToBook and apply personal details
         HasMemberSelectionSection.MemberInfo member = state.getSelectedMember();
         if (member != null && member.getPersonEntity() != null) {
             FXPersonToBook.setPersonToBook(member.getPersonEntity());
+            // Apply personal details via WorkingBooking to ensure they're set on AddDocumentEvent
+            if (workingBooking != null && workingBooking.getDocument() != null && workingBooking.getDocument().isNew()) {
+                workingBooking.applyPersonalDetails(member.getPersonEntity());
+            }
         }
 
-        // Step 1b: For new users (guests OR creating account), set personal details on the document
-        // and maintain guest session via FXGuestToBook (same pattern as Step1BookingFormAndSubmitSlide)
+        // Step 1b: For new users (guests OR creating account), apply personal details via WorkingBooking
+        // This properly sets them on the AddDocumentEvent (not just Document entity) so they get submitted
         HasYourInformationSection.NewUserData newUser = state.getPendingNewUserData();
         if (newUser != null) {
-            Document document = getWorkingBooking().getDocument();
-            if (document != null) {
-                document.setFirstName(newUser.firstName);
-                document.setLastName(newUser.lastName);
-                document.setEmail(newUser.email);
-                // Set country from event organization (same as Step1BookingFormAndSubmitSlide)
-                Event event = getWorkingBooking().getEvent();
+            if (workingBooking != null && workingBooking.getDocument() != null && workingBooking.getDocument().isNew()) {
+                // Apply guest personal details to AddDocumentEvent
+                workingBooking.applyGuestPersonalDetails(newUser.firstName, newUser.lastName, newUser.email);
+
+                // Set country from event organization (need to do this separately on Document)
+                Document document = workingBooking.getDocument();
+                Event event = workingBooking.getEvent();
                 if (event != null && event.getOrganization() != null) {
                     document.setCountry(event.getOrganization().getCountry());
                 }
+
                 // Maintain guest session for payment/confirmation
                 FXGuestToBook.setGuestToBook(document);
             }
@@ -730,7 +737,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultCommentsSection != null) {
             String commentText = defaultCommentsSection.getCommentText();
             if (commentText != null && !commentText.trim().isEmpty()) {
-                WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
                 if (workingBooking != null) {
                     workingBooking.addRequest(commentText.trim());
                 }
