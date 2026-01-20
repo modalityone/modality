@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.console.Console;
+import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.stack.com.bus.DeliveryOptions;
 import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
@@ -22,6 +23,7 @@ final class DocumentSubmitEventQueue {
 
     private final Event event; // Keeping reference for debugging purpose
     private boolean ready;
+    private Scheduled scheduled;
     private DocumentSubmitRequest processingRequest;
     private final Map<Object, DocumentSubmitRequest> queue = new LinkedHashMap<>();
     private int processedRequests;
@@ -34,7 +36,7 @@ final class DocumentSubmitEventQueue {
         long delayMs = bookingProcessStart == null ? 0 : bookingProcessStart.toInstant(ZoneOffset.UTC).toEpochMilli() - System.currentTimeMillis();
         ready = delayMs <= 0;
         if (!ready) {
-            Scheduler.scheduleDelay(delayMs, this::setReady);
+            scheduled = Scheduler.scheduleDelay(delayMs, this::setReady);
         }
         log("Created - Start delay: " + delayMs + "ms");
     }
@@ -113,9 +115,10 @@ final class DocumentSubmitEventQueue {
         log("Processed " + processedRequests + " request(s) over " + totalRequests + " (" + remainingRequests + " remaining)");
         // We don't publish the progress for a single request in a non-waiting queue (as it will be processed
         // immediately), and this should be actually most of the cases.
-        if (ready && totalRequests == 1)
+        if (scheduled == null && totalRequests == 1)
             return;
         // But for events with big opening, we do publish the progress so the front-office can animate a progress bar
+        log("Notifying front-office of progress");
         ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
             EntityChangesBuilder.create()
                 .addFieldChange(event, Event.queueProgress, processedRequests + "/" + totalRequests)
