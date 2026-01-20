@@ -1610,6 +1610,51 @@
     -fx-text-fill: #6c757d;
 }
 
+/* Amber Price Includes Info Box (per FestivalRegistrationV2.jsx mockup) */
+.bookingpage-price-includes-box-amber {
+    -fx-background-color: #FEF3C7;
+    -fx-border-color: #F59E0B #FCD34D #FCD34D #F59E0B;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.bookingpage-price-includes-amber-bold {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #92400E;
+}
+
+.bookingpage-price-includes-amber-primary {
+    -fx-font-size: 13px;
+    -fx-text-fill: #92400E;
+}
+
+.bookingpage-price-includes-amber-secondary {
+    -fx-font-size: 12px;
+    -fx-text-fill: #B45309;
+}
+
+/* No Accommodation Separator */
+.bookingpage-no-accommodation-line {
+    -fx-background-color: #D1D5DB;
+}
+
+.bookingpage-no-accommodation-pill {
+    -fx-background-color: #F3F4F6;
+    -fx-border-color: #D1D5DB;
+    -fx-border-width: 1;
+    -fx-border-radius: 24;
+    -fx-background-radius: 24;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 3, 0, 0, 1);
+}
+
+.bookingpage-no-accommodation-text {
+    -fx-font-size: 13px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #374151;
+}
+
 /* Info Box - Outline Primary (transparent bg, primary color border all around) */
 .bookingpage-info-box-outline-primary {
     -fx-background-color: transparent;

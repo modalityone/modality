@@ -1415,6 +1415,191 @@ public final class BookingPageUIBuilder {
     }
 
     /**
+     * Creates an amber-styled "Price includes" info box for accommodation sections.
+     * Uses the FestivalRegistrationV2.jsx mockup style: amber/yellow background with
+     * 4px orange left border accent, info icon, bold "Price includes:" label,
+     * followed by primary text and secondary muted text.
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-price-includes-box-amber} - container styling</li>
+     *   <li>{@code .bookingpage-price-includes-amber-icon} - info icon styling</li>
+     *   <li>{@code .bookingpage-price-includes-amber-bold} - bold label styling</li>
+     *   <li>{@code .bookingpage-price-includes-amber-primary} - primary text styling</li>
+     *   <li>{@code .bookingpage-price-includes-amber-secondary} - secondary text styling</li>
+     * </ul>
+     *
+     * @param primaryText   The main text after "Price includes:" (e.g., "All teachings, accommodation, and meals for the full event.")
+     * @param secondaryText The secondary muted text (e.g., "You can adjust dates and options like meals in the next step")
+     * @return A styled HBox containing the info icon and text
+     */
+    public static HBox createAmberPriceIncludesInfoBox(String primaryText, String secondaryText) {
+        HBox box = new HBox(12);
+        box.setAlignment(Pos.TOP_LEFT);
+        box.setPadding(new Insets(14, 18, 14, 18));
+        box.getStyleClass().add("bookingpage-price-includes-box-amber");
+
+        // Info icon (circle with "i") - amber colored
+        SVGPath infoCircle = new SVGPath();
+        infoCircle.setContent("M12 2a10 10 0 100 20 10 10 0 000-20z");
+        infoCircle.setScaleX(0.83);  // Scale to ~20px from 24px viewBox
+        infoCircle.setScaleY(0.83);
+        infoCircle.setStroke(Color.web("#D97706"));  // Amber stroke
+        infoCircle.setStrokeWidth(2);
+        infoCircle.setFill(Color.TRANSPARENT);
+
+        SVGPath infoI = new SVGPath();
+        infoI.setContent("M12 16v-4M12 8h.01");
+        infoI.setScaleX(0.83);
+        infoI.setScaleY(0.83);
+        infoI.setStroke(Color.web("#D97706"));  // Amber stroke
+        infoI.setStrokeWidth(2);
+        infoI.setFill(Color.TRANSPARENT);
+
+        StackPane iconContainer = new StackPane(infoCircle, infoI);
+        iconContainer.setMinSize(20, 20);
+        iconContainer.setMaxSize(20, 20);
+        iconContainer.setAlignment(Pos.CENTER);
+
+        // VBox to stack the text properly for wrapping
+        VBox textContainer = new VBox(4);
+        textContainer.setAlignment(Pos.TOP_LEFT);
+
+        // Bold "Price includes:" followed by primary text on same conceptual line
+        Label boldLabel = new Label("Price includes:");
+        boldLabel.getStyleClass().add("bookingpage-price-includes-amber-bold");
+
+        // Primary text on next line, will wrap naturally
+        Label primaryLabel = new Label(primaryText);
+        primaryLabel.getStyleClass().add("bookingpage-price-includes-amber-primary");
+        primaryLabel.setWrapText(true);
+        primaryLabel.setMaxWidth(Double.MAX_VALUE);
+
+        textContainer.getChildren().addAll(boldLabel, primaryLabel);
+
+        // Secondary text (if provided)
+        if (secondaryText != null && !secondaryText.isEmpty()) {
+            Label secondaryLabel = new Label(secondaryText);
+            secondaryLabel.getStyleClass().add("bookingpage-price-includes-amber-secondary");
+            secondaryLabel.setWrapText(true);
+            secondaryLabel.setMaxWidth(Double.MAX_VALUE);
+            VBox.setMargin(secondaryLabel, new Insets(4, 0, 0, 0));
+            textContainer.getChildren().add(secondaryLabel);
+        }
+
+        box.getChildren().addAll(iconContainer, textContainer);
+        HBox.setHgrow(textContainer, Priority.ALWAYS);
+
+        return box;
+    }
+
+    // =============================================
+    // NO ACCOMMODATION SEPARATOR
+    // =============================================
+
+    /** SVG path for map pin outline (24x24 viewBox) */
+    public static final String ICON_MAP_PIN_OUTLINE = "M12 22s-8-4.5-8-11.8A8 8 0 0 1 12 2a8 8 0 0 1 8 8.2c0 7.3-8 11.8-8 11.8z";
+
+    /** SVG path for X mark line 1 (inside map pin) */
+    public static final String ICON_X_LINE_1 = "M9 9L15 15";
+
+    /** SVG path for X mark line 2 (inside map pin) */
+    public static final String ICON_X_LINE_2 = "M15 9L9 15";
+
+    /**
+     * Creates a "No Accommodation" separator for use between accommodation options
+     * and day visitor options in the accommodation selection section.
+     *
+     * <p>Structure: [horizontal line] [pill with icon + text] [horizontal line]</p>
+     *
+     * <p>CSS classes used:</p>
+     * <ul>
+     *   <li>{@code .bookingpage-no-accommodation-line} - horizontal line styling</li>
+     *   <li>{@code .bookingpage-no-accommodation-pill} - center pill styling</li>
+     *   <li>{@code .bookingpage-no-accommodation-text} - text styling</li>
+     * </ul>
+     *
+     * @return A styled HBox containing the separator
+     */
+    public static HBox createNoAccommodationSeparator() {
+        HBox separator = new HBox(12);
+        separator.setAlignment(Pos.CENTER);
+
+        // Left horizontal line (2px height, gray #D1D5DB)
+        Region leftLine = new Region();
+        leftLine.setMinHeight(2);
+        leftLine.setMaxHeight(2);
+        leftLine.getStyleClass().add("bookingpage-no-accommodation-line");
+        HBox.setHgrow(leftLine, Priority.ALWAYS);
+
+        // Center pill with icon and text
+        HBox pill = new HBox(10);
+        pill.setAlignment(Pos.CENTER);
+        pill.setPadding(new Insets(10, 20, 10, 20));
+        pill.getStyleClass().add("bookingpage-no-accommodation-pill");
+
+        // Map pin with X icon
+        StackPane mapIcon = createMapPinWithXIcon();
+
+        // "NO ACCOMMODATION" text (uppercase)
+        Label text = new Label("NO ACCOMMODATION");
+        text.getStyleClass().add("bookingpage-no-accommodation-text");
+
+        pill.getChildren().addAll(mapIcon, text);
+
+        // Right horizontal line
+        Region rightLine = new Region();
+        rightLine.setMinHeight(2);
+        rightLine.setMaxHeight(2);
+        rightLine.getStyleClass().add("bookingpage-no-accommodation-line");
+        HBox.setHgrow(rightLine, Priority.ALWAYS);
+
+        separator.getChildren().addAll(leftLine, pill, rightLine);
+        return separator;
+    }
+
+    /**
+     * Creates a map pin icon with an X inside, used for the "No Accommodation" separator.
+     * Uses gray stroke color (#4B5563).
+     *
+     * @return A StackPane containing the composite icon
+     */
+    public static StackPane createMapPinWithXIcon() {
+        // Pin outline
+        SVGPath pin = new SVGPath();
+        pin.setContent(ICON_MAP_PIN_OUTLINE);
+        pin.setStroke(Color.web("#4B5563"));
+        pin.setStrokeWidth(2.5);
+        pin.setFill(Color.TRANSPARENT);
+        pin.setScaleX(0.75);  // Scale to 18x18 from 24x24 viewBox
+        pin.setScaleY(0.75);
+
+        // X line 1
+        SVGPath xLine1 = new SVGPath();
+        xLine1.setContent(ICON_X_LINE_1);
+        xLine1.setStroke(Color.web("#4B5563"));
+        xLine1.setStrokeWidth(2.5);
+        xLine1.setFill(Color.TRANSPARENT);
+        xLine1.setScaleX(0.75);
+        xLine1.setScaleY(0.75);
+
+        // X line 2
+        SVGPath xLine2 = new SVGPath();
+        xLine2.setContent(ICON_X_LINE_2);
+        xLine2.setStroke(Color.web("#4B5563"));
+        xLine2.setStrokeWidth(2.5);
+        xLine2.setFill(Color.TRANSPARENT);
+        xLine2.setScaleX(0.75);
+        xLine2.setScaleY(0.75);
+
+        StackPane container = new StackPane(pin, xLine1, xLine2);
+        container.setMinSize(18, 18);
+        container.setMaxSize(18, 18);
+        container.setAlignment(Pos.CENTER);
+        return container;
+    }
+
+    /**
      * Applies past date styling to a card using pure CSS.
      * Past dates are displayed but not selectable (grayed out, no hover effects).
      *
