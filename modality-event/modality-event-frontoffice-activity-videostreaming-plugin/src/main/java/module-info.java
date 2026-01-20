@@ -6,9 +6,9 @@ module modality.event.frontoffice.activity.videostreaming.plugin {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
+    requires modality.base.client.entity.message.receiver;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
-    requires modality.base.client.messaging;
     requires modality.base.client.time;
     requires modality.base.frontoffice.utility;
     requires modality.base.shared.entities;

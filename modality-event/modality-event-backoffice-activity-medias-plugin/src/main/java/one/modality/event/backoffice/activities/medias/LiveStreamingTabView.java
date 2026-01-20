@@ -27,7 +27,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.LabelTextField;
-import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.shared.entity.message.sender.ModalityEntityMessageSender;
 import one.modality.base.shared.entities.Event;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -132,7 +132,7 @@ final class LiveStreamingTabView {
     private void notifyFrontOfficeClientsAboutLivestreamMessageChanges(SubmitChangesResult result) {
         // Notifying the front-office clients of the possible changes made
         EntityChanges committedChanges = result.getCommittedChanges();
-        ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(
+        ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
             EntityChangesBuilder.create()
                 .addFilteredEntityChanges(committedChanges, Event.class, Event.livestreamMessageLabel)
                 .addFilteredEntityChanges(committedChanges, one.modality.base.shared.entities.Label.class, "en", "de", "fr", "es", "pt") // I18n.getSupportedLanguages().toArray() returns only "en", "fr" for some reasons TODO: fix this

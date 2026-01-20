@@ -8,7 +8,6 @@ import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -24,7 +23,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -32,7 +30,7 @@ import javafx.scene.shape.SVGPath;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.LabelTextField;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.shared.entity.message.sender.ModalityEntityMessageSender;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.shared.entities.Media;
 import one.modality.base.shared.entities.MediaType;
@@ -468,7 +466,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                             .inUiThread()
                             .onSuccess(result -> {
                                 // Notifying the front-office clients of the possible changes made on ScheduledItems.published
-                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(
+                                ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
                                     EntityChangesBuilder.create()
                                         .addFilteredEntityChanges(result.getCommittedChanges(), ScheduledItem.class, ScheduledItem.published)
                                         .build()

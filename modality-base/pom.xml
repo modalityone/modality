@@ -47,13 +47,13 @@
         <module>modality-base-client-cloud-image</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-entities</module>
+        <module>modality-base-client-entity-message-receiver</module>
         <module>modality-base-client-error</module>
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>
         <module>modality-base-client-icons</module>
         <module>modality-base-client-mainframe-fx</module>
         <module>modality-base-client-max-plugin</module>
-        <module>modality-base-client-messaging</module>
         <module>modality-base-client-min-plugin</module>
         <module>modality-base-client-navigationarrows-openjfx-plugin</module>
         <module>modality-base-client-operationactionsloading-plugin</module>
@@ -81,6 +81,8 @@
         <module>modality-base-shared-context</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
+        <module>modality-base-shared-entity-message-bus</module>
+        <module>modality-base-shared-entity-message-sender</module>
         <module>modality-base-shared-knownitems</module>
         <module>modality-base-shared-util</module>
     </modules>
