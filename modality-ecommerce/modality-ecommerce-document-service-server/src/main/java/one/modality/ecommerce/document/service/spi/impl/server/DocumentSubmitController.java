@@ -1,8 +1,6 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.stack.com.bus.DeliveryOptions;
-import dev.webfx.stack.push.server.PushServerService;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 
@@ -68,12 +66,10 @@ final class DocumentSubmitController {
 
     static void processRequestAndNotifyClient(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
         processRequest(request, eventQueue)
-            .onComplete(ar -> pushResultToClient(ar.result(), request.runId()));
-    }
-
-    private static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
-        if (clientRunId != null)
-            PushServerService.push("/document/service/push-result", result, new DeliveryOptions(), clientRunId);
+            .onComplete(ar -> DocumentSubmitEventQueue.pushResultToClient(
+                SubmitDocumentChangesResult.withQueueToken(ar.result(), request.queueToken()),
+                request.runId()
+            ));
     }
 
     static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {

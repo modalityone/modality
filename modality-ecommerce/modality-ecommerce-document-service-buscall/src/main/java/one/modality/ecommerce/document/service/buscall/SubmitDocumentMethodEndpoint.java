@@ -11,7 +11,7 @@ import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 public class SubmitDocumentMethodEndpoint extends AsyncFunctionBusCallEndpoint<SubmitDocumentChangesArgument, SubmitDocumentChangesResult> {
 
     public SubmitDocumentMethodEndpoint() {
-        super(DocumentServiceBusAddress.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, DocumentService::submitDocumentChanges);
+        super(DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, DocumentService::submitDocumentChanges);
     }
 
 }

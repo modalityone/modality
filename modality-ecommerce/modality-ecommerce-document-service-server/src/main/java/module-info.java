@@ -6,6 +6,7 @@ module modality.ecommerce.document.service.server {
     requires modality.base.shared.entities;
     requires modality.base.shared.entity.message.sender;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.history.server;
     requires webfx.platform.ast;
     requires webfx.platform.async;

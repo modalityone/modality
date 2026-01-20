@@ -2,9 +2,13 @@ package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.stack.com.bus.DeliveryOptions;
 import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
+import dev.webfx.stack.push.server.PushServerService;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entity.message.sender.ModalityEntityMessageSender;
+import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
+import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddresses;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -20,7 +24,7 @@ final class DocumentSubmitEventQueue {
     private boolean ready;
     private DocumentSubmitRequest processingRequest;
     private final Map<Object, DocumentSubmitRequest> queue = new LinkedHashMap<>();
-    private int processedRequestCount;
+    private int processedRequests;
 
     public DocumentSubmitEventQueue(Event event) {
         this.event = event;
@@ -80,13 +84,13 @@ final class DocumentSubmitEventQueue {
                 DocumentSubmitController.processRequestAndNotifyClient(nextRequest, this);
             } else {
                 DocumentSubmitController.releaseEventQueue(this);
-                log("Released after processing " + processedRequestCount + " request(s)");
+                log("Released after processing " + processedRequests + " request(s)");
             }
         }
     }
 
     public void removedProcessedRequest(DocumentSubmitRequest processedRequest) {
-        processedRequestCount++;
+        processedRequests++;
         removeRequest(processedRequest);
         publishProgress();
         if (this.processingRequest == processedRequest) {
@@ -105,8 +109,8 @@ final class DocumentSubmitEventQueue {
 
     void publishProgress() {
         int remainingRequests = queue.size();
-        int totalRequests = processedRequestCount + remainingRequests;
-        log("Processed " + processedRequestCount + " request(s) over " + totalRequests + " (" + remainingRequests + " remaining)");
+        int totalRequests = processedRequests + remainingRequests;
+        log("Processed " + processedRequests + " request(s) over " + totalRequests + " (" + remainingRequests + " remaining)");
         // We don't publish the progress for a single request in a non-waiting queue (as it will be processed
         // immediately), and this should be actually most of the cases.
         if (ready && totalRequests == 1)
@@ -114,9 +118,18 @@ final class DocumentSubmitEventQueue {
         // But for events with big opening, we do publish the progress so the front-office can animate a progress bar
         ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
             EntityChangesBuilder.create()
-                .addFieldChange(event, Event.queueProgress, processedRequestCount + "/" + totalRequests)
+                .addFieldChange(event, Event.queueProgress, processedRequests + "/" + totalRequests)
                 .build()
         );
+    }
+
+    static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
+        if (clientRunId != null)
+            PushServerService.push(
+                DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_CLIENT_PUSH_ADDRESS,
+                result,
+                new DeliveryOptions(),
+                clientRunId);
     }
 
     private void log(String message) {
