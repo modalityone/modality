@@ -1089,9 +1089,11 @@ public final class BookingPageUIBuilder {
      */
     public static class VerificationCodeResult {
         private final HBox container;
+        private final javafx.scene.control.TextField[] digitFields;
 
-        public VerificationCodeResult(HBox container) {
+        public VerificationCodeResult(HBox container, javafx.scene.control.TextField[] digitFields) {
             this.container = container;
+            this.digitFields = digitFields;
         }
 
         /** Returns the HBox container with all digit fields */
@@ -1099,6 +1101,103 @@ public final class BookingPageUIBuilder {
             return container;
         }
 
+        /** Returns the array of 6 TextField digit fields */
+        public javafx.scene.control.TextField[] getDigitFields() {
+            return digitFields;
+        }
+    }
+
+    /**
+     * Creates a container with 6 digit input fields for verification codes.
+     * Provides auto-advance, backspace navigation, and paste support.
+     *
+     * <p>CSS class used: {@code .bookingpage-digit-field}, {@code .bookingpage-input-bordered}, {@code .bookingpage-input-focused}</p>
+     *
+     * @param onCodeChange Runnable to call when any digit changes (for validation/updates)
+     * @param onPasteDigits Consumer that handles pasting multiple digits (digits, startIndex)
+     * @return VerificationCodeResult containing the container and digit fields array
+     */
+    public static VerificationCodeResult createVerificationCodeFields(
+            Runnable onCodeChange,
+            java.util.function.BiConsumer<String, Integer> onPasteDigits) {
+
+        javafx.scene.control.TextField[] digitFields = new javafx.scene.control.TextField[6];
+        HBox container = new HBox(8);
+        container.setAlignment(Pos.CENTER);
+
+        for (int i = 0; i < 6; i++) {
+            final int index = i;
+            javafx.scene.control.TextField digitField = new javafx.scene.control.TextField();
+            digitField.setPrefWidth(48);
+            digitField.setMaxWidth(48);
+            digitField.setPrefHeight(48);
+            digitField.setMinHeight(48);
+            digitField.setAlignment(Pos.CENTER);
+            digitField.getStyleClass().add("bookingpage-digit-field");
+            digitField.setPadding(new Insets(12, 0, 12, 0));
+
+            // Handle input - only allow single digit
+            digitField.textProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null && !newVal.isEmpty()) {
+                    // Handle paste of multiple digits
+                    String digits = newVal.replaceAll("\\D", "");
+                    if (digits.length() > 1) {
+                        // Distribute pasted digits across fields
+                        if (onPasteDigits != null) {
+                            onPasteDigits.accept(digits, index);
+                        }
+                        return;
+                    }
+                    // Single digit - keep only first digit
+                    if (digits.length() == 1) {
+                        if (!digits.equals(newVal)) {
+                            digitField.setText(digits);
+                        }
+                        // Auto-advance to next field
+                        if (index < 5) {
+                            digitFields[index + 1].requestFocus();
+                        }
+                        // Update combined code
+                        if (onCodeChange != null) {
+                            onCodeChange.run();
+                        }
+                    } else {
+                        digitField.setText("");
+                    }
+                } else {
+                    if (onCodeChange != null) {
+                        onCodeChange.run();
+                    }
+                }
+            });
+
+            // Handle backspace to go to previous field
+            digitField.setOnKeyPressed(e -> {
+                if (e.getCode() == javafx.scene.input.KeyCode.BACK_SPACE && digitField.getText().isEmpty() && index > 0) {
+                    digitFields[index - 1].requestFocus();
+                    digitFields[index - 1].clear();
+                }
+            });
+
+            // Set initial border styling via CSS class
+            digitField.getStyleClass().add("bookingpage-input-bordered");
+
+            // Focus styling - toggle CSS class on focus (theme colors via CSS variables)
+            digitField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+                if (isFocused) {
+                    digitField.getStyleClass().remove("bookingpage-input-bordered");
+                    digitField.getStyleClass().add("bookingpage-input-focused");
+                } else {
+                    digitField.getStyleClass().remove("bookingpage-input-focused");
+                    digitField.getStyleClass().add("bookingpage-input-bordered");
+                }
+            });
+
+            digitFields[i] = digitField;
+            container.getChildren().add(digitField);
+        }
+
+        return new VerificationCodeResult(container, digitFields);
     }
 
     // =============================================

@@ -25,3 +25,83 @@
     --fx-svg-path-stroke: var(--fx-stroke);
     --fx-svg-path-fill: var(--fx-fill);
 }
+
+/* === Gender Selection Buttons === */
+.bookingpage-gender-button {
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 2px;
+    -fx-border-radius: 8px;
+    -fx-background-color: white;
+    -fx-text-fill: #495057;
+    -fx-cursor: hand;
+    -fx-background-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.bookingpage-gender-button:hover {
+    -fx-border-color: var(--booking-form-hover-border, #b6d4fe);
+}
+
+.bookingpage-gender-button.selected {
+    -fx-border-color: var(--booking-form-primary);
+    -fx-background-color: var(--booking-form-selected-bg);
+    -fx-text-fill: var(--booking-form-dark-text, #212529);
+    -fx-font-weight: 600;
+}
+
+/* === Toggle Switch === */
+.bookingpage-toggle-background {
+    -fx-background-color: #dee2e6;
+    -fx-background-radius: 12px;
+}
+
+.bookingpage-toggle-background.active {
+    -fx-background-color: var(--booking-form-primary);
+}
+
+.bookingpage-toggle-knob {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.2), 3, 0, 0, 1);
+}
+
+.bookingpage-toggle-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #212529;
+}
+
+.bookingpage-toggle-item {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6c757d;
+}
+
+.bookingpage-terms-link {
+    -fx-text-fill: var(--booking-form-primary);
+    -fx-font-weight: 500;
+}
+
+/* === Email Verification Success Icon === */
+.bookingpage-verification-success-icon {
+    -fx-background-color: #10B981;
+    -fx-background-radius: 16px;
+}
+
+.bookingpage-success-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #10B981;
+}
+
+.bookingpage-success-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6c757d;
+}
+
+/* === Info Banner (Email Sent Confirmation) === */
+.bookingpage-info-banner {
+    -fx-background-color: var(--booking-form-selected-bg, #E3F2FD);
+    -fx-border-color: var(--booking-form-primary);
+    -fx-border-width: 0 0 0 4px;
+    -fx-background-radius: 8px;
+}

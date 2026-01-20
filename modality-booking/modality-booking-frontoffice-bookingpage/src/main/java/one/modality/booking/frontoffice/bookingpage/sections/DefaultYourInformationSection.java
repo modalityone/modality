@@ -8,12 +8,19 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
+import dev.webfx.stack.authn.AuthenticateWithMagicLinkCredentials;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
 import dev.webfx.stack.authn.AuthenticateWithVerificationCodeCredentials;
+import dev.webfx.stack.authn.AuthenticationRequest;
 import dev.webfx.stack.authn.AuthenticationService;
+import dev.webfx.stack.authn.FinaliseAccountCreationCredentials;
+import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
 import dev.webfx.stack.authn.SendMagicLinkCredentials;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.orm.entity.UpdateStore;
+import javafx.beans.binding.Bindings;
 import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -33,6 +40,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -41,6 +49,7 @@ import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuil
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -87,6 +96,19 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected final StringProperty verificationCodeProperty = new SimpleStringProperty("");
     protected final BooleanProperty showPasswordProperty = new SimpleBooleanProperty(false);
     protected final BooleanProperty forceAccountCreationProperty = new SimpleBooleanProperty(false);
+    protected final ObjectProperty<Boolean> genderProperty = new SimpleObjectProperty<>(null); // null | false (Female) | true (Male)
+    protected final BooleanProperty showGenderFieldProperty = new SimpleBooleanProperty(false);
+    protected final BooleanProperty ageTermsAcceptedProperty = new SimpleBooleanProperty(false);
+    protected final BooleanProperty emailVerificationCompleteProperty = new SimpleBooleanProperty(false);
+    protected final BooleanProperty verificationCodeSentProperty = new SimpleBooleanProperty(false);
+
+    // Password fields for account creation
+    protected final StringProperty createAccountPasswordProperty = new SimpleStringProperty("");
+    protected final StringProperty createAccountConfirmPasswordProperty = new SimpleStringProperty("");
+    protected final BooleanProperty showCreateAccountPasswordProperty = new SimpleBooleanProperty(false);
+
+    // Validation support
+    protected final ValidationSupport accountCreationValidationSupport = new ValidationSupport();
 
     // === UI COMPONENTS ===
     protected final VBox container = new VBox();
@@ -98,8 +120,15 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     protected TextField visiblePasswordField;
     protected TextField firstNameField;
     protected TextField lastNameField;
-    protected TextField[] codeDigitFields;  // 6 separate digit input fields
-    protected HBox codeDigitsContainer;     // Container for the 6 digit fields
+    protected TextField[] codeDigitFields;  // 6 separate digit input fields (for forgot password)
+    protected HBox codeDigitsContainer;     // Container for the 6 digit fields (for forgot password)
+    protected TextField[] accountVerificationDigitFields;  // 6 separate digit input fields (for account verification)
+    protected HBox accountVerificationDigitsContainer;     // Container for the 6 digit fields (for account verification)
+    // Password fields for account creation
+    protected PasswordField createAccountPasswordField;
+    protected PasswordField createAccountConfirmPasswordField;
+    protected TextField visibleCreateAccountPasswordField;
+    protected TextField visibleCreateAccountConfirmPasswordField;
     protected CheckBox createAccountCheckBox;
     protected Button signInButton;
     protected Hyperlink resendLink;           // Resend code link
@@ -146,6 +175,19 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     // Page-level back button (for navigating to previous page)
     protected Button emailInputBackButton;
 
+    // Gender selection components
+    protected Button femaleButton;
+    protected Button maleButton;
+    protected HBox genderButtonsContainer;
+
+    // Age/Terms agreement components
+    protected HBox ageTermsToggleContainer;
+
+    // Email verification for account creation
+    protected Button sendVerificationButton;
+    protected HBox verificationSuccessBox;
+    protected Hyperlink resendVerificationLink;
+
     // === CALLBACKS ===
     protected Consumer<Person> onLoginSuccess;
     protected Consumer<NewUserData> onNewUserContinue;
@@ -191,6 +233,16 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         // Update email validity when email changes
         emailProperty.addListener((obs, oldVal, newVal) -> emailValidProperty.set(isValidEmail(newVal)));
 
+        // Reset verification state when email changes
+        emailProperty.addListener((obs, oldEmail, newEmail) -> {
+            if (!Objects.equals(oldEmail, newEmail)) {
+                ageTermsAcceptedProperty.set(false);
+                verificationCodeSentProperty.set(false);
+                emailVerificationCompleteProperty.set(false);
+                clearAccountVerificationCodeDigitFields();
+            }
+        });
+
         emailErrorLabel = createErrorLabel();
 
         // Password fields (both visible and hidden versions)
@@ -233,76 +285,172 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         createAccountCheckBox = new CheckBox();
         createAccountCheckBox.selectedProperty().bindBidirectional(createAccountProperty);
 
-        // Verification code fields - 6 separate digit boxes
-        codeDigitFields = new TextField[6];
-        codeDigitsContainer = new HBox(8);
-        codeDigitsContainer.setAlignment(Pos.CENTER);
+        // Verification code fields for forgot password flow
+        BookingPageUIBuilder.VerificationCodeResult forgotPasswordCodeFields =
+                BookingPageUIBuilder.createVerificationCodeFields(
+                        this::updateVerificationCodeFromFields,
+                        this::distributePastedCode
+                );
+        codeDigitFields = forgotPasswordCodeFields.getDigitFields();
+        codeDigitsContainer = forgotPasswordCodeFields.getContainer();
 
-        for (int i = 0; i < 6; i++) {
-            final int index = i;
-            TextField digitField = new TextField();
-            digitField.setPrefWidth(48);
-            digitField.setMaxWidth(48);
-            digitField.setAlignment(Pos.CENTER);
-            digitField.getStyleClass().add("bookingpage-digit-field");
-            digitField.setPadding(new Insets(12, 0, 12, 0));
-
-            // Handle input - only allow single digit
-            digitField.textProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null && !newVal.isEmpty()) {
-                    // Handle paste of multiple digits
-                    String digits = newVal.replaceAll("\\D", "");
-                    if (digits.length() > 1) {
-                        // Distribute pasted digits across fields
-                        distributePastedCode(digits, index);
-                        return;
-                    }
-                    // Single digit - keep only first digit
-                    if (digits.length() == 1) {
-                        if (!digits.equals(newVal)) {
-                            digitField.setText(digits);
-                        }
-                        // Auto-advance to next field
-                        if (index < 5) {
-                            codeDigitFields[index + 1].requestFocus();
-                        }
-                        // Update combined code and check for auto-validation
-                        updateVerificationCodeFromFields();
-                    } else {
-                        digitField.setText("");
-                    }
-                } else {
-                    updateVerificationCodeFromFields();
-                }
-            });
-
-            // Handle backspace to go to previous field
-            digitField.setOnKeyPressed(e -> {
-                if (e.getCode() == javafx.scene.input.KeyCode.BACK_SPACE && digitField.getText().isEmpty() && index > 0) {
-                    codeDigitFields[index - 1].requestFocus();
-                    codeDigitFields[index - 1].clear();
-                }
-            });
-
-            // Set initial border styling via CSS class
-            digitField.getStyleClass().add("bookingpage-input-bordered");
-
-            // Focus styling - toggle CSS class on focus (theme colors via CSS variables)
-            digitField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
-                if (isFocused) {
-                    digitField.getStyleClass().remove("bookingpage-input-bordered");
-                    digitField.getStyleClass().add("bookingpage-input-focused");
-                } else {
-                    digitField.getStyleClass().remove("bookingpage-input-focused");
-                    digitField.getStyleClass().add("bookingpage-input-bordered");
-                }
-            });
-
-            codeDigitFields[i] = digitField;
-            codeDigitsContainer.getChildren().add(digitField);
-        }
+        // Verification code fields for account verification flow (separate instance to avoid JavaFX parent conflicts)
+        BookingPageUIBuilder.VerificationCodeResult accountVerificationCodeFields =
+                BookingPageUIBuilder.createVerificationCodeFields(
+                        this::updateAccountVerificationCodeFromFields,
+                        this::distributeAccountVerificationPastedCode
+                );
+        accountVerificationDigitFields = accountVerificationCodeFields.getDigitFields();
+        accountVerificationDigitsContainer = accountVerificationCodeFields.getContainer();
 
         codeErrorLabel = createErrorLabel();
+
+        // Gender selection buttons
+        genderButtonsContainer = new HBox(8);
+        genderButtonsContainer.setAlignment(Pos.CENTER_LEFT);
+
+        femaleButton = new Button();
+        I18n.bindI18nTextProperty(femaleButton.textProperty(), BookingPageI18nKeys.Female);
+        femaleButton.setPadding(new Insets(14, 20, 14, 20));
+        femaleButton.setMinWidth(80);
+        femaleButton.getStyleClass().add("bookingpage-gender-button");
+        femaleButton.setOnAction(e -> {
+            genderProperty.set(false);
+            femaleButton.getStyleClass().add("selected");
+            maleButton.getStyleClass().remove("selected");
+        });
+
+        maleButton = new Button();
+        I18n.bindI18nTextProperty(maleButton.textProperty(), BookingPageI18nKeys.Male);
+        maleButton.setPadding(new Insets(14, 20, 14, 20));
+        maleButton.setMinWidth(80);
+        maleButton.getStyleClass().add("bookingpage-gender-button");
+        maleButton.setOnAction(e -> {
+            genderProperty.set(true);
+            maleButton.getStyleClass().add("selected");
+            femaleButton.getStyleClass().remove("selected");
+        });
+
+        genderButtonsContainer.getChildren().addAll(femaleButton, maleButton);
+
+        // Password field for account creation
+        createAccountPasswordField = new PasswordField();
+        I18n.bindI18nPromptProperty(createAccountPasswordField.promptTextProperty(), BookingPageI18nKeys.CreatePassword);
+        createAccountPasswordField.textProperty().bindBidirectional(createAccountPasswordProperty);
+        styleInput(createAccountPasswordField);
+
+        visibleCreateAccountPasswordField = new TextField();
+        I18n.bindI18nPromptProperty(visibleCreateAccountPasswordField.promptTextProperty(), BookingPageI18nKeys.CreatePassword);
+        visibleCreateAccountPasswordField.textProperty().bindBidirectional(createAccountPasswordProperty);
+        styleInput(visibleCreateAccountPasswordField);
+        visibleCreateAccountPasswordField.setVisible(false);
+        visibleCreateAccountPasswordField.setManaged(false);
+
+        // Confirm password field
+        createAccountConfirmPasswordField = new PasswordField();
+        I18n.bindI18nPromptProperty(createAccountConfirmPasswordField.promptTextProperty(), BookingPageI18nKeys.ConfirmPassword);
+        createAccountConfirmPasswordField.textProperty().bindBidirectional(createAccountConfirmPasswordProperty);
+        styleInput(createAccountConfirmPasswordField);
+
+        visibleCreateAccountConfirmPasswordField = new TextField();
+        I18n.bindI18nPromptProperty(visibleCreateAccountConfirmPasswordField.promptTextProperty(), BookingPageI18nKeys.ConfirmPassword);
+        visibleCreateAccountConfirmPasswordField.textProperty().bindBidirectional(createAccountConfirmPasswordProperty);
+        styleInput(visibleCreateAccountConfirmPasswordField);
+        visibleCreateAccountConfirmPasswordField.setVisible(false);
+        visibleCreateAccountConfirmPasswordField.setManaged(false);
+
+        // Bind visibility toggle for password fields
+        showCreateAccountPasswordProperty.addListener((obs, old, show) -> {
+            createAccountPasswordField.setVisible(!show);
+            createAccountPasswordField.setManaged(!show);
+            visibleCreateAccountPasswordField.setVisible(show);
+            visibleCreateAccountPasswordField.setManaged(show);
+            createAccountConfirmPasswordField.setVisible(!show);
+            createAccountConfirmPasswordField.setManaged(!show);
+            visibleCreateAccountConfirmPasswordField.setVisible(show);
+            visibleCreateAccountConfirmPasswordField.setManaged(show);
+        });
+
+        // Age & Terms agreement checkbox
+        ageTermsToggleContainer = new HBox(12);
+        ageTermsToggleContainer.setAlignment(Pos.TOP_LEFT);
+
+        // Checkbox for agreement
+        CheckBox ageTermsCheckBox = new CheckBox();
+        ageTermsCheckBox.selectedProperty().bindBidirectional(ageTermsAcceptedProperty);
+        ageTermsCheckBox.setPadding(new Insets(2, 0, 0, 0)); // Slight top padding for alignment
+
+        // Checkbox labels with bullet list
+        VBox toggleLabels = new VBox(6);
+        Label confirmLabel = I18nControls.newLabel(BookingPageI18nKeys.IConfirmThat);
+        confirmLabel.getStyleClass().add("bookingpage-toggle-label");
+
+        // Bullet list (simulating HTML <ul>)
+        VBox bulletList = new VBox(4);
+        bulletList.setPadding(new Insets(0, 0, 0, 20)); // Left padding like paddingLeft: 20px in JSX
+
+        // First bullet item - Age confirmation
+        HBox age18Line = new HBox(6);
+        age18Line.setAlignment(Pos.TOP_LEFT);
+        Label age18Bullet = new Label("•");
+        age18Bullet.getStyleClass().add("bookingpage-toggle-item");
+        age18Bullet.setMinWidth(10);
+        Label age18Label = I18nControls.newLabel(BookingPageI18nKeys.IAm18YearsOrOlder);
+        age18Label.getStyleClass().add("bookingpage-toggle-item");
+        age18Label.setWrapText(true);
+        age18Line.getChildren().addAll(age18Bullet, age18Label);
+        HBox.setHgrow(age18Label, Priority.ALWAYS);
+
+        // Second bullet item - Terms agreement
+        HBox termsLine = new HBox(6);
+        termsLine.setAlignment(Pos.TOP_LEFT);
+        Label termsBullet = new Label("•");
+        termsBullet.getStyleClass().add("bookingpage-toggle-item");
+        termsBullet.setMinWidth(10);
+
+        HBox termsContent = new HBox(4);
+        termsContent.setAlignment(Pos.CENTER_LEFT);
+        Label iAgreeLabel = I18nControls.newLabel(BookingPageI18nKeys.IAgreeToThe);
+        iAgreeLabel.getStyleClass().add("bookingpage-toggle-item");
+        Hyperlink termsLink = I18nControls.newHyperlink(BookingPageI18nKeys.TermsAndConditions);
+        termsLink.setOnAction(e -> openTermsAndConditions());
+        termsLink.getStyleClass().add("bookingpage-terms-link");
+        termsContent.getChildren().addAll(iAgreeLabel, termsLink);
+
+        termsLine.getChildren().addAll(termsBullet, termsContent);
+        HBox.setHgrow(termsContent, Priority.ALWAYS);
+
+        bulletList.getChildren().addAll(age18Line, termsLine);
+        toggleLabels.getChildren().addAll(confirmLabel, bulletList);
+        HBox.setHgrow(toggleLabels, Priority.ALWAYS);
+
+        ageTermsToggleContainer.getChildren().addAll(ageTermsCheckBox, toggleLabels);
+
+        // Email verification - Send button with spinner
+        sendVerificationButton = BookingPageUIBuilder.createPrimaryButton(BookingPageI18nKeys.SendVerificationCode, colorScheme);
+        sendVerificationButton.setOnAction(e -> handleSendVerificationCode());
+
+        // Email verification - Success box
+        verificationSuccessBox = new HBox(12);
+        verificationSuccessBox.setAlignment(Pos.CENTER_LEFT);
+
+        Region checkIconContainer = new Region();
+        checkIconContainer.setPrefSize(32, 32);
+        checkIconContainer.setMaxSize(32, 32);
+        checkIconContainer.getStyleClass().add("bookingpage-verification-success-icon");
+
+        VBox successLabels = new VBox(4);
+        Label verifiedLabel = I18nControls.newLabel(BookingPageI18nKeys.EmailVerified);
+        verifiedLabel.getStyleClass().add("bookingpage-success-title");
+        Label accountCreationLabel = I18nControls.newLabel(BookingPageI18nKeys.YourAccountWillBeCreatedWhenYouComplete);
+        accountCreationLabel.getStyleClass().add("bookingpage-success-subtitle");
+        successLabels.getChildren().addAll(verifiedLabel, accountCreationLabel);
+
+        verificationSuccessBox.getChildren().addAll(checkIconContainer, successLabels);
+
+        // Resend verification code link
+        resendVerificationLink = I18nControls.newHyperlink(BookingPageI18nKeys.ResendCode);
+        resendVerificationLink.setOnAction(e -> handleResendVerificationCode());
     }
 
     protected void setupStateListener() {
@@ -604,9 +752,17 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         HBox lastNameLabelBox = createRequiredFieldLabel(BookingPageI18nKeys.LastName);
         lastNameContainer.getChildren().addAll(lastNameLabelBox, lastNameField, lastNameErrorLabel);
 
+        // Gender field (conditionally shown)
+        VBox genderContainer = new VBox(8);
+        Label genderLabel = createFieldLabel(BookingPageI18nKeys.Gender);
+        genderContainer.getChildren().addAll(genderLabel, genderButtonsContainer);
+        genderContainer.visibleProperty().bind(showGenderFieldProperty);
+        genderContainer.managedProperty().bind(showGenderFieldProperty);
+
         // Add to grid (will be rearranged by responsive design)
         nameFieldsGrid.add(firstNameContainer, 0, 0);
         nameFieldsGrid.add(lastNameContainer, 1, 0);
+        nameFieldsGrid.add(genderContainer, 0, 1, 2, 1); // Span 2 columns
         nameFieldsGrid.getColumnConstraints().addAll(createColumnConstraint(), createColumnConstraint());
 
         nameCard.getChildren().add(nameFieldsGrid);
@@ -621,13 +777,24 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         Button continueButton = createPrimaryButton(BookingPageI18nKeys.Continue);
         continueButton.setOnAction(e -> handleNewUserContinue());
-        // Disable continue when names are not filled (min 2 chars each)
-        BooleanProperty namesValid = new SimpleBooleanProperty(false);
-        FXProperties.runNowAndOnPropertiesChange(() -> namesValid.set(
-                firstNameProperty.get().trim().length() >= 2 &&
-                        lastNameProperty.get().trim().length() >= 2
-        ), firstNameProperty, lastNameProperty);
-        continueButton.disableProperty().bind(namesValid.not());
+
+        // Complex validation binding
+        BooleanProperty canContinue = new SimpleBooleanProperty(false);
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            boolean namesValid = firstNameProperty.get().trim().length() >= 2
+                               && lastNameProperty.get().trim().length() >= 2;
+
+            boolean genderValid = !showGenderFieldProperty.get()
+                               || genderProperty.get() != null;
+
+            boolean accountCreationValid = !createAccountProperty.get()
+                || (ageTermsAcceptedProperty.get() && emailVerificationCompleteProperty.get());
+
+            canContinue.set(namesValid && genderValid && accountCreationValid);
+        }, firstNameProperty, lastNameProperty, genderProperty, showGenderFieldProperty,
+           createAccountProperty, ageTermsAcceptedProperty, emailVerificationCompleteProperty);
+
+        continueButton.disableProperty().bind(canContinue.not());
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -777,16 +944,12 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         VBox box = new VBox(0);
         box.setPadding(new Insets(24));
-        box.setCursor(Cursor.HAND);
         updateCreateAccountBoxStyle(box);
-
-        // Make clickable
-        box.setOnMouseClicked(e -> createAccountProperty.set(!createAccountProperty.get()));
 
         HBox contentRow = new HBox(16);
         contentRow.setAlignment(Pos.TOP_LEFT);
 
-        // Custom checkbox
+        // Custom checkbox (clickable)
         StackPane checkbox = createCustomCheckbox();
 
         // Content
@@ -825,34 +988,123 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         content.getChildren().addAll(titleRow, descLabel, benefitsRow);
 
-        // Email note (shown when checked)
-        VBox emailNote = new VBox(0);
-        emailNote.setPadding(new Insets(16, 0, 0, 0));
-        emailNote.visibleProperty().bind(createAccountProperty);
-        emailNote.managedProperty().bind(createAccountProperty);
+        // Account creation requirements (shown when checked)
+        VBox accountCreationRequirements = new VBox(16);
+        accountCreationRequirements.setPadding(new Insets(16, 0, 0, 0));
+        accountCreationRequirements.visibleProperty().bind(createAccountProperty);
+        accountCreationRequirements.managedProperty().bind(createAccountProperty);
 
-        HBox noteBox = new HBox(10);
-        noteBox.setPadding(new Insets(12, 14, 12, 14));
-        noteBox.getStyleClass().addAll("bookingpage-card", "bookingpage-rounded");
-        noteBox.setAlignment(Pos.TOP_LEFT);
+        // Age/Terms container (white card with toggle)
+        VBox ageTermsCard = new VBox(0);
+        ageTermsCard.setPadding(new Insets(16));
+        ageTermsCard.getStyleClass().addAll("bookingpage-card", "bookingpage-rounded");
+        ageTermsCard.setOnMouseClicked(e -> e.consume()); // Prevent toggling main checkbox
 
-        createAccountNoteIcon = new SVGPath();
-        createAccountNoteIcon.setContent("M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6");
-        createAccountNoteIcon.getStyleClass().add("bookingpage-icon-primary");
-        createAccountNoteIcon.setStrokeWidth(2);
-        createAccountNoteIcon.setFill(Color.TRANSPARENT);
-        createAccountNoteIcon.setScaleX(0.65);
-        createAccountNoteIcon.setScaleY(0.65);
+        ageTermsCard.getChildren().add(ageTermsToggleContainer);
+        accountCreationRequirements.getChildren().add(ageTermsCard);
 
-        Label noteText = I18nControls.newLabel(BookingPageI18nKeys.WeWillSendEmailToSetPassword);
-        noteText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
-        noteText.setWrapText(true);
+        // Password fields section (shown when age/terms accepted)
+        VBox passwordSection = new VBox(16);
+        passwordSection.setPadding(new Insets(16, 0, 0, 0));
+        passwordSection.visibleProperty().bind(ageTermsAcceptedProperty);
+        passwordSection.managedProperty().bind(ageTermsAcceptedProperty);
 
-        noteBox.getChildren().addAll(createAccountNoteIcon, noteText);
-        HBox.setHgrow(noteText, Priority.ALWAYS);
+        // Password field with label
+        VBox passwordFieldContainer = new VBox(8);
+        HBox passwordLabelBox = createRequiredFieldLabel(BookingPageI18nKeys.CreatePassword);
+        StackPane pwdStack = new StackPane();
+        pwdStack.getChildren().addAll(createAccountPasswordField, visibleCreateAccountPasswordField);
+        HBox pwdRow = new HBox(8);
+        pwdRow.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(pwdStack, Priority.ALWAYS);
+        Button pwdEyeBtn = createEyeToggleButton();
+        pwdEyeBtn.setOnAction(e -> showCreateAccountPasswordProperty.set(!showCreateAccountPasswordProperty.get()));
+        pwdRow.getChildren().addAll(pwdStack, pwdEyeBtn);
+        passwordFieldContainer.getChildren().addAll(passwordLabelBox, pwdRow);
 
-        emailNote.getChildren().add(noteBox);
-        content.getChildren().add(emailNote);
+        // Password strength hint
+        Label passwordStrengthHint = I18nControls.newLabel(BookingPageI18nKeys.PasswordStrengthHint);
+        passwordStrengthHint.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        passwordStrengthHint.setWrapText(true);
+
+        // Confirm password field with label
+        VBox confirmPasswordContainer = new VBox(8);
+        HBox confirmPasswordLabelBox = createRequiredFieldLabel(BookingPageI18nKeys.ConfirmPassword);
+        StackPane confirmPwdStack = new StackPane();
+        confirmPwdStack.getChildren().addAll(createAccountConfirmPasswordField, visibleCreateAccountConfirmPasswordField);
+        confirmPasswordContainer.getChildren().addAll(confirmPasswordLabelBox, confirmPwdStack);
+
+        passwordSection.getChildren().addAll(passwordFieldContainer, passwordStrengthHint, confirmPasswordContainer);
+        accountCreationRequirements.getChildren().add(passwordSection);
+
+        // Email verification section (shown when age/terms accepted)
+        VBox verificationSection = new VBox(16);
+        verificationSection.setPadding(new Insets(16, 0, 0, 0));
+        verificationSection.visibleProperty().bind(ageTermsAcceptedProperty);
+        verificationSection.managedProperty().bind(ageTermsAcceptedProperty);
+
+        // Send verification button state
+        VBox sendCodeContainer = new VBox(8);
+        sendCodeContainer.setAlignment(Pos.CENTER);
+        Label verifyPrompt = I18nControls.newLabel(BookingPageI18nKeys.ToCreateAccountVerifyEmail);
+        verifyPrompt.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        verifyPrompt.setWrapText(true);
+        verifyPrompt.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
+        sendCodeContainer.getChildren().addAll(verifyPrompt, sendVerificationButton);
+        sendCodeContainer.visibleProperty().bind(verificationCodeSentProperty.not());
+        sendCodeContainer.managedProperty().bind(verificationCodeSentProperty.not());
+
+        // Code entry state
+        VBox codeEntryContainer = new VBox(12);
+
+        // Email confirmation banner
+        HBox emailConfirmBanner = new HBox(10);
+        emailConfirmBanner.setPadding(new Insets(12, 16, 12, 16));
+        emailConfirmBanner.setAlignment(Pos.TOP_LEFT);
+        emailConfirmBanner.getStyleClass().addAll("bookingpage-info-banner");
+
+        SVGPath emailIcon = new SVGPath();
+        emailIcon.setContent("M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z M22 6l-10 7L2 6");
+        emailIcon.getStyleClass().add("bookingpage-icon-primary");
+        emailIcon.setStrokeWidth(2);
+        emailIcon.setFill(Color.TRANSPARENT);
+        emailIcon.setScaleX(0.7);
+        emailIcon.setScaleY(0.7);
+
+        VBox emailConfirmText = new VBox(4);
+        Label codeSentLabel = I18nControls.newLabel(BookingPageI18nKeys.WeSentVerificationCodeTo);
+        codeSentLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        Label emailAddressLabel = new Label();
+        emailAddressLabel.textProperty().bind(emailProperty);
+        emailAddressLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold");
+        emailConfirmText.getChildren().addAll(codeSentLabel, emailAddressLabel);
+
+        emailConfirmBanner.getChildren().addAll(emailIcon, emailConfirmText);
+        HBox.setHgrow(emailConfirmText, Priority.ALWAYS);
+
+        // Code input label
+        Label codeLabel = I18nControls.newLabel(BookingPageI18nKeys.EnterVerificationCode);
+        codeLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+
+        // Resend/hint row
+        HBox resendRow = new HBox(12);
+        resendRow.setAlignment(Pos.CENTER_LEFT);
+        Label didntReceiveLabel = I18nControls.newLabel(BookingPageI18nKeys.DidntReceiveIt);
+        didntReceiveLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        resendRow.getChildren().addAll(didntReceiveLabel, resendVerificationLink);
+
+        codeEntryContainer.getChildren().addAll(emailConfirmBanner, codeLabel, accountVerificationDigitsContainer, codeErrorLabel, resendRow);
+        codeEntryContainer.visibleProperty().bind(verificationCodeSentProperty.and(emailVerificationCompleteProperty.not()));
+        codeEntryContainer.managedProperty().bind(verificationCodeSentProperty.and(emailVerificationCompleteProperty.not()));
+
+        // Success state
+        verificationSuccessBox.visibleProperty().bind(emailVerificationCompleteProperty);
+        verificationSuccessBox.managedProperty().bind(emailVerificationCompleteProperty);
+
+        verificationSection.getChildren().addAll(sendCodeContainer, codeEntryContainer, verificationSuccessBox);
+        accountCreationRequirements.getChildren().add(verificationSection);
+
+        content.getChildren().add(accountCreationRequirements);
 
         contentRow.getChildren().addAll(checkbox, content);
         HBox.setHgrow(content, Priority.ALWAYS);
@@ -880,6 +1132,13 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         StackPane checkbox = new StackPane();
         checkbox.setMinSize(24, 24);
         checkbox.setMaxSize(24, 24);
+        checkbox.setCursor(Cursor.HAND);
+
+        // Make checkbox clickable
+        checkbox.setOnMouseClicked(e -> {
+            e.consume(); // Prevent event propagation
+            createAccountProperty.set(!createAccountProperty.get());
+        });
 
         // Checkmark icon (always present, shown/hidden via parent style)
         SVGPath checkIcon = new SVGPath();
@@ -1434,7 +1693,9 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                     emailProperty.get(),
                     firstName,
                     lastName,
-                    createAccountProperty.get()
+                    genderProperty.get(),
+                    createAccountProperty.get(),
+                    emailVerificationCompleteProperty.get()
             );
             onNewUserContinue.accept(data);
         }
@@ -1602,6 +1863,54 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     }
 
     /**
+     * Starts the resend cooldown timer for account verification resend link.
+     */
+    protected void startAccountVerificationResendCooldown() {
+        if (resendVerificationLink == null) {
+            return;
+        }
+
+        // Stop any existing timer
+        if (resendCountdownTimer != null) {
+            resendCountdownTimer.stop();
+        }
+
+        // Initialize countdown
+        resendSecondsRemaining = RESEND_COOLDOWN_SECONDS;
+
+        // Unbind the i18n binding so we can set text directly
+        resendVerificationLink.textProperty().unbind();
+
+        // Disable the link and show initial countdown
+        resendVerificationLink.setDisable(true);
+        resendVerificationLink.setText(I18n.getI18nText(BookingPageI18nKeys.ResendInSeconds, resendSecondsRemaining));
+        resendVerificationLink.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-disabled");
+        resendVerificationLink.setTextFill(Color.web("#6c757d")); // Muted gray for disabled state
+
+        // Create countdown timer (fires every second)
+        resendCountdownTimer = new Timeline(
+            new KeyFrame(Duration.seconds(1), event -> {
+                resendSecondsRemaining--;
+                if (resendSecondsRemaining > 0) {
+                    // Update countdown text
+                    resendVerificationLink.setText(I18n.getI18nText(BookingPageI18nKeys.ResendInSeconds, resendSecondsRemaining));
+                } else {
+                    // Cooldown complete - re-enable the link
+                    resendCountdownTimer.stop();
+                    resendVerificationLink.setDisable(false);
+                    resendVerificationLink.getStyleClass().remove("bookingpage-text-disabled");
+                    I18nControls.bindI18nTextProperty(resendVerificationLink, BookingPageI18nKeys.ResendCode);
+                    BookingFormColorScheme colors = colorScheme.get();
+                    Color linkColor = colors != null ? colors.getPrimary() : Color.web("#0d6efd");
+                    resendVerificationLink.setTextFill(linkColor);
+                }
+            })
+        );
+        resendCountdownTimer.setCycleCount(RESEND_COOLDOWN_SECONDS);
+        resendCountdownTimer.play();
+    }
+
+    /**
      * Clears all verification code digit fields.
      */
     protected void clearCodeDigitFields() {
@@ -1612,6 +1921,22 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
             }
             // Focus first field
             codeDigitFields[0].requestFocus();
+        }
+    }
+
+    /**
+     * Clears all account verification digit fields.
+     */
+    protected void clearAccountVerificationCodeDigitFields() {
+        verificationCodeProperty.set("");
+        if (accountVerificationDigitFields != null) {
+            for (TextField field : accountVerificationDigitFields) {
+                field.setText("");
+            }
+            // Focus first field
+            if (accountVerificationDigitFields.length > 0) {
+                accountVerificationDigitFields[0].requestFocus();
+            }
         }
     }
 
@@ -1634,7 +1959,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     }
 
     /**
-     * Updates the verificationCodeProperty from the individual digit fields
+     * Updates the verificationCodeProperty from the individual digit fields (forgot password flow)
      * and triggers auto-validation when all 6 digits are entered.
      */
     protected void updateVerificationCodeFromFields() {
@@ -1645,10 +1970,44 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         String fullCode = code.toString();
         verificationCodeProperty.set(fullCode);
 
-        // Auto-validate when all 6 digits are entered
+        // Auto-validate when all 6 digits are entered (forgot password flow)
         if (fullCode.length() == 6) {
-            // Use Platform.runLater to allow the UI to update first
             UiScheduler.runInUiThread(this::handleVerifyCode);
+        }
+    }
+
+    /**
+     * Distributes pasted digits across account verification digit fields.
+     */
+    protected void distributeAccountVerificationPastedCode(String digits, int startIndex) {
+        // Distribute digits across fields (listeners on each field will call updateAccountVerificationCodeFromFields)
+        for (int i = 0; i < digits.length() && (startIndex + i) < 6; i++) {
+            accountVerificationDigitFields[startIndex + i].setText(String.valueOf(digits.charAt(i)));
+        }
+        // Focus the last filled field or the next empty one
+        int lastIndex = Math.min(startIndex + digits.length() - 1, 5);
+        if (lastIndex < 5 && digits.length() < (6 - startIndex)) {
+            accountVerificationDigitFields[lastIndex + 1].requestFocus();
+        } else {
+            accountVerificationDigitFields[lastIndex].requestFocus();
+        }
+    }
+
+    /**
+     * Updates the verificationCodeProperty from the account verification digit fields
+     * and triggers auto-validation when all 6 digits are entered.
+     */
+    protected void updateAccountVerificationCodeFromFields() {
+        StringBuilder code = new StringBuilder();
+        for (TextField field : accountVerificationDigitFields) {
+            code.append(field.getText());
+        }
+        String fullCode = code.toString();
+        verificationCodeProperty.set(fullCode);
+
+        // Auto-validate when all 6 digits are entered (account verification flow)
+        if (fullCode.length() == 6) {
+            UiScheduler.runInUiThread(this::handleVerifyAccountCode);
         }
     }
 
@@ -1660,6 +2019,10 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         lastNameProperty.set("");
         createAccountProperty.set(false);
         verificationCodeProperty.set("");
+        // Reset account creation password fields
+        createAccountPasswordProperty.set("");
+        createAccountConfirmPasswordProperty.set("");
+        accountCreationValidationSupport.reset();
         emailExists = false;
         flowStateProperty.set(FlowState.EMAIL_INPUT);
     }
@@ -1732,6 +2095,208 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
             case FORGOT_PASSWORD:
                 validProperty.set(verificationCodeProperty.get().length() == 6);
                 break;
+        }
+    }
+
+    // ========================================
+    // HELPER METHODS FOR NEW FEATURES
+    // ========================================
+
+    protected void openTermsAndConditions() {
+        // Open terms and conditions page
+        // Check if event has termsUrlEn
+        if (workingBookingProperties != null) {
+            WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
+            if (workingBooking != null && workingBooking.getEvent() != null) {
+                String termsUrl = workingBooking.getEvent().getStringFieldValue("termsUrlEn");
+                if (termsUrl != null && !termsUrl.isEmpty()) {
+                    //TODO Replace by Hyerpkink object.
+                    //WindowLocation.open(termsUrl, "_blank");
+                    return;
+                }
+            }
+        }
+        // Fallback to generic terms page
+        //WindowLocation.open("/terms-and-conditions", "_blank");
+    }
+
+    /**
+     * Initializes validation rules for account creation.
+     * Called before sending verification code.
+     */
+    protected void initAccountCreationValidation() {
+        if (accountCreationValidationSupport.isEmpty()) {
+            // First name required (min 2 chars)
+            accountCreationValidationSupport.addValidationRule(
+                Bindings.createBooleanBinding(
+                    () -> firstNameProperty.get().trim().length() >= 2,
+                    firstNameProperty
+                ),
+                firstNameField,
+                I18n.i18nTextProperty(BookingPageI18nKeys.FirstNameRequired),
+                true
+            );
+
+            // Last name required (min 2 chars)
+            accountCreationValidationSupport.addValidationRule(
+                Bindings.createBooleanBinding(
+                    () -> lastNameProperty.get().trim().length() >= 2,
+                    lastNameProperty
+                ),
+                lastNameField,
+                I18n.i18nTextProperty(BookingPageI18nKeys.LastNameRequired),
+                true
+            );
+
+            // Password strength validation
+            accountCreationValidationSupport.addPasswordStrengthValidation(
+                createAccountPasswordField,
+                I18n.i18nTextProperty(BookingPageI18nKeys.PasswordStrengthHint)
+            );
+
+            // Password match validation
+            accountCreationValidationSupport.addPasswordMatchValidation(
+                createAccountPasswordField,
+                createAccountConfirmPasswordField,
+                I18n.i18nTextProperty(BookingPageI18nKeys.PasswordsDoNotMatch)
+            );
+        }
+    }
+
+    protected void handleSendVerificationCode() {
+        // Initialize and run validation
+        initAccountCreationValidation();
+        if (!accountCreationValidationSupport.isValid()) {
+            return; // Validation failed - error popover shown automatically
+        }
+
+        String email = emailProperty.get().trim().toLowerCase();
+
+        // Use InitiateAccountCreationCredentials for new account creation
+        // with verificationCodeOnly=true to receive a 6-digit code instead of magic link
+        InitiateAccountCreationCredentials credentials = new InitiateAccountCreationCredentials(
+                email,
+                WindowLocation.getOrigin(),
+                WindowLocation.getPath(),
+                I18n.getLanguage(),
+                true,  // verificationCodeOnly - send 6-digit code, not magic link
+                null   // No context needed
+        );
+
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
+                new AuthenticationRequest()
+                        .setUserCredentials(credentials)
+                        .executeAsync()
+                        .inUiThread()
+                        .onFailure(error -> {
+                            showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.ErrorSendingCode));
+                        })
+                        .onSuccess(ar -> {
+                            verificationCodeSentProperty.set(true);
+                            clearError(codeErrorLabel);
+                            // Start cooldown timer for resend link
+                            UiScheduler.scheduleDelay(100, this::startAccountVerificationResendCooldown);
+                        }),
+                sendVerificationButton
+        );
+    }
+
+    protected void handleVerifyAccountCode() {
+        String code = verificationCodeProperty.get().trim();
+
+        if (code.length() != 6) {
+            return; // Should not happen due to validation
+        }
+
+        String password = createAccountPasswordProperty.get();
+
+        // Create account with password using FinaliseAccountCreationCredentials
+        new AuthenticationRequest()
+                .setUserCredentials(new FinaliseAccountCreationCredentials(code, password))
+                .executeAsync()
+                .inUiThread()
+                .onFailure(error -> {
+                    Console.log("Account creation failed: " + error.getMessage());
+                    showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.InvalidOrExpiredCode));
+                    clearAccountVerificationCodeDigitFields(); // Clear for retry
+                })
+                .onSuccess(accountPk -> {
+                    Console.log("FrontendAccount created successfully, now creating Person...");
+
+                    // Create UpdateStore for Person and FrontendAccount update
+                    UpdateStore updateStore = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+
+                    // Create Person entity linked to the account (like UserAccountUI.java)
+                    Person person = updateStore.insertEntity(Person.class);
+                    person.setFrontendAccount(accountPk);
+                    person.setEmail(emailProperty.get().trim().toLowerCase());
+                    person.setFirstName(firstNameProperty.get().trim());
+                    person.setLastName(lastNameProperty.get().trim());
+
+                    // Set gender if entered (genderProperty: null=not set, false=Female, true=Male)
+                    Boolean gender = genderProperty.get();
+                    if (gender != null) {
+                        person.setMale(gender);
+                    }
+
+                    // Mark as account owner (critical to avoid duplicate in Member Selection!)
+                    person.setOwner(true);
+
+                    // Update FrontendAccount with current language
+                    FrontendAccount fa = updateStore.updateEntity(FrontendAccount.class, accountPk);
+                    fa.setLang(I18n.getLanguage().toString());
+
+                    // Submit Person and FrontendAccount update
+                    updateStore.submitChanges()
+                        .inUiThread()
+                        .onFailure(failure -> {
+                            Console.log("Error creating Person: " + failure.getMessage());
+                            showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.InvalidOrExpiredCode));
+                        })
+                        .onSuccess(success -> {
+                            Console.log("Person created successfully, now authenticating...");
+
+                            // Authenticate using the verification code to log user in
+                            new AuthenticationRequest()
+                                .setUserCredentials(new AuthenticateWithMagicLinkCredentials(code))
+                                .executeAsync()
+                                .inUiThread()
+                                .onFailure(authError -> {
+                                    // Person is created, but auth failed - still allow to continue
+                                    Console.log("Authentication after account creation failed: " + authError.getMessage());
+                                    emailVerificationCompleteProperty.set(true);
+                                    clearError(codeErrorLabel);
+                                })
+                                .onSuccess(requestedPath -> {
+                                    Console.log("Account created and user authenticated successfully");
+                                    emailVerificationCompleteProperty.set(true);
+                                    clearError(codeErrorLabel);
+
+                                    // User is now logged in - notify callback when FXUserPerson is available
+                                    if (onLoginSuccess != null) {
+                                        Person userPerson = FXUserPerson.getUserPerson();
+                                        if (userPerson != null) {
+                                            onLoginSuccess.accept(userPerson);
+                                        } else {
+                                            FXProperties.runOnPropertyChange(p -> {
+                                                if (p != null) {
+                                                    onLoginSuccess.accept(p);
+                                                }
+                                            }, FXUserPerson.userPersonProperty());
+                                        }
+                                    }
+                                });
+                        });
+                });
+    }
+
+    protected void handleResendVerificationCode() {
+        emailVerificationCompleteProperty.set(false);
+        clearAccountVerificationCodeDigitFields();
+        handleSendVerificationCode();
+        // Refocus first digit field
+        if (accountVerificationDigitFields.length > 0) {
+            accountVerificationDigitFields[0].requestFocus();
         }
     }
 
@@ -1851,5 +2416,13 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     @Override
     public boolean isForceAccountCreation() {
         return forceAccountCreationProperty.get();
+    }
+
+    public void setShowGenderField(boolean show) {
+        showGenderFieldProperty.set(show);
+    }
+
+    public boolean isShowGenderField() {
+        return showGenderFieldProperty.get();
     }
 }
