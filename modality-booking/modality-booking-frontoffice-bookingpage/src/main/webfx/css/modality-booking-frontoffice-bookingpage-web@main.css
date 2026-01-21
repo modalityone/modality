@@ -26,6 +26,37 @@
     --fx-svg-path-fill: var(--fx-fill);
 }
 
+/* Sold out section icons - use orange/warning colors */
+.bookingpage-soldout-icon-circle-icon {
+    --fx-svg-path-stroke: #F57C00;
+    --fx-svg-path-fill: transparent;
+    stroke: #F57C00;
+}
+
+.bookingpage-soldout-indicator-icon {
+    --fx-svg-path-stroke: #E65100;
+    --fx-svg-path-fill: transparent;
+    stroke: #E65100;
+}
+
+/* Sold out section backgrounds and text colors for web */
+.bookingpage-soldout-icon-circle {
+    background-color: #FFF3E0;
+}
+
+.bookingpage-soldout-explanation-box {
+    background-color: #FFF3E0;
+    border-color: #FFE0B2;
+}
+
+.bookingpage-soldout-indicator {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.bookingpage-text-warning-dark {
+    color: #E65100;
+}
+
 /* Increasing the line height for the event description */
 .bookingpage-text-base {
     line-height: 1.8;
