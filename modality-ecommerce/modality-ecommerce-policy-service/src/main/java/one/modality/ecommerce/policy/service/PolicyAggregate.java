@@ -191,6 +191,14 @@ public final class PolicyAggregate {
         return filterScheduledItemsOfFamily(KnownItemFamily.ACCOMMODATION);
     }
 
+    public List<ScheduledItem> filterMealsScheduledItems() {
+        return filterScheduledItemsOfFamily(KnownItemFamily.MEALS);
+    }
+
+    public List<ScheduledItem> filterCeremonyScheduledItems() {
+        return filterScheduledItemsOfFamily(KnownItemFamily.CEREMONY);
+    }
+
     public EntityList<ScheduledBoundary> getScheduledBoundaries() {
         return scheduledBoundaries;
     }
