@@ -5,6 +5,7 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.browser.Browser;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
@@ -40,8 +41,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+import one.modality.base.client.entities.Labels;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.FrontendAccount;
+import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.Person;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
@@ -185,6 +188,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
     // Age/Terms agreement components
     protected HBox ageTermsToggleContainer;
+    protected HBox termsLine;
 
     // Email verification for account creation
     protected Button sendVerificationButton;
@@ -405,7 +409,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         HBox.setHgrow(age18Label, Priority.ALWAYS);
 
         // Second bullet item - Terms agreement
-        HBox termsLine = new HBox(6);
+        termsLine = new HBox(6);
         termsLine.setAlignment(Pos.TOP_LEFT);
         Label termsBullet = new Label("•");
         termsBullet.getStyleClass().add("bookingpage-toggle-item");
@@ -445,9 +449,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         VBox successLabels = new VBox(4);
         Label verifiedLabel = I18nControls.newLabel(BookingPageI18nKeys.EmailVerified);
         verifiedLabel.getStyleClass().add("bookingpage-success-title");
-        Label accountCreationLabel = I18nControls.newLabel(BookingPageI18nKeys.YourAccountWillBeCreatedWhenYouComplete);
-        accountCreationLabel.getStyleClass().add("bookingpage-success-subtitle");
-        successLabels.getChildren().addAll(verifiedLabel, accountCreationLabel);
+        successLabels.getChildren().add(verifiedLabel);
 
         verificationSuccessBox.getChildren().addAll(checkIconContainer, successLabels);
 
@@ -2140,21 +2142,46 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
     // ========================================
 
     protected void openTermsAndConditions() {
-        // Open terms and conditions page
-        // Check if event has termsUrlEn
+        String privacyUrl = getOrganizationPrivacyUrl();
+        if (privacyUrl != null && !privacyUrl.isEmpty()) {
+            try {
+                Browser.launchExternalBrowser(privacyUrl);
+            } catch (Exception e) {
+                Console.log(e);
+            }
+        }
+    }
+
+    /**
+     * Gets the privacy URL from the organization associated with the event.
+     * The URL is stored in a Label entity with i18n fields (en, fr, etc.).
+     * Returns the URL for the current interface language, falling back to other languages if not available.
+     * Returns null if no privacy URL is configured.
+     */
+    protected String getOrganizationPrivacyUrl() {
         if (workingBookingProperties != null) {
             WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
             if (workingBooking != null && workingBooking.getEvent() != null) {
-                String termsUrl = workingBooking.getEvent().getStringFieldValue("termsUrlEn");
-                if (termsUrl != null && !termsUrl.isEmpty()) {
-                    //TODO Replace by Hyerpkink object.
-                    //WindowLocation.open(termsUrl, "_blank");
-                    return;
+                Organization organization = workingBooking.getPolicyAggregate().getEvent().getOrganization();
+                if (organization != null) {
+                    one.modality.base.shared.entities.Label privacyUrlLabel = organization.getPrivacyUrlLabel();
+                    return Labels.instantTranslateLabel(privacyUrlLabel);
                 }
             }
         }
-        // Fallback to generic terms page
-        //WindowLocation.open("/terms-and-conditions", "_blank");
+        return null;
+    }
+
+    /**
+     * Updates the visibility of the terms line based on whether the organization has a privacy URL.
+     */
+    protected void updateTermsLineVisibility() {
+        if (termsLine != null) {
+            String privacyUrl = getOrganizationPrivacyUrl();
+            boolean hasPrivacyUrl = privacyUrl != null && !privacyUrl.isEmpty();
+            termsLine.setVisible(hasPrivacyUrl);
+            termsLine.setManaged(hasPrivacyUrl);
+        }
     }
 
     /**
@@ -2255,6 +2282,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                 .onFailure(error -> {
                     Console.log("Account creation failed: " + error.getMessage());
                     showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.InvalidOrExpiredCode));
+                    playShakeAnimation(accountVerificationDigitsContainer);
                     clearAccountVerificationCodeDigitFields(); // Clear for retry
                 })
                 .onSuccess(accountPk -> {
@@ -2367,6 +2395,9 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
             // Configure gender field requirement from item policies
             updateGenderFieldRequirement();
+
+            // Update terms line visibility based on organization's privacy URL
+            updateTermsLineVisibility();
         }
     }
 

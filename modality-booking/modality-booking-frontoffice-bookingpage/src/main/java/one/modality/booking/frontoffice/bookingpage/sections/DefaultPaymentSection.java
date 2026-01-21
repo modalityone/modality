@@ -358,7 +358,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         HBox inputRow = new HBox(12);
         inputRow.setAlignment(Pos.CENTER_LEFT);
 
-        Label currencyLabel = new Label(PriceFormatter.getCurrencySymbol());
+        Label currencyLabel = new Label(EventPriceFormatter.getEventCurrencySymbol(workingBookingProperties != null ? workingBookingProperties.getEvent() : null));
         currencyLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-semibold", "bookingpage-text-dark");
 
         customAmountTextField = new TextField();
@@ -492,7 +492,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         HBox inputBox = new HBox(8);
         inputBox.setAlignment(Pos.CENTER_RIGHT);
 
-        Label currencyLabel = new Label(PriceFormatter.getCurrencySymbol());
+        Label currencyLabel = new Label(EventPriceFormatter.getEventCurrencySymbol(workingBookingProperties != null ? workingBookingProperties.getEvent() : null));
         currencyLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-muted");
 
         TextField allocationField = new TextField();
