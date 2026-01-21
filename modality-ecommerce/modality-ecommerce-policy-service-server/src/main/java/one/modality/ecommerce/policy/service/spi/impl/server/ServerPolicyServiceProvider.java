@@ -25,7 +25,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         ", date_part('epoch', coalesce(bookingProcessStart, openingDate) - now()) as " + Event.secondsToBookingProcessStartAtLoadingTime +
         " from Event"; // loading terms url for US Festival (way to load terms will change later)
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
-        "select name,label,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
+        "select name,label,comment,site.name,item.(name,label,code,family.(code,name,label),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
         ",(select sum(" +
             "coalesce((select quantity from PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1 limit 1), 0)" +
