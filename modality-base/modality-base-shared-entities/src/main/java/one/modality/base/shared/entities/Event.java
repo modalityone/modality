@@ -54,9 +54,9 @@ public interface Event extends Entity,
     String termsUrlEn = "termsUrlEn";
     String noAccountBooking = "noAccountBooking";
 
-    // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate.getEvent() - loaded/computed by ServerPolicyServiceProvider
-    String secondsToOpeningDate = "secondsToOpeningDate";
-    String secondsToBookingProcessStart = "secondsToBookingProcessStart";
+    // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate - loaded/computed by ServerPolicyServiceProvider
+    String secondsToOpeningDateAtLoadingTime = "secondsToOpeningDateAtLoadingTime";
+    String secondsToBookingProcessStartAtLoadingTime = "secondsToBookingProcessStartAtLoadingTime";
 
     // Virtual dynamic field (not persisted in the database) used for messaging purpose only
     String queueProgress = "queueProgress";
@@ -375,14 +375,6 @@ public interface Event extends Entity,
 
     default Boolean isNoAccountBooking() {
         return getBooleanFieldValue(noAccountBooking);
-    }
-
-    default Double getSecondsToOpeningDate() {
-        return getDoubleFieldValue(secondsToOpeningDate);
-    }
-
-    default Double getSecondsToBookingProcessStart() {
-        return getDoubleFieldValue(secondsToBookingProcessStart);
     }
 
 }
