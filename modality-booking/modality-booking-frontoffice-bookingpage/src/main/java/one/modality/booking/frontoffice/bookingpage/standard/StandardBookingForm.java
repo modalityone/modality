@@ -59,6 +59,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+//import java.util.stream.IntStream;
 
 /**
  * A standard booking form with a flexible number of custom steps followed by
@@ -124,6 +125,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private DefaultUnifiedQueueSection unifiedQueueSection;
     private CompositeBookingFormPage unifiedQueuePage;
     private EventQueueNotification eventQueueNotification;
+    private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
 
     // Configuration flags
     private boolean showCommentsSection;
@@ -1163,6 +1165,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
      */
     private void handleEnqueued(SubmitDocumentChangesResult result, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
         Object queueToken = result.queueToken();
+        this.currentQueueToken = queueToken; // Store for use when leaving queue
         Event event = getEvent();
 
         // Navigate to unified queue page
@@ -1232,6 +1235,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void handleEnqueuedFinalResult(SubmitDocumentChangesResult finalResult, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
         // Queue processing completed - registration is now confirmed open
         registrationConfirmedOpen = true;
+        currentQueueToken = null; // Clear the token as queue processing is complete
 
         switch (finalResult.status()) {
             case APPROVED -> {
@@ -1339,14 +1343,18 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     /**
      * Handles when user clicks "Leave Queue and Edit Booking".
-     * Stops countdown/processing and returns to summary page.
+     * Stops countdown/processing, cancels the enqueued booking on the server, and returns to summary page.
      */
     private void handleLeaveQueue() {
         if (unifiedQueueSection != null) {
             unifiedQueueSection.stopCountdown();
             unifiedQueueSection.stopStatusMessageRotation();
         }
-        // TODO: Cancel the enqueued booking on the server if needed
+        // Cancel the enqueued booking on the server
+        if (currentQueueToken != null) {
+            DocumentService.leaveEventQueue(currentQueueToken);
+            currentQueueToken = null; // Clear the token
+        }
         navigateToSummary();
     }
 
@@ -1398,7 +1406,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String historyComment = historyHelper.generateHistoryComment();
 
         // Submit changes to the database
-       //For debug only the queue system only: IntStream.range(1, 15).forEach(i -> workingBooking.submitChanges(historyComment));
+       //For debug only the queue system only:
+    //    IntStream.range(1, 15).forEach(i -> workingBooking.submitChanges(historyComment));
 
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
