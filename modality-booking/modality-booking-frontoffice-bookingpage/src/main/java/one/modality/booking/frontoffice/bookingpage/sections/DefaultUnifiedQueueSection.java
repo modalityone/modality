@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.ObjectProperty;
@@ -118,8 +119,13 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
     private Label hoursLabel;
     private Label minutesLabel;
     private Label secondsLabel;
+    private HBox timerDisplay;
+    private StackPane hoursDigitPane;
+    private StackPane minutesDigitPane;
+    private StackPane secondsDigitPane;
     private Timeline countdownTimer;
     private int remainingSeconds = 0;
+    private ResponsiveDesign responsiveDesign;
 
     // Progress bar components
     private StackPane progressBarFill;
@@ -165,6 +171,9 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
 
         // Set initial state
         updateUIForState(QueueState.PRE_COUNTDOWN);
+
+        // Set up responsive design for countdown timer
+        setupResponsiveDesign();
     }
 
     // ===============================
@@ -199,6 +208,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel("DoNotRefreshBannerTitle");
+        title.setWrapText(true);
         title.getStyleClass().add("registration-queue-danger-title");
 
         Label message = I18nControls.newLabel("DoNotRefreshBannerMessage");
@@ -229,6 +239,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
 
         // Title and subtitle
         statusTitle = new Label();
+        statusTitle.setWrapText(true);
         statusTitle.getStyleClass().add("registration-queue-status-title");
 
         statusSubtitle = new Label();
@@ -265,6 +276,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         infoIconBadge.getChildren().add(infoIcon);
 
         Label headerLabel = I18nControls.newLabel("HowTheQueueWorks");
+        headerLabel.setWrapText(true);
         headerLabel.getStyleClass().add("registration-queue-explanation-header");
 
         headerRow.getChildren().addAll(infoIconBadge, headerLabel);
@@ -305,6 +317,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel(titleKey);
+        title.setWrapText(true);
         title.getStyleClass().add("registration-queue-explanation-step-title");
 
         Label desc = I18nControls.newLabel(descKey);
@@ -344,6 +357,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel("NewBookingSystemNotice");
+        title.setWrapText(true);
         title.getStyleClass().add("registration-queue-notice-title");
 
         Label desc = I18nControls.newLabel("NewBookingSystemNoticeDesc");
@@ -384,15 +398,24 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
 
         // "Registration opens in" label
         Label opensInLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationOpensIn);
+        opensInLabel.setWrapText(true);
         opensInLabel.getStyleClass().add("registration-queue-countdown-label");
 
         // Timer display: HH : MM : SS
-        HBox timerDisplay = new HBox(12);
+        timerDisplay = new HBox(12);
         timerDisplay.setAlignment(Pos.CENTER);
 
         // Hours
-        VBox hoursBox = createTimerDigitBox("00", BookingPageI18nKeys.Hours);
-        hoursLabel = (Label) ((StackPane) hoursBox.getChildren().get(0)).getChildren().get(0);
+        VBox hoursBox = new VBox(6);
+        hoursBox.setAlignment(Pos.CENTER);
+        hoursLabel = new Label("00");
+        hoursLabel.setAlignment(Pos.CENTER);
+        hoursLabel.getStyleClass().add("registration-queue-countdown-digit");
+        hoursDigitPane = new StackPane(hoursLabel);
+        hoursDigitPane.getStyleClass().add("registration-queue-countdown-digit-box");
+        Label hoursUnitLabel = I18nControls.newLabel(BookingPageI18nKeys.Hours);
+        hoursUnitLabel.getStyleClass().add("registration-queue-countdown-unit");
+        hoursBox.getChildren().addAll(hoursDigitPane, hoursUnitLabel);
 
         // Colon separator
         Label colon1 = new Label(":");
@@ -400,8 +423,16 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         VBox.setMargin(colon1, new Insets(0, 0, 24, 0));
 
         // Minutes
-        VBox minutesBox = createTimerDigitBox("00", BookingPageI18nKeys.Minutes);
-        minutesLabel = (Label) ((StackPane) minutesBox.getChildren().get(0)).getChildren().get(0);
+        VBox minutesBox = new VBox(6);
+        minutesBox.setAlignment(Pos.CENTER);
+        minutesLabel = new Label("00");
+        minutesLabel.setAlignment(Pos.CENTER);
+        minutesLabel.getStyleClass().add("registration-queue-countdown-digit");
+        minutesDigitPane = new StackPane(minutesLabel);
+        minutesDigitPane.getStyleClass().add("registration-queue-countdown-digit-box");
+        Label minutesUnitLabel = I18nControls.newLabel(BookingPageI18nKeys.Minutes);
+        minutesUnitLabel.getStyleClass().add("registration-queue-countdown-unit");
+        minutesBox.getChildren().addAll(minutesDigitPane, minutesUnitLabel);
 
         // Colon separator
         Label colon2 = new Label(":");
@@ -409,8 +440,16 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         VBox.setMargin(colon2, new Insets(0, 0, 24, 0));
 
         // Seconds
-        VBox secondsBox = createTimerDigitBox("00", BookingPageI18nKeys.Seconds);
-        secondsLabel = (Label) ((StackPane) secondsBox.getChildren().get(0)).getChildren().get(0);
+        VBox secondsBox = new VBox(6);
+        secondsBox.setAlignment(Pos.CENTER);
+        secondsLabel = new Label("00");
+        secondsLabel.setAlignment(Pos.CENTER);
+        secondsLabel.getStyleClass().add("registration-queue-countdown-digit");
+        secondsDigitPane = new StackPane(secondsLabel);
+        secondsDigitPane.getStyleClass().add("registration-queue-countdown-digit-box");
+        Label secondsUnitLabel = I18nControls.newLabel(BookingPageI18nKeys.Seconds);
+        secondsUnitLabel.getStyleClass().add("registration-queue-countdown-unit");
+        secondsBox.getChildren().addAll(secondsDigitPane, secondsUnitLabel);
 
         timerDisplay.getChildren().addAll(hoursBox, colon1, minutesBox, colon2, secondsBox);
 
@@ -420,29 +459,52 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
     }
 
     /**
-     * Creates a timer digit box with unit label below.
+     * Sets up responsive design for the countdown timer.
+     * Adjusts sizes based on container width.
      */
-    private VBox createTimerDigitBox(String initialValue, Object unitKey) {
-        VBox box = new VBox(6);
-        box.setAlignment(Pos.CENTER);
+    private void setupResponsiveDesign() {
+        responsiveDesign = new ResponsiveDesign(container);
 
-        // Digit display
-        Label digitLabel = new Label(initialValue);
-        digitLabel.setMinWidth(80);
-        digitLabel.setAlignment(Pos.CENTER);
-        digitLabel.getStyleClass().add("registration-queue-countdown-digit");
+        // Desktop layout (width >= 500): larger timer boxes
+        responsiveDesign.addResponsiveLayout(
+            width -> width >= 500,
+            () -> applyTimerSize(80, new Insets(16, 24, 16, 24), 12)
+        );
 
-        StackPane digitPane = new StackPane(digitLabel);
-        digitPane.setPadding(new Insets(16, 24, 16, 24));
-        digitPane.getStyleClass().add("registration-queue-countdown-digit-box");
+        // Mobile layout (width < 500): smaller timer boxes
+        responsiveDesign.addResponsiveLayout(
+            width -> width < 500,
+            () -> applyTimerSize(50, new Insets(10, 14, 10, 14), 6)
+        );
 
-        // Unit label below
-        Label unitLabel = I18nControls.newLabel(unitKey);
-        unitLabel.getStyleClass().add("registration-queue-countdown-unit");
+        responsiveDesign.start();
+    }
 
-        box.getChildren().addAll(digitPane, unitLabel);
-
-        return box;
+    /**
+     * Applies size settings to timer digit boxes.
+     */
+    private void applyTimerSize(double minWidth, Insets padding, double spacing) {
+        if (timerDisplay != null) {
+            timerDisplay.setSpacing(spacing);
+        }
+        if (hoursLabel != null) {
+            hoursLabel.setMinWidth(minWidth);
+        }
+        if (minutesLabel != null) {
+            minutesLabel.setMinWidth(minWidth);
+        }
+        if (secondsLabel != null) {
+            secondsLabel.setMinWidth(minWidth);
+        }
+        if (hoursDigitPane != null) {
+            hoursDigitPane.setPadding(padding);
+        }
+        if (minutesDigitPane != null) {
+            minutesDigitPane.setPadding(padding);
+        }
+        if (secondsDigitPane != null) {
+            secondsDigitPane.setPadding(padding);
+        }
     }
 
     /**
@@ -456,6 +518,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
 
         // "Processing Now" header
         Label processingLabel = I18nControls.newLabel("ProcessingNow");
+        processingLabel.setWrapText(true);
         processingLabel.getStyleClass().add("registration-queue-progress-header");
 
         // Progress bar section
@@ -498,14 +561,20 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
 
         progressSection.getChildren().addAll(progressLabelRow, progressBar);
 
-        // Queue position display
-        HBox positionRow = new HBox(6);
+        // Queue position display - using FlowPane to wrap on small screens
+        FlowPane positionRow = new FlowPane();
+        positionRow.setHgap(6);
+        positionRow.setVgap(4);
         positionRow.setAlignment(Pos.CENTER);
         positionRow.setPadding(new Insets(12, 16, 12, 16));
         positionRow.getStyleClass().add("registration-queue-position");
 
         Label processingBookingLabel = I18nControls.newLabel("CurrentlyProcessingBooking");
         processingBookingLabel.getStyleClass().add("registration-queue-position-text");
+
+        // Wrap "X of Y" in HBox so they stay together when FlowPane wraps
+        HBox numbersBox = new HBox(6);
+        numbersBox.setAlignment(Pos.CENTER);
 
         positionLabel = new Label("0");
         positionLabel.getStyleClass().add("registration-queue-position-number");
@@ -516,10 +585,12 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         totalLabel = new Label("0");
         totalLabel.getStyleClass().add("registration-queue-position-number");
 
-        positionRow.getChildren().addAll(processingBookingLabel, positionLabel, ofLabel, totalLabel);
+        numbersBox.getChildren().addAll(positionLabel, ofLabel, totalLabel);
+        positionRow.getChildren().addAll(processingBookingLabel, numbersBox);
 
         // Status message (rotating)
         statusMessageLabel = new Label();
+        statusMessageLabel.setWrapText(true);
         statusMessageLabel.getStyleClass().add("registration-queue-status-message");
 
         content.getChildren().addAll(processingLabel, progressSection, positionRow, statusMessageLabel);
@@ -563,6 +634,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         actionButtonContainer.setPadding(new Insets(24, 0, 0, 0));
 
         Label buttonLabel = I18nControls.newLabel("LeaveQueueAndEditBooking");
+        buttonLabel.setWrapText(true);
 
         HBox button = new HBox(8);
         button.setAlignment(Pos.CENTER);
