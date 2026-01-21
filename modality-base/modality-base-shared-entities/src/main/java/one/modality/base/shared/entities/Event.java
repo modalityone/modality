@@ -26,6 +26,7 @@ public interface Event extends Entity,
     String startDate = "startDate";
     String endDate = "endDate";
     String openingDate = "openingDate";
+    String bookingProcessStart = "bookingProcessStart";
     String vodExpirationDate = "vodExpirationDate";
     String vodProcessingTimeMinutes = "vodProcessingTimeMinutes";
     String audioExpirationDate = "audioExpirationDate";
@@ -51,6 +52,14 @@ public interface Event extends Entity,
     String repeatVideo = "repeatVideo";
     String timezone = "timezone";
     String termsUrlEn = "termsUrlEn";
+    String noAccountBooking = "noAccountBooking";
+
+    // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate - loaded/computed by ServerPolicyServiceProvider
+    String secondsToOpeningDateAtLoadingTime = "secondsToOpeningDateAtLoadingTime";
+    String secondsToBookingProcessStartAtLoadingTime = "secondsToBookingProcessStartAtLoadingTime";
+
+    // Virtual dynamic field (not persisted in the database) used for messaging purpose only
+    String queueProgress = "queueProgress";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -104,6 +113,14 @@ public interface Event extends Entity,
 
     default LocalDateTime getOpeningDate() {
         return getLocalDateTimeFieldValue(openingDate);
+    }
+
+    default void setBookingProcessStart(LocalDateTime value) {
+        setFieldValue(bookingProcessStart, value);
+    }
+
+    default LocalDateTime getBookingProcessStart() {
+        return getLocalDateTimeFieldValue(bookingProcessStart);
     }
 
     default void setVodExpirationDate(LocalDateTime value) {
@@ -350,6 +367,14 @@ public interface Event extends Entity,
 
     default String getTermsUrlEn() {
         return getStringFieldValue(termsUrlEn);
+    }
+
+    default void setNoAccountBooking(Boolean value) {
+        setFieldValue(noAccountBooking, value);
+    }
+
+    default Boolean isNoAccountBooking() {
+        return getBooleanFieldValue(noAccountBooking);
     }
 
 }

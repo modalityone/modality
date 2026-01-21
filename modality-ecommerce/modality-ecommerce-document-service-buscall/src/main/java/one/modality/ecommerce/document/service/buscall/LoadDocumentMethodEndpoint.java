@@ -11,7 +11,7 @@ import one.modality.ecommerce.document.service.LoadDocumentArgument;
 public class LoadDocumentMethodEndpoint extends AsyncFunctionBusCallEndpoint<LoadDocumentArgument, DocumentAggregate> {
 
     public LoadDocumentMethodEndpoint() {
-        super(DocumentServiceBusAddress.LOAD_DOCUMENT_METHOD_ADDRESS, DocumentService::loadDocument);
+        super(DocumentServiceBusAddresses.LOAD_DOCUMENT_METHOD_ADDRESS, DocumentService::loadDocument);
     }
 
 }

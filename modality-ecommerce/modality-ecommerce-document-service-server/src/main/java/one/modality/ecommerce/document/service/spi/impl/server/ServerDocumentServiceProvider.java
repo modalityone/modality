@@ -245,4 +245,9 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         return null;
     }
 
+    @Override
+    public Future<Boolean> leaveEventQueue(Object queueToken) {
+        return Future.succeededFuture(DocumentSubmitController.leaveEventQueue(queueToken));
+    }
+
 }

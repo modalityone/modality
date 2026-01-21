@@ -1,12 +1,9 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.scheduler.Scheduler;
-import dev.webfx.stack.com.bus.DeliveryOptions;
-import dev.webfx.stack.push.server.PushServerService;
+import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 
-import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,56 +13,81 @@ import java.util.Map;
 final class DocumentSubmitController {
 
     private static final Map<Object, DocumentSubmitEventQueue> eventQueues = new HashMap<>();
+    private static final Map<Object, Future<DocumentSubmitEventQueue>> eventQueueCreationFutures = new HashMap<>();
 
-    public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest info) {
-        Object eventPrimaryKey = info.eventPrimaryKey();
+    public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest request) {
+        Object eventPrimaryKey = request.eventPrimaryKey();
 
+        // Getting the event queue if already exists
         DocumentSubmitEventQueue eventQueue = eventQueues.get(eventPrimaryKey);
-        if (eventQueue == null) {
-            return createEventSubmitQueue(eventPrimaryKey)
-                .compose(newQueue -> {
-                    eventQueues.put(eventPrimaryKey, newQueue);
-                    return executeOrEnqueueSubmitDocumentChanges(info, newQueue);
-                });
+        if (eventQueue != null) // If the event queue already exists, we can proceed with the request right now
+            return executeOrEnqueueSubmitDocumentChanges(request, eventQueue);
+
+        // Otherwise, we first need to create the event queue (or wait if it's already being created)
+        Future<DocumentSubmitEventQueue> eventQueueCreationFuture = eventQueueCreationFutures.get(eventPrimaryKey);
+        if (eventQueueCreationFuture == null) {
+            eventQueueCreationFuture = createEventSubmitQueue(request)
+                .onComplete(ar -> eventQueueCreationFutures.remove(eventPrimaryKey));
+            eventQueueCreationFutures.put(eventPrimaryKey, eventQueueCreationFuture);
         }
-        return executeOrEnqueueSubmitDocumentChanges(info, eventQueue);
+        return eventQueueCreationFuture
+            .compose(newQueue -> {
+                eventQueues.put(eventPrimaryKey, newQueue);
+                // and then proceed with the request
+                return executeOrEnqueueSubmitDocumentChanges(request, newQueue);
+            });
     }
 
-    private static Future<SubmitDocumentChangesResult> executeOrEnqueueSubmitDocumentChanges(DocumentSubmitRequest info, DocumentSubmitEventQueue eventQueue) {
-        if (eventQueue.getQueueStartExecutionDateTime() == null) {
-            return ServerDocumentServiceProvider.submitDocumentChangesNow(info);
-        }
-
-        eventQueue.addRequest(info);
-        if (eventQueue.getScheduled() == null) {
-            long delayMs = eventQueue.getQueueStartExecutionDateTime().toInstant(ZoneOffset.UTC).toEpochMilli() - System.currentTimeMillis();
-            eventQueue.setScheduled(Scheduler.scheduleDelay(Math.max(0, delayMs), () -> processNextEnqueuedRequest(eventQueue)));
-        }
-        return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult("toto"));
+    private static Future<DocumentSubmitEventQueue> createEventSubmitQueue(DocumentSubmitRequest request) {
+        return request.updateStore().getOrCreateEntity(Event.class, request.eventPrimaryKey()).<Event>onExpressionLoaded("name,openingDate,bookingProcessStart")
+            .map(DocumentSubmitEventQueue::new);
     }
 
-    private static void processNextEnqueuedRequest(DocumentSubmitEventQueue eventQueue) {
-        DocumentSubmitRequest request = eventQueue.pollRequest();
-        if (request != null) {
-            ServerDocumentServiceProvider.submitDocumentChangesNow(request)
-                .onComplete(ar -> {
-                    pushResultToClient(ar.result() != null ? ar.result() : SubmitDocumentChangesResult.createSoldOutResult(null, null), request.runId());
-                    processNextEnqueuedRequest(eventQueue);
-                });
-        } else {
-            eventQueue.setScheduled(null);
+    private static Future<SubmitDocumentChangesResult> executeOrEnqueueSubmitDocumentChanges(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
+        // Even if we execute the request immediately, we still need to add it to the queue
+        boolean isTheOnlyRequest = eventQueue.isEmpty();
+        eventQueue.addRequest(request);
+
+        // We execute the request immediately if it's the only request and the queue is ready (not waiting an opening time) and not processing
+        if (isTheOnlyRequest && eventQueue.isReady() && !eventQueue.isProcessing()) {
+            eventQueue.setProcessingRequest(request); // We inform the queue we process the request now
+            return processRequest(request, eventQueue); // We process it (this will also remove it from the queue and eventually process the next one)
         }
+
+        // Otherwise we return the enqueued result with the queue token, and the request will be processed later
+        return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult(request.queueToken()));
     }
 
-    private static Future<DocumentSubmitEventQueue> createEventSubmitQueue(Object eventPrimaryKey) {
-        // Temporary implementation (will be read from the database in the next version)
-        return Future.succeededFuture(new DocumentSubmitEventQueue(null));
-        //return Future.succeededFuture(new EventSubmitQueue(LocalDateTime.now().plusMinutes(1)));
+    private static Future<SubmitDocumentChangesResult> processRequest(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
+        return ServerDocumentServiceProvider.submitDocumentChangesNow(request)
+            // And once processed, we inform the queue the request can be removed
+            .onComplete(ar -> eventQueue.removedProcessedRequest(request));
     }
 
-    private static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
-        if (clientRunId != null)
-            PushServerService.push("/document/service/push-result", result, new DeliveryOptions(), clientRunId);
+    static void processRequestAndNotifyClient(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
+        processRequest(request, eventQueue)
+            .onComplete(ar -> {
+                SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
+                    // Temporary SoldOut result when an exception is raised (ex: double booking)
+                    SubmitDocumentChangesResult.createSoldOutResult(null, null);
+                DocumentSubmitEventQueue.pushResultToClient(
+                    SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
+                    request.runId()
+                );
+            });
+    }
+
+    static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {
+        eventQueues.remove(eventQueue.getEventPrimaryKey());
+    }
+
+    static boolean leaveEventQueue(Object queueToken) {
+        for (DocumentSubmitEventQueue eventQueue : eventQueues.values()) {
+            if (eventQueue.releaseEventQueue(queueToken)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

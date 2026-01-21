@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.beans.property.*;
@@ -89,6 +90,29 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
     protected final Map<AccommodationOption, VBox> optionCardMap = new HashMap<>();
     protected final Map<AccommodationOption, StackPane> checkmarkBadgeMap = new HashMap<>();
 
+    // === RESPONSIVE DESIGN ===
+    protected ResponsiveDesign responsiveDesign;
+    protected boolean isMobileLayout = false;
+    // Track header components for responsive layout switching
+    protected final java.util.List<CardHeaderComponents> cardHeaderList = new java.util.ArrayList<>();
+
+    /** Holds references to card header components for responsive layout switching */
+    protected static class CardHeaderComponents {
+        final VBox headerContainer;  // Container that holds either HBox or VBox layout
+        final Label nameLabel;
+        final VBox priceContainer;
+        final StackPane checkmarkBadge;
+        final boolean isAvailable;
+
+        CardHeaderComponents(VBox headerContainer, Label nameLabel, VBox priceContainer, StackPane checkmarkBadge, boolean isAvailable) {
+            this.headerContainer = headerContainer;
+            this.nameLabel = nameLabel;
+            this.priceContainer = priceContainer;
+            this.checkmarkBadge = checkmarkBadge;
+            this.isAvailable = isAvailable;
+        }
+    }
+
     // === CALLBACKS ===
     protected Consumer<AccommodationOption> onOptionSelected;
     protected Runnable onContinuePressed;
@@ -110,8 +134,8 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         // Section header with icon
         HBox sectionHeader = new StyledSectionHeader(BookingPageI18nKeys.AccommodationOptions, StyledSectionHeader.ICON_HOME);
 
-        // Info box explaining what price includes (per JSX mockup)
-        priceIncludesInfoBox = BookingPageUIBuilder.createPriceIncludesInfoBox(
+        // Info box explaining what price includes (per JSX mockup - amber style)
+        priceIncludesInfoBox = BookingPageUIBuilder.createAmberPriceIncludesInfoBox(
             I18n.getI18nText(BookingPageI18nKeys.PriceIncludesTeachingsAccommodationMeals),
             I18n.getI18nText(BookingPageI18nKeys.AdjustDatesAndOptionsNextStep)
         );
@@ -124,6 +148,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         container.getChildren().addAll(sectionHeader, priceIncludesInfoBox, optionsContainer);
         VBox.setMargin(sectionHeader, new Insets(0, 0, 16, 0));
         VBox.setMargin(priceIncludesInfoBox, new Insets(0, 0, 20, 0));  // marginBottom: 20px per JSX
+
+        // Setup responsive design for card layouts
+        setupResponsiveDesign();
     }
 
     protected void setupBindings() {
@@ -169,13 +196,43 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         optionsContainer.getChildren().clear();
         optionCardMap.clear();
         checkmarkBadgeMap.clear();
+        cardHeaderList.clear();
 
         AccommodationOption currentlySelected = selectedOptionProperty.get();
         Object selectedItemId = currentlySelected != null ? currentlySelected.getItemId() : null;
 
         AccommodationOption matchingOption = null;
 
-        for (AccommodationOption option : accommodationOptions) {
+        // Separate options into accommodation and day visitor groups
+        List<AccommodationOption> accommodationOpts = accommodationOptions.stream()
+            .filter(opt -> !opt.isDayVisitor())
+            .collect(Collectors.toList());
+
+        List<AccommodationOption> dayVisitorOpts = accommodationOptions.stream()
+            .filter(AccommodationOption::isDayVisitor)
+            .collect(Collectors.toList());
+
+        // Add accommodation cards first
+        for (AccommodationOption option : accommodationOpts) {
+            boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
+            VBox card = createOptionCard(option, isSelected);
+            optionsContainer.getChildren().add(card);
+            optionCardMap.put(option, card);
+
+            if (isSelected) {
+                matchingOption = option;
+            }
+        }
+
+        // Add separator if both groups exist
+        if (!accommodationOpts.isEmpty() && !dayVisitorOpts.isEmpty()) {
+            HBox separator = BookingPageUIBuilder.createNoAccommodationSeparator();
+            VBox.setMargin(separator, new Insets(28, 0, 20, 0));
+            optionsContainer.getChildren().add(separator);
+        }
+
+        // Add day visitor cards
+        for (AccommodationOption option : dayVisitorOpts) {
             boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
             VBox card = createOptionCard(option, isSelected);
             optionsContainer.getChildren().add(card);
@@ -189,6 +246,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         if (matchingOption != null && currentlySelected != matchingOption) {
             selectedOptionProperty.set(matchingOption);
         }
+
+        // Reapply current layout after rebuilding cards
+        applyCardLayout(isMobileLayout);
     }
 
     protected VBox createOptionCard(AccommodationOption option, boolean isSelected) {
@@ -218,15 +278,10 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         }
 
         // === HEADER ROW: Room name (left) + Total Price (right) ===
-        // Using BorderPane for proper space-between layout like JSX
-        BorderPane headerRow = new BorderPane();
-        // Always add right padding for available cards to avoid price/checkmark overlap
-        // (checkmark can appear at any time when user selects the card)
-        if (isAvailable) {
-            headerRow.setPadding(new Insets(0, 40, 0, 0));
-        }
+        // Using VBox as container for responsive layout switching (horizontal/vertical)
+        VBox headerContainer = new VBox(8);
 
-        // Room name (left side) - 16px, semibold
+        // Room name - 16px, semibold
         Label nameLabel = new Label(option.getName());
         nameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
         if (isSoldOut) {
@@ -235,14 +290,12 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             nameLabel.getStyleClass().add("bookingpage-text-dark");
         }
         nameLabel.setWrapText(true);
-        nameLabel.setMaxWidth(200); // Prevent name from pushing price off
 
-        // Total price (right side) with per person/room indicator
+        // Total price with per person/room indicator
         int totalPrice = calculateTotalPrice(option);
 
         // Price container (VBox with price and per person/room text)
         VBox priceContainer = new VBox(2);
-        priceContainer.setAlignment(Pos.TOP_RIGHT);
 
         Label priceLabel = new Label(formatPrice(totalPrice));
         priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold");
@@ -262,13 +315,18 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             priceContainer.getChildren().add(priceLabel);
         }
 
-        headerRow.setLeft(nameLabel);
-        headerRow.setRight(priceContainer);
-        BorderPane.setAlignment(nameLabel, Pos.TOP_LEFT);
-        BorderPane.setAlignment(priceContainer, Pos.TOP_RIGHT);
-        BorderPane.setMargin(priceContainer, new Insets(0, 0, 0, 12)); // marginLeft like JSX
+        // Store checkmark badge reference (will be created later for available cards)
+        StackPane checkmarkBadge = null;
+        if (isAvailable) {
+            checkmarkBadge = BookingPageUIBuilder.createCheckmarkBadgeCss(32);
+            checkmarkBadge.setVisible(isSelected);
+            checkmarkBadgeMap.put(option, checkmarkBadge);
+        }
 
-        contentBox.getChildren().add(headerRow);
+        // Track header components for responsive layout switching
+        cardHeaderList.add(new CardHeaderComponents(headerContainer, nameLabel, priceContainer, checkmarkBadge, isAvailable));
+
+        contentBox.getChildren().add(headerContainer);
 
         // === BADGES ROW: Constraint badge only (LIMITED badge removed per user request) ===
         if (option.hasConstraint()) {
@@ -308,15 +366,13 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
         // Wrap content with checkmark badge or sold out ribbon
         if (isAvailable) {
-            // Create checkmark badge (CSS-themed, 32px like JSX)
-            StackPane checkmarkBadge = BookingPageUIBuilder.createCheckmarkBadgeCss(32);
-            checkmarkBadge.setVisible(isSelected);
-            checkmarkBadgeMap.put(option, checkmarkBadge);
+            // Use the checkmark badge already created and stored in checkmarkBadgeMap
+            StackPane existingCheckmarkBadge = checkmarkBadgeMap.get(option);
 
             // StackPane wrapper to position checkmark in top-right corner
-            StackPane wrapper = new StackPane(contentBox, checkmarkBadge);
-            StackPane.setAlignment(checkmarkBadge, Pos.TOP_RIGHT);
-            StackPane.setMargin(checkmarkBadge, new Insets(-8, -8, 0, 0));
+            StackPane wrapper = new StackPane(contentBox, existingCheckmarkBadge);
+            StackPane.setAlignment(existingCheckmarkBadge, Pos.TOP_RIGHT);
+            StackPane.setMargin(existingCheckmarkBadge, new Insets(-8, -8, 0, 0));
 
             card.getChildren().add(wrapper);
         } else {
@@ -429,10 +485,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
         ribbon.setAlignment(Pos.CENTER);  // Center the text in the ribbon
 
-        // Text styling - smaller font for better fit
+        // Text styling - font size defined in CSS class
         Label ribbonText = new Label("SOLD OUT");
         ribbonText.getStyleClass().add("bookingpage-soldout-ribbon-text");
-        ribbonText.setStyle("-fx-font-size: 9px;");  // Smaller text
 
         // Padding for the ribbon - asymmetric to center text in visible area
         // More padding on left to shift text towards visible center
@@ -441,8 +496,6 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         ribbon.getChildren().add(ribbonText);
         ribbon.setMaxWidth(Region.USE_PREF_SIZE);
         ribbon.setMaxHeight(Region.USE_PREF_SIZE);
-        // Set solid background color directly to ensure no transparency
-        ribbon.setStyle("-fx-background-color: #78716c;");
 
         // Rotate for diagonal effect (45deg per JSX)
         ribbon.setRotate(45);
@@ -459,6 +512,75 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             return;
         }
         selectedOptionProperty.set(option);
+    }
+
+    // ========================================
+    // RESPONSIVE DESIGN
+    // ========================================
+
+    /**
+     * Sets up responsive design to switch card header layouts based on container width.
+     */
+    protected void setupResponsiveDesign() {
+        responsiveDesign = new ResponsiveDesign(container);
+
+        // Desktop layout (width >= 450): horizontal name + price layout
+        responsiveDesign.addResponsiveLayout(
+            width -> width >= 450,
+            () -> {
+                isMobileLayout = false;
+                applyCardLayout(false);
+            }
+        );
+
+        // Mobile layout (width < 450): vertical stacked layout
+        responsiveDesign.addResponsiveLayout(
+            width -> width < 450,
+            () -> {
+                isMobileLayout = true;
+                applyCardLayout(true);
+            }
+        );
+
+        responsiveDesign.start();
+    }
+
+    /**
+     * Applies the card header layout (horizontal or vertical) to all option cards.
+     *
+     * @param mobile true for vertical mobile layout, false for horizontal desktop layout
+     */
+    protected void applyCardLayout(boolean mobile) {
+        for (CardHeaderComponents header : cardHeaderList) {
+            header.headerContainer.getChildren().clear();
+
+            if (mobile) {
+                // Mobile: stack name and price vertically
+                header.nameLabel.setAlignment(Pos.CENTER_LEFT);
+                header.priceContainer.setAlignment(Pos.CENTER_LEFT);
+
+                header.headerContainer.setSpacing(8);
+                header.headerContainer.getChildren().addAll(header.nameLabel, header.priceContainer);
+            } else {
+                // Desktop: name and price side by side with spacer
+                header.nameLabel.setAlignment(Pos.CENTER_LEFT);
+                header.priceContainer.setAlignment(Pos.TOP_RIGHT);
+
+                HBox hbox = new HBox();
+                hbox.setAlignment(Pos.TOP_LEFT);
+                // Reserve space for checkmark badge on available cards
+                if (header.isAvailable) {
+                    hbox.setPadding(new Insets(0, 40, 0, 0));
+                }
+
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                HBox.setHgrow(header.nameLabel, Priority.SOMETIMES);
+
+                hbox.getChildren().addAll(header.nameLabel, spacer, header.priceContainer);
+                header.headerContainer.getChildren().add(hbox);
+            }
+        }
     }
 
     protected int calculateTotalPrice(AccommodationOption option) {

@@ -22,7 +22,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.i18n.I18nEntities;
-import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.client.message.receiver.ModalityEntityMessageReceiver;
 import one.modality.base.shared.entities.Event;
 
 import java.util.function.Consumer;
@@ -58,7 +58,7 @@ final class LivestreamNotificationOverlay {
         livestreamPlayer.getOverlayChildren().add(notificationContainer);
 
         // Push-notification management: we turn the published field into a property
-        ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(event.getStore());
+        ModalityEntityMessageReceiver.getFrontOfficeEntityMessageReceiver().listenEntityChanges(event.getStore());
         ObjectProperty<one.modality.base.shared.entities.Label> liveMessageLabelProperty = EntityBindings.getForeignEntityProperty(event, Event.livestreamMessageLabel);
 
         // Consumer that gets called when address fields change

@@ -24,7 +24,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.i18n.I18nEntities;
-import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.client.message.receiver.ModalityEntityMessageReceiver;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -113,7 +113,7 @@ final class TimetableFormattersAndRenderers {
             );
 
             // Push-notification management: we turn the published field into a property
-            ModalityMessaging.getFrontOfficeEntityMessaging().listenEntityChanges(videoScheduledItem.getStore());
+            ModalityEntityMessageReceiver.getFrontOfficeEntityMessageReceiver().listenEntityChanges(videoScheduledItem.getStore());
             BooleanProperty isPublishedProperty = EntityBindings.getBooleanFieldProperty(videoScheduledItem, ScheduledItem.published);
 
             // Starting a regular update of the status over the time to reflect the video lifecycle

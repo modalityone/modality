@@ -15,4 +15,6 @@ public interface DocumentServiceProvider {
 
     Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument);
 
+    Future<Boolean> leaveEventQueue(Object queueToken);
+
 }

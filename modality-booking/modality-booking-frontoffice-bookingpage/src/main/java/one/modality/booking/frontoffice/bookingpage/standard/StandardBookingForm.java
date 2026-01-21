@@ -59,6 +59,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+//import java.util.stream.IntStream;
 
 /**
  * A standard booking form with a flexible number of custom steps followed by
@@ -120,6 +121,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private DefaultPaymentSection defaultPaymentSection;
     private DefaultConfirmationSection defaultConfirmationSection;
 
+    // Unified queue section (lazy-initialized) - handles both countdown waiting and queue processing
+    private DefaultUnifiedQueueSection unifiedQueueSection;
+    private CompositeBookingFormPage unifiedQueuePage;
+    private EventQueueNotification eventQueueNotification;
+    private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
+
     // Configuration flags
     private boolean showCommentsSection;
 
@@ -135,6 +142,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     // Sticky header (optional - appears at top of form)
     private final Node stickyHeader;
+
+    // Tracks whether a user was logged in (to detect logout)
+    private boolean hadLoggedInUser = false;
+
+    // Tracks whether registration has been confirmed open (server accepted our submission)
+    private boolean registrationConfirmedOpen = false;
+
+    // Tracks whether we're returning to Summary from sold-out recovery (hides back button)
+    private boolean returnedFromSoldOutRecovery = false;
 
     /**
      * Package-private constructor - use {@link StandardBookingFormBuilder} to create instances.
@@ -607,26 +623,26 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultConfirmationSection != null) {
             defaultConfirmationSection.setOnMakeAnotherBooking(this::handleMakeAnotherBooking);
         }
+
+        // Listen for user logout to reset the form
+        FXProperties.runNowAndOnPropertyChange(userPerson -> {
+            if (userPerson != null) {
+                // User logged in - remember we had a logged-in user
+                hadLoggedInUser = true;
+            } else if (hadLoggedInUser) {
+                // User logged out (was logged in, now null) - reset the form
+                UiScheduler.runInUiThread(this::handleLogout);
+            }
+        }, FXUserPerson.userPersonProperty());
     }
 
     // === Page Button Configuration ===
     // Sets up navigation buttons for each page using the CompositeBookingFormPage API.
 
     private void setupPageButtons() {
-        // Summary page: Back + Submit Registration (submits booking before navigating)
-        // Back: goes to Member Selection (or Your Information if no member selection)
-        // Submit Registration: disabled when page not valid, submits booking then navigates to Pending Bookings
-        if (summaryPage instanceof CompositeBookingFormPage compositeSummary) {
-            compositeSummary.setButtons(
-                new BookingFormButton(BookingPageI18nKeys.Back,
-                    e -> handleSummaryBack(),
-                    "btn-back booking-form-btn-back"),
-                BookingFormButton.async(BookingPageI18nKeys.SubmitRegistration,
-                    button -> handleSummaryContinueAsync(),
-                    "btn-primary booking-form-btn-primary",
-                    Bindings.not(compositeSummary.validProperty()))
-            );
-        }
+        // Summary page: buttons configured via updateSummaryPageButtons()
+        // (handles both normal flow and sold-out recovery flow)
+        updateSummaryPageButtons();
 
         // Pending Bookings page: Register Another Person + Proceed to Payment (or Confirm Booking if price is zero)
         // Register Another Person is only shown for logged-in users (new users can't register another person)
@@ -697,27 +713,73 @@ public class StandardBookingForm extends MultiPageBookingForm {
         navigateToPreviousPage();
     }
 
+    /**
+     * Updates the summary page buttons based on the current state.
+     * When returning from sold-out recovery, the back button is hidden.
+     */
+    private void updateSummaryPageButtons() {
+        if (summaryPage instanceof CompositeBookingFormPage compositeSummary) {
+            if (returnedFromSoldOutRecovery) {
+                // No back button when returning from sold-out recovery
+                compositeSummary.setButtons(
+                    BookingFormButton.async(BookingPageI18nKeys.SubmitRegistration,
+                        button -> handleSummaryContinueAsync(),
+                        "btn-primary booking-form-btn-primary",
+                        Bindings.not(compositeSummary.validProperty()))
+                );
+            } else {
+                // Normal flow: include back button
+                compositeSummary.setButtons(
+                    new BookingFormButton(BookingPageI18nKeys.Back,
+                        e -> handleSummaryBack(),
+                        "btn-back booking-form-btn-back"),
+                    BookingFormButton.async(BookingPageI18nKeys.SubmitRegistration,
+                        button -> handleSummaryContinueAsync(),
+                        "btn-primary booking-form-btn-primary",
+                        Bindings.not(compositeSummary.validProperty()))
+                );
+            }
+        }
+    }
+
     private Future<?> handleSummaryContinueAsync() {
-        // Step 1: Set the person to book in FXPersonToBook before booking items
+        // Reset sold-out recovery state since we're now submitting
+        returnedFromSoldOutRecovery = false;
+        return handleSummaryContinueAsync(false);
+    }
+
+    private Future<?> handleSummaryContinueAsync(boolean skipQueueCheck) {
+        // Registration is now always submitted immediately to the server.
+        // If the event is not yet open, the server returns ENQUEUED status and we show the unified queue page.
+        // The skipQueueCheck parameter is used when returning from the queue page after "Leave Queue" action.
+
+        WorkingBooking workingBooking = getWorkingBooking();
+
+        // Step 1: Set the person to book in FXPersonToBook and apply personal details
         HasMemberSelectionSection.MemberInfo member = state.getSelectedMember();
         if (member != null && member.getPersonEntity() != null) {
             FXPersonToBook.setPersonToBook(member.getPersonEntity());
+            // Apply personal details via WorkingBooking to ensure they're set on AddDocumentEvent
+            if (workingBooking != null && workingBooking.getDocument() != null && workingBooking.getDocument().isNew()) {
+                workingBooking.applyPersonalDetails(member.getPersonEntity());
+            }
         }
 
-        // Step 1b: For new users (guests OR creating account), set personal details on the document
-        // and maintain guest session via FXGuestToBook (same pattern as Step1BookingFormAndSubmitSlide)
+        // Step 1b: For new users (guests OR creating account), apply personal details via WorkingBooking
+        // This properly sets them on the AddDocumentEvent (not just Document entity) so they get submitted
         HasYourInformationSection.NewUserData newUser = state.getPendingNewUserData();
         if (newUser != null) {
-            Document document = getWorkingBooking().getDocument();
-            if (document != null) {
-                document.setFirstName(newUser.firstName);
-                document.setLastName(newUser.lastName);
-                document.setEmail(newUser.email);
-                // Set country from event organization (same as Step1BookingFormAndSubmitSlide)
-                Event event = getWorkingBooking().getEvent();
+            if (workingBooking != null && workingBooking.getDocument() != null && workingBooking.getDocument().isNew()) {
+                // Apply guest personal details to AddDocumentEvent
+                workingBooking.applyGuestPersonalDetails(newUser.firstName, newUser.lastName, newUser.email);
+
+                // Set country from event organization (need to do this separately on Document)
+                Document document = workingBooking.getDocument();
+                Event event = workingBooking.getEvent();
                 if (event != null && event.getOrganization() != null) {
                     document.setCountry(event.getOrganization().getCountry());
                 }
+
                 // Maintain guest session for payment/confirmation
                 FXGuestToBook.setGuestToBook(document);
             }
@@ -730,7 +792,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (defaultCommentsSection != null) {
             String commentText = defaultCommentsSection.getCommentText();
             if (commentText != null && !commentText.trim().isEmpty()) {
-                WorkingBooking workingBooking = getWorkingBookingProperties().getWorkingBooking();
                 if (workingBooking != null) {
                     workingBooking.addRequest(commentText.trim());
                 }
@@ -749,6 +810,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .compose(ignored -> submitBookingAsync())
             .compose(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
+                    // SOLD_OUT means registration opened and processing happened
+                    registrationConfirmedOpen = true;
                     UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
                         new SoldOutErrorParser.SoldOutInfo(
                             submitResult.soldOutSitePrimaryKey(),
@@ -757,6 +820,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         )
                     ));
                     return Future.failedFuture("Sold out"); // We still want to stop the flow here
+                }
+                // Handle ENQUEUED status - show queue page and wait for final result
+                if (submitResult.status() == DocumentChangesStatus.ENQUEUED) {
+                    UiScheduler.runInUiThread(() -> handleEnqueued(submitResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation));
+                    return Future.failedFuture("Enqueued"); // Stop flow, will continue when final result arrives
                 }
                 // For new users (guest or creating account), skip loading bookings
                 // They're not logged in, so there's nothing to load
@@ -905,7 +973,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Configure page properties
         page.setStep(false)                    // Don't show in step progress header
-            .setHeaderVisible(false)           // Section has its own header
+            .setHeaderVisible(true)            // Show step navigation header
             .setShowingOwnSubmitButton(false); // Show custom navigation buttons from this page
 
         // Create custom buttons for this page
@@ -917,7 +985,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 if (selectedOption != null) {
                     // Get roommate info if collected in the sold-out section
                     StandardBookingFormCallbacks.SoldOutRecoveryRoommateInfo roommateInfo = soldOutSection.getRoommateInfo();
-                    callbacks.onAccommodationSoldOutRecovery(selectedOption, roommateInfo, this::navigateToSummary);
+                    callbacks.onAccommodationSoldOutRecovery(selectedOption, roommateInfo, () -> {
+                        // Set flag to hide back button on Summary page (no going back after sold-out recovery)
+                        returnedFromSoldOutRecovery = true;
+                        updateSummaryPageButtons();
+                        navigateToSummary();
+                    });
                 }
             },
             "btn-primary booking-form-btn-primary",
@@ -1083,6 +1156,221 @@ public class StandardBookingForm extends MultiPageBookingForm {
         return options;
     }
 
+    // === Registration Queue Handling ===
+
+    /**
+     * Handles ENQUEUED status from submission by showing the unified queue page.
+     * The page shows a countdown if registration is not yet open, then transitions
+     * to progress display when the server starts processing.
+     */
+    private void handleEnqueued(SubmitDocumentChangesResult result, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
+        Object queueToken = result.queueToken();
+        this.currentQueueToken = queueToken; // Store for use when leaving queue
+        Event event = getEvent();
+
+        // Navigate to unified queue page
+        navigateToUnifiedQueuePage();
+
+        // Determine initial state based on whether registration is open
+        if (unifiedQueueSection != null) {
+            // Set up callback for when countdown completes
+            unifiedQueueSection.setOnCountdownComplete(() -> {
+                // Countdown reached zero - transition to processing state
+                unifiedQueueSection.transitionToProcessing();
+            });
+
+            if (isRegistrationOpen()) {
+                // Registration already open - show processing state directly
+                unifiedQueueSection.setState(DefaultUnifiedQueueSection.QueueState.QUEUE_PROCESSING);
+                unifiedQueueSection.startStatusMessageRotation();
+            } else {
+                // Registration not yet open - show countdown
+                int secondsToOpening = getSecondsToRegistrationOpening();
+                unifiedQueueSection.setState(DefaultUnifiedQueueSection.QueueState.PRE_COUNTDOWN);
+                unifiedQueueSection.startCountdown(secondsToOpening);
+            }
+        }
+
+        // Set up queue notification to track progress
+        if (event != null) {
+            eventQueueNotification = EventQueueNotification.getOrCreate(event);
+
+            // Update progress when queue status changes
+            FXProperties.runOnPropertyChange(progress -> {
+                if (progress != null && unifiedQueueSection != null) {
+                    UiScheduler.runInUiThread(() -> {
+                        // Only transition to processing state if registration is now open
+                        // (countdown has reached zero or event opening time has passed)
+                        if (unifiedQueueSection.getState() == DefaultUnifiedQueueSection.QueueState.PRE_COUNTDOWN) {
+                            if (isRegistrationOpen()) {
+                                unifiedQueueSection.transitionToProcessing();
+                            }
+                            // If not open yet, stay in countdown state - don't update progress
+                            return;
+                        }
+                        unifiedQueueSection.updateProgress(progress.processedRequests(), progress.totalRequests());
+                    });
+                }
+            }, eventQueueNotification.progressProperty());
+        }
+
+        // Register handler for final result (push notification from server)
+        EventQueueNotification.setEnqueuedBookingFinalResultHandler(queueToken, finalResult -> {
+            UiScheduler.runInUiThread(() -> {
+                // Stop timers and status rotation
+                if (unifiedQueueSection != null) {
+                    unifiedQueueSection.stopCountdown();
+                    unifiedQueueSection.stopStatusMessageRotation();
+                }
+
+                handleEnqueuedFinalResult(finalResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation);
+            });
+        });
+    }
+
+    /**
+     * Handles the final result after queue processing completes.
+     * Routes to appropriate page based on final status (APPROVED or SOLD_OUT).
+     */
+    private void handleEnqueuedFinalResult(SubmitDocumentChangesResult finalResult, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
+        // Queue processing completed - registration is now confirmed open
+        registrationConfirmedOpen = true;
+        currentQueueToken = null; // Clear the token as queue processing is complete
+
+        switch (finalResult.status()) {
+            case APPROVED -> {
+                // Send account creation email if user opted to create an account
+                if (wantsAccountCreation && newUserEmail != null) {
+                    InitiateAccountCreationCredentials credentials = new InitiateAccountCreationCredentials(
+                        newUserEmail,
+                        WindowLocation.getOrigin(),
+                        null,
+                        I18n.getLanguage(),
+                        false,
+                        null
+                    );
+                    AuthenticationService.authenticate(credentials);
+                }
+
+                if (isNewUser) {
+                    populatePendingBookingsForNewUser(newUserName, newUserEmail);
+                    navigateToPendingBookings();
+                } else {
+                    // Load bookings then navigate
+                    loadAllBookingsForEventAsync()
+                        .onSuccess(ignored -> UiScheduler.runInUiThread(this::navigateToPendingBookings));
+                }
+            }
+            case SOLD_OUT -> {
+                handleAccommodationSoldOut(new SoldOutErrorParser.SoldOutInfo(
+                    finalResult.soldOutSitePrimaryKey(),
+                    finalResult.soldOutItemPrimaryKey(),
+                    null
+                ));
+            }
+            default -> {
+                // Unexpected status - go back to summary
+                navigateToSummary();
+            }
+        }
+    }
+
+    /**
+     * Checks if registration is currently open for the event.
+     *
+     * @return true if registration is open (or no opening date set), false if still waiting
+     */
+    public boolean isRegistrationOpen() {
+        // If we received a SOLD_OUT result, registration was definitely open
+        if (registrationConfirmedOpen) {
+            return true;
+        }
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) {
+            return true; // No policy = assume open
+        }
+        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
+        return secondsToOpening == null || secondsToOpening <= 0;
+    }
+
+    /**
+     * Gets the number of seconds until registration opens.
+     *
+     * @return seconds until opening, or 0 if already open or no opening date set
+     */
+    public int getSecondsToRegistrationOpening() {
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) {
+            return 0;
+        }
+        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
+        return secondsToOpening != null && secondsToOpening > 0 ? secondsToOpening.intValue() : 0;
+    }
+
+    /**
+     * Creates or returns the unified queue page (lazy initialization).
+     * This page handles both the pre-countdown waiting state and the queue processing state.
+     */
+    private CompositeBookingFormPage getOrCreateUnifiedQueuePage() {
+        if (unifiedQueuePage == null) {
+            unifiedQueueSection = new DefaultUnifiedQueueSection();
+            unifiedQueueSection.setColorScheme(colorScheme);
+            unifiedQueueSection.setWorkingBookingProperties(workingBookingProperties);
+
+            unifiedQueuePage = new CompositeBookingFormPage(
+                "RegistrationQueue", // i18n key
+                unifiedQueueSection
+            );
+            unifiedQueuePage.setStep(false)
+                .setHeaderVisible(true) // Show step navigation header
+                .setShowingOwnSubmitButton(true)
+                .setCanGoBack(false); // Can't go back during queue - use "Leave Queue" button
+
+            // Create "Leave Queue and Edit Booking" button
+            BookingFormButton leaveQueueButton = new BookingFormButton(
+                "LeaveQueueAndEditBooking", // i18n key
+                e -> handleLeaveQueue(),
+                "registration-queue-action-button"
+            );
+
+            unifiedQueuePage.setButtons(leaveQueueButton);
+
+            // Set up callback for when user leaves queue
+            unifiedQueueSection.setOnLeaveQueueAndEdit(this::handleLeaveQueue);
+        }
+        return unifiedQueuePage;
+    }
+
+    /**
+     * Handles when user clicks "Leave Queue and Edit Booking".
+     * Stops countdown/processing, cancels the enqueued booking on the server, and returns to summary page.
+     */
+    private void handleLeaveQueue() {
+        if (unifiedQueueSection != null) {
+            unifiedQueueSection.stopCountdown();
+            unifiedQueueSection.stopStatusMessageRotation();
+        }
+        // Cancel the enqueued booking on the server
+        if (currentQueueToken != null) {
+            DocumentService.leaveEventQueue(currentQueueToken);
+            currentQueueToken = null; // Clear the token
+        }
+        navigateToSummary();
+    }
+
+    /**
+     * Navigates to the unified queue page.
+     * Call this when booking is enqueued.
+     */
+    public void navigateToUnifiedQueuePage() {
+        CompositeBookingFormPage page = getOrCreateUnifiedQueuePage();
+
+        // Refresh working booking properties in case they changed
+        unifiedQueueSection.setWorkingBookingProperties(workingBookingProperties);
+
+        navigateToSpecialPage(page);
+    }
+
     /**
      * Books selected items into the WorkingBooking before submission.
      * <p>
@@ -1118,6 +1406,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
         String historyComment = historyHelper.generateHistoryComment();
 
         // Submit changes to the database
+       //For debug only the queue system only:
+    //    IntStream.range(1, 15).forEach(i -> workingBooking.submitChanges(historyComment));
+
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.APPROVED) {
@@ -1680,6 +1971,86 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Navigate to first custom step
         navigateToFirstCustomStep();
+    }
+
+    /**
+     * Handles user logout by completely resetting the form.
+     * Called when the user logs out (FXUserPerson transitions from non-null to null).
+     * This resets the WorkingBooking to a fresh state and navigates to the first page.
+     */
+    private void handleLogout() {
+        // Start a completely new booking (fresh Document entity)
+        state.prepareForNewBooking();
+
+        // Reset the hadLoggedInUser flag since we're starting fresh
+        hadLoggedInUser = false;
+
+        // Clear stored new user info
+        storedNewUserName = null;
+        storedNewUserEmail = null;
+
+        // Reset the Your Information section to email input state
+        if (defaultYourInformationSection != null) {
+            defaultYourInformationSection.resetToEmailInput();
+        }
+
+        // Clear member selection section
+        if (defaultMemberSelectionSection != null) {
+            defaultMemberSelectionSection.clearMembers();
+            defaultMemberSelectionSection.clearAlreadyBooked();
+            defaultMemberSelectionSection.clearSelection();
+        }
+
+        // Clear summary section
+        if (defaultSummarySection != null) {
+            defaultSummarySection.clearPriceLines();
+            defaultSummarySection.clearAdditionalOptions();
+        }
+
+        // Clear pending bookings section
+        if (defaultPendingBookingsSection != null) {
+            defaultPendingBookingsSection.clearBookings();
+        }
+
+        // Clear confirmation section
+        if (defaultConfirmationSection != null) {
+            defaultConfirmationSection.clearConfirmedBookings();
+        }
+
+        // Reset sections in custom pages (audio recording, prerequisite, etc.)
+        resetCustomPageSections();
+
+        // Notify callbacks for any additional custom reset logic
+        if (callbacks != null) {
+            callbacks.onPrepareNewBooking();
+        }
+
+        // Navigate to the first applicable page of the form
+        // We need to find the first page that is applicable to the new (empty) booking
+        navigateToFirstApplicablePage();
+    }
+
+    /**
+     * Navigates to the first applicable page of the form.
+     * This is used when completely resetting the form (e.g., after logout).
+     * It finds the first page where isApplicableToBooking() returns true.
+     */
+    private void navigateToFirstApplicablePage() {
+        WorkingBooking workingBooking = getWorkingBooking();
+        BookingFormPage[] allPages = getPages();
+
+        // Find the first applicable page
+        for (int i = 0; i < allPages.length; i++) {
+            if (allPages[i].isApplicableToBooking(workingBooking)) {
+                navigateToPage(i);
+                return;
+            }
+        }
+
+        // Fallback: if no page is applicable (shouldn't happen), go to page 0
+        if (allPages.length > 0) {
+            navigateToPage(0);
+        }
     }
 
     // === Summary and Payment Updates ===

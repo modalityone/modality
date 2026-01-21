@@ -127,19 +127,21 @@ public final class HouseholdMemberLoader {
                         .map(inv -> inv.getInvitee().getId())
                         .collect(Collectors.toSet());
 
-                // Add pending invitations as non-bookable members
-                for (Invitation inv : pendingInvitations) {
-                    Person invitee = inv.getInvitee();
-                    if (invitee != null) {
-                        memberSection.addMember(new HasMemberSelectionSection.MemberInfo(
-                                invitee.getId(),
-                                getPersonFullName(invitee),
-                                invitee.getEmail(),
-                                invitee,
-                                HasMemberSelectionSection.MemberStatus.PENDING_INVITATION
-                        ));
+                // Add pending invitations as non-bookable members (must run on UI thread)
+                UiScheduler.runInUiThread(() -> {
+                    for (Invitation inv : pendingInvitations) {
+                        Person invitee = inv.getInvitee();
+                        if (invitee != null) {
+                            memberSection.addMember(new HasMemberSelectionSection.MemberInfo(
+                                    invitee.getId(),
+                                    getPersonFullName(invitee),
+                                    invitee.getEmail(),
+                                    invitee,
+                                    HasMemberSelectionSection.MemberStatus.PENDING_INVITATION
+                            ));
+                        }
                     }
-                }
+                });
 
                 return pendingInviteeIds;
             });
@@ -228,13 +230,15 @@ public final class HouseholdMemberLoader {
                 }
 
                 Console.log("Total already booked person IDs: " + alreadyBookedPersonIds.size());
-                memberSection.setAlreadyBookedPersonIds(alreadyBookedPersonIds);
+                // Update UI on UI thread to avoid "Not on FX application thread" errors
+                UiScheduler.runInUiThread(() -> memberSection.setAlreadyBookedPersonIds(alreadyBookedPersonIds));
                 return null;
             });
     }
 
     /**
      * Helper method to add members to the selection section with proper status.
+     * This method is called from async callbacks so it schedules UI updates on the UI thread.
      *
      * @param members List of members to add
      * @param pendingInviteeIds Set of person IDs with pending invitations
@@ -248,6 +252,9 @@ public final class HouseholdMemberLoader {
             Set<String> emailsWithAccounts,
             DefaultMemberSelectionSection memberSection,
             String ownerEmail) {
+
+        // Build list of member infos on current thread, then add to UI on UI thread
+        java.util.List<HasMemberSelectionSection.MemberInfo> memberInfos = new java.util.ArrayList<>();
 
         for (Person member : members) {
             // Skip if this is a pending invitee (already added)
@@ -275,7 +282,7 @@ public final class HouseholdMemberLoader {
                 status = HasMemberSelectionSection.MemberStatus.ACTIVE;
             }
 
-            memberSection.addMember(new HasMemberSelectionSection.MemberInfo(
+            memberInfos.add(new HasMemberSelectionSection.MemberInfo(
                     member.getPrimaryKey(),
                     getPersonFullName(member),
                     member.getEmail(),
@@ -283,6 +290,13 @@ public final class HouseholdMemberLoader {
                     status
             ));
         }
+
+        // Add members on UI thread to avoid threading issues
+        UiScheduler.runInUiThread(() -> {
+            for (HasMemberSelectionSection.MemberInfo info : memberInfos) {
+                memberSection.addMember(info);
+            }
+        });
     }
 
     /**

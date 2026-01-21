@@ -24,6 +24,8 @@ public interface Organization extends
     String language = "language";
     String teachingsDayTicketItem = "teachingsDayTicketItem";
     String globalSite = "globalSite";
+    String termsUrlLabel = "termsUrlLabel";
+    String privacyUrlLabel = "privacyUrlLabel";
 
     default void setClosed(boolean value) { setFieldValue(closed, value); }
 
@@ -109,6 +111,30 @@ public interface Organization extends
 
     default Site getGlobalSite() {
         return getForeignEntity(globalSite);
+    }
+
+    default void setTermsUrlLabel(Object value) {
+        setForeignField(termsUrlLabel, value);
+    }
+
+    default EntityId getTermsUrlLabelId() {
+        return getForeignEntityId(termsUrlLabel);
+    }
+
+    default Label getTermsUrlLabel() {
+        return getForeignEntity(termsUrlLabel);
+    }
+
+    default void setPrivacyUrlLabel(Object value) {
+        setForeignField(privacyUrlLabel, value);
+    }
+
+    default EntityId getPrivacyUrlLabelId() {
+        return getForeignEntityId(privacyUrlLabel);
+    }
+
+    default Label getPrivacyUrlLabel() {
+        return getForeignEntity(privacyUrlLabel);
     }
 
 }

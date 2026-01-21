@@ -2,6 +2,7 @@ package one.modality.booking.frontoffice.bookingpage.sections;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,7 +16,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
@@ -42,19 +42,26 @@ import java.util.stream.Collectors;
  * unavailable (sold out) during booking submission. It provides a warm, non-alarming
  * interface for selecting an alternative accommodation.</p>
  *
- * <p>UI Structure:</p>
+ * <p>UI Structure (matching FestivalRegistrationV2.jsx mockup):</p>
  * <ul>
- *   <li>Header: Warm cream background with refresh icon and title</li>
- *   <li>What Happened: Explanation box with original selection showing "SOLD OUT"</li>
- *   <li>Alternatives: List of available accommodation cards (reuses existing card pattern)</li>
+ *   <li>Header: Orange circle (80x80) with exchange arrows icon</li>
+ *   <li>Title: "Choose Another Option" (24px, semibold)</li>
+ *   <li>Subtitle: "Your first choice is no longer available"</li>
+ *   <li>Explanation Box: Orange background (#FFF3E0) containing:
+ *     <ul>
+ *       <li>Main text: "Due to high demand, [item name] is now fully booked."</li>
+ *       <li>Sold out indicator: X icon + "[Item Name] — SOLD OUT"</li>
+ *       <li>Reassurance: "Your other choices...are saved"</li>
+ *     </ul>
+ *   </li>
+ *   <li>Section Header: "Available Options" with home icon</li>
+ *   <li>Alternatives: List of available accommodation cards</li>
  *   <li>Buttons: "Continue with New Selection" and "Cancel Registration"</li>
  * </ul>
  *
  * <p>CSS classes used:</p>
  * <ul>
  *   <li>{@code .bookingpage-selectable-card} - accommodation card</li>
- *   <li>{@code .bookingpage-info-box-warning} - warning info box</li>
- *   <li>{@code .bookingpage-text-warning} - warning text color</li>
  * </ul>
  *
  * @author Claude Code
@@ -63,7 +70,10 @@ import java.util.stream.Collectors;
 public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldOutSection {
 
     // === SVG ICONS ===
-    private static final String ICON_REFRESH = "M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16M16 21h5v-5";
+    // Exchange/switch arrows icon matching mockup (diagonal arrows indicating change)
+    private static final String ICON_EXCHANGE = "M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5";
+    // Circle with X icon for sold out indicator
+    private static final String ICON_CIRCLE_X = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2M15 9l-6 6M9 9l6 6";
     private static final String ICON_INFO = "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z";
 
     // === COLOR SCHEME ===
@@ -87,11 +97,33 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     // === UI COMPONENTS ===
     private final VBox container = new VBox();
     private VBox optionsContainer;
-    private Label originalNameLabel;
-    private Label originalPriceLabel;
-    private Label eventNameLabel;
+    private Label originalNameLabel;  // Shows "[Item Name] — SOLD OUT" in the sold out indicator
+    private Label eventNameLabel;     // Shows "Due to high demand, [item] is now fully booked."
     private final Map<HasAccommodationSelectionSection.AccommodationOption, VBox> optionCardMap = new HashMap<>();
     private final Map<HasAccommodationSelectionSection.AccommodationOption, StackPane> checkmarkBadgeMap = new HashMap<>();
+
+    // === RESPONSIVE DESIGN ===
+    private ResponsiveDesign responsiveDesign;
+    private boolean isMobileLayout = false;
+    // Track header components for responsive layout switching
+    private final java.util.List<CardHeaderComponents> cardHeaderList = new java.util.ArrayList<>();
+
+    /** Holds references to card header components for responsive layout switching */
+    private static class CardHeaderComponents {
+        final VBox headerContainer;  // Container that holds either HBox or VBox layout
+        final Label nameLabel;
+        final VBox priceContainer;
+        final StackPane checkmarkBadge;
+        final boolean isAvailable;
+
+        CardHeaderComponents(VBox headerContainer, Label nameLabel, VBox priceContainer, StackPane checkmarkBadge, boolean isAvailable) {
+            this.headerContainer = headerContainer;
+            this.nameLabel = nameLabel;
+            this.priceContainer = priceContainer;
+            this.checkmarkBadge = checkmarkBadge;
+            this.isAvailable = isAvailable;
+        }
+    }
 
     // === CALLBACKS ===
     private Consumer<HasAccommodationSelectionSection.AccommodationOption> onOptionSelected;
@@ -123,7 +155,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         body.setPadding(new Insets(24));
 
         // Section title for alternatives using StyledSectionHeader with home icon
-        HBox alternativesHeader = new StyledSectionHeader(BookingPageI18nKeys.ChooseNewAccommodation, StyledSectionHeader.ICON_HOME);
+        HBox alternativesHeader = new StyledSectionHeader(BookingPageI18nKeys.AvailableOptions, StyledSectionHeader.ICON_HOME);
 
         // Options container for alternative accommodations
         optionsContainer = new VBox(12);
@@ -140,109 +172,131 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         body.getChildren().addAll(alternativesHeader, optionsContainer, roommateContainer);
 
         container.getChildren().addAll(header, body);
+
+        // Setup responsive design for card layouts
+        setupResponsiveDesign();
     }
 
     /**
-     * Creates a combined header section with warm cream background and rounded corners.
-     * Merges the title, explanation text, and original selection display into one cohesive box.
+     * Creates a combined header section matching the mockup design.
+     * Features: orange theme, exchange arrows icon, explanation box with sold out indicator.
      */
     private VBox createCombinedHeader() {
-        VBox header = new VBox(16);
+        VBox header = new VBox(32);
         header.setAlignment(Pos.CENTER);
-        header.setPadding(new Insets(24));
-        // Warm cream background with rounded corners (CSS via inline style)
-        header.setStyle("-fx-background-color: #FFF8E7; -fx-background-radius: 12; -fx-border-color: #F0E4CC; -fx-border-radius: 12; -fx-border-width: 1;");
+        header.setPadding(new Insets(32, 24, 24, 24));
 
-        // === TOP SECTION: Icon and title ===
-        VBox topSection = new VBox(6);
-        topSection.setAlignment(Pos.CENTER);
+        // === TOP SECTION: Icon and title (centered) ===
+        VBox topSection = createHeaderTopSection();
 
-        // Refresh icon in amber circle
-        StackPane iconCircle = new StackPane();
-        iconCircle.setMinSize(48, 48);
-        iconCircle.setMaxSize(48, 48);
-        iconCircle.setStyle("-fx-background-color: white; -fx-background-radius: 24; -fx-border-color: #E5A545; -fx-border-width: 2; -fx-border-radius: 24;");
+        // === EXPLANATION BOX (orange background with sold out indicator inside) ===
+        VBox explanationBox = createExplanationBox();
 
-        SVGPath refreshIcon = new SVGPath();
-        refreshIcon.setContent(ICON_REFRESH);
-        refreshIcon.setFill(Color.TRANSPARENT);
-        refreshIcon.setStroke(Color.web("#E5A545"));
-        refreshIcon.setStrokeWidth(2);
-        refreshIcon.setScaleX(1.0);
-        refreshIcon.setScaleY(1.0);
-        iconCircle.getChildren().add(refreshIcon);
-
-        // Title
-        Label title = I18nControls.newLabel(BookingPageI18nKeys.AccommodationUpdateNeeded);
-        title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #5D4E37;");
-
-        // Subtitle
-        Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.AccommodationNoLongerAvailable);
-        subtitle.setStyle("-fx-font-size: 14px; -fx-text-fill: #6B5D4D;");
-        subtitle.setWrapText(true);
-
-        topSection.getChildren().addAll(iconCircle, title, subtitle);
-        VBox.setMargin(title, new Insets(8, 0, 2, 0));
-
-        // === EXPLANATION SECTION ===
-        VBox explanationSection = new VBox(8);
-        explanationSection.setAlignment(Pos.CENTER_LEFT);
-
-        // What happened header with icon
-        HBox whatHappenedRow = new HBox(8);
-        whatHappenedRow.setAlignment(Pos.CENTER_LEFT);
-
-        SVGPath infoIcon = new SVGPath();
-        infoIcon.setContent(ICON_INFO);
-        infoIcon.setScaleX(0.75);
-        infoIcon.setScaleY(0.75);
-        infoIcon.setFill(Color.web("#5D4E37"));
-
-        Label whatHappenedLabel = I18nControls.newLabel(BookingPageI18nKeys.WhatHappened);
-        whatHappenedLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 600; -fx-text-fill: #5D4E37;");
-
-        whatHappenedRow.getChildren().addAll(infoIcon, whatHappenedLabel);
-
-        // Explanation text
-        eventNameLabel = new Label();
-        eventNameLabel.setWrapText(true);
-        eventNameLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #6B5D4D;");
-        updateExplanationText();
-
-        explanationSection.getChildren().addAll(whatHappenedRow, eventNameLabel);
-
-        // === ORIGINAL SELECTION BOX (with SOLD OUT badge) ===
-        HBox originalBox = createOriginalSelectionBox();
-
-        header.getChildren().addAll(topSection, explanationSection, originalBox);
+        header.getChildren().addAll(topSection, explanationBox);
 
         return header;
     }
 
-    private HBox createOriginalSelectionBox() {
-        HBox box = new HBox(12);
-        box.setAlignment(Pos.CENTER_LEFT);
-        box.setPadding(new Insets(12, 16, 12, 16));
-        // Light red/pink background for sold out - danger styling
-        box.setStyle("-fx-background-color: #FEF2F2; -fx-background-radius: 8; -fx-border-color: #FECACA; -fx-border-radius: 8; -fx-border-width: 1;");
+    /**
+     * Creates the top section of the header with icon, title, and subtitle.
+     */
+    private VBox createHeaderTopSection() {
+        VBox section = new VBox(8);
+        section.setAlignment(Pos.CENTER);
 
-        // SOLD OUT badge
-        Label badge = new Label("SOLD OUT");
-        badge.setPadding(new Insets(4, 10, 4, 10));
-        badge.setStyle("-fx-background-color: #DC2626; -fx-background-radius: 6; -fx-text-fill: white; -fx-font-size: 11px; -fx-font-weight: 600;");
+        // Orange circle with exchange arrows icon (80x80 matching mockup)
+        StackPane iconCircle = new StackPane();
+        iconCircle.setMinSize(80, 80);
+        iconCircle.setMaxSize(80, 80);
+        iconCircle.getStyleClass().add("bookingpage-soldout-icon-circle");
 
-        // Original item name
-        originalNameLabel = new Label(originalItemName);
-        originalNameLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: 500; -fx-text-fill: #991B1B;");
-        HBox.setHgrow(originalNameLabel, Priority.ALWAYS);
+        SVGPath exchangeIcon = new SVGPath();
+        exchangeIcon.setContent(ICON_EXCHANGE);
+        exchangeIcon.getStyleClass().add("bookingpage-soldout-icon-circle-icon");
+        exchangeIcon.setStrokeWidth(2);
+        exchangeIcon.setScaleX(1.5);
+        exchangeIcon.setScaleY(1.5);
+        iconCircle.getChildren().add(exchangeIcon);
 
-        // Original price (strikethrough)
-        originalPriceLabel = new Label(formatPrice(originalPrice));
-        originalPriceLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #991B1B; -fx-strikethrough: true;");
+        // Title - "Choose Another Option"
+        Label title = I18nControls.newLabel(BookingPageI18nKeys.ChooseAnotherOption);
+        title.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-semibold", "bookingpage-text-dark");
 
-        box.getChildren().addAll(badge, originalNameLabel, originalPriceLabel);
+        // Subtitle - "Your first choice is no longer available"
+        Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.FirstChoiceNoLongerAvailable);
+        subtitle.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        subtitle.setWrapText(true);
 
+        section.getChildren().addAll(iconCircle, title, subtitle);
+        VBox.setMargin(title, new Insets(12, 0, 4, 0));
+
+        return section;
+    }
+
+    /**
+     * Creates the explanation box with orange background containing the sold out indicator.
+     */
+    private VBox createExplanationBox() {
+        VBox box = new VBox(12);
+        box.setPadding(new Insets(20));
+        box.getStyleClass().add("bookingpage-soldout-explanation-box");
+
+        // Main explanation text - "Due to high demand, [item name] is now fully booked."
+        eventNameLabel = new Label();
+        eventNameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-warning-dark");
+        eventNameLabel.setWrapText(true);
+        updateExplanationText();
+
+        // Sold out indicator (inside the box with semi-transparent white background)
+        HBox soldOutIndicator = createSoldOutIndicator();
+
+        // Reassurance text - "Your other choices...are saved"
+        Label reassuranceLabel = I18nControls.newLabel(BookingPageI18nKeys.OtherChoicesSaved);
+        reassuranceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning-dark");
+        reassuranceLabel.setWrapText(true);
+
+        box.getChildren().addAll(eventNameLabel, soldOutIndicator, reassuranceLabel);
         return box;
+    }
+
+    /**
+     * Creates the sold out indicator row with X icon and item name.
+     */
+    private HBox createSoldOutIndicator() {
+        HBox indicator = new HBox(8);
+        indicator.setAlignment(Pos.CENTER_LEFT);
+        indicator.setPadding(new Insets(10, 12, 10, 12));
+        indicator.getStyleClass().add("bookingpage-soldout-indicator");
+
+        // X icon (circle with X)
+        SVGPath xIcon = new SVGPath();
+        xIcon.setContent(ICON_CIRCLE_X);
+        xIcon.getStyleClass().add("bookingpage-soldout-indicator-icon");
+        xIcon.setStrokeWidth(2);
+        xIcon.setScaleX(0.67);
+        xIcon.setScaleY(0.67);
+
+        // Wrap icon in StackPane for proper sizing
+        StackPane iconWrapper = new StackPane(xIcon);
+        iconWrapper.setMinSize(16, 16);
+        iconWrapper.setMaxSize(16, 16);
+
+        // Item name + " — SOLD OUT" text
+        originalNameLabel = new Label();
+        originalNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-warning-dark");
+        updateSoldOutIndicatorText();
+
+        indicator.getChildren().addAll(iconWrapper, originalNameLabel);
+        return indicator;
+    }
+
+    /**
+     * Updates the sold out indicator text with item name.
+     */
+    private void updateSoldOutIndicatorText() {
+        if (originalNameLabel != null && originalItemName != null && !originalItemName.isEmpty()) {
+            originalNameLabel.setText(originalItemName + " — SOLD OUT");
+        }
     }
 
     private void setupBindings() {
@@ -359,22 +413,51 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         optionsContainer.getChildren().clear();
         optionCardMap.clear();
         checkmarkBadgeMap.clear();
+        cardHeaderList.clear();
 
         HasAccommodationSelectionSection.AccommodationOption currentlySelected = selectedOptionProperty.get();
         Object selectedItemId = currentlySelected != null ? currentlySelected.getItemId() : null;
 
         HasAccommodationSelectionSection.AccommodationOption matchingOption = null;
 
-        // Sort options by Item.ord field (null ord values go to end)
-        List<HasAccommodationSelectionSection.AccommodationOption> sortedOptions = alternativeOptions.stream()
-            .sorted(Comparator.comparing(
-                option -> {
-                    Item item = option.getItemEntity();
-                    return item != null && item.getOrd() != null ? item.getOrd() : Integer.MAX_VALUE;
-                }))
+        // Separate options into accommodation and day visitor groups, sorted by Item.ord
+        Comparator<HasAccommodationSelectionSection.AccommodationOption> byOrd = Comparator.comparing(
+            option -> {
+                Item item = option.getItemEntity();
+                return item != null && item.getOrd() != null ? item.getOrd() : Integer.MAX_VALUE;
+            });
+
+        List<HasAccommodationSelectionSection.AccommodationOption> accommodationOpts = alternativeOptions.stream()
+            .filter(opt -> !opt.isDayVisitor())
+            .sorted(byOrd)
             .collect(Collectors.toList());
 
-        for (HasAccommodationSelectionSection.AccommodationOption option : sortedOptions) {
+        List<HasAccommodationSelectionSection.AccommodationOption> dayVisitorOpts = alternativeOptions.stream()
+            .filter(HasAccommodationSelectionSection.AccommodationOption::isDayVisitor)
+            .sorted(byOrd)
+            .collect(Collectors.toList());
+
+        // Add accommodation cards first
+        for (HasAccommodationSelectionSection.AccommodationOption option : accommodationOpts) {
+            boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
+            VBox card = createOptionCard(option, isSelected);
+            optionsContainer.getChildren().add(card);
+            optionCardMap.put(option, card);
+
+            if (isSelected) {
+                matchingOption = option;
+            }
+        }
+
+        // Add separator if both groups exist
+        if (!accommodationOpts.isEmpty() && !dayVisitorOpts.isEmpty()) {
+            HBox separator = BookingPageUIBuilder.createNoAccommodationSeparator();
+            VBox.setMargin(separator, new Insets(28, 0, 20, 0));
+            optionsContainer.getChildren().add(separator);
+        }
+
+        // Add day visitor cards
+        for (HasAccommodationSelectionSection.AccommodationOption option : dayVisitorOpts) {
             boolean isSelected = selectedItemId != null && selectedItemId.equals(option.getItemId());
             VBox card = createOptionCard(option, isSelected);
             optionsContainer.getChildren().add(card);
@@ -388,10 +471,14 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         if (matchingOption != null && currentlySelected != matchingOption) {
             selectedOptionProperty.set(matchingOption);
         }
+
+        // Reapply current layout after rebuilding cards
+        applyCardLayout(isMobileLayout);
     }
 
     /**
      * Creates an accommodation option card using the same pattern as DefaultAccommodationSelectionSection.
+     * Uses a responsive header that switches between horizontal and vertical layouts.
      */
     private VBox createOptionCard(HasAccommodationSelectionSection.AccommodationOption option, boolean isSelected) {
         boolean isSoldOut = option.getAvailability() == HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT;
@@ -416,11 +503,8 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             contentBox.setPadding(new Insets(20));
         }
 
-        // Header row: Room name + Total Price
-        BorderPane headerRow = new BorderPane();
-        if (isAvailable) {
-            headerRow.setPadding(new Insets(0, 40, 0, 0));
-        }
+        // Header container - will hold either HBox (desktop) or VBox (mobile) layout
+        VBox headerContainer = new VBox(8);
 
         // Room name
         Label nameLabel = new Label(option.getName());
@@ -431,12 +515,10 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             nameLabel.getStyleClass().add("bookingpage-text-dark");
         }
         nameLabel.setWrapText(true);
-        nameLabel.setMaxWidth(200);
 
         // Price container - shows per-night rate and total for duration
         int pricePerNight = option.getPricePerNight();
         VBox priceContainer = new VBox(2);
-        priceContainer.setAlignment(Pos.TOP_RIGHT);
 
         if (!option.isDayVisitor()) {
             // Per-night price with "/night" label
@@ -486,13 +568,18 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             priceContainer.getChildren().add(priceLabel);
         }
 
-        headerRow.setLeft(nameLabel);
-        headerRow.setRight(priceContainer);
-        BorderPane.setAlignment(nameLabel, Pos.TOP_LEFT);
-        BorderPane.setAlignment(priceContainer, Pos.TOP_RIGHT);
-        BorderPane.setMargin(priceContainer, new Insets(0, 0, 0, 12));
+        // Store checkmark badge reference (will be created later)
+        StackPane checkmarkBadge = null;
+        if (isAvailable) {
+            checkmarkBadge = BookingPageUIBuilder.createCheckmarkBadgeCss(32);
+            checkmarkBadge.setVisible(isSelected);
+            checkmarkBadgeMap.put(option, checkmarkBadge);
+        }
 
-        contentBox.getChildren().add(headerRow);
+        // Track header components for responsive layout switching
+        cardHeaderList.add(new CardHeaderComponents(headerContainer, nameLabel, priceContainer, checkmarkBadge, isAvailable));
+
+        contentBox.getChildren().add(headerContainer);
 
         // === BADGES ROW: Constraint badge (minimum nights, etc.) ===
         if (option.hasConstraint()) {
@@ -536,13 +623,12 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Wrap content with checkmark badge or sold out ribbon
         if (isAvailable) {
-            StackPane checkmarkBadge = BookingPageUIBuilder.createCheckmarkBadgeCss(32);
-            checkmarkBadge.setVisible(isSelected);
-            checkmarkBadgeMap.put(option, checkmarkBadge);
+            // Use the checkmark badge already created and stored in checkmarkBadgeMap
+            StackPane existingCheckmarkBadge = checkmarkBadgeMap.get(option);
 
-            StackPane wrapper = new StackPane(contentBox, checkmarkBadge);
-            StackPane.setAlignment(checkmarkBadge, Pos.TOP_RIGHT);
-            StackPane.setMargin(checkmarkBadge, new Insets(-8, -8, 0, 0));
+            StackPane wrapper = new StackPane(contentBox, existingCheckmarkBadge);
+            StackPane.setAlignment(existingCheckmarkBadge, Pos.TOP_RIGHT);
+            StackPane.setMargin(existingCheckmarkBadge, new Insets(-8, -8, 0, 0));
 
             card.getChildren().add(wrapper);
         } else {
@@ -579,13 +665,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         Label ribbonText = new Label("SOLD OUT");
         ribbonText.getStyleClass().add("bookingpage-soldout-ribbon-text");
-        ribbonText.setStyle("-fx-font-size: 9px;");
 
         ribbon.setPadding(new Insets(4, 35, 4, 55));
         ribbon.getChildren().add(ribbonText);
         ribbon.setMaxWidth(Region.USE_PREF_SIZE);
         ribbon.setMaxHeight(Region.USE_PREF_SIZE);
-        ribbon.setStyle("-fx-background-color: #78716c;");
         ribbon.setRotate(45);
         ribbon.setTranslateX(30);
         ribbon.setTranslateY(18);
@@ -632,7 +716,8 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
     private void updateExplanationText() {
         if (eventNameLabel != null) {
-            String text = I18n.getI18nText(BookingPageI18nKeys.WhatHappenedSoldOut, eventName, originalItemName);
+            // Use the new i18n key: "Due to high demand, {0} is now fully booked."
+            String text = I18n.getI18nText(BookingPageI18nKeys.DueToHighDemandSoldOut, originalItemName);
             eventNameLabel.setText(text);
         }
     }
@@ -642,12 +727,81 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     }
 
     // ========================================
+    // RESPONSIVE DESIGN
+    // ========================================
+
+    /**
+     * Sets up responsive design to switch card header layouts based on container width.
+     */
+    private void setupResponsiveDesign() {
+        responsiveDesign = new ResponsiveDesign(container);
+
+        // Desktop layout (width >= 450): horizontal name + price layout
+        responsiveDesign.addResponsiveLayout(
+            width -> width >= 450,
+            () -> {
+                isMobileLayout = false;
+                applyCardLayout(false);
+            }
+        );
+
+        // Mobile layout (width < 450): vertical stacked layout
+        responsiveDesign.addResponsiveLayout(
+            width -> width < 450,
+            () -> {
+                isMobileLayout = true;
+                applyCardLayout(true);
+            }
+        );
+
+        responsiveDesign.start();
+    }
+
+    /**
+     * Applies the card header layout (horizontal or vertical) to all option cards.
+     *
+     * @param mobile true for vertical mobile layout, false for horizontal desktop layout
+     */
+    private void applyCardLayout(boolean mobile) {
+        for (CardHeaderComponents header : cardHeaderList) {
+            header.headerContainer.getChildren().clear();
+
+            if (mobile) {
+                // Mobile: stack name and price vertically
+                header.nameLabel.setAlignment(Pos.CENTER_LEFT);
+                header.priceContainer.setAlignment(Pos.CENTER_LEFT);
+
+                header.headerContainer.setSpacing(8);
+                header.headerContainer.getChildren().addAll(header.nameLabel, header.priceContainer);
+            } else {
+                // Desktop: name and price side by side with spacer
+                header.nameLabel.setAlignment(Pos.CENTER_LEFT);
+                header.priceContainer.setAlignment(Pos.TOP_RIGHT);
+
+                HBox hbox = new HBox();
+                hbox.setAlignment(Pos.TOP_LEFT);
+                // Reserve space for checkmark badge on available cards
+                if (header.isAvailable) {
+                    hbox.setPadding(new Insets(0, 40, 0, 0));
+                }
+
+                Region spacer = new Region();
+                HBox.setHgrow(spacer, Priority.ALWAYS);
+                HBox.setHgrow(header.nameLabel, Priority.SOMETIMES);
+
+                hbox.getChildren().addAll(header.nameLabel, spacer, header.priceContainer);
+                header.headerContainer.getChildren().add(hbox);
+            }
+        }
+    }
+
+    // ========================================
     // BookingFormSection INTERFACE
     // ========================================
 
     @Override
     public Object getTitleI18nKey() {
-        return BookingPageI18nKeys.AccommodationUpdateNeeded;
+        return BookingPageI18nKeys.ChooseAnotherOption;
     }
 
     @Override
@@ -683,12 +837,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     public void setOriginalSelection(String itemName, int price) {
         this.originalItemName = itemName != null ? itemName : "";
         this.originalPrice = price;
-        if (originalNameLabel != null) {
-            originalNameLabel.setText(this.originalItemName);
-        }
-        if (originalPriceLabel != null) {
-            originalPriceLabel.setText(formatPrice(this.originalPrice));
-        }
+        updateSoldOutIndicatorText();
         updateExplanationText();
     }
 

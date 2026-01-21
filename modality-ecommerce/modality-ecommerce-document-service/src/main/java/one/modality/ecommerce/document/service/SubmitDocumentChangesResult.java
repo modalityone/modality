@@ -28,4 +28,8 @@ public record SubmitDocumentChangesResult(
     public static SubmitDocumentChangesResult createEnqueuedResult(Object queueToken) {
         return new SubmitDocumentChangesResult(DocumentChangesStatus.ENQUEUED, null, null, null, null, null, null, queueToken);
     }
+
+    public static SubmitDocumentChangesResult withQueueToken(SubmitDocumentChangesResult result, Object queueToken) {
+        return new SubmitDocumentChangesResult(result.status, result.documentPrimaryKey, result.documentRef, result.cartPrimaryKey, result.cartUuid, result.soldOutSitePrimaryKey, result.soldOutItemPrimaryKey, queueToken);
+    }
 }
