@@ -13,6 +13,7 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.platform.util.uuid.Uuid;
+import one.modality.ecommerce.payment.PaymentFailureReason;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
@@ -245,7 +246,11 @@ public final class SquarePaymentGateway implements PaymentGateway {
         String gatewayStatus = payment.getStatus().orElse("UNKNOWN");
         SquarePaymentStatus squarePaymentStatus = SquarePaymentStatus.valueOf(gatewayStatus.toUpperCase());
         PaymentStatus paymentStatus = squarePaymentStatus.getGenericPaymentStatus();
-        return new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus);
+        PaymentFailureReason failureReason = null;
+        if (paymentStatus == PaymentStatus.FAILED) {
+            failureReason = PaymentFailureReason.UNKNOWN_REASON; // Should be refined by looking at response errors
+        }
+        return new GatewayCompletePaymentResult(gatewayResponse, gatewayTransactionRef, gatewayStatus, paymentStatus, failureReason);
     }
 
     private static String generateErrorMessage(Throwable ex, String method) {

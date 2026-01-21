@@ -68,7 +68,7 @@ public final class WebPaymentForm {
     private Consumer<String> onInitFailure; // Called when the payment page failed to initialize (otherwise the card details should appear)
     private Consumer<String> onVerificationFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
     private Consumer<String> onPaymentFailure; // Called when Modality couldn't complete the payment
-    private Consumer<PaymentStatus> onPaymentCompletion;
+    private Consumer<CompletePaymentResult> onPaymentCompletion;
     private boolean paymentCancelled;
     private boolean paymentCompleted;
 
@@ -108,7 +108,7 @@ public final class WebPaymentForm {
         return this;
     }
 
-    public WebPaymentForm setOnPaymentCompletion(Consumer<PaymentStatus> onPaymentCompletion) {
+    public WebPaymentForm setOnPaymentCompletion(Consumer<CompletePaymentResult> onPaymentCompletion) {
         this.onPaymentCompletion = onPaymentCompletion;
         return this;
     }
@@ -444,7 +444,7 @@ public final class WebPaymentForm {
         showVerificationSuccessOverlay();
         PaymentService.completePayment(new CompletePaymentArgument(result.paymentPrimaryKey(), result.isLive(), result.gatewayName(), gatewayCompletePaymentPayload))
             .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
-            .onSuccess(r -> onModalityCompletePaymentSuccess(r.paymentStatus()));
+            .onSuccess(this::onModalityCompletePaymentSuccess);
     }
 
     public void onModalityCompletePaymentFailure(String error) {
@@ -454,10 +454,10 @@ public final class WebPaymentForm {
     }
 
 
-    public void onModalityCompletePaymentSuccess(PaymentStatus status) {
-        logDebug("onModalityCompletePaymentSuccess called (status = " + status + ")");
+    public void onModalityCompletePaymentSuccess(CompletePaymentResult result) {
+        logDebug("onModalityCompletePaymentSuccess called (status = " + result.paymentStatus() + ")");
         //setUserInteractionAllowedInUiThread(true);
-        callConsumerInUiThreadIfSet(onPaymentCompletion, status);
+        callConsumerInUiThreadIfSet(onPaymentCompletion, result);
     }
 
     private <T> void callConsumerInUiThreadIfSet(Consumer<T> consumer, T argument) {

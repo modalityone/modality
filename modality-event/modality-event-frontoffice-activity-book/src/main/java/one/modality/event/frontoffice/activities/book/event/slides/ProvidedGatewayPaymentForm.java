@@ -21,6 +21,7 @@ import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.CancelPaymentResult;
+import one.modality.ecommerce.payment.CompletePaymentResult;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
@@ -121,8 +122,8 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
                 errorConsumer.accept(BookI18nKeys.ErrorPaymentModalityFailure);
                 Console.log(errorMsg);
             })
-            .setOnPaymentCompletion(status -> {
-                successConsumer.accept(status);
+            .setOnPaymentCompletion(result -> {
+                successConsumer.accept(result.paymentStatus());
             });
     }
 
