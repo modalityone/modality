@@ -116,8 +116,8 @@ public final class PolicyAggregate {
         // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
         // additional fields such as termsUrlEn
         this.event = Collections.first(QueryResultToEntitiesMapper.mapQueryResultToEntities(eventQueryResult, queryMapping, entityStore, "events"));
-        secondsToOpeningDateAtLoadingTime = event.getDoubleFieldValue(Event.secondsToOpeningDateAtLoadingTime);
-        secondsToBookingProcessStartAtLoadingTime = event.getDoubleFieldValue(Event.secondsToBookingProcessStartAtLoadingTime);
+        secondsToOpeningDateAtLoadingTime = this.event.getDoubleFieldValue(Event.secondsToOpeningDateAtLoadingTime);
+        secondsToBookingProcessStartAtLoadingTime = this.event.getDoubleFieldValue(Event.secondsToBookingProcessStartAtLoadingTime);
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledBoundariesQueryBase).getQueryMapping();
@@ -168,7 +168,7 @@ public final class PolicyAggregate {
 
     private Double getSecondsNow(Double secondsAtLoadingTime) {
         if (secondsAtLoadingTime == null) return null;
-        return secondsAtLoadingTime + (System.currentTimeMillis() - creationTimeMillis) / 1000.0;
+        return secondsAtLoadingTime - (System.currentTimeMillis() - creationTimeMillis) / 1000.0;
     }
 
     public List<ScheduledItem> getScheduledItems() {
