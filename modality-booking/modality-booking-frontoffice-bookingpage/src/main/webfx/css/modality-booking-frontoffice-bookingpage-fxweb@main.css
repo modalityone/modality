@@ -2456,10 +2456,55 @@
 }
 
 .bookingpage-soldout-ribbon-text {
-    -fx-font-size: 11px;
+    -fx-font-size: 9px;
     -fx-font-weight: 600;
     -fx-text-fill: #fafaf9;
-    /* Padding set in Java: new Insets(4, 40, 4, 40) */
+    /* Padding set in Java for angled ribbon */
+}
+
+/* ==========================================
+   Accommodation Sold Out Section Components
+   ========================================== */
+
+/* Orange icon circle (80x80) for sold out header */
+.bookingpage-soldout-icon-circle {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 40;
+    /* Size set in Java: min/max 80x80 */
+}
+
+/* Icon inside the sold out icon circle */
+.bookingpage-soldout-icon-circle-icon {
+    -fx-stroke: -booking-form-primary;
+    -fx-fill: transparent;
+}
+
+/* Explanation box with orange theme */
+.bookingpage-soldout-explanation-box {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 12;
+    -fx-border-color: #FFE0B2;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+    /* Padding set in Java: new Insets(20) */
+}
+
+/* Text inside explanation box (dark orange) */
+.bookingpage-text-warning-dark {
+    -fx-text-fill: -booking-form-primary-dark;
+}
+
+/* Sold out indicator with semi-transparent white background */
+.bookingpage-soldout-indicator {
+    -fx-background-color: rgba(255, 255, 255, 0.7);
+    -fx-background-radius: 6;
+    /* Padding set in Java: new Insets(10, 12, 10, 12) */
+}
+
+/* Icon inside sold out indicator */
+.bookingpage-soldout-indicator-icon {
+    -fx-stroke: -booking-form-primary-dark;
+    -fx-fill: transparent;
 }
 
 /* ==========================================
