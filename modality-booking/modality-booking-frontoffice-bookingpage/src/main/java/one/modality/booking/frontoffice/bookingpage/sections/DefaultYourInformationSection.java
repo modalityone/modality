@@ -449,9 +449,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         VBox successLabels = new VBox(4);
         Label verifiedLabel = I18nControls.newLabel(BookingPageI18nKeys.EmailVerified);
         verifiedLabel.getStyleClass().add("bookingpage-success-title");
-        Label accountCreationLabel = I18nControls.newLabel(BookingPageI18nKeys.YourAccountWillBeCreatedWhenYouComplete);
-        accountCreationLabel.getStyleClass().add("bookingpage-success-subtitle");
-        successLabels.getChildren().addAll(verifiedLabel, accountCreationLabel);
+        successLabels.getChildren().add(verifiedLabel);
 
         verificationSuccessBox.getChildren().addAll(checkIconContainer, successLabels);
 
@@ -2284,6 +2282,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
                 .onFailure(error -> {
                     Console.log("Account creation failed: " + error.getMessage());
                     showError(codeErrorLabel, I18n.getI18nText(BookingPageI18nKeys.InvalidOrExpiredCode));
+                    playShakeAnimation(accountVerificationDigitsContainer);
                     clearAccountVerificationCodeDigitFields(); // Clear for retry
                 })
                 .onSuccess(accountPk -> {
