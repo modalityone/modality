@@ -7,6 +7,7 @@ module modality.booking.frontoffice.bookingpage {
     requires javafx.controls;
     requires javafx.graphics;
     requires modality.base.client.cloud.image;
+    requires modality.base.client.entities;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
     requires modality.base.client.time;
@@ -46,6 +47,7 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.extras.webtext;
     requires webfx.kit.util;
     requires webfx.platform.async;
+    requires webfx.platform.browser;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
