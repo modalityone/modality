@@ -4,11 +4,14 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
@@ -79,6 +82,49 @@ public interface HasAdditionalOptionsSection extends BookingFormSection {
         public boolean isPerDay() { return perDay; }
         public boolean isPerPerson() { return perPerson; }
         public String getIconSvg() { return iconSvg; }
+
+        public BooleanProperty selectedProperty() { return selected; }
+        public boolean isSelected() { return selected.get(); }
+        public void setSelected(boolean value) { selected.set(value); }
+    }
+
+    /**
+     * Represents a ceremony option loaded from ScheduledItem.
+     * Contains temporal information (date, time) and comment.
+     * Ceremonies are always free - no price field needed.
+     */
+    class CeremonyOption {
+        private final Object scheduledItemId;
+        private final ScheduledItem scheduledItem;
+        private final Item item;
+        private final String name;
+        private final LocalDate date;
+        private final LocalTime startTime;
+        private final LocalTime endTime;
+        private final String comment;
+        private final BooleanProperty selected = new SimpleBooleanProperty(false);
+
+        public CeremonyOption(Object scheduledItemId, ScheduledItem scheduledItem, Item item,
+                              String name, LocalDate date, LocalTime startTime, LocalTime endTime,
+                              String comment) {
+            this.scheduledItemId = scheduledItemId;
+            this.scheduledItem = scheduledItem;
+            this.item = item;
+            this.name = name;
+            this.date = date;
+            this.startTime = startTime;
+            this.endTime = endTime;
+            this.comment = comment;
+        }
+
+        public Object getScheduledItemId() { return scheduledItemId; }
+        public ScheduledItem getScheduledItem() { return scheduledItem; }
+        public Item getItem() { return item; }
+        public String getName() { return name; }
+        public LocalDate getDate() { return date; }
+        public LocalTime getStartTime() { return startTime; }
+        public LocalTime getEndTime() { return endTime; }
+        public String getComment() { return comment; }
 
         public BooleanProperty selectedProperty() { return selected; }
         public boolean isSelected() { return selected.get(); }
@@ -300,4 +346,30 @@ public interface HasAdditionalOptionsSection extends BookingFormSection {
      * @param callback the callback to invoke on selection change
      */
     void setOnSelectionChanged(Runnable callback);
+
+    // === Ceremony Options API ===
+
+    /**
+     * Returns all ceremony options loaded from ScheduledItems.
+     */
+    List<CeremonyOption> getCeremonyOptions();
+
+    /**
+     * Returns all selected ceremony options.
+     */
+    default List<CeremonyOption> getSelectedCeremonyOptions() {
+        return getCeremonyOptions().stream()
+            .filter(CeremonyOption::isSelected)
+            .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * Clears all ceremony options.
+     */
+    void clearCeremonyOptions();
+
+    /**
+     * Adds a single ceremony option.
+     */
+    void addCeremonyOption(CeremonyOption option);
 }

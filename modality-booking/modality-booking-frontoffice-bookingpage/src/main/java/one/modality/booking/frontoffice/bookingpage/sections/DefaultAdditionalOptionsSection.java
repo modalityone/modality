@@ -21,8 +21,12 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,6 +58,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
     // === DYNAMIC OPTIONS ===
     protected final List<AdditionalOption> options = new ArrayList<>();
+    protected final List<CeremonyOption> ceremonyOptions = new ArrayList<>();
 
     // === LEGACY OPTIONS SELECTION (for backward compatibility) ===
     protected final BooleanProperty assistedListening = new SimpleBooleanProperty(false);
@@ -107,8 +112,14 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     protected void buildOptionCards() {
         optionsContainer.getChildren().clear();
 
+        // Ceremony options first (always displayed at the top)
+        for (CeremonyOption ceremony : ceremonyOptions) {
+            VBox card = createCeremonyOptionCard(ceremony);
+            optionsContainer.getChildren().add(card);
+        }
+
+        // Then regular additional options
         if (options.isEmpty()) {
-            // No options to display
             return;
         }
 
@@ -229,6 +240,100 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             priceStr += " pp";
         }
         return priceStr;
+    }
+
+    /**
+     * Creates a card for a ceremony option.
+     * Displays name, date/time, and comment (if present).
+     */
+    protected VBox createCeremonyOptionCard(CeremonyOption ceremony) {
+        VBox card = new VBox(0);
+        card.getStyleClass().add("bookingpage-checkbox-card");
+
+        HBox mainRow = new HBox(12);
+        mainRow.setAlignment(Pos.CENTER_LEFT);
+        mainRow.setPadding(new Insets(16));
+        mainRow.setCursor(Cursor.HAND);
+
+        // Checkbox indicator
+        StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(
+            ceremony.selectedProperty(), colorScheme);
+
+        // Text content
+        VBox textContent = new VBox(4);
+        textContent.setAlignment(Pos.CENTER_LEFT);
+        HBox.setHgrow(textContent, Priority.ALWAYS);
+
+        // Title (ceremony name from Item)
+        Label title = new Label(ceremony.getName());
+        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+
+        // Date/time subtitle
+        Label dateTime = new Label(formatCeremonyDateTime(ceremony));
+        dateTime.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+
+        textContent.getChildren().addAll(title, dateTime);
+
+        // Comment (if present)
+        if (ceremony.getComment() != null && !ceremony.getComment().isEmpty()) {
+            Label comment = new Label(ceremony.getComment());
+            comment.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            comment.setWrapText(true);
+            textContent.getChildren().add(comment);
+        }
+
+        // No price display - ceremonies are always free
+        mainRow.getChildren().addAll(checkbox, textContent);
+        card.getChildren().add(mainRow);
+
+        // Initial selection state
+        if (ceremony.isSelected()) {
+            card.getStyleClass().add("selected");
+        }
+
+        // Selection handling
+        ceremony.selectedProperty().addListener((obs, old, newVal) -> {
+            if (newVal) {
+                if (!card.getStyleClass().contains("selected")) {
+                    card.getStyleClass().add("selected");
+                }
+            } else {
+                card.getStyleClass().remove("selected");
+            }
+            // Notify callback if registered
+            if (onSelectionChangedCallback != null) {
+                onSelectionChangedCallback.run();
+            }
+        });
+
+        mainRow.setOnMouseClicked(e -> ceremony.setSelected(!ceremony.isSelected()));
+
+        return card;
+    }
+
+    /**
+     * Formats the ceremony date and time for display.
+     * Example: "Saturday, Jan 5 at 2:00 PM - 4:00 PM"
+     */
+    protected String formatCeremonyDateTime(CeremonyOption ceremony) {
+        StringBuilder sb = new StringBuilder();
+
+        if (ceremony.getDate() != null) {
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("EEEE, MMM d", Locale.ENGLISH);
+            sb.append(ceremony.getDate().format(dateFormatter));
+        }
+
+        if (ceremony.getStartTime() != null) {
+            if (sb.length() > 0) sb.append(" at ");
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+            sb.append(ceremony.getStartTime().format(timeFormatter));
+
+            if (ceremony.getEndTime() != null && !ceremony.getEndTime().equals(ceremony.getStartTime())) {
+                sb.append(" - ").append(ceremony.getEndTime().format(timeFormatter));
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -355,6 +460,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     @Override
     public void clearOptions() {
         options.clear();
+        ceremonyOptions.clear();
         if (optionsContainer != null) {
             optionsContainer.getChildren().clear();
         }
@@ -368,6 +474,25 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     @Override
     public void setOnSelectionChanged(Runnable callback) {
         this.onSelectionChangedCallback = callback;
+    }
+
+    // ========================================
+    // CEREMONY OPTIONS API
+    // ========================================
+
+    @Override
+    public List<CeremonyOption> getCeremonyOptions() {
+        return ceremonyOptions;
+    }
+
+    @Override
+    public void clearCeremonyOptions() {
+        ceremonyOptions.clear();
+    }
+
+    @Override
+    public void addCeremonyOption(CeremonyOption option) {
+        ceremonyOptions.add(option);
     }
 
     // ========================================
@@ -392,6 +517,9 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
     // Dynamic exclusion for parking (when handled by dedicated transport section)
     private boolean excludeParking = false;
+
+    // Dynamic exclusion for ceremony (when handled by a dedicated section or not needed)
+    private boolean excludeCeremony = false;
 
     /**
      * Sets whether to exclude audio recording items from additional options.
@@ -453,6 +581,23 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
     public void setExcludeParkingAndTransport(boolean exclude) {
         setExcludeParking(exclude);
         setExcludeTransport(exclude);
+    }
+
+    /**
+     * Sets whether to exclude ceremony items from additional options.
+     * Use this when ceremonies are handled by a dedicated section or not needed.
+     *
+     * @param exclude true to exclude ceremony items, false to include them
+     */
+    public void setExcludeCeremony(boolean exclude) {
+        this.excludeCeremony = exclude;
+    }
+
+    /**
+     * Returns whether ceremony items are excluded from additional options.
+     */
+    public boolean isExcludeCeremony() {
+        return excludeCeremony;
     }
 
     /**
@@ -611,6 +756,34 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
             );
 
             addOption(option);
+        }
+
+        // === PART 3: Load ceremony ScheduledItems ===
+        if (!excludeCeremony) {
+            clearCeremonyOptions();
+            List<ScheduledItem> ceremonyItems = policyAggregate.filterCeremonyScheduledItems();
+
+            // Sort by date, then start time
+            ceremonyItems.sort(java.util.Comparator
+                .comparing(ScheduledItem::getDate, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder()))
+                .thenComparing(ScheduledItem::getStartTime, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())));
+
+            for (ScheduledItem si : ceremonyItems) {
+                Item item = si.getItem();
+                if (item == null) continue;
+
+                CeremonyOption option = new CeremonyOption(
+                    si.getPrimaryKey(),
+                    si,
+                    item,
+                    item.getName() != null ? item.getName() : "",
+                    si.getDate(),
+                    si.getStartTime(),
+                    si.getEndTime(),
+                    si.getComment()
+                );
+                addCeremonyOption(option);
+            }
         }
 
         // Rebuild UI to show new options
