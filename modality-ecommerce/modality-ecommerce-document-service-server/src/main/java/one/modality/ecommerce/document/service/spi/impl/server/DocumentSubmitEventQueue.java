@@ -13,8 +13,7 @@ import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddress
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Bruno Salmon
@@ -25,7 +24,8 @@ final class DocumentSubmitEventQueue {
     private boolean ready;
     private Scheduled scheduled;
     private DocumentSubmitRequest processingRequest;
-    private final Map<Object, DocumentSubmitRequest> queue = new LinkedHashMap<>();
+    private final Map<Object, DocumentSubmitRequest> queue = new HashMap<>();
+    private final Random random = new Random();
     private int processedRequests;
 
     public DocumentSubmitEventQueue(Event event) {
@@ -70,7 +70,8 @@ final class DocumentSubmitEventQueue {
     DocumentSubmitRequest pollProcessingRequest() {
         if (queue.isEmpty())
             return null;
-        DocumentSubmitRequest request = queue.values().iterator().next();
+        int index = random.nextInt(queue.size());
+        DocumentSubmitRequest request = queue.values().stream().skip(index).findFirst().orElse(null);
         setProcessingRequest(request);
         return request;
     }
