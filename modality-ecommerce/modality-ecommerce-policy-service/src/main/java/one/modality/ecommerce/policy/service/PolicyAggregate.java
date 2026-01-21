@@ -53,9 +53,12 @@ public final class PolicyAggregate {
     private final String bookablePeriodsQueryBase;
     @Deprecated
     private final QueryResult bookablePeriodsQueryResult;
+    private final long creationTimeMillis = System.currentTimeMillis();
 
     // Fields intended for application code
     private Event event;
+    private Double secondsToOpeningDateAtLoadingTime;
+    private Double secondsToBookingProcessStartAtLoadingTime;
     private EntityStore entityStore;
     private EntityList<ScheduledItem> scheduledItems;
     private EntityList<ScheduledBoundary> scheduledBoundaries;
@@ -113,6 +116,8 @@ public final class PolicyAggregate {
         // The event returned by PolicyAggregate is a different instance from the passes event and may contain some
         // additional fields such as termsUrlEn
         this.event = Collections.first(QueryResultToEntitiesMapper.mapQueryResultToEntities(eventQueryResult, queryMapping, entityStore, "events"));
+        secondsToOpeningDateAtLoadingTime = event.getDoubleFieldValue(Event.secondsToOpeningDateAtLoadingTime);
+        secondsToBookingProcessStartAtLoadingTime = event.getDoubleFieldValue(Event.secondsToBookingProcessStartAtLoadingTime);
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledItemsQueryBase).getQueryMapping();
         scheduledItems = QueryResultToEntitiesMapper.mapQueryResultToEntities(scheduledItemsQueryResult, queryMapping, entityStore, "scheduledItems");
         queryMapping = dataSourceModel.parseAndCompileSelect(scheduledBoundariesQueryBase).getQueryMapping();
@@ -151,6 +156,19 @@ public final class PolicyAggregate {
 
     public Event getEvent() {
         return event;
+    }
+
+    public Double getSecondsToOpeningDate() {
+        return getSecondsNow(secondsToOpeningDateAtLoadingTime);
+    }
+
+    public Double getSecondsToBookingProcessStart() {
+        return getSecondsNow(secondsToBookingProcessStartAtLoadingTime);
+    }
+
+    private Double getSecondsNow(Double secondsAtLoadingTime) {
+        if (secondsAtLoadingTime == null) return null;
+        return secondsAtLoadingTime + (System.currentTimeMillis() - creationTimeMillis) / 1000.0;
     }
 
     public List<ScheduledItem> getScheduledItems() {
