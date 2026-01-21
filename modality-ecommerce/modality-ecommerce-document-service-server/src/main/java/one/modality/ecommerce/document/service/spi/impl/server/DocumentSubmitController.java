@@ -66,10 +66,15 @@ final class DocumentSubmitController {
 
     static void processRequestAndNotifyClient(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
         processRequest(request, eventQueue)
-            .onComplete(ar -> DocumentSubmitEventQueue.pushResultToClient(
-                SubmitDocumentChangesResult.withQueueToken(ar.result(), request.queueToken()),
-                request.runId()
-            ));
+            .onComplete(ar -> {
+                SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
+                    // Temporary SoldOut result when an exception is raised (ex: double booking)
+                    SubmitDocumentChangesResult.createSoldOutResult(null, null);
+                DocumentSubmitEventQueue.pushResultToClient(
+                    SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
+                    request.runId()
+                );
+            });
     }
 
     static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {
