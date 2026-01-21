@@ -71,7 +71,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
     protected Label paymentsMadeAmountLabel; // Label showing the payments made amount
     protected VBox paymentAmountSection;
     protected VBox paymentMethodsSection;
-    protected HBox paymentOptionsContainer;
+    protected FlowPane paymentOptionsContainer;
     protected VBox customAmountSection;
     protected VBox allocationSection;
     protected VBox allocationItemsContainer;
@@ -296,6 +296,7 @@ public class DefaultPaymentSection implements HasPaymentSection {
         }
         Label nameLabel = new Label(nameText);
         nameLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.setWrapText(true);  // Allow long names with registration numbers to wrap
 
         Label detailsLabel = new Label(item.getDetails());
         detailsLabel.getStyleClass().add("bookingpage-label-small");
@@ -322,8 +323,10 @@ public class DefaultPaymentSection implements HasPaymentSection {
         titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
         VBox.setMargin(titleLabel, new Insets(0, 0, 20, 0));
 
-        // Payment options container
-        paymentOptionsContainer = new HBox(12);
+        // Payment options container - FlowPane allows cards to stack vertically on narrow screens
+        paymentOptionsContainer = new FlowPane();
+        paymentOptionsContainer.setHgap(12);
+        paymentOptionsContainer.setVgap(12);
         paymentOptionsContainer.setAlignment(Pos.CENTER);
 
         // Custom amount section (initially hidden)
@@ -486,11 +489,13 @@ public class DefaultPaymentSection implements HasPaymentSection {
         // Person name and total
         Label nameLabel = new Label(index + ". " + item.getPersonName() + " (" + EventPriceFormatter.formatWithCurrency(item.getAmount(), workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null ? workingBookingProperties.getWorkingBooking().getEvent() : null) + ")");
         nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
+        nameLabel.setWrapText(true);  // Allow long names to wrap instead of overlapping
         HBox.setHgrow(nameLabel, Priority.ALWAYS);
 
-        // Input for allocation
+        // Input for allocation - ensure it maintains minimum size
         HBox inputBox = new HBox(8);
         inputBox.setAlignment(Pos.CENTER_RIGHT);
+        inputBox.setMinWidth(Region.USE_PREF_SIZE);  // Prevent input from being pushed off screen
 
         Label currencyLabel = new Label(EventPriceFormatter.getEventCurrencySymbol(workingBookingProperties != null ? workingBookingProperties.getEvent() : null));
         currencyLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-muted");
@@ -745,22 +750,25 @@ public class DefaultPaymentSection implements HasPaymentSection {
         paymentOptionsContainer.getChildren().clear();
 
         // Only add cards for available payment options
+        // Cards have fixed preferred width for consistent sizing in FlowPane
+        double cardPrefWidth = 150;
+
         if (availablePaymentOptions.contains(PaymentOption.DEPOSIT)) {
             String depositDescription = I18n.getI18nText(BookingPageI18nKeys.MeetMinimumRequirement);
             VBox depositCard = createPaymentOptionCard(PaymentOption.DEPOSIT, BookingPageI18nKeys.MinimumDeposit, depositDescription);
-            HBox.setHgrow(depositCard, Priority.ALWAYS);
+            depositCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(depositCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.CUSTOM)) {
             VBox customCard = createPaymentOptionCard(PaymentOption.CUSTOM, BookingPageI18nKeys.CustomAmount, I18n.getI18nText(BookingPageI18nKeys.ChooseYourAmount));
-            HBox.setHgrow(customCard, Priority.ALWAYS);
+            customCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(customCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.FULL)) {
             VBox fullCard = createPaymentOptionCard(PaymentOption.FULL, BookingPageI18nKeys.PayInFullTitle, I18n.getI18nText(BookingPageI18nKeys.CompletePayment));
-            HBox.setHgrow(fullCard, Priority.ALWAYS);
+            fullCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(fullCard);
         }
     }
