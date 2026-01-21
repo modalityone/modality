@@ -28,4 +28,10 @@ public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
     public Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
         return BusCallService.call(DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, argument);
     }
+
+    @Override
+    public Future<Boolean> leaveEventQueue(Object queueToken) {
+        return BusCallService.call(DocumentServiceBusAddresses.LEAVE_EVENT_QUEUE_ADDRESS, queueToken);
+    }
+
 }

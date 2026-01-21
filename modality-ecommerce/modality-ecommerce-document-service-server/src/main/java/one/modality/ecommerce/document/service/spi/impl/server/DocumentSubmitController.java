@@ -81,4 +81,13 @@ final class DocumentSubmitController {
         eventQueues.remove(eventQueue.getEventPrimaryKey());
     }
 
+    static boolean leaveEventQueue(Object queueToken) {
+        for (DocumentSubmitEventQueue eventQueue : eventQueues.values()) {
+            if (eventQueue.releaseEventQueue(queueToken)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

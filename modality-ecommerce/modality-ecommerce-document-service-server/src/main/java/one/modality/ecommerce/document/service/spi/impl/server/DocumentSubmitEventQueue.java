@@ -105,8 +105,8 @@ final class DocumentSubmitEventQueue {
         removeRequest(request.queueToken());
     }
 
-    void removeRequest(Object token) {
-        queue.remove(token);
+    DocumentSubmitRequest removeRequest(Object token) {
+        return queue.remove(token);
     }
 
     void publishProgress() {
@@ -137,6 +137,14 @@ final class DocumentSubmitEventQueue {
 
     private void log(String message) {
         Console.log("🪣 [EVENT-QUEUE-" + event.getPrimaryKey() + "-" + event.getName() + "] " + message);
+    }
+
+    boolean releaseEventQueue(Object queueToken) {
+        if (removeRequest(queueToken) != null) {
+            publishProgress();
+            return true;
+        }
+        return false;
     }
 
 }
