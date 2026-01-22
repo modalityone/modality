@@ -859,7 +859,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         navigateToPendingBookings();
                     }
                 });
-            });
+            })
+            .onFailure(Console::log);
     }
 
     /**
