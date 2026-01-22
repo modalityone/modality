@@ -15,7 +15,9 @@ import one.modality.base.shared.entities.triggers.Triggers;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.*;
+import one.modality.ecommerce.document.service.events.registration.documentline.AllocateDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.LinkMateToOwnerDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 import one.modality.ecommerce.history.server.HistoryRecorder;
 

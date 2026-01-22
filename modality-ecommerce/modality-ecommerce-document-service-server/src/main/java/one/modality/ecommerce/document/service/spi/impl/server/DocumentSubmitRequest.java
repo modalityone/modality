@@ -25,6 +25,10 @@ record DocumentSubmitRequest(
 ) {
 
     static DocumentSubmitRequest create(SubmitDocumentChangesArgument argument) {
+        return create(argument, null);
+    }
+
+    static DocumentSubmitRequest create(SubmitDocumentChangesArgument argument, Object providedEventPrimaryKey) {
         // Capturing the required client state info from thread local (before it will be wiped out by the async call)
         String runId = ThreadLocalStateHolder.getRunId();
 
@@ -45,7 +49,7 @@ record DocumentSubmitRequest(
         if (document == null && documentLine != null)
             document = documentLine.getDocument();
 
-        Object eventPrimaryKey = document == null ? null : Entities.getPrimaryKey(document.getEventId());
+        Object eventPrimaryKey = providedEventPrimaryKey != null ? providedEventPrimaryKey : document == null ? null : Entities.getPrimaryKey(document.getEventId());
         Object queueToken = Uuid.randomUuid();
 
         return new DocumentSubmitRequest(argument, runId, updateStore, document, documentLine, eventPrimaryKey, queueToken);

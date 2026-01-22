@@ -2,6 +2,8 @@ package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
+import dev.webfx.stack.orm.entity.Entities;
+import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 
@@ -19,6 +21,14 @@ final class DocumentSubmitController {
 
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest request) {
         Object eventPrimaryKey = request.eventPrimaryKey();
+
+        if (eventPrimaryKey == null) { // Case when the event primary key must be loaded from the document (ex: booking cancellation)
+            return request.document().<Document>onExpressionLoaded("event")
+                .compose(document -> {
+                    DocumentSubmitRequest requestWithEventKeyProvided = DocumentSubmitRequest.create(request.argument(), Entities.getPrimaryKey(document.getEventId()));
+                    return submitDocumentChanges(requestWithEventKeyProvided);
+                });
+        }
 
         // Getting the event queue if already exists
         DocumentSubmitEventQueue eventQueue = eventQueues.get(eventPrimaryKey);
