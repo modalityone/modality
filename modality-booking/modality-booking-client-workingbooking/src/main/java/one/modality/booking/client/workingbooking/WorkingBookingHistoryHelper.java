@@ -3,13 +3,16 @@ package one.modality.booking.client.workingbooking;
 import dev.webfx.platform.util.collection.Collections;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.util.Attendances;
 import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
 import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -58,7 +61,11 @@ public final class WorkingBookingHistoryHelper {
         if (!attendances.isEmpty()) {
             newSection(sb).append(!added ? "Removed" : workingBooking.isNewBooking() ? "Booked" : "Added");
             attendances.stream().collect(Collectors.groupingBy(Attendances::getItem))
-                .forEach((item, itemAttendances) -> {
+                // Sorting by item family ordinal then item ordinal
+                .entrySet().stream().sorted(Comparator.<Map.Entry<Item, List<Attendance>>, Integer>comparing(entry -> entry.getKey().getFamily().getOrd()).thenComparing(entry -> entry.getKey().getOrd()))
+                .forEach(entry -> {
+                    Item item = entry.getKey();
+                    List<Attendance> itemAttendances = entry.getValue();
                     List<LocalDate> dates = Collections.map(itemAttendances, Attendances::getDate);
                     sb.append("  ⦿ ").append(item.getName()).append(" ").append(ModalityDates.formatDateSeries(dates));
                 });
