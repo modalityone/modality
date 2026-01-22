@@ -365,8 +365,8 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             roommateSection.setVisible(true);
             roommateContainer.setVisible(true);
             roommateContainer.setManaged(true);
-        } else if (!isDayVisitor && item != null) {
-            // Check room capacity for multi-person rooms
+        } else if (!isDayVisitor && item != null && !option.isPerPerson()) {
+            // Check room capacity for multi-person rooms (per-room pricing only)
             Integer capacity = item.getCapacity();
             if (capacity != null && capacity > 1) {
                 // Double Room: show roommate fields
