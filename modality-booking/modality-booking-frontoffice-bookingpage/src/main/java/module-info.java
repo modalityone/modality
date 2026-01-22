@@ -48,11 +48,13 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.browser;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
     requires webfx.platform.util;
     requires webfx.platform.util.time;
+    requires webfx.platform.visibility;
     requires webfx.platform.windowhistory;
     requires webfx.platform.windowlocation;
     requires webfx.stack.authn;
@@ -71,6 +73,8 @@ module modality.booking.frontoffice.bookingpage {
     exports one.modality.booking.frontoffice.bookingpage.navigation;
     exports one.modality.booking.frontoffice.bookingpage.pages.audiorecording;
     exports one.modality.booking.frontoffice.bookingpage.pages.closed;
+    exports one.modality.booking.frontoffice.bookingpage.pages.countdown;
+    exports one.modality.booking.frontoffice.bookingpage.pages.offline;
     exports one.modality.booking.frontoffice.bookingpage.pages.payment;
     exports one.modality.booking.frontoffice.bookingpage.pages.personal;
     exports one.modality.booking.frontoffice.bookingpage.pages.prerequisite;

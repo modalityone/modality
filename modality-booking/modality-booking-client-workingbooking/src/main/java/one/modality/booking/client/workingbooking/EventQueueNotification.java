@@ -92,6 +92,10 @@ public final class EventQueueNotification {
         ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS.put(queueToken, handler);
     }
 
+    public static void removeEnqueuedBookingFinalResultHandler(Object queueToken) {
+        ENQUEUED_BOOKING_FINAL_RESULT_HANDLERS.remove(queueToken);
+    }
+
     public static EventQueueNotification getOrCreate(Event event) {
         return NOTIFICATIONS.computeIfAbsent(event.getPrimaryKey(), ignored -> new EventQueueNotification(event));
     }

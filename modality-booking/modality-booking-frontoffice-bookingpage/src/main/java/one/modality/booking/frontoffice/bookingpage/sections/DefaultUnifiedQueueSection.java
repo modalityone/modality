@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Event;
@@ -240,10 +241,12 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         // Title and subtitle
         statusTitle = new Label();
         statusTitle.setWrapText(true);
+        statusTitle.setTextAlignment(TextAlignment.CENTER);
         statusTitle.getStyleClass().add("registration-queue-status-title");
 
         statusSubtitle = new Label();
         statusSubtitle.setWrapText(true);
+        statusSubtitle.setTextAlignment(TextAlignment.CENTER);
         statusSubtitle.getStyleClass().add("registration-queue-status-subtitle");
 
         header.getChildren().addAll(statusIconBadge, statusTitle, statusSubtitle);
@@ -399,6 +402,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         // "Registration opens in" label
         Label opensInLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationOpensIn);
         opensInLabel.setWrapText(true);
+        opensInLabel.setTextAlignment(TextAlignment.CENTER);
         opensInLabel.getStyleClass().add("registration-queue-countdown-label");
 
         // Timer display: HH : MM : SS
@@ -519,6 +523,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         // "Processing Now" header
         Label processingLabel = I18nControls.newLabel("ProcessingNow");
         processingLabel.setWrapText(true);
+        processingLabel.setTextAlignment(TextAlignment.CENTER);
         processingLabel.getStyleClass().add("registration-queue-progress-header");
 
         // Progress bar section
@@ -591,6 +596,7 @@ public class DefaultUnifiedQueueSection implements BookingFormSection {
         // Status message (rotating)
         statusMessageLabel = new Label();
         statusMessageLabel.setWrapText(true);
+        statusMessageLabel.setTextAlignment(TextAlignment.CENTER);
         statusMessageLabel.getStyleClass().add("registration-queue-status-message");
 
         content.getChildren().addAll(processingLabel, progressSection, positionRow, statusMessageLabel);

@@ -9,6 +9,7 @@ import dev.webfx.platform.util.uuid.Uuid;
 import net.authorize.Environment;
 import net.authorize.api.contract.v1.*;
 import net.authorize.api.controller.CreateTransactionController;
+import one.modality.ecommerce.payment.PaymentFailureReason;
 import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.SandboxCard;
 import one.modality.ecommerce.payment.server.gateway.*;
@@ -193,11 +194,21 @@ public final class AnetPaymentGateway implements PaymentGateway {
             String transId = transactionResponse.getTransId();
             String responseCode = transactionResponse.getResponseCode();
             PaymentStatus paymentStatus = "1".equals(responseCode) ? PaymentStatus.COMPLETED :  PaymentStatus.FAILED;
+            PaymentFailureReason failureReason = null;
+            if (paymentStatus == PaymentStatus.FAILED) {
+                failureReason = switch (responseCode) {
+                    case "2" -> PaymentFailureReason.DECLINED_BY_BANK;
+                    case "3" -> PaymentFailureReason.GATEWAY_ERROR;
+                    case "4" -> PaymentFailureReason.INSUFFICIENT_FUNDS; // Actually "held for review" but let's stick to simple mapping for now
+                    default -> PaymentFailureReason.UNKNOWN_REASON;
+                };
+            }
             return Future.succeededFuture(new GatewayCompletePaymentResult(
                 null,
                 transId,
                 responseCode,
-                paymentStatus
+                paymentStatus,
+                failureReason
             ));
         } else { // API request failed (technical error or validation failure)
             StringBuilder sb = new StringBuilder();

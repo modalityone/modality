@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 
@@ -14,6 +15,7 @@ final class DocumentSubmitController {
 
     private static final Map<Object, DocumentSubmitEventQueue> eventQueues = new HashMap<>();
     private static final Map<Object, Future<DocumentSubmitEventQueue>> eventQueueCreationFutures = new HashMap<>();
+    private static final Map<Object, SubmitDocumentChangesResult> pushingResults = new HashMap<>();
 
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest request) {
         Object eventPrimaryKey = request.eventPrimaryKey();
@@ -70,11 +72,33 @@ final class DocumentSubmitController {
                 SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
                     // Temporary SoldOut result when an exception is raised (ex: double booking)
                     SubmitDocumentChangesResult.createSoldOutResult(null, null);
-                DocumentSubmitEventQueue.pushResultToClient(
-                    SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
-                    request.runId()
-                );
+                notifyClient(request, result, 30);
             });
+    }
+
+    static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result, int retryMaxCount) {
+        pushingResults.put(request.queueToken(), result);
+        DocumentSubmitEventQueue.pushResultToClient(
+            SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
+            request.runId()
+        ).onComplete(ar -> {
+            if (ar.succeeded()) {
+                Console.log("✅ Successfully pushed token " + request.queueToken() + " to client " + request.runId());
+                pushingResults.remove(request.queueToken());
+            } else {
+                Console.log("❌ Failed pushing token " + request.queueToken() + " to client " + request.runId());
+                if (!pushingResults.containsKey(request.queueToken())) { // Can happen if fetchEventQueueResult() was called
+                    Console.log("🤷 But token " + request.queueToken() + " is not present anymore (maybe fetchEventQueueResult() was called)");
+                    return;
+                }
+                if (retryMaxCount > 0) {
+                    Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId() + " (retryMaxCount = " + (retryMaxCount - 1) + ")");
+                    notifyClient(request, result, retryMaxCount - 1);
+                } else {
+                    Console.log("🤷 Giving up push of token " + request.queueToken() + " to client " + request.runId());
+                }
+            }
+        });
     }
 
     static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {
@@ -90,4 +114,9 @@ final class DocumentSubmitController {
         return false;
     }
 
+    static SubmitDocumentChangesResult fetchEventQueueResult(Object queueToken) {
+        SubmitDocumentChangesResult result = pushingResults.remove(queueToken);
+        Console.log("☀️ Fetched result for token " + queueToken + ": " + result);
+        return result;
+    }
 }

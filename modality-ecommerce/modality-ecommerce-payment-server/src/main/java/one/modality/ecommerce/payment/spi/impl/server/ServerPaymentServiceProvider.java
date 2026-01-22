@@ -191,6 +191,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                     PaymentStatus paymentStatus = result.paymentStatus();
                     boolean pending = paymentStatus.isPending();
                     boolean successful = paymentStatus.isSuccessful();
+                    PaymentFailureReason failureReason = result.failureReason();
                     // We finally update the payment status through the payment service (this will also create a history entry)
                     return gatewayUserId.callAndReturn(() ->
                         updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(
@@ -200,7 +201,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                             gatewayStatus,
                             pending,
                             successful))
-                            .map(ignoredVoid -> new CompletePaymentResult(paymentStatus))
+                            .map(ignoredVoid -> new CompletePaymentResult(paymentStatus, failureReason))
                             .onFailure(Console::log)
                     );
                 });

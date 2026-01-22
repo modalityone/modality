@@ -164,11 +164,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     /**
      * Updates the pay button text with the current payment amount.
-     * Format: "Pay £{amount} Now →"
+     * Format: "Pay {currency}{amount} Now →"
      */
     protected void updatePayButtonText() {
         int amount = getPaymentAmount();
-        String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(amount);
+        String formattedAmount = EventPriceFormatter.formatWithCurrency(amount, workingBookingProperties != null ? workingBookingProperties.getEvent() : null);
         I18n.bindI18nTextProperty(payButtonText, BookingPageI18nKeys.PayAmountNow, formattedAmount);
     }
 
@@ -751,23 +751,26 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
         // Only add cards for available payment options
         // Cards have fixed preferred width for consistent sizing in FlowPane
-        double cardPrefWidth = 150;
+        double cardPrefWidth = 220;
 
         if (availablePaymentOptions.contains(PaymentOption.DEPOSIT)) {
             String depositDescription = I18n.getI18nText(BookingPageI18nKeys.MeetMinimumRequirement);
             VBox depositCard = createPaymentOptionCard(PaymentOption.DEPOSIT, BookingPageI18nKeys.MinimumDeposit, depositDescription);
+            depositCard.setMinWidth(cardPrefWidth);
             depositCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(depositCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.CUSTOM)) {
             VBox customCard = createPaymentOptionCard(PaymentOption.CUSTOM, BookingPageI18nKeys.CustomAmount, I18n.getI18nText(BookingPageI18nKeys.ChooseYourAmount));
+            customCard.setMinWidth(cardPrefWidth);
             customCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(customCard);
         }
 
         if (availablePaymentOptions.contains(PaymentOption.FULL)) {
             VBox fullCard = createPaymentOptionCard(PaymentOption.FULL, BookingPageI18nKeys.PayInFullTitle, I18n.getI18nText(BookingPageI18nKeys.CompletePayment));
+            fullCard.setMinWidth(cardPrefWidth);
             fullCard.setPrefWidth(cardPrefWidth);
             paymentOptionsContainer.getChildren().add(fullCard);
         }

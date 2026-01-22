@@ -5,9 +5,13 @@ import dev.webfx.extras.panes.GrowingPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.visibility.Visibility;
+import dev.webfx.platform.visibility.VisibilityListener;
+import dev.webfx.platform.visibility.VisibilityState;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
@@ -37,6 +41,8 @@ import one.modality.booking.frontoffice.bookingpage.*;
 import one.modality.booking.frontoffice.bookingpage.components.StickyPriceHeader;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
+import one.modality.booking.frontoffice.bookingpage.pages.countdown.RegistrationCountdownPage;
+import one.modality.booking.frontoffice.bookingpage.pages.offline.RegistrationOfflinePage;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
@@ -45,7 +51,9 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.PaymentAllocation;
+import one.modality.ecommerce.payment.PaymentFailureReason;
 import one.modality.ecommerce.payment.PaymentFormType;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
@@ -59,6 +67,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 //import java.util.stream.IntStream;
 
 /**
@@ -126,6 +135,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private CompositeBookingFormPage unifiedQueuePage;
     private EventQueueNotification eventQueueNotification;
     private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
+    private VisibilityListener queueVisibilityListener; // For fetching missed queue results when tab becomes active
 
     // Configuration flags
     private boolean showCommentsSection;
@@ -134,8 +144,16 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private String storedNewUserName;
     private String storedNewUserEmail;
 
+    // Stored context for handling queue results after tab reactivation
+    private boolean storedIsNewUser;
+    private boolean storedWantsAccountCreation;
+
     // Dynamic button text for pending bookings page (changes based on total amount)
     private final StringProperty pendingBookingsButtonText = new SimpleStringProperty();
+
+    // Payment retry parameters (stored when payment is initiated, used for retry after failure)
+    private int lastPaymentAmount;
+    private PaymentAllocation[] lastPaymentAllocations;
 
     // Navigation configuration
     private final boolean navigationClickable;
@@ -450,8 +468,63 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 }
             }
             // Normal flow - starts at first applicable page
-            default -> super.onWorkingBookingLoaded();
+            default -> {
+                // Check if registration status page should be shown (countdown or offline)
+                if (!checkAndShowRegistrationStatusPage()) {
+                    super.onWorkingBookingLoaded();
+                }
+            }
         }
+    }
+
+    /**
+     * Checks registration status and shows appropriate page if needed.
+     * Called automatically when WorkingBooking is loaded.
+     *
+     * @return true if a special page was shown (countdown or offline), false to continue normal flow
+     */
+    protected boolean checkAndShowRegistrationStatusPage() {
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) return false;
+
+        Event event = policyAggregate.getEvent();
+        if (event == null) return false;
+
+        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
+
+        // Case 1: Registration not yet open - show countdown
+        if (secondsToOpening != null && secondsToOpening > 0) {
+            showCountdownPage(policyAggregate);
+            return true;
+        }
+
+        /// Case 2: Form is on hold - show maintenance page
+        if (EventState.ON_HOLD == event.getState()) {
+            showOfflinePage(event);
+            return true;
+        }
+
+        return false; // Normal flow
+    }
+
+    private void showCountdownPage(PolicyAggregate policyAggregate) {
+        RegistrationCountdownPage countdownPage = new RegistrationCountdownPage(
+            policyAggregate,
+            colorScheme,
+            () -> {
+                // Called when countdown completes - check status again
+                if (!checkAndShowRegistrationStatusPage()) {
+                    navigateToNextPage(); // Proceed to normal flow
+                }
+            }
+        ).setButtons(); // Empty buttons array to hide navigation
+        navigateToSpecialPage(countdownPage);
+    }
+
+    private void showOfflinePage(Event event) {
+        RegistrationOfflinePage offlinePage = new RegistrationOfflinePage(event, colorScheme)
+            .setButtons(); // Empty buttons array to hide navigation
+        navigateToSpecialPage(offlinePage);
     }
 
     /**
@@ -499,6 +572,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             // Set event info from document
             Event event = document.getEvent();
             if (event != null) {
+                defaultConfirmationSection.setEvent(event); // Set event for currency formatting
                 defaultConfirmationSection.setEventName(event.getName());
                 defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
             }
@@ -857,7 +931,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         navigateToPendingBookings();
                     }
                 });
-            });
+            })
+            .onFailure(Console::log);
     }
 
     /**
@@ -1166,6 +1241,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void handleEnqueued(SubmitDocumentChangesResult result, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
         Object queueToken = result.queueToken();
         this.currentQueueToken = queueToken; // Store for use when leaving queue
+
+        // Store context for potential deferred result handling (if tab was inactive)
+        this.storedIsNewUser = isNewUser;
+        this.storedNewUserName = newUserName;
+        this.storedNewUserEmail = newUserEmail;
+        this.storedWantsAccountCreation = wantsAccountCreation;
+
         Event event = getEvent();
 
         // Navigate to unified queue page
@@ -1226,6 +1308,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 handleEnqueuedFinalResult(finalResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation);
             });
         });
+
+        // Register visibility listener to fetch results if tab was inactive
+        registerQueueVisibilityListener();
     }
 
     /**
@@ -1233,6 +1318,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Routes to appropriate page based on final status (APPROVED or SOLD_OUT).
      */
     private void handleEnqueuedFinalResult(SubmitDocumentChangesResult finalResult, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
+        removeQueueVisibilityListener();
+
         // Queue processing completed - registration is now confirmed open
         registrationConfirmedOpen = true;
         currentQueueToken = null; // Clear the token as queue processing is complete
@@ -1289,22 +1376,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (policyAggregate == null) {
             return true; // No policy = assume open
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening == null || secondsToOpening <= 0;
+        // Check if booking processing has started (random allocation time)
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart == null || secondsToProcessStart <= 0;
     }
 
     /**
-     * Gets the number of seconds until registration opens.
+     * Gets the number of seconds until booking processing starts (random allocation).
+     * This is used for the queue countdown after a user submits their registration.
      *
-     * @return seconds until opening, or 0 if already open or no opening date set
+     * @return seconds until processing starts, or 0 if already started or no date set
      */
     public int getSecondsToRegistrationOpening() {
         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
         if (policyAggregate == null) {
             return 0;
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening != null && secondsToOpening > 0 ? secondsToOpening.intValue() : 0;
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart != null && secondsToProcessStart > 0 ? secondsToProcessStart.intValue() : 0;
     }
 
     /**
@@ -1355,7 +1444,59 @@ public class StandardBookingForm extends MultiPageBookingForm {
             DocumentService.leaveEventQueue(currentQueueToken);
             currentQueueToken = null; // Clear the token
         }
+        removeQueueVisibilityListener();
         navigateToSummary();
+    }
+
+    /**
+     * Registers a visibility listener to fetch queue results when tab becomes visible.
+     * Called when booking is enqueued.
+     */
+    private void registerQueueVisibilityListener() {
+        removeQueueVisibilityListener(); // Remove any existing listener first
+
+        queueVisibilityListener = visibilityState -> {
+            if (visibilityState == VisibilityState.VISIBLE && currentQueueToken != null) {
+                // Small delay to let any pending push notifications arrive first
+                UiScheduler.scheduleDelay(150, () -> fetchQueueResultIfStillWaiting());
+            }
+        };
+        Visibility.addVisibilityListener(queueVisibilityListener);
+    }
+
+    /**
+     * Removes the visibility listener. Called when queue processing completes or user leaves queue.
+     */
+    private void removeQueueVisibilityListener() {
+        if (queueVisibilityListener != null) {
+            Visibility.removeVisibilityListener(queueVisibilityListener);
+            queueVisibilityListener = null;
+        }
+    }
+
+    /**
+     * Fetches queue result from server if still waiting for a result.
+     * Called when tab becomes visible to recover from missed push notifications.
+     */
+    private void fetchQueueResultIfStillWaiting() {
+        Object token = currentQueueToken; // Capture current value
+        if (token == null) {
+            return; // Already processed or left queue
+        }
+
+        Console.log("Tab became visible - fetching queue result as fallback");
+        DocumentService.fetchEventQueueResult(token)
+            .onSuccess(result -> {
+                if (result != null && token.equals(currentQueueToken)) {
+                    // Remove push handler to prevent duplicate processing
+                    EventQueueNotification.removeEnqueuedBookingFinalResultHandler(token);
+                    UiScheduler.runInUiThread(() ->
+                        handleEnqueuedFinalResult(result, storedIsNewUser, storedNewUserName, storedNewUserEmail, storedWantsAccountCreation)
+                    );
+                }
+                // If result is null, still processing - do nothing, wait for push
+            })
+            .onFailure(error -> Console.log("Fallback queue fetch failed: " + error.getMessage()));
     }
 
     /**
@@ -1405,10 +1546,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
         WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
         String historyComment = historyHelper.generateHistoryComment();
 
-        // Submit changes to the database
-       //For debug only the queue system only:
-    //    IntStream.range(1, 15).forEach(i -> workingBooking.submitChanges(historyComment));
+        // For testing the booking queue system only:
+        if (getEvent().getState() == EventState.TESTING) {
+            Integer bulkCount = ConfigLoader.getRootConfig().getInteger("${{ TEST_BOOKING_QUEUE_SUBMIT_BULK_COUNT }}");
+            if (bulkCount != null) {
+                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment));
+            }
+        }
 
+        // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.APPROVED) {
@@ -1844,6 +1990,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set event info
         Event event = getEvent();
         if (event != null) {
+            defaultConfirmationSection.setEvent(event); // Set event for currency formatting
             defaultConfirmationSection.setEventName(event.getName());
             defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
         }
@@ -1863,6 +2010,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     private Future<Void> handlePaymentSubmit(int amount, PaymentAllocation[] paymentAllocations) {
+        // Store parameters for potential retry after payment failure
+        this.lastPaymentAmount = amount;
+        this.lastPaymentAllocations = paymentAllocations;
+
         PaymentFormType preferredFormType =
             // Using embedded payment form for STTP (type 48) and US Festival (type 38)
             Entities.samePrimaryKey(getEvent().getType(), 48) // STTP
@@ -1876,9 +2027,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     webPaymentForm.navigateToRedirectedPaymentForm();
                 } else {
                     // Creating and displaying the gateway payment form
-                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), Console::log, Console::log, paymentStatus -> {
-                        if (paymentStatus.isSuccessful())
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), Console::log, Console::log, result -> {
+                        PaymentStatus paymentStatus = result.paymentStatus();
+                        if (paymentStatus.isSuccessful()) {
                             handleEmbeddedPaymentSuccess(amount);
+                        } else if (paymentStatus == PaymentStatus.CANCELED) {
+                            handleEmbeddedPaymentCanceled(amount);
+                        } else if (paymentStatus.isFailed()) {
+                            handleEmbeddedPaymentFailed(amount, result.failureReason());
+                        }
                     });
                     // Display the embedded payment form
                     displayEmbeddedPaymentForm(gatewayPaymentForm, amount);
@@ -1925,10 +2082,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .setShowingOwnSubmitButton(true)
             .setCanGoBack(false);
 
-        // Handle cancel: show cancellation message and unload form (like PaymentPage)
+        // Handle cancel: show payment canceled page with retry option
         gatewayPaymentForm.setCancelPaymentResultHandler(ar -> {
             growingPane.setContent(null); // Unload payment form
-            navigateToConfirmation(); // Navigate to confirmation with cancellation state
+            handleEmbeddedPaymentCanceled(amount); // Show canceled page with retry option
         });
 
         // Display the page
@@ -1949,6 +2106,63 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Navigate to confirmation
         navigateToConfirmation();
+    }
+
+    /**
+     * Handles embedded payment failure (card declined, error).
+     * Displays the PaymentRefusedSection with "Decline Reason" card and "Try Again" option.
+     */
+    private void handleEmbeddedPaymentFailed(int amount, PaymentFailureReason failureReason) {
+        // Create PaymentRefusedSection matching JSX mockup
+        PaymentRefusedSection section = new PaymentRefusedSection();
+        section.setColorScheme(colorScheme);
+        section.setAmount(amount);
+        section.setFailureReason(failureReason);
+        section.setOnRetryPayment(() -> handlePaymentSubmit(lastPaymentAmount, lastPaymentAllocations));
+        section.setOnCancelBooking(this::cancelBookingAndExit);
+
+        // Set event info
+        Event event = getEvent();
+        if (event != null) {
+            section.setEventName(event.getName());
+            section.setEventDates(event.getStartDate(), event.getEndDate());
+        }
+
+        // Display section using CompositeBookingFormPage
+        CompositeBookingFormPage failedPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            section
+        );
+        failedPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        navigateToSpecialPage(failedPaymentPage);
+    }
+
+    /**
+     * Handles embedded payment cancellation (user clicked cancel).
+     * Displays the PaymentCanceledSection with "Try Again" option.
+     */
+    private void handleEmbeddedPaymentCanceled(int amount) {
+        // Create PaymentCanceledSection matching JSX mockup
+        PaymentCanceledSection section = new PaymentCanceledSection();
+        section.setColorScheme(colorScheme);
+        section.setAmount(amount);
+        section.setOnRetryPayment(() -> handlePaymentSubmit(lastPaymentAmount, lastPaymentAllocations));
+
+        // Display section using CompositeBookingFormPage
+        CompositeBookingFormPage canceledPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            section
+        );
+        canceledPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        navigateToSpecialPage(canceledPaymentPage);
     }
 
     private void handleMakeAnotherBooking() {
@@ -2646,6 +2860,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set event info
         Event event = getEvent();
         if (event != null) {
+            defaultConfirmationSection.setEvent(event); // Set event for currency formatting
             defaultConfirmationSection.setEventName(event.getName());
             defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
         }

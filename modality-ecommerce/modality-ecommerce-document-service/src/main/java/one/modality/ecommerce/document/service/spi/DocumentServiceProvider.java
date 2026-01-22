@@ -17,4 +17,6 @@ public interface DocumentServiceProvider {
 
     Future<Boolean> leaveEventQueue(Object queueToken);
 
+    Future<SubmitDocumentChangesResult> fetchEventQueueResult(Object queueToken);
+
 }

@@ -1,5 +1,6 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
@@ -13,8 +14,9 @@ import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddress
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Bruno Salmon
@@ -25,7 +27,8 @@ final class DocumentSubmitEventQueue {
     private boolean ready;
     private Scheduled scheduled;
     private DocumentSubmitRequest processingRequest;
-    private final Map<Object, DocumentSubmitRequest> queue = new LinkedHashMap<>();
+    private final Map<Object, DocumentSubmitRequest> queue = new HashMap<>();
+    private final Random random = new Random();
     private int processedRequests;
 
     public DocumentSubmitEventQueue(Event event) {
@@ -70,7 +73,8 @@ final class DocumentSubmitEventQueue {
     DocumentSubmitRequest pollProcessingRequest() {
         if (queue.isEmpty())
             return null;
-        DocumentSubmitRequest request = queue.values().iterator().next();
+        int index = random.nextInt(queue.size());
+        DocumentSubmitRequest request = queue.values().stream().skip(index).findFirst().orElse(null);
         setProcessingRequest(request);
         return request;
     }
@@ -126,13 +130,14 @@ final class DocumentSubmitEventQueue {
         );
     }
 
-    static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
-        if (clientRunId != null)
-            PushServerService.push(
-                DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
-                result,
-                new DeliveryOptions(),
-                clientRunId);
+    static Future<Object> pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
+        if (clientRunId == null)
+            return Future.succeededFuture("UNKNOWN");
+        return PushServerService.push(
+            DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
+            result,
+            new DeliveryOptions(),
+            clientRunId);
     }
 
     private void log(String message) {

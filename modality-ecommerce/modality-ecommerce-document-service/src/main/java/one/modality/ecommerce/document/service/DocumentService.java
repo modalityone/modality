@@ -36,6 +36,10 @@ public final class DocumentService {
         return getProvider().leaveEventQueue(queueToken);
     }
 
+    public static Future<SubmitDocumentChangesResult> fetchEventQueueResult(Object queueToken) {
+        return getProvider().fetchEventQueueResult(queueToken);
+    }
+
     // Additional top-level utility methods to load a document (not directly implemented by the provider and not directly serialized)
 
     public static Future<DocumentAggregate> loadDocument(Object event, Object userPerson) {

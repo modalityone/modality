@@ -14,4 +14,6 @@ public interface DocumentServiceBusAddresses {
     String SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS = "modality/service/document/push";
 
     String LEAVE_EVENT_QUEUE_ADDRESS = "modality/service/document/leaveEventQueue";
+
+    String FETCH_EVENT_QUEUE_RESULT_ADDRESS = "modality/service/document/fetchEventQueueResult";
 }
