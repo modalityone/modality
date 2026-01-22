@@ -1,5 +1,6 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
+import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
@@ -13,7 +14,9 @@ import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddress
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 /**
  * @author Bruno Salmon
@@ -127,13 +130,14 @@ final class DocumentSubmitEventQueue {
         );
     }
 
-    static void pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
-        if (clientRunId != null)
-            PushServerService.push(
-                DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
-                result,
-                new DeliveryOptions(),
-                clientRunId);
+    static Future<Object> pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
+        if (clientRunId == null)
+            return Future.succeededFuture("UNKNOWN");
+        return PushServerService.push(
+            DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_FINAL_CLIENT_PUSH_ADDRESS,
+            result,
+            new DeliveryOptions(),
+            clientRunId);
     }
 
     private void log(String message) {

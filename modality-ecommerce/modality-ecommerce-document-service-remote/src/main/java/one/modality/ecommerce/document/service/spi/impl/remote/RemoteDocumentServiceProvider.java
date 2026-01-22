@@ -34,4 +34,8 @@ public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
         return BusCallService.call(DocumentServiceBusAddresses.LEAVE_EVENT_QUEUE_ADDRESS, queueToken);
     }
 
+    @Override
+    public Future<SubmitDocumentChangesResult> fetchEventQueueResult(Object queueToken) {
+        return BusCallService.call(DocumentServiceBusAddresses.FETCH_EVENT_QUEUE_RESULT_ADDRESS, queueToken);
+    }
 }

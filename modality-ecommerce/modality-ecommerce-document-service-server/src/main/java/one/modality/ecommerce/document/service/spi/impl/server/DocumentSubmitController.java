@@ -1,6 +1,7 @@
 package one.modality.ecommerce.document.service.spi.impl.server;
 
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import one.modality.base.shared.entities.Event;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 
@@ -14,6 +15,7 @@ final class DocumentSubmitController {
 
     private static final Map<Object, DocumentSubmitEventQueue> eventQueues = new HashMap<>();
     private static final Map<Object, Future<DocumentSubmitEventQueue>> eventQueueCreationFutures = new HashMap<>();
+    private static final Map<Object, SubmitDocumentChangesResult> pushingResults = new HashMap<>();
 
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest request) {
         Object eventPrimaryKey = request.eventPrimaryKey();
@@ -70,11 +72,27 @@ final class DocumentSubmitController {
                 SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
                     // Temporary SoldOut result when an exception is raised (ex: double booking)
                     SubmitDocumentChangesResult.createSoldOutResult(null, null);
-                DocumentSubmitEventQueue.pushResultToClient(
-                    SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
-                    request.runId()
-                );
+                notifyClient(request, result);
             });
+    }
+
+    static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result) {
+        pushingResults.put(request.queueToken(), result);
+        DocumentSubmitEventQueue.pushResultToClient(
+            SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
+            request.runId()
+        ).onComplete(ar -> {
+            if (ar.succeeded()) {
+                Console.log("✅ Successfully pushed token " + request.queueToken() + " to client " + request.runId());
+                pushingResults.remove(request.queueToken());
+            } else {
+                Console.log("❌ Failed pushing token " + request.queueToken() + " to client " + request.runId());
+                if (pushingResults.containsKey(request.queueToken())) {
+                    Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId());
+                    notifyClient(request, result);
+                }
+            }
+        });
     }
 
     static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {
@@ -90,4 +108,7 @@ final class DocumentSubmitController {
         return false;
     }
 
+    static SubmitDocumentChangesResult fetchEventQueueResult(Object queueToken) {
+        return pushingResults.remove(queueToken);
+    }
 }
