@@ -164,11 +164,11 @@ public class DefaultPaymentSection implements HasPaymentSection {
 
     /**
      * Updates the pay button text with the current payment amount.
-     * Format: "Pay £{amount} Now →"
+     * Format: "Pay {currency}{amount} Now →"
      */
     protected void updatePayButtonText() {
         int amount = getPaymentAmount();
-        String formattedAmount = PriceFormatter.formatPriceWithCurrencyNoDecimals(amount);
+        String formattedAmount = EventPriceFormatter.formatWithCurrency(amount, workingBookingProperties != null ? workingBookingProperties.getEvent() : null);
         I18n.bindI18nTextProperty(payButtonText, BookingPageI18nKeys.PayAmountNow, formattedAmount);
     }
 

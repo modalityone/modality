@@ -3677,3 +3677,108 @@
     -fx-font-weight: 600;
     -fx-text-fill: #495057;
 }
+
+/* ==========================================
+   Payment Outcome Pages (Refused/Canceled)
+   Amber warning styling based on JSX mockup
+   ========================================== */
+
+/* Amber icon circle - 80px with 4px amber border */
+.bookingpage-warning-icon-circle {
+    -fx-background-color: #FEF3C7;
+    -fx-border-color: #F59E0B;
+    -fx-border-width: 4;
+    -fx-border-radius: 40;
+    -fx-background-radius: 40;
+}
+
+/* Title - 24px, warm brown color */
+.bookingpage-warning-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #92400E;
+}
+
+/* Subtitle - 15px, gray (for Label/Hyperlink) */
+.bookingpage-warning-subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Subtitle - 15px, gray (for Text nodes in TextFlow) */
+.bookingpage-warning-subtitle-text {
+    -fx-font-size: 15px;
+    -fx-fill: #6c757d;
+}
+
+/* Orders link in subtitle - uses theme primary color */
+.bookingpage-orders-link {
+    -fx-text-fill: -booking-form-primary;
+}
+
+/* Pay Later box title - 15px, semi-bold, dark */
+.bookingpage-paylater-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #212529;
+}
+
+/* Pay Later box description - 14px, gray (for Label/Hyperlink) */
+.bookingpage-paylater-desc {
+    -fx-font-size: 14px;
+    -fx-text-fill: #6c757d;
+}
+
+/* Pay Later box description - 14px, gray (for Text nodes in TextFlow) */
+.bookingpage-paylater-desc-text {
+    -fx-font-size: 14px;
+    -fx-fill: #6c757d;
+}
+
+/* Decline reason amber card */
+.bookingpage-decline-reason-card {
+    -fx-background-color: #FFFBEB;
+    -fx-border-color: #F59E0B #FDE68A #FDE68A #F59E0B;
+    -fx-border-width: 1 1 1 4;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+/* "DECLINE REASON" header - uppercase, small, amber */
+.bookingpage-decline-reason-header {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #92400E;
+}
+
+/* Failure reason message - 14px, dark amber */
+.bookingpage-decline-reason-message {
+    -fx-font-size: 14px;
+    -fx-text-fill: #78350F;
+}
+
+/* ==========================================
+   Registration Status Pages (Countdown + Offline)
+   ========================================== */
+
+/* Registration Countdown Page */
+.registration-countdown-page {
+    -fx-background-color: white;
+}
+
+.registration-countdown-timer-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: 700;
+    -fx-text-fill: -booking-form-primary;
+}
+
+.registration-countdown-timer-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6c757d;
+    -fx-font-weight: 500;
+}
+
+/* Registration Offline Page */
+.registration-offline-page {
+    -fx-background-color: white;
+}

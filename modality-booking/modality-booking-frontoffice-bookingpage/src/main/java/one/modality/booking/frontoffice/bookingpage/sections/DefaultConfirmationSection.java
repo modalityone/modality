@@ -527,6 +527,17 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         this.colorScheme.set(scheme);
     }
 
+    /**
+     * Sets the event for currency formatting.
+     * This should be called before setPaymentAmounts() to ensure correct currency display.
+     *
+     * @param event the event entity (used to determine currency symbol)
+     */
+    public void setEvent(Event event) {
+        this.event = event;
+        this.unifiedPriceDisplay = new UnifiedPriceDisplay(event);
+    }
+
     @Override
     public void setEventName(String name) {
         eventNameProperty.set(name);

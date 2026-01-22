@@ -22,7 +22,6 @@ import one.modality.booking.frontoffice.bookingform.GatewayPaymentForm;
 import one.modality.ecommerce.client.i18n.EcommerceI18nKeys;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.CompletePaymentResult;
-import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
 
@@ -43,7 +42,7 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
     private Button pressedButton;
     private Consumer<AsyncResult<CancelPaymentResult>> cancelPaymentResultHandler;
 
-    public ProvidedGatewayPaymentForm(WebPaymentForm webPaymentForm, Event event, Consumer<Object> errorConsumer, Consumer<CancelPaymentResult> cancelConsumer, Consumer<PaymentStatus> successConsumer) {
+    public ProvidedGatewayPaymentForm(WebPaymentForm webPaymentForm, Event event, Consumer<Object> errorConsumer, Consumer<CancelPaymentResult> cancelConsumer, Consumer<CompletePaymentResult> successConsumer) {
         gatewayName = webPaymentForm.getGatewayName();
 
         Label gatewayLogo = new Label();
@@ -122,9 +121,7 @@ public final class ProvidedGatewayPaymentForm implements GatewayPaymentForm {
                 errorConsumer.accept(BookI18nKeys.ErrorPaymentModalityFailure);
                 Console.log(errorMsg);
             })
-            .setOnPaymentCompletion(result -> {
-                successConsumer.accept(result.paymentStatus());
-            });
+            .setOnPaymentCompletion(successConsumer);
     }
 
     @Override

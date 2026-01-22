@@ -18,13 +18,14 @@ import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.BookablePeriod;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
+import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.entities.util.Items;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
-import one.modality.booking.frontoffice.bookingpage.PriceFormatter;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -272,7 +273,8 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
     }
 
     protected void createRecordingCard(Item recordingItem, int price, boolean isLocked) {
-        AudioRecordingCard card = new AudioRecordingCard(recordingItem, price, isLocked, colorScheme);
+        Event event = workingBookingProperties != null ? workingBookingProperties.getEvent() : null;
+        AudioRecordingCard card = new AudioRecordingCard(recordingItem, price, isLocked, colorScheme, event);
         card.setOnClick(() -> handleCardSelection(card, recordingItem));
 
         I18nEntities.bindTranslatedEntityToTextProperty(card.getTitleLabel(), recordingItem);
@@ -461,7 +463,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
         private Runnable onClick;
 
-        AudioRecordingCard(Item recordingItem, int price, boolean locked, ObjectProperty<BookingFormColorScheme> colorSchemeProperty) {
+        AudioRecordingCard(Item recordingItem, int price, boolean locked, ObjectProperty<BookingFormColorScheme> colorSchemeProperty, Event event) {
             this.recordingItem = recordingItem;
             this.locked = locked;
 
@@ -485,7 +487,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             HBox.setHgrow(titleContainer, Priority.ALWAYS);
 
             // Price - styled via CSS
-            Label priceLabel = new Label(PriceFormatter.formatPriceWithCurrencyNoDecimals(price));
+            Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(price, event));
             priceLabel.getStyleClass().addAll("bookingpage-font-bold", "bookingpage-text-base", "bookingpage-text-dark");
 
             // Layout
