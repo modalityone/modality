@@ -8,8 +8,10 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Strings;
+import dev.webfx.platform.visibility.Visibility;
+import dev.webfx.platform.visibility.VisibilityListener;
+import dev.webfx.platform.visibility.VisibilityState;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
@@ -133,6 +135,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private CompositeBookingFormPage unifiedQueuePage;
     private EventQueueNotification eventQueueNotification;
     private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
+    private VisibilityListener queueVisibilityListener; // For fetching missed queue results when tab becomes active
 
     // Configuration flags
     private boolean showCommentsSection;
@@ -140,6 +143,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Stored new user info for payment/confirmation flow (persists after submission clears state)
     private String storedNewUserName;
     private String storedNewUserEmail;
+
+    // Stored context for handling queue results after tab reactivation
+    private boolean storedIsNewUser;
+    private boolean storedWantsAccountCreation;
 
     // Dynamic button text for pending bookings page (changes based on total amount)
     private final StringProperty pendingBookingsButtonText = new SimpleStringProperty();
@@ -1234,6 +1241,13 @@ public class StandardBookingForm extends MultiPageBookingForm {
     private void handleEnqueued(SubmitDocumentChangesResult result, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
         Object queueToken = result.queueToken();
         this.currentQueueToken = queueToken; // Store for use when leaving queue
+
+        // Store context for potential deferred result handling (if tab was inactive)
+        this.storedIsNewUser = isNewUser;
+        this.storedNewUserName = newUserName;
+        this.storedNewUserEmail = newUserEmail;
+        this.storedWantsAccountCreation = wantsAccountCreation;
+
         Event event = getEvent();
 
         // Navigate to unified queue page
@@ -1294,6 +1308,9 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 handleEnqueuedFinalResult(finalResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation);
             });
         });
+
+        // Register visibility listener to fetch results if tab was inactive
+        registerQueueVisibilityListener();
     }
 
     /**
@@ -1301,6 +1318,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Routes to appropriate page based on final status (APPROVED or SOLD_OUT).
      */
     private void handleEnqueuedFinalResult(SubmitDocumentChangesResult finalResult, boolean isNewUser, String newUserName, String newUserEmail, boolean wantsAccountCreation) {
+        removeQueueVisibilityListener();
+
         // Queue processing completed - registration is now confirmed open
         registrationConfirmedOpen = true;
         currentQueueToken = null; // Clear the token as queue processing is complete
@@ -1425,7 +1444,59 @@ public class StandardBookingForm extends MultiPageBookingForm {
             DocumentService.leaveEventQueue(currentQueueToken);
             currentQueueToken = null; // Clear the token
         }
+        removeQueueVisibilityListener();
         navigateToSummary();
+    }
+
+    /**
+     * Registers a visibility listener to fetch queue results when tab becomes visible.
+     * Called when booking is enqueued.
+     */
+    private void registerQueueVisibilityListener() {
+        removeQueueVisibilityListener(); // Remove any existing listener first
+
+        queueVisibilityListener = visibilityState -> {
+            if (visibilityState == VisibilityState.VISIBLE && currentQueueToken != null) {
+                // Small delay to let any pending push notifications arrive first
+                UiScheduler.scheduleDelay(150, () -> fetchQueueResultIfStillWaiting());
+            }
+        };
+        Visibility.addVisibilityListener(queueVisibilityListener);
+    }
+
+    /**
+     * Removes the visibility listener. Called when queue processing completes or user leaves queue.
+     */
+    private void removeQueueVisibilityListener() {
+        if (queueVisibilityListener != null) {
+            Visibility.removeVisibilityListener(queueVisibilityListener);
+            queueVisibilityListener = null;
+        }
+    }
+
+    /**
+     * Fetches queue result from server if still waiting for a result.
+     * Called when tab becomes visible to recover from missed push notifications.
+     */
+    private void fetchQueueResultIfStillWaiting() {
+        Object token = currentQueueToken; // Capture current value
+        if (token == null) {
+            return; // Already processed or left queue
+        }
+
+        Console.log("Tab became visible - fetching queue result as fallback");
+        DocumentService.fetchEventQueueResult(token)
+            .onSuccess(result -> {
+                if (result != null && token.equals(currentQueueToken)) {
+                    // Remove push handler to prevent duplicate processing
+                    EventQueueNotification.removeEnqueuedBookingFinalResultHandler(token);
+                    UiScheduler.runInUiThread(() ->
+                        handleEnqueuedFinalResult(result, storedIsNewUser, storedNewUserName, storedNewUserEmail, storedWantsAccountCreation)
+                    );
+                }
+                // If result is null, still processing - do nothing, wait for push
+            })
+            .onFailure(error -> Console.log("Fallback queue fetch failed: " + error.getMessage()));
     }
 
     /**
