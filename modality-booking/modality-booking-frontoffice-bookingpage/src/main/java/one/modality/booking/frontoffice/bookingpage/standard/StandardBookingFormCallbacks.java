@@ -126,6 +126,27 @@ public interface StandardBookingFormCallbacks {
     }
 
     /**
+     * Called when entering the sold-out recovery page, BEFORE the page is displayed.
+     *
+     * <p>This callback is triggered when the sold-out recovery flow starts, giving the form
+     * an opportunity to clean up the previous accommodation state before showing alternatives.
+     * Override this to:</p>
+     * <ul>
+     *   <li>Cancel/remove old accommodation document lines from WorkingBooking</li>
+     *   <li>Reset roommate info section data (isRoomBooker, visibility, etc.)</li>
+     *   <li>Clear any form-specific accommodation state</li>
+     * </ul>
+     *
+     * <p>This ensures the booking starts fresh when the user selects a new accommodation
+     * option from the sold-out recovery dialog.</p>
+     *
+     * <p>The default implementation does nothing.</p>
+     */
+    default void onEnteringSoldOutRecovery() {
+        // Default: no cleanup needed
+    }
+
+    /**
      * Called when accommodation selection needs to be updated due to sold-out error.
      *
      * <p>This callback is triggered when the server returns a SOLDOUT error during
