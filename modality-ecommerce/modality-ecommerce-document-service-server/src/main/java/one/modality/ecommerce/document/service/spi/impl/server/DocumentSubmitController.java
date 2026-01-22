@@ -72,11 +72,11 @@ final class DocumentSubmitController {
                 SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
                     // Temporary SoldOut result when an exception is raised (ex: double booking)
                     SubmitDocumentChangesResult.createSoldOutResult(null, null);
-                notifyClient(request, result);
+                notifyClient(request, result, 30);
             });
     }
 
-    static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result) {
+    static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result, int retryMaxCount) {
         pushingResults.put(request.queueToken(), result);
         DocumentSubmitEventQueue.pushResultToClient(
             SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
@@ -87,9 +87,15 @@ final class DocumentSubmitController {
                 pushingResults.remove(request.queueToken());
             } else {
                 Console.log("❌ Failed pushing token " + request.queueToken() + " to client " + request.runId());
-                if (pushingResults.containsKey(request.queueToken())) {
-                    Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId());
-                    notifyClient(request, result);
+                if (!pushingResults.containsKey(request.queueToken())) { // Can happen if fetchEventQueueResult() was called
+                    Console.log("🤷 But token " + request.queueToken() + " is not present anymore (maybe fetchEventQueueResult() was called)");
+                    return;
+                }
+                if (retryMaxCount > 0) {
+                    Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId() + " (retryMaxCount = " + (retryMaxCount - 1) + ")");
+                    notifyClient(request, result, retryMaxCount - 1);
+                } else {
+                    Console.log("🤷 Giving up push of token " + request.queueToken() + " to client " + request.runId());
                 }
             }
         });
@@ -109,6 +115,8 @@ final class DocumentSubmitController {
     }
 
     static SubmitDocumentChangesResult fetchEventQueueResult(Object queueToken) {
-        return pushingResults.remove(queueToken);
+        SubmitDocumentChangesResult result = pushingResults.remove(queueToken);
+        Console.log("☀️ Fetched result for token " + queueToken + ": " + result);
+        return result;
     }
 }
