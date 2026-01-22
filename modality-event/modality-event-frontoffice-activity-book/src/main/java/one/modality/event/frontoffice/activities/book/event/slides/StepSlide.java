@@ -20,6 +20,7 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.CancelPaymentResult;
 import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.PaymentService;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.payment.client.WebPaymentForm;
 import one.modality.event.frontoffice.activities.book.BookI18nKeys;
@@ -138,10 +139,11 @@ public abstract class StepSlide implements Supplier<Node> {
                     // No more slide to show, we just wait the redirected payment page to replace this app
                 else { // Embedded payment form
                     // Creating and displaying the gateway payment form
-                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), this::displayErrorMessage, this::displayCancellationSlide, status -> {
-                        if (status.isPending()) {
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), this::displayErrorMessage, this::displayCancellationSlide, result -> {
+                        PaymentStatus paymentStatus = result.paymentStatus();
+                        if (paymentStatus.isPending()) {
                             displayPendingPaymentSlide();
-                        } else if (status.isSuccessful()) {
+                        } else if (paymentStatus.isSuccessful()) {
                             displayThankYouSlide();
                         } else { // failed payment
                             displayFailedPaymentSlide();

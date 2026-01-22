@@ -8,6 +8,7 @@ import dev.webfx.platform.async.Promise;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Booleans;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
@@ -38,6 +39,8 @@ import one.modality.booking.frontoffice.bookingpage.*;
 import one.modality.booking.frontoffice.bookingpage.components.StickyPriceHeader;
 import one.modality.booking.frontoffice.bookingpage.navigation.ButtonNavigation;
 import one.modality.booking.frontoffice.bookingpage.navigation.ResponsiveStepProgressHeader;
+import one.modality.booking.frontoffice.bookingpage.pages.countdown.RegistrationCountdownPage;
+import one.modality.booking.frontoffice.bookingpage.pages.offline.RegistrationOfflinePage;
 import one.modality.booking.frontoffice.bookingpage.sections.*;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
@@ -46,7 +49,9 @@ import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
 import one.modality.ecommerce.payment.PaymentAllocation;
+import one.modality.ecommerce.payment.PaymentFailureReason;
 import one.modality.ecommerce.payment.PaymentFormType;
+import one.modality.ecommerce.payment.PaymentStatus;
 import one.modality.ecommerce.payment.client.ClientPaymentUtil;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
@@ -138,6 +143,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     // Dynamic button text for pending bookings page (changes based on total amount)
     private final StringProperty pendingBookingsButtonText = new SimpleStringProperty();
+
+    // Payment retry parameters (stored when payment is initiated, used for retry after failure)
+    private int lastPaymentAmount;
+    private PaymentAllocation[] lastPaymentAllocations;
 
     // Navigation configuration
     private final boolean navigationClickable;
@@ -452,8 +461,63 @@ public class StandardBookingForm extends MultiPageBookingForm {
                 }
             }
             // Normal flow - starts at first applicable page
-            default -> super.onWorkingBookingLoaded();
+            default -> {
+                // Check if registration status page should be shown (countdown or offline)
+                if (!checkAndShowRegistrationStatusPage()) {
+                    super.onWorkingBookingLoaded();
+                }
+            }
         }
+    }
+
+    /**
+     * Checks registration status and shows appropriate page if needed.
+     * Called automatically when WorkingBooking is loaded.
+     *
+     * @return true if a special page was shown (countdown or offline), false to continue normal flow
+     */
+    protected boolean checkAndShowRegistrationStatusPage() {
+        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        if (policyAggregate == null) return false;
+
+        Event event = policyAggregate.getEvent();
+        if (event == null) return false;
+
+        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
+
+        // Case 1: Registration not yet open - show countdown
+        if (secondsToOpening != null && secondsToOpening > 0) {
+            showCountdownPage(policyAggregate);
+            return true;
+        }
+
+        /// Case 2: Form is on hold - show maintenance page
+        if (EventState.ON_HOLD == event.getState()) {
+            showOfflinePage(event);
+            return true;
+        }
+
+        return false; // Normal flow
+    }
+
+    private void showCountdownPage(PolicyAggregate policyAggregate) {
+        RegistrationCountdownPage countdownPage = new RegistrationCountdownPage(
+            policyAggregate,
+            colorScheme,
+            () -> {
+                // Called when countdown completes - check status again
+                if (!checkAndShowRegistrationStatusPage()) {
+                    navigateToNextPage(); // Proceed to normal flow
+                }
+            }
+        ).setButtons(); // Empty buttons array to hide navigation
+        navigateToSpecialPage(countdownPage);
+    }
+
+    private void showOfflinePage(Event event) {
+        RegistrationOfflinePage offlinePage = new RegistrationOfflinePage(event, colorScheme)
+            .setButtons(); // Empty buttons array to hide navigation
+        navigateToSpecialPage(offlinePage);
     }
 
     /**
@@ -501,6 +565,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             // Set event info from document
             Event event = document.getEvent();
             if (event != null) {
+                defaultConfirmationSection.setEvent(event); // Set event for currency formatting
                 defaultConfirmationSection.setEventName(event.getName());
                 defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
             }
@@ -1292,22 +1357,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (policyAggregate == null) {
             return true; // No policy = assume open
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening == null || secondsToOpening <= 0;
+        // Check if booking processing has started (random allocation time)
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart == null || secondsToProcessStart <= 0;
     }
 
     /**
-     * Gets the number of seconds until registration opens.
+     * Gets the number of seconds until booking processing starts (random allocation).
+     * This is used for the queue countdown after a user submits their registration.
      *
-     * @return seconds until opening, or 0 if already open or no opening date set
+     * @return seconds until processing starts, or 0 if already started or no date set
      */
     public int getSecondsToRegistrationOpening() {
         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
         if (policyAggregate == null) {
             return 0;
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening != null && secondsToOpening > 0 ? secondsToOpening.intValue() : 0;
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart != null && secondsToProcessStart > 0 ? secondsToProcessStart.intValue() : 0;
     }
 
     /**
@@ -1852,6 +1919,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set event info
         Event event = getEvent();
         if (event != null) {
+            defaultConfirmationSection.setEvent(event); // Set event for currency formatting
             defaultConfirmationSection.setEventName(event.getName());
             defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
         }
@@ -1871,6 +1939,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
     }
 
     private Future<Void> handlePaymentSubmit(int amount, PaymentAllocation[] paymentAllocations) {
+        // Store parameters for potential retry after payment failure
+        this.lastPaymentAmount = amount;
+        this.lastPaymentAllocations = paymentAllocations;
+
         PaymentFormType preferredFormType =
             // Using embedded payment form for STTP (type 48) and US Festival (type 38)
             Entities.samePrimaryKey(getEvent().getType(), 48) // STTP
@@ -1884,9 +1956,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     webPaymentForm.navigateToRedirectedPaymentForm();
                 } else {
                     // Creating and displaying the gateway payment form
-                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), Console::log, Console::log, paymentStatus -> {
-                        if (paymentStatus.isSuccessful())
+                    GatewayPaymentForm gatewayPaymentForm = new ProvidedGatewayPaymentForm(webPaymentForm, getEvent(), Console::log, Console::log, result -> {
+                        PaymentStatus paymentStatus = result.paymentStatus();
+                        if (paymentStatus.isSuccessful()) {
                             handleEmbeddedPaymentSuccess(amount);
+                        } else if (paymentStatus == PaymentStatus.CANCELED) {
+                            handleEmbeddedPaymentCanceled(amount);
+                        } else if (paymentStatus.isFailed()) {
+                            handleEmbeddedPaymentFailed(amount, result.failureReason());
+                        }
                     });
                     // Display the embedded payment form
                     displayEmbeddedPaymentForm(gatewayPaymentForm, amount);
@@ -1933,10 +2011,10 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .setShowingOwnSubmitButton(true)
             .setCanGoBack(false);
 
-        // Handle cancel: show cancellation message and unload form (like PaymentPage)
+        // Handle cancel: show payment canceled page with retry option
         gatewayPaymentForm.setCancelPaymentResultHandler(ar -> {
             growingPane.setContent(null); // Unload payment form
-            navigateToConfirmation(); // Navigate to confirmation with cancellation state
+            handleEmbeddedPaymentCanceled(amount); // Show canceled page with retry option
         });
 
         // Display the page
@@ -1957,6 +2035,63 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Navigate to confirmation
         navigateToConfirmation();
+    }
+
+    /**
+     * Handles embedded payment failure (card declined, error).
+     * Displays the PaymentRefusedSection with "Decline Reason" card and "Try Again" option.
+     */
+    private void handleEmbeddedPaymentFailed(int amount, PaymentFailureReason failureReason) {
+        // Create PaymentRefusedSection matching JSX mockup
+        PaymentRefusedSection section = new PaymentRefusedSection();
+        section.setColorScheme(colorScheme);
+        section.setAmount(amount);
+        section.setFailureReason(failureReason);
+        section.setOnRetryPayment(() -> handlePaymentSubmit(lastPaymentAmount, lastPaymentAllocations));
+        section.setOnCancelBooking(this::cancelBookingAndExit);
+
+        // Set event info
+        Event event = getEvent();
+        if (event != null) {
+            section.setEventName(event.getName());
+            section.setEventDates(event.getStartDate(), event.getEndDate());
+        }
+
+        // Display section using CompositeBookingFormPage
+        CompositeBookingFormPage failedPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            section
+        );
+        failedPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        navigateToSpecialPage(failedPaymentPage);
+    }
+
+    /**
+     * Handles embedded payment cancellation (user clicked cancel).
+     * Displays the PaymentCanceledSection with "Try Again" option.
+     */
+    private void handleEmbeddedPaymentCanceled(int amount) {
+        // Create PaymentCanceledSection matching JSX mockup
+        PaymentCanceledSection section = new PaymentCanceledSection();
+        section.setColorScheme(colorScheme);
+        section.setAmount(amount);
+        section.setOnRetryPayment(() -> handlePaymentSubmit(lastPaymentAmount, lastPaymentAllocations));
+
+        // Display section using CompositeBookingFormPage
+        CompositeBookingFormPage canceledPaymentPage = new CompositeBookingFormPage(
+            BookingPageI18nKeys.Payment,
+            section
+        );
+        canceledPaymentPage
+            .setStep(false)
+            .setShowingOwnSubmitButton(true)
+            .setCanGoBack(false);
+
+        navigateToSpecialPage(canceledPaymentPage);
     }
 
     private void handleMakeAnotherBooking() {
@@ -2654,6 +2789,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         // Set event info
         Event event = getEvent();
         if (event != null) {
+            defaultConfirmationSection.setEvent(event); // Set event for currency formatting
             defaultConfirmationSection.setEventName(event.getName());
             defaultConfirmationSection.setEventDates(event.getStartDate(), event.getEndDate());
         }
