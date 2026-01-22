@@ -3778,7 +3778,72 @@
     -fx-font-weight: 500;
 }
 
+.registration-countdown-timer-box {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-border-color: -booking-form-primary;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.registration-countdown-info-card {
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 16;
+    -fx-border-color: #E6E7E7;
+    -fx-border-radius: 16;
+}
+
+.registration-countdown-reassurance-box {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 8;
+}
+
+.registration-countdown-step-number {
+    -fx-background-color: -booking-form-primary;
+    -fx-background-radius: 14;
+}
+
+.registration-countdown-step-number-text {
+    -fx-text-fill: white;
+    -fx-font-size: 13px;
+    -fx-font-weight: 600;
+}
+
+.registration-countdown-reassurance-text {
+    -fx-text-fill: #1f2937;
+}
+
 /* Registration Offline Page */
 .registration-offline-page {
     -fx-background-color: white;
+}
+
+.registration-offline-info-card {
+    -fx-background-color: #F8F9FA;
+    -fx-background-radius: 16;
+    -fx-border-color: #E6E7E7;
+    -fx-border-radius: 16;
+}
+
+.registration-offline-lightbulb-icon {
+    -fx-background-color: -booking-form-selected-bg;
+    -fx-background-radius: 16;
+}
+
+.registration-offline-suggestion-icon {
+    -fx-background-color: #E5E7EB;
+    -fx-background-radius: 12;
+}
+
+.registration-offline-text-gray {
+    -fx-text-fill: #4B5563;
+}
+
+.registration-offline-text-light-gray {
+    -fx-text-fill: #9CA3AF;
+}
+
+.registration-offline-email-link {
+    -fx-text-fill: -booking-form-primary;
+    -fx-font-weight: 500;
 }

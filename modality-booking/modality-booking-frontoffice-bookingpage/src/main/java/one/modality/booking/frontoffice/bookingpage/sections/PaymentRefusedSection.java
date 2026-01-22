@@ -318,11 +318,19 @@ public class PaymentRefusedSection implements BookingFormSection {
         return box;
     }
 
+    /**
+     * Converts a Color to a hex string (e.g., "#FF5500").
+     * GWT-compatible alternative to String.format("#%02X%02X%02X", ...).
+     */
     private String toHexString(Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
+        return "#" + toHex((int) (color.getRed() * 255))
+                   + toHex((int) (color.getGreen() * 255))
+                   + toHex((int) (color.getBlue() * 255));
+    }
+
+    private static String toHex(int value) {
+        String hex = Integer.toHexString(value).toUpperCase();
+        return hex.length() == 1 ? "0" + hex : hex;
     }
 
     // === BookingFormSection INTERFACE ===

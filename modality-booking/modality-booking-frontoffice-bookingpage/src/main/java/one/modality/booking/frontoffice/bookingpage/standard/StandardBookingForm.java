@@ -1357,22 +1357,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (policyAggregate == null) {
             return true; // No policy = assume open
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening == null || secondsToOpening <= 0;
+        // Check if booking processing has started (random allocation time)
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart == null || secondsToProcessStart <= 0;
     }
 
     /**
-     * Gets the number of seconds until registration opens.
+     * Gets the number of seconds until booking processing starts (random allocation).
+     * This is used for the queue countdown after a user submits their registration.
      *
-     * @return seconds until opening, or 0 if already open or no opening date set
+     * @return seconds until processing starts, or 0 if already started or no date set
      */
     public int getSecondsToRegistrationOpening() {
         PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
         if (policyAggregate == null) {
             return 0;
         }
-        Double secondsToOpening = policyAggregate.getSecondsToOpeningDate();
-        return secondsToOpening != null && secondsToOpening > 0 ? secondsToOpening.intValue() : 0;
+        Double secondsToProcessStart = policyAggregate.getSecondsToBookingProcessStart();
+        return secondsToProcessStart != null && secondsToProcessStart > 0 ? secondsToProcessStart.intValue() : 0;
     }
 
     /**

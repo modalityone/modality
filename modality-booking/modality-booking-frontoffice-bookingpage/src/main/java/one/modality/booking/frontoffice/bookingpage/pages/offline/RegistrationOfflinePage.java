@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -176,16 +177,21 @@ public class RegistrationOfflinePage implements BookingFormPage {
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(600);
         nameLabel.setAlignment(Pos.CENTER);
+        nameLabel.setTextAlignment(TextAlignment.CENTER);
 
-        // Location (from organization/site)
-        String location = "";
+        header.getChildren().add(nameLabel);
+
+        // Organization name with proper wrapping
         if (event != null && event.getOrganization() != null) {
-            location = event.getOrganization().getName();
+            Label orgLabel = new Label(event.getOrganization().getName());
+            orgLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+            orgLabel.setWrapText(true);
+            orgLabel.setMaxWidth(600);
+            orgLabel.setAlignment(Pos.CENTER);
+            orgLabel.setTextAlignment(TextAlignment.CENTER);
+            header.getChildren().add(orgLabel);
         }
-        Label locationLabel = new Label(location);
-        locationLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
 
-        header.getChildren().addAll(nameLabel, locationLabel);
         return header;
     }
 
@@ -239,7 +245,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         card.setAlignment(Pos.TOP_LEFT);
         card.setPadding(new Insets(28));
         card.setMaxWidth(500);
-        card.setStyle("-fx-background-color: #F8F9FA; -fx-background-radius: 16; -fx-border-color: #E6E7E7; -fx-border-radius: 16;");
+        card.getStyleClass().add("registration-offline-info-card");
 
         // Header: "In the meantime"
         HBox header = new HBox(10);
@@ -248,7 +254,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane lightbulbIcon = new StackPane();
         lightbulbIcon.setMinSize(32, 32);
         lightbulbIcon.setMaxSize(32, 32);
-        lightbulbIcon.setStyle("-fx-background-color: " + toHexString(colorScheme.getSelectedBg()) + "; -fx-background-radius: 16;");
+        lightbulbIcon.getStyleClass().add("registration-offline-lightbulb-icon");
 
         SVGPath bulb = new SVGPath();
         bulb.setContent("M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z");
@@ -303,7 +309,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(24, 24);
         iconCircle.setMaxSize(24, 24);
-        iconCircle.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 12;");
+        iconCircle.getStyleClass().add("registration-offline-suggestion-icon");
 
         SVGPath icon = new SVGPath();
         icon.setContent(iconPath);
@@ -324,8 +330,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         } else {
             textLabel = I18nControls.newLabel(textI18nKey);
         }
-        textLabel.getStyleClass().addAll("bookingpage-text-sm");
-        textLabel.setStyle("-fx-text-fill: " + toHexString(GRAY_TEXT) + ";");
+        textLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-offline-text-gray");
         textLabel.setWrapText(true);
 
         row.getChildren().addAll(iconCircle, textLabel);
@@ -341,7 +346,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(24, 24);
         iconCircle.setMaxSize(24, 24);
-        iconCircle.setStyle("-fx-background-color: #E5E7EB; -fx-background-radius: 12;");
+        iconCircle.getStyleClass().add("registration-offline-suggestion-icon");
 
         SVGPath icon = new SVGPath();
         icon.setContent("M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z");
@@ -357,11 +362,10 @@ public class RegistrationOfflinePage implements BookingFormPage {
         textContainer.setAlignment(Pos.CENTER_LEFT);
 
         Label questionLabel = I18nControls.newLabel(BookingPageI18nKeys.QuestionsContactUs);
-        questionLabel.getStyleClass().addAll("bookingpage-text-sm");
-        questionLabel.setStyle("-fx-text-fill: " + toHexString(GRAY_TEXT) + ";");
+        questionLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-offline-text-gray");
 
-        Hyperlink emailLink = new Hyperlink("bookings@kadampa.org");
-        emailLink.setStyle("-fx-text-fill: " + toHexString(colorScheme.getPrimary()) + "; -fx-font-weight: 500;");
+        Hyperlink emailLink = new Hyperlink("kbs@kadampa.net");
+        emailLink.getStyleClass().add("registration-offline-email-link");
         emailLink.setOnAction(e -> {
             // In a real app, this would open the email client
             // For now, just log it
@@ -387,19 +391,11 @@ public class RegistrationOfflinePage implements BookingFormPage {
         infoIcon.setScaleY(0.67);
 
         Label apologyLabel = I18nControls.newLabel(BookingPageI18nKeys.ApologizeForInconvenience);
-        apologyLabel.getStyleClass().addAll("bookingpage-text-xs");
-        apologyLabel.setStyle("-fx-text-fill: " + toHexString(LIGHT_GRAY_TEXT) + ";");
+        apologyLabel.getStyleClass().addAll("bookingpage-text-xs", "registration-offline-text-light-gray");
         apologyLabel.setWrapText(true);
         apologyLabel.setMaxWidth(400);
 
         box.getChildren().addAll(infoIcon, apologyLabel);
         return box;
-    }
-
-    private static String toHexString(Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
     }
 }

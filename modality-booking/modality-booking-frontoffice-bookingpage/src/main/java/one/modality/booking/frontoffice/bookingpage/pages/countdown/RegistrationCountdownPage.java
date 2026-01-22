@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -210,16 +211,21 @@ public class RegistrationCountdownPage implements BookingFormPage {
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(600);
         nameLabel.setAlignment(Pos.CENTER);
+        nameLabel.setTextAlignment(TextAlignment.CENTER);
 
-        // Location (from organization/site)
-        String location = "";
+        header.getChildren().add(nameLabel);
+
+        // Organization name (center)
         if (event != null && event.getOrganization() != null) {
-            location = event.getOrganization().getName();
+            Label orgLabel = new Label(event.getOrganization().getName());
+            orgLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+            orgLabel.setWrapText(true);
+            orgLabel.setMaxWidth(600);
+            orgLabel.setAlignment(Pos.CENTER);
+            orgLabel.setTextAlignment(TextAlignment.CENTER);
+            header.getChildren().add(orgLabel);
         }
-        Label locationLabel = new Label(location);
-        locationLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
 
-        header.getChildren().addAll(nameLabel, locationLabel);
         return header;
     }
 
@@ -293,28 +299,18 @@ public class RegistrationCountdownPage implements BookingFormPage {
     }
 
     private HBox buildTimeUnit(String value, Object labelI18nKey) {
-        Color primaryColor = colorScheme.getPrimary();
-        Color bgColor = colorScheme.getSelectedBg();
-
-        // Value label
+        // Value label - uses CSS class for themed text color
         Label valueLabel = new Label(value);
         valueLabel.getStyleClass().add("registration-countdown-timer-value");
-        valueLabel.setStyle("-fx-text-fill: " + toHexString(primaryColor) + ";");
         valueLabel.setMinWidth(60);
         valueLabel.setAlignment(Pos.CENTER);
 
-        // Value box with border
+        // Value box with themed background and border via CSS class
         VBox valueBox = new VBox(valueLabel);
         valueBox.setAlignment(Pos.CENTER);
         valueBox.setPadding(new Insets(16, 24, 16, 24));
         valueBox.setMinWidth(80);
-        valueBox.setStyle(
-            "-fx-background-color: " + toHexString(bgColor) + ";" +
-            "-fx-border-color: " + toHexString(primaryColor) + ";" +
-            "-fx-border-width: 2;" +
-            "-fx-border-radius: 12;" +
-            "-fx-background-radius: 12;"
-        );
+        valueBox.getStyleClass().add("registration-countdown-timer-box");
 
         // Label below
         Label label = I18nControls.newLabel(labelI18nKey);
@@ -334,8 +330,7 @@ public class RegistrationCountdownPage implements BookingFormPage {
         infoBox.setAlignment(Pos.TOP_LEFT);
         infoBox.setPadding(new Insets(28));
         infoBox.setMaxWidth(600);
-        infoBox.getStyleClass().add("bookingpage-info-card");
-        infoBox.setStyle("-fx-background-color: #F8F9FA; -fx-background-radius: 16; -fx-border-color: #E6E7E7; -fx-border-radius: 16;");
+        infoBox.getStyleClass().addAll("bookingpage-info-card", "registration-countdown-info-card");
 
         // Header with info icon
         HBox header = new HBox(12);
@@ -367,12 +362,11 @@ public class RegistrationCountdownPage implements BookingFormPage {
         HBox reassurance = new HBox(10);
         reassurance.setAlignment(Pos.CENTER_LEFT);
         reassurance.setPadding(new Insets(12, 16, 12, 16));
-        reassurance.setStyle("-fx-background-color: " + toHexString(colorScheme.getSelectedBg()) + "; -fx-background-radius: 8;");
+        reassurance.getStyleClass().add("registration-countdown-reassurance-box");
 
         SVGPath checkIcon = BookingPageUIBuilder.createThemedIcon("M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", 0.75);
         Label reassuranceLabel = I18nControls.newLabel(BookingPageI18nKeys.TakeYourTime);
-        reassuranceLabel.getStyleClass().addAll("bookingpage-text-sm");
-        reassuranceLabel.setStyle("-fx-text-fill: " + toHexString(colorScheme.getDarkText()) + ";");
+        reassuranceLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-countdown-reassurance-text");
         reassuranceLabel.setWrapText(true);
 
         reassurance.getChildren().addAll(checkIcon, reassuranceLabel);
@@ -385,13 +379,13 @@ public class RegistrationCountdownPage implements BookingFormPage {
         HBox step = new HBox(12);
         step.setAlignment(Pos.TOP_LEFT);
 
-        // Number circle
+        // Number circle - uses CSS for themed background
         StackPane numberCircle = new StackPane();
         numberCircle.setMinSize(28, 28);
         numberCircle.setMaxSize(28, 28);
-        numberCircle.setStyle("-fx-background-color: " + toHexString(colorScheme.getPrimary()) + "; -fx-background-radius: 14;");
+        numberCircle.getStyleClass().add("registration-countdown-step-number");
         Label numberLabel = new Label(String.valueOf(number));
-        numberLabel.setStyle("-fx-text-fill: white; -fx-font-size: 13px; -fx-font-weight: 600;");
+        numberLabel.getStyleClass().add("registration-countdown-step-number-text");
         numberCircle.getChildren().add(numberLabel);
 
         // Text content with {0} placeholder replaced by windowMinutes
@@ -435,9 +429,9 @@ public class RegistrationCountdownPage implements BookingFormPage {
 
         LocalDateTime openingDateTime = LocalDateTime.ofInstant(openingInstant, zoneId);
 
-        // Format: "Saturday, 15 March 2026 at 09:00 GMT"
+        // Format: "Saturday, 15 March 2026 at 09:00"
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-            "EEEE, d MMMM yyyy 'at' HH:mm z", Locale.ENGLISH
+            "EEEE, d MMMM yyyy 'at' HH:mm", Locale.ENGLISH
         ).withZone(zoneId);
 
         return openingDateTime.atZone(zoneId).format(formatter);
@@ -475,10 +469,10 @@ public class RegistrationCountdownPage implements BookingFormPage {
         long seconds = totalSeconds % 60;
 
         // Update labels with zero-padding
-        if (daysValueLabel != null) daysValueLabel.setText(String.format("%02d", days));
-        if (hoursValueLabel != null) hoursValueLabel.setText(String.format("%02d", hours));
-        if (minutesValueLabel != null) minutesValueLabel.setText(String.format("%02d", minutes));
-        if (secondsValueLabel != null) secondsValueLabel.setText(String.format("%02d", seconds));
+        if (daysValueLabel != null) daysValueLabel.setText(padZero(days));
+        if (hoursValueLabel != null) hoursValueLabel.setText(padZero(hours));
+        if (minutesValueLabel != null) minutesValueLabel.setText(padZero(minutes));
+        if (secondsValueLabel != null) secondsValueLabel.setText(padZero(seconds));
 
         // Hide days box if days = 0
         if (daysBox != null) {
@@ -487,10 +481,11 @@ public class RegistrationCountdownPage implements BookingFormPage {
         }
     }
 
-    private static String toHexString(Color color) {
-        return String.format("#%02X%02X%02X",
-            (int) (color.getRed() * 255),
-            (int) (color.getGreen() * 255),
-            (int) (color.getBlue() * 255));
+    /**
+     * Pads a number to 2 digits with leading zero if needed.
+     * GWT-compatible alternative to String.format("%02d", value).
+     */
+    private static String padZero(long value) {
+        return value < 10 ? "0" + value : String.valueOf(value);
     }
 }
