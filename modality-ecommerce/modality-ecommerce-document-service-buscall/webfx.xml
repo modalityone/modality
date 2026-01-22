@@ -11,6 +11,8 @@
     </dependencies>
 
     <providers>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.FetchEventQueueResultDocumentMethodEndpoint</provider>
+        <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LeaveEventQueueDocumentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadDocumentMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.LoadDocumentsMethodEndpoint</provider>
         <provider interface="dev.webfx.stack.com.bus.call.spi.BusCallEndpoint">one.modality.ecommerce.document.service.buscall.SubmitDocumentMethodEndpoint</provider>
