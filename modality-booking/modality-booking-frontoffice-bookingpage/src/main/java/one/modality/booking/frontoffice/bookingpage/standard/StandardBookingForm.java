@@ -5,6 +5,7 @@ import dev.webfx.extras.panes.GrowingPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
+import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Booleans;
@@ -64,6 +65,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 //import java.util.stream.IntStream;
 
 /**
@@ -922,7 +924,8 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         navigateToPendingBookings();
                     }
                 });
-            });
+            })
+            .onFailure(Console::log);
     }
 
     /**
@@ -1470,10 +1473,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
         WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
         String historyComment = historyHelper.generateHistoryComment();
 
-        // Submit changes to the database
-       //For debug only the queue system only:
-    //    IntStream.range(1, 15).forEach(i -> workingBooking.submitChanges(historyComment));
+        // For testing the booking queue system only:
+        if (getEvent().getState() == EventState.TESTING) {
+            Integer bulkCount = ConfigLoader.getRootConfig().getInteger("${{ TEST_BOOKING_QUEUE_SUBMIT_BULK_COUNT }}");
+            if (bulkCount != null) {
+                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment));
+            }
+        }
 
+        // Submit changes to the database
         return workingBooking.submitChanges(historyComment)
             .map(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.APPROVED) {

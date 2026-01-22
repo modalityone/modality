@@ -48,6 +48,7 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.kit.util;
     requires webfx.platform.async;
     requires webfx.platform.browser;
+    requires webfx.platform.conf;
     requires webfx.platform.console;
     requires webfx.platform.uischeduler;
     requires webfx.platform.useragent;
