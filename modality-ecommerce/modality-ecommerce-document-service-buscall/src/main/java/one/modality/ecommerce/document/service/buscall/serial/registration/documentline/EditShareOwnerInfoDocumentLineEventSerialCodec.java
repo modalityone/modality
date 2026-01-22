@@ -3,7 +3,7 @@ package one.modality.ecommerce.document.service.buscall.serial.registration.docu
 import dev.webfx.platform.ast.AstObject;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import one.modality.ecommerce.document.service.buscall.serial.AbstractDocumentLineEventSerialCodec;
-import one.modality.ecommerce.document.service.events.registration.documentline.EditShareOwnerInfoDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.EditShareOwnerInfoDocumentLineEvent;
 
 /**
  * @author Bruno Salmon

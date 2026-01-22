@@ -11,7 +11,7 @@ import one.modality.ecommerce.document.service.events.AbstractAttendancesEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 import one.modality.ecommerce.document.service.events.AbstractDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.book.*;
-import one.modality.ecommerce.document.service.events.registration.documentline.EditShareOwnerInfoDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.EditShareOwnerInfoDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 import one.modality.ecommerce.document.service.events.registration.documentline.RemoveDocumentLineEvent;
 
