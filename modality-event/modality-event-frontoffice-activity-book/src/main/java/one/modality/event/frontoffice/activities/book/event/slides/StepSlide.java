@@ -164,7 +164,7 @@ public abstract class StepSlide implements Supplier<Node> {
         else
             workingBooking.uncancelBooking();
         turnOnWaitMode();
-        workingBooking.submitChanges(cancel ? "Cancelled booking" : "Uncancelled booking")
+        workingBooking.submitChanges(cancel ? "Cancelled booking" : "Uncancelled booking", false)
             .inUiThread()
             .onFailure(ex -> {
                 turnOffWaitMode();

@@ -1,6 +1,5 @@
 package one.modality.booking.backoffice.activities.registration;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
@@ -16,9 +15,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
 import one.modality.base.shared.entities.Document;
@@ -468,7 +465,7 @@ public class RegistrationEditModal {
             return;
         }
 
-        bookingTab.getWorkingBooking().submitChanges(historyComment != null ? historyComment : "Attendance changes")
+        bookingTab.getWorkingBooking().submitChanges(historyComment != null ? historyComment : "Attendance changes", false)
             .onSuccess(result -> {
                 System.out.println("WorkingBooking changes submitted successfully");
                 // UI updates must be on FX thread

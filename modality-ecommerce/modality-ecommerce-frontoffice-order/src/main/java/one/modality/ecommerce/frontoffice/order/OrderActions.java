@@ -219,7 +219,7 @@ public final class OrderActions {
                     WorkingBooking.loadWorkingBooking(orderDocument)
                         .compose(workingBooking -> {
                             workingBooking.cancelBooking();
-                            return workingBooking.submitChanges("Booking canceled online by user")
+                            return workingBooking.submitChanges("Booking canceled online by user", false)
                                 .compose(result -> loadFromDatabaseFunction.get());
                         })
                         .onFailure(Console::log)

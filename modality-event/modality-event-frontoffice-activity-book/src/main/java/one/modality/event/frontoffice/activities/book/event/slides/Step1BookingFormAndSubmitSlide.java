@@ -299,7 +299,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
             turnOnWaitMode();
             // We look at the changes to fill the history
             WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
-            workingBooking.submitChanges(historyHelper.generateHistoryComment())
+            workingBooking.submitChanges(historyHelper.generateHistoryComment(), false)
                 .inUiThread()
                 // Turning off the wait mode in all cases - Might be turned on again in success if payment is required
                 .onComplete(ar -> turnOffWaitMode())

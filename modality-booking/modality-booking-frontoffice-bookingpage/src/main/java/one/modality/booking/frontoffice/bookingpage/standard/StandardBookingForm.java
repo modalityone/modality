@@ -1550,12 +1550,12 @@ public class StandardBookingForm extends MultiPageBookingForm {
         if (getEvent().getState() == EventState.TESTING) {
             Integer bulkCount = ConfigLoader.getRootConfig().getInteger("${{ TEST_BOOKING_QUEUE_SUBMIT_BULK_COUNT }}");
             if (bulkCount != null) {
-                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment));
+                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment, true));
             }
         }
 
         // Submit changes to the database
-        return workingBooking.submitChanges(historyComment)
+        return workingBooking.submitChanges(historyComment, true)
             .map(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.APPROVED) {
                     // Store the booking reference

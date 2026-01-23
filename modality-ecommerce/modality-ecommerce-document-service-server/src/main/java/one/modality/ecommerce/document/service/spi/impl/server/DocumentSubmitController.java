@@ -20,6 +20,10 @@ final class DocumentSubmitController {
     private static final Map<Object, SubmitDocumentChangesResult> pushingResults = new HashMap<>();
 
     public static Future<SubmitDocumentChangesResult> submitDocumentChanges(DocumentSubmitRequest request) {
+        // When the caller UI is not queue-capable (ex: back-office, or cancel request), we submit the changes immediately
+        if (!request.argument().queueCapable())
+            return ServerDocumentServiceProvider.submitDocumentChangesNow(request);
+
         Object eventPrimaryKey = request.eventPrimaryKey();
 
         if (eventPrimaryKey == null) { // Case when the event primary key must be loaded from the document (ex: booking cancellation)

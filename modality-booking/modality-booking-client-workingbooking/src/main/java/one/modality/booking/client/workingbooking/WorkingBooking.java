@@ -460,14 +460,14 @@ public final class WorkingBooking {
         }
     }
 
-    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment) {
+    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment, boolean queueCapable) {
         if (document.isNew()) {
             if (document.getPerson() == null && (Strings.isEmpty(document.getFirstName()) || Strings.isEmpty(document.getLastName()) || Strings.isEmpty(document.getEmail())))
                 throw new IllegalStateException("Cannot submit a new booking with incomplete personal details");
         }
         // We submit the booking changes
         return DocumentService.submitDocumentChanges(
-            new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]))
+            new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]), queueCapable)
         ).compose(result -> {
             if (result.status() != DocumentChangesStatus.APPROVED) // SOLD_OUT or ENQUEUED
                 return Future.succeededFuture(result);

@@ -7,5 +7,6 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
  */
 public record SubmitDocumentChangesArgument(
     String historyComment,
-    AbstractDocumentEvent... documentEvents
+    AbstractDocumentEvent[] documentEvents,
+    boolean queueCapable
 ) { }
