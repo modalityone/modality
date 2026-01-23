@@ -60,16 +60,18 @@ final class DocumentSubmitController {
     }
 
     private static Future<SubmitDocumentChangesResult> executeOrEnqueueSubmitDocumentChanges(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
-        // Even if we execute the request immediately, we still need to add it to the queue
+        // Even if we execute the request immediately, we still add it to the queue
         boolean isTheOnlyRequest = eventQueue.isEmpty();
         eventQueue.addRequest(request);
 
         // We execute the request immediately if it's the only request and the queue is ready (not waiting an opening time) and not processing
         if (isTheOnlyRequest && eventQueue.isReady() && !eventQueue.isProcessing()) {
+            Console.log("Executing immediately request token = " + request.queueToken() + " from client runId = " + request.runId());
             eventQueue.setProcessingRequest(request); // We inform the queue we process the request now
             return processRequest(request, eventQueue); // We process it (this will also remove it from the queue and eventually process the next one)
         }
 
+        Console.log("Enqueued request token = " + request.queueToken() + " from client runId = " + request.runId());
         // Otherwise we return the enqueued result with the queue token, and the request will be processed later
         return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult(request.queueToken()));
     }
@@ -81,6 +83,7 @@ final class DocumentSubmitController {
     }
 
     static void processRequestAndNotifyClient(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
+        Console.log("Processing enqueue request token = " + request.queueToken() + " from client runId = " + request.runId());
         processRequest(request, eventQueue)
             .onComplete(ar -> {
                 SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
@@ -91,6 +94,7 @@ final class DocumentSubmitController {
     }
 
     static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result, int retryMaxCount) {
+        Console.log("Notifying client runId = " + request.runId() + " with result from request token = " + result.queueToken());
         pushingResults.put(request.queueToken(), result);
         DocumentSubmitEventQueue.pushResultToClient(
             SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),

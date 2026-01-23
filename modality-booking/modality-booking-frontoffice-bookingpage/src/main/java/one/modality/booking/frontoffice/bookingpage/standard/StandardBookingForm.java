@@ -133,7 +133,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Unified queue section (lazy-initialized) - handles both countdown waiting and queue processing
     private DefaultUnifiedQueueSection unifiedQueueSection;
     private CompositeBookingFormPage unifiedQueuePage;
-    private EventQueueNotification eventQueueNotification;
     private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
     private VisibilityListener queueVisibilityListener; // For fetching missed queue results when tab becomes active
 
@@ -883,22 +882,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
+            .onFailure(Console::log)
+            .inUiThread()
             .compose(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
                     // SOLD_OUT means registration opened and processing happened
                     registrationConfirmedOpen = true;
-                    UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
+                    handleAccommodationSoldOut(
                         new SoldOutErrorParser.SoldOutInfo(
                             submitResult.soldOutSitePrimaryKey(),
                             submitResult.soldOutItemPrimaryKey(),
                             null
                         )
-                    ));
+                    );
                     return Future.failedFuture("Sold out"); // We still want to stop the flow here
                 }
                 // Handle ENQUEUED status - show queue page and wait for final result
                 if (submitResult.status() == DocumentChangesStatus.ENQUEUED) {
-                    UiScheduler.runInUiThread(() -> handleEnqueued(submitResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation));
+                    handleEnqueued(submitResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation);
                     return Future.failedFuture("Enqueued"); // Stop flow, will continue when final result arrives
                 }
                 // For new users (guest or creating account), skip loading bookings
@@ -922,18 +923,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     AuthenticationService.authenticate(credentials);
                 }
 
-                UiScheduler.runInUiThread(() -> {
-                    if (isNewUser) {
-                        // Both guests and account creation users go to pending bookings
-                        // (populated from WorkingBooking, not from database)
-                        populatePendingBookingsForNewUser(newUserName, newUserEmail);
-                        navigateToPendingBookings();
-                    } else {
-                        navigateToPendingBookings();
-                    }
-                });
-            })
-            .onFailure(Console::log);
+                if (isNewUser) {
+                    // Both guests and account creation users go to pending bookings
+                    // (populated from WorkingBooking, not from database)
+                    populatePendingBookingsForNewUser(newUserName, newUserEmail);
+                    navigateToPendingBookings();
+                } else {
+                    navigateToPendingBookings();
+                }
+            });
     }
 
     /**
@@ -1281,7 +1279,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Set up queue notification to track progress
         if (event != null) {
-            eventQueueNotification = EventQueueNotification.getOrCreate(event);
+            EventQueueProgressNotification eventQueueProgressNotification = EventQueueProgressNotification.getOrCreate(event);
 
             // Update progress when queue status changes
             FXProperties.runOnPropertyChange(progress -> {
@@ -1299,11 +1297,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         unifiedQueueSection.updateProgress(progress.processedRequests(), progress.totalRequests());
                     });
                 }
-            }, eventQueueNotification.progressProperty());
+            }, eventQueueProgressNotification.progressProperty());
         }
 
         // Register handler for final result (push notification from server)
-        EventQueueNotification.setEnqueuedBookingFinalResultHandler(queueToken, finalResult -> {
+        EventQueueFinalResultNotification.setEnqueuedBookingFinalResultHandler(queueToken, finalResult -> {
             UiScheduler.runInUiThread(() -> {
                 // Stop timers and status rotation
                 if (unifiedQueueSection != null) {
@@ -1495,7 +1493,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .onSuccess(result -> {
                 if (result != null && token.equals(currentQueueToken)) {
                     // Remove push handler to prevent duplicate processing
-                    EventQueueNotification.removeEnqueuedBookingFinalResultHandler(token);
+                    EventQueueFinalResultNotification.removeEnqueuedBookingFinalResultHandler(token);
                     UiScheduler.runInUiThread(() ->
                         handleEnqueuedFinalResult(result, storedIsNewUser, storedNewUserName, storedNewUserEmail, storedWantsAccountCreation)
                     );
