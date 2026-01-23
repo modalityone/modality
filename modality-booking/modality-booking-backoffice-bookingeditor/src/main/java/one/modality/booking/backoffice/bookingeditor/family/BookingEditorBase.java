@@ -35,8 +35,7 @@ public abstract class BookingEditorBase implements BookingEditor {
     @Override
     public Future<Void> saveChanges() {
         syncWorkingBookingFromUi();
-        WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
-        return workingBooking.submitChanges(historyHelper.generateHistoryComment())
+        return workingBooking.submitChanges(WorkingBookingHistoryHelper.generateHistoryComment(workingBooking), false)
             .mapEmpty();
     }
 
