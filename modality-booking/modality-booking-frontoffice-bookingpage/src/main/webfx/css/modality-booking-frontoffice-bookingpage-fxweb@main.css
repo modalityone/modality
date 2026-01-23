@@ -3757,6 +3757,21 @@
     -fx-text-fill: #78350F;
 }
 
+/* Small warning icon circle (32px) */
+.bookingpage-warning-icon-circle-sm {
+    -fx-background-color: #FEF3C7;
+    -fx-background-radius: 16;
+}
+
+/* Info box with rounded corners (neutral) */
+.bookingpage-info-box-neutral-rounded {
+    -fx-background-color: #F8F9FA;
+    -fx-border-color: #E6E7E7;
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
 /* ==========================================
    Registration Status Pages (Countdown + Offline)
    ========================================== */

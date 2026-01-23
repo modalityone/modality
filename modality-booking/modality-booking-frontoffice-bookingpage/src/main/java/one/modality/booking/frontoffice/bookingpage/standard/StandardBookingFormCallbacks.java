@@ -1,8 +1,8 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.platform.async.Future;
-import one.modality.booking.frontoffice.bookingpage.sections.DefaultSummarySection;
-import one.modality.booking.frontoffice.bookingpage.sections.HasAccommodationSelectionSection;
+import one.modality.booking.frontoffice.bookingpage.sections.summary.DefaultSummarySection;
+import one.modality.booking.frontoffice.bookingpage.sections.accommodation.HasAccommodationSelectionSection;
 
 import java.util.Collections;
 import java.util.List;

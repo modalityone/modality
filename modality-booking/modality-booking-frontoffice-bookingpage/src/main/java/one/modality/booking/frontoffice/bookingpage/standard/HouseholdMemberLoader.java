@@ -11,8 +11,8 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Invitation;
 import one.modality.base.shared.entities.Person;
-import one.modality.booking.frontoffice.bookingpage.sections.DefaultMemberSelectionSection;
-import one.modality.booking.frontoffice.bookingpage.sections.HasMemberSelectionSection;
+import one.modality.booking.frontoffice.bookingpage.sections.member.DefaultMemberSelectionSection;
+import one.modality.booking.frontoffice.bookingpage.sections.member.HasMemberSelectionSection;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 
