@@ -1543,8 +1543,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
         }
 
         // Generate history comment for the booking
-        WorkingBookingHistoryHelper historyHelper = new WorkingBookingHistoryHelper(workingBooking);
-        String historyComment = historyHelper.generateHistoryComment();
+        String historyComment = WorkingBookingHistoryHelper.generateHistoryComment(workingBooking);
 
         // For testing the booking queue system only:
         if (getEvent().getState() == EventState.TESTING) {

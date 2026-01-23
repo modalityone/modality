@@ -21,16 +21,10 @@ import java.util.stream.Collectors;
  */
 public final class WorkingBookingHistoryHelper {
 
-    private final WorkingBooking workingBooking;
-
-    public WorkingBookingHistoryHelper(WorkingBooking workingBooking) {
-        this.workingBooking = workingBooking;
-    }
-
-    public String generateHistoryComment() {
+    public static String generateHistoryComment(WorkingBooking workingBooking) {
         StringBuilder sb = new StringBuilder();
-        appendHistoryCommentFromAttendances(workingBooking.getAttendancesAdded(true), true, sb);
-        appendHistoryCommentFromAttendances(workingBooking.getAttendancesRemoved(true), false, sb);
+        appendHistoryCommentFromAttendances(workingBooking.getAttendancesAdded(true), true, sb, workingBooking);
+        appendHistoryCommentFromAttendances(workingBooking.getAttendancesRemoved(true), false, sb, workingBooking);
         // "Selected member rate" if the user selected the member rate
         ApplyFacilityFeeEvent applyFacilityFeeEvent = workingBooking.findApplyFacilityFeeEvent(true);
         if (applyFacilityFeeEvent != null) {
@@ -57,7 +51,7 @@ public final class WorkingBookingHistoryHelper {
         return sb.toString();
     }
 
-    private void appendHistoryCommentFromAttendances(List<Attendance> attendances, boolean added, StringBuilder sb) {
+    private static void appendHistoryCommentFromAttendances(List<Attendance> attendances, boolean added, StringBuilder sb, WorkingBooking workingBooking) {
         if (!attendances.isEmpty()) {
             newSection(sb).append(!added ? "Removed" : workingBooking.isNewBooking() ? "Booked" : "Added");
             attendances.stream().collect(Collectors.groupingBy(Attendances::getItem))
@@ -72,7 +66,7 @@ public final class WorkingBookingHistoryHelper {
         }
     }
 
-    private StringBuilder newSection(StringBuilder sb) {
+    private static StringBuilder newSection(StringBuilder sb) {
         if (sb.length() > 0) // GWT
             sb.append("  ~  ");
         return sb;
