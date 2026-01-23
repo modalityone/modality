@@ -33,6 +33,7 @@ import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -224,11 +225,23 @@ public final class WorkingBooking {
     public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
         if (scheduledItems.isEmpty())
             return;
-        // A first draft version assuming all scheduled items are referring to the same site and items
-        ScheduledItem scheduledItemSample = scheduledItems.get(0);
-        Site site = scheduledItemSample.getSite();
-        Item item = scheduledItemSample.getItem();
-        bookDatesOrScheduledItems(site, item, scheduledItems, addOnly);
+        // Group scheduled items by (site, item) and process each group separately.
+        // This is required because bookDatesOrScheduledItems() creates/uses a single DocumentLine
+        // per (site, item) combination, so mixing different items would cause incorrect behavior.
+        Map<String, List<ScheduledItem>> groupedBySiteItem = scheduledItems.stream()
+            .collect(Collectors.groupingBy(si -> getSiteItemKey(si.getSite(), si.getItem())));
+        for (List<ScheduledItem> group : groupedBySiteItem.values()) {
+            if (!group.isEmpty()) {
+                ScheduledItem sample = group.get(0);
+                bookDatesOrScheduledItems(sample.getSite(), sample.getItem(), group, addOnly);
+            }
+        }
+    }
+
+    private String getSiteItemKey(Site site, Item item) {
+        Object siteKey = site != null ? Entities.getPrimaryKey(site) : "null";
+        Object itemKey = item != null ? Entities.getPrimaryKey(item) : "null";
+        return siteKey + ":" + itemKey;
     }
 
     private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean addOnly) {
@@ -272,7 +285,17 @@ public final class WorkingBooking {
     }
 
     public void unbookScheduledItems(List<ScheduledItem> scheduledItems) {
-        removeAttendances(Collections.filter(getAttendancesAdded(false), a -> scheduledItems.contains(a.getScheduledItem())));
+        List<Attendance> attendancesToRemove = Collections.filter(getAttendancesAdded(false), a -> scheduledItems.contains(a.getScheduledItem()));
+        // Group attendances by DocumentLine before removing, because RemoveAttendancesEvent
+        // requires all attendances to belong to the same DocumentLine.
+        Map<Object, List<Attendance>> groupedByDocLine = attendancesToRemove.stream()
+            .filter(a -> a.getDocumentLine() != null)
+            .collect(Collectors.groupingBy(a -> Entities.getPrimaryKey(a.getDocumentLine())));
+        for (List<Attendance> group : groupedByDocLine.values()) {
+            if (!group.isEmpty()) {
+                removeAttendances(group);
+            }
+        }
     }
 
     public void bookSiteItemsOverPeriod(List<SiteItem> siteItems, Period period) {

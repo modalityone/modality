@@ -2,8 +2,8 @@ package one.modality.booking.frontoffice.bookingpage.standard;
 
 import one.modality.base.shared.entities.Person;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.booking.frontoffice.bookingpage.sections.HasMemberSelectionSection;
-import one.modality.booking.frontoffice.bookingpage.sections.HasYourInformationSection;
+import one.modality.booking.frontoffice.bookingpage.sections.member.HasMemberSelectionSection;
+import one.modality.booking.frontoffice.bookingpage.sections.user.HasYourInformationSection;
 
 /**
  * Holds the transient state of a booking form session.
@@ -15,6 +15,8 @@ import one.modality.booking.frontoffice.bookingpage.sections.HasYourInformationS
  *   <li>The selected member to book for</li>
  *   <li>Pending new user data (for guest checkout)</li>
  *   <li>Navigation flags like allowMemberReselection</li>
+ *   <li>Stored user info for payment/confirmation flow</li>
+ *   <li>Queue and sold-out recovery tracking flags</li>
  * </ul>
  *
  * @author Bruno Salmon
@@ -25,13 +27,24 @@ public class BookingFormState {
 
     // Authentication state
     private Person loggedInPerson;
+    private boolean hadLoggedInUser = false;  // Tracks if user was logged in (to detect logout)
 
     // Member selection state
     private HasMemberSelectionSection.MemberInfo selectedMember;
     private HasYourInformationSection.NewUserData pendingNewUserData;
 
+    // Stored user info for payment/confirmation flow (persists after submission clears state)
+    private String storedNewUserName;
+    private String storedNewUserEmail;
+
     // Navigation flags
     private boolean allowMemberReselection = false;
+
+    // Queue handling flags
+    private boolean registrationConfirmedOpen = false;  // Server accepted submission
+
+    // Sold-out recovery flags
+    private boolean returnedFromSoldOutRecovery = false;  // Returning to Summary from recovery
 
     /**
      * Creates a new booking form state.
@@ -82,6 +95,59 @@ public class BookingFormState {
         this.allowMemberReselection = allow;
     }
 
+    // === Stored User Info (for payment/confirmation after submission) ===
+
+    public String getStoredNewUserName() {
+        return storedNewUserName;
+    }
+
+    public void setStoredNewUserName(String name) {
+        this.storedNewUserName = name;
+    }
+
+    public String getStoredNewUserEmail() {
+        return storedNewUserEmail;
+    }
+
+    public void setStoredNewUserEmail(String email) {
+        this.storedNewUserEmail = email;
+    }
+
+    public void clearStoredNewUserInfo() {
+        this.storedNewUserName = null;
+        this.storedNewUserEmail = null;
+    }
+
+    // === Login Tracking ===
+
+    public boolean hadLoggedInUser() {
+        return hadLoggedInUser;
+    }
+
+    public void setHadLoggedInUser(boolean hadLoggedIn) {
+        this.hadLoggedInUser = hadLoggedIn;
+    }
+
+    // === Queue Handling ===
+
+    public boolean isRegistrationConfirmedOpen() {
+        return registrationConfirmedOpen;
+    }
+
+    public void setRegistrationConfirmedOpen(boolean confirmed) {
+        this.registrationConfirmedOpen = confirmed;
+    }
+
+    // === Sold-Out Recovery ===
+
+    public boolean isReturnedFromSoldOutRecovery() {
+        return returnedFromSoldOutRecovery;
+    }
+
+    public void setReturnedFromSoldOutRecovery(boolean returned) {
+        this.returnedFromSoldOutRecovery = returned;
+    }
+
     // === Reset ===
 
     /**
@@ -94,6 +160,11 @@ public class BookingFormState {
         selectedMember = null;
         pendingNewUserData = null;
         allowMemberReselection = false;
+        storedNewUserName = null;
+        storedNewUserEmail = null;
+        hadLoggedInUser = false;
+        registrationConfirmedOpen = false;
+        returnedFromSoldOutRecovery = false;
         if (workingBookingProperties != null) {
             workingBookingProperties.getWorkingBooking().cancelChanges();
         }
@@ -109,6 +180,11 @@ public class BookingFormState {
         selectedMember = null;
         pendingNewUserData = null;
         allowMemberReselection = true;
+        storedNewUserName = null;
+        storedNewUserEmail = null;
+        returnedFromSoldOutRecovery = false;
+        // Note: hadLoggedInUser and registrationConfirmedOpen are NOT reset here
+        // as they track session-level state, not per-booking state
         if (workingBookingProperties != null) {
             // Start a completely fresh booking (new Document), not just revert changes
             workingBookingProperties.getWorkingBooking().startNewBooking();

@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage;
 
 public interface BookingPageI18nKeys {
 
+    Object AcceptBookingTermsText = "AcceptBookingTermsText";
     Object AcceptTermsAndConditions = "AcceptTermsAndConditions";
     Object AcceptTermsHtml = "AcceptTermsHtml";
     Object AcceptTermsText = "AcceptTermsText";
@@ -38,6 +39,7 @@ public interface BookingPageI18nKeys {
     Object ApologizeForInconvenience = "ApologizeForInconvenience";
     Object Arrival = "Arrival";
     Object ArrivalTime = "ArrivalTime";
+    Object ArrivalTimeOnDate = "ArrivalTimeOnDate";
     Object AssistedListeningDevice = "AssistedListeningDevice";
     Object Attendee = "Attendee";
     Object AttendeeCount = "AttendeeCount";
@@ -137,6 +139,7 @@ public interface BookingPageI18nKeys {
     Object DepartsAt = "DepartsAt";
     Object Departure = "Departure";
     Object DepartureTime = "DepartureTime";
+    Object DepartureTimeOnDate = "DepartureTimeOnDate";
     Object Deposit = "Deposit";
     Object DepositPaid = "DepositPaid";
     Object DepositRequiredPercent = "DepositRequiredPercent";
@@ -151,6 +154,7 @@ public interface BookingPageI18nKeys {
     Object DownloadPDFConfirmation = "DownloadPDFConfirmation";
     Object DueToHighDemandSoldOut = "DueToHighDemandSoldOut";
     Object EarlyArrival = "EarlyArrival";
+    Object EarlyArrivalMealPrice = "EarlyArrivalMealPrice";
     Object EmailAddress = "EmailAddress";
     Object EmailMayTakeUpTo1Minute = "EmailMayTakeUpTo1Minute";
     Object EmailPlaceholder = "EmailPlaceholder";
@@ -171,6 +175,7 @@ public interface BookingPageI18nKeys {
     Object Event = "Event";
     Object EventDates = "EventDates";
     Object EventDetails = "EventDetails";
+    Object EventDetailsRateDisplay = "EventDetailsRateDisplay";
     Object ExistingBooking = "ExistingBooking";
     Object ExpiredCardDesc = "ExpiredCardDesc";
     Object ExpiredCardSuggestion1 = "ExpiredCardSuggestion1";
@@ -196,6 +201,7 @@ public interface BookingPageI18nKeys {
     Object FullProgramme = "FullProgramme";
     Object Gender = "Gender";
     Object GoToMyOrders = "GoToMyOrders";
+    Object GoToOrders = "GoToOrders";
     Object Guest = "Guest";
     Object Handicap = "Handicap";
     Object HaveQuestions = "HaveQuestions";
@@ -228,9 +234,11 @@ public interface BookingPageI18nKeys {
     Object LastNamePlaceholder = "LastNamePlaceholder";
     Object LastNameRequired = "LastNameRequired";
     Object LateDeparture = "LateDeparture";
+    Object LateDepartureMealPrice = "LateDepartureMealPrice";
     Object LeaveQueueAndEditBooking = "LeaveQueueAndEditBooking";
     Object LimitedAvailability = "LimitedAvailability";
     Object LimitedParkingAvailable = "LimitedParkingAvailable";
+    Object Loading = "Loading";
     Object Lunch = "Lunch";
     Object MakingImprovements = "MakingImprovements";
     Object Male = "Male";
@@ -245,9 +253,13 @@ public interface BookingPageI18nKeys {
     Object MinimumDeposit = "MinimumDeposit";
     Object Minutes = "Minutes";
     Object ModifyBooking1 = "ModifyBooking1";
+    Object ModifyBookingContactSupport = "ModifyBookingContactSupport";
+    Object ModifyBookingNotSupported = "ModifyBookingNotSupported";
+    Object ModifyBookingNotSupportedTitle = "ModifyBookingNotSupportedTitle";
     Object ModifyYourBooking = "ModifyYourBooking";
     Object Morning = "Morning";
     Object MustBeInRange2 = "MustBeInRange2";
+    Object NameWithRegistrationRef = "NameWithRegistrationRef";
     Object NeedHelpContact = "NeedHelpContact";
     Object NeedsValidation = "NeedsValidation";
     Object NewBookingSystemNotice = "NewBookingSystemNotice";
@@ -264,6 +276,7 @@ public interface BookingPageI18nKeys {
     Object Orders = "Orders";
     Object OriginalSelection = "OriginalSelection";
     Object OtherChoicesSaved = "OtherChoicesSaved";
+    Object OutsideEventMealPrice = "OutsideEventMealPrice";
     Object PageUpdatedMessage = "PageUpdatedMessage";
     Object PaidStatus = "PaidStatus";
     Object PaidToday = "PaidToday";
@@ -315,10 +328,15 @@ public interface BookingPageI18nKeys {
     Object PendingBookings = "PendingBookings";
     Object PendingInvitation = "PendingInvitation";
     Object People = "People";
+    Object PeopleCount = "PeopleCount";
     Object PeopleOnYourAccount = "PeopleOnYourAccount";
+    Object PerNightFormat = "PerNightFormat";
+    Object PerPerson = "PerPerson";
+    Object PerRoom = "PerRoom";
     Object Person = "Person";
     Object PersonAlreadyBooked = "PersonAlreadyBooked";
     Object PersonAlreadyBooked1 = "PersonAlreadyBooked1";
+    Object PersonCount = "PersonCount";
     Object PleaseConfirmAgeAndTerms = "PleaseConfirmAgeAndTerms";
     Object PleaseSelectAccommodation = "PleaseSelectAccommodation";
     Object PleaseStayOnPage = "PleaseStayOnPage";
@@ -327,6 +345,7 @@ public interface BookingPageI18nKeys {
     Object Prerequisite = "Prerequisite";
     Object PriceBreakdown = "PriceBreakdown";
     Object PriceIncludesTeachingsAccommodationMeals = "PriceIncludesTeachingsAccommodationMeals";
+    Object PricePerNight = "PricePerNight";
     Object PricesReflectRate = "PricesReflectRate";
     Object ProceedToPayment = "ProceedToPayment";
     Object ProceedToPaymentArrow = "ProceedToPaymentArrow";
@@ -377,6 +396,7 @@ public interface BookingPageI18nKeys {
     Object ReviewRegistrationsSubtitle = "ReviewRegistrationsSubtitle";
     Object ReviewYourBooking = "ReviewYourBooking";
     Object RoomBookingRoommatesInfo = "RoomBookingRoommatesInfo";
+    Object RoomBookingSharingNote = "RoomBookingSharingNote";
     Object Roommate = "Roommate";
     Object RoommateInformation = "RoommateInformation";
     Object RoommateName = "RoommateName";
@@ -407,6 +427,7 @@ public interface BookingPageI18nKeys {
     Object SignInToContinueWithYourBooking = "SignInToContinueWithYourBooking";
     Object SkipFormsNextTime = "SkipFormsNextTime";
     Object SoldOut = "SoldOut";
+    Object SoldOutIndicatorFormat = "SoldOutIndicatorFormat";
     Object Standard = "Standard";
     Object StandardRate = "StandardRate";
     Object StatusAllocating = "StatusAllocating";
@@ -438,6 +459,7 @@ public interface BookingPageI18nKeys {
     Object TotalAmountDue = "TotalAmountDue";
     Object TotalBookings = "TotalBookings";
     Object TotalCost = "TotalCost";
+    Object TotalForNightsFormat = "TotalForNightsFormat";
     Object TrackBookingMessage = "TrackBookingMessage";
     Object TrackYourBooking = "TrackYourBooking";
     Object Transport = "Transport";
