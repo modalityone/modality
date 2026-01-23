@@ -13,13 +13,14 @@ final class MergeMultipleBookingsOptionsExecutor {
 
     static Future<Void> executeRequest(MergeMultipleBookingsOptionsRequest rq) {
         return ModalityDialog.showConfirmationDialogForAsyncOperation(
-                "Please confirm"
-                , rq.getParentContainer(),
-                () -> DocumentService.submitDocumentChanges(
-                        new SubmitDocumentChangesArgument(
-                                "Merged options from other multiple bookings",
-                                new MergeMultipleBookingsOptionsEvent(rq.getDocument()))
-                ));
+            "Please confirm"
+            , rq.getParentContainer(),
+            () -> DocumentService.submitDocumentChanges(
+                SubmitDocumentChangesArgument.of(
+                    "Merged options from other multiple bookings",
+                    new MergeMultipleBookingsOptionsEvent(rq.getDocument())
+                )
+            ));
     }
 
 }

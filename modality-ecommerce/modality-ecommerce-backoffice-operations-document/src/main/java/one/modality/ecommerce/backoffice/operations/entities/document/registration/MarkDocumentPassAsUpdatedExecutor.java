@@ -13,11 +13,12 @@ final class MarkDocumentPassAsUpdatedExecutor {
 
     static Future<Void> executeRequest(MarkDocumentPassAsUpdatedRequest rq) {
         return rq.getDocument().<Document>onExpressionLoaded("read")
-                .compose(document -> DocumentService.submitDocumentChanges(
-                        new SubmitDocumentChangesArgument(
-                                "Marked pass as updated",
-                                new MarkDocumentAsReadEvent(document, true))
-                ).map(ignored -> null));
+            .compose(document -> DocumentService.submitDocumentChanges(
+                SubmitDocumentChangesArgument.of(
+                    "Marked pass as updated",
+                    new MarkDocumentAsReadEvent(document, true)
+                )
+            ).map(ignored -> null));
     }
 
 }

@@ -269,9 +269,9 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                 Document document = moneyTransfer.getDocument();
                 // If there was no deposit on the booking, we cancel that booking
                 if (document.getPriceDeposit() == 0) {
-                    return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(new SubmitDocumentChangesArgument(
+                    return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(SubmitDocumentChangesArgument.of(
                         "Cancelled booking",
-                        new CancelDocumentEvent[]{new CancelDocumentEvent(document, true)}, false)
+                        new CancelDocumentEvent(document, true))
                     ).map(ignored -> new CancelPaymentResult(true)));
                 }
                 // If there is a deposit, we remove all options added after the last successful payment (that is
@@ -300,8 +300,8 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                         if (removeEvents.isEmpty())
                             return Future.succeededFuture(new CancelPaymentResult(false));
                         return SystemUserId.SYSTEM.callAndReturn(() -> DocumentService.submitDocumentChanges(
-                                new SubmitDocumentChangesArgument("Unbooked unpaid options",
-                                    removeEvents.toArray(new AbstractDocumentEvent[0]), false))
+                                SubmitDocumentChangesArgument.of("Unbooked unpaid options",
+                                    removeEvents.toArray(new AbstractDocumentEvent[0])))
                             .map(ignoredResult -> new CancelPaymentResult(false)));
                     });
             });

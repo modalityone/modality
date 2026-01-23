@@ -21,9 +21,10 @@ final class ToggleCancelDocumentExecutor {
                         "Are you sure you want to " + (cancelled ? "cancel" : "uncancel") + " this booking?"
                         , rq.getParentContainer(),
                         () -> DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
+                            SubmitDocumentChangesArgument.of(
                                 cancelled ? "Cancelled booking" : "Uncancelled booking",
-                                new CancelDocumentEvent(document, cancelled, read))
+                                new CancelDocumentEvent(document, cancelled, read)
+                            )
                         ));
                 });
     }

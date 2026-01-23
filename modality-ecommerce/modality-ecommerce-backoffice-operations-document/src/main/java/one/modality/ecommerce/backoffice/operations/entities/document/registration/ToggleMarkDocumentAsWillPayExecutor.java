@@ -13,14 +13,15 @@ final class ToggleMarkDocumentAsWillPayExecutor {
 
     static Future<Void> executeRequest(ToggleMarkDocumentAsWillPayRequest rq) {
         return rq.getDocument().<Document>onExpressionLoaded("willPay")
-                .compose(document -> {
-                    boolean willPay = !document.isWillPay();
-                    return DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
-                                    willPay ? "Marked as will pay" : "Unmarked as will pay",
-                                    new MarkDocumentAsWillPayEvent(document, willPay))
-                    ).map(ignored -> null);
-                });
+            .compose(document -> {
+                boolean willPay = !document.isWillPay();
+                return DocumentService.submitDocumentChanges(
+                    SubmitDocumentChangesArgument.of(
+                        willPay ? "Marked as will pay" : "Unmarked as will pay",
+                        new MarkDocumentAsWillPayEvent(document, willPay)
+                    )
+                ).map(ignored -> null);
+            });
     }
 
 }

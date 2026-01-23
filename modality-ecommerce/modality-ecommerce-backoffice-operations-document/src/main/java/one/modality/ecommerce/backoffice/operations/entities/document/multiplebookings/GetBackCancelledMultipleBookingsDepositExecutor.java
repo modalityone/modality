@@ -13,13 +13,15 @@ final class GetBackCancelledMultipleBookingsDepositExecutor {
 
     static Future<Void> executeRequest(GetBackCancelledMultipleBookingsDepositRequest rq) {
         return ModalityDialog.showConfirmationDialogForAsyncOperation(
-                "Please confirm"
-                , rq.getParentContainer(),
-                () -> DocumentService.submitDocumentChanges(
-                        new SubmitDocumentChangesArgument(
-                                "Got deposit back from cancelled multiple bookings",
-                                new GetBackCancelledMultipleBookingsDepositEvent(rq.getDocument()))
-                ));
+            "Please confirm"
+            , rq.getParentContainer(),
+            () -> DocumentService.submitDocumentChanges(
+                SubmitDocumentChangesArgument.of(
+                    "Got deposit back from cancelled multiple bookings",
+                    new GetBackCancelledMultipleBookingsDepositEvent(rq.getDocument()
+                    )
+                )
+            ));
     }
 
 }

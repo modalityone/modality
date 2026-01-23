@@ -12,16 +12,17 @@ final class DeleteDocumentLineExecutor {
 
     static Future<Void> executeRequest(DeleteDocumentLineRequest rq) {
         return rq.getDocumentLine().<DocumentLine>onExpressionLoaded("item.name")
-                .compose(documentLine -> {
-                    String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
-                    return ModalityDialog.showConfirmationDialogForAsyncOperation(
-                            "Are you sure you want to delete " + itemName + "?"
-                            , rq.getParentContainer(),
-                            () -> DocumentService.submitDocumentChanges(
-                                    new SubmitDocumentChangesArgument(
-                                            "Deleted " + itemName,
-                                            new RemoveDocumentLineEvent(documentLine))
-                            ));
-                });
+            .compose(documentLine -> {
+                String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
+                return ModalityDialog.showConfirmationDialogForAsyncOperation(
+                    "Are you sure you want to delete " + itemName + "?"
+                    , rq.getParentContainer(),
+                    () -> DocumentService.submitDocumentChanges(
+                        SubmitDocumentChangesArgument.of(
+                            "Deleted " + itemName,
+                            new RemoveDocumentLineEvent(documentLine)
+                        )
+                    ));
+            });
     }
 }

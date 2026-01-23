@@ -12,9 +12,10 @@ final class MarkDocumentAsVerifiedExecutor {
 
     static Future<Void> executeRequest(MarkDocumentAsVerifiedRequest rq) {
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(
-                        "Marked as verified",
-                        new MarkDocumentAsVerifiedEvent(rq.getDocument()))
+            SubmitDocumentChangesArgument.of(
+                "Marked as verified",
+                new MarkDocumentAsVerifiedEvent(rq.getDocument())
+            )
         ).map(ignored -> null);
     }
 

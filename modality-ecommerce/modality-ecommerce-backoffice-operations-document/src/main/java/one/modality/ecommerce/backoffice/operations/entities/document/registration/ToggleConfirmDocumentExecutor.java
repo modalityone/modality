@@ -56,9 +56,10 @@ final class ToggleConfirmDocumentExecutor {
                     preDocumentSubmit = Future.succeededFuture();
                 return preDocumentSubmit.compose(ignored ->
                     DocumentService.submitDocumentChanges(
-                        new SubmitDocumentChangesArgument(
+                        SubmitDocumentChangesArgument.of(
                             sendConfirmationLetter ? "Sent '" + confirmationLetter.getFieldValue("subject_en") + "'" : confirmed ? "Confirmed booking" : "Unconfirmed booking",
-                            new ConfirmDocumentEvent(document, confirmed, read))
+                            new ConfirmDocumentEvent(document, confirmed, read)
+                        )
                     ));
             });
         });

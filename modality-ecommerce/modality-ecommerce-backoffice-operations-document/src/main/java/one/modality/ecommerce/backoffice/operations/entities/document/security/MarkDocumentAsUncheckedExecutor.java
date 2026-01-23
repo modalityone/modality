@@ -12,9 +12,10 @@ final class MarkDocumentAsUncheckedExecutor {
 
     static Future<Void> executeRequest(MarkDocumentAsUncheckedRequest rq) {
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(
-                        "Marked as unchecked",
-                        new MarkDocumentAsUncheckedEvent(rq.getDocument()))
+            SubmitDocumentChangesArgument.of(
+                "Marked as unchecked",
+                new MarkDocumentAsUncheckedEvent(rq.getDocument())
+            )
         ).map(ignored -> null);
     }
 

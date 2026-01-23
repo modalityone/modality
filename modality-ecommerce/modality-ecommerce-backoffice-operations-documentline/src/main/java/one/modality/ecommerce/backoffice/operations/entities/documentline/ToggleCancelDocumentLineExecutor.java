@@ -15,19 +15,20 @@ final class ToggleCancelDocumentLineExecutor {
 
     static Future<Void> executeRequest(ToggleCancelDocumentLineRequest rq) {
         return rq.getDocumentLine().<DocumentLine>onExpressionLoaded("cancelled,item.name")
-                .compose(documentLine -> {
-                    boolean cancelled = !documentLine.isCancelled();
-                    boolean read = true;
-                    String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
-                    return ModalityDialog.showConfirmationDialogForAsyncOperation(
-                        "Are you sure you want to " + (cancelled ? "cancel " : "uncancel ") + itemName + "?"
-                        , rq.getParentContainer(),
-                        () -> DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
-                                    (cancelled ? "Cancelled " : "Uncancelled ") + itemName,
-                                new CancelDocumentLineEvent(documentLine, cancelled, read))
-                        ));
-                });
+            .compose(documentLine -> {
+                boolean cancelled = !documentLine.isCancelled();
+                boolean read = true;
+                String itemName = Objects.coalesce(documentLine.evaluate("item.name"), "option");
+                return ModalityDialog.showConfirmationDialogForAsyncOperation(
+                    "Are you sure you want to " + (cancelled ? "cancel " : "uncancel ") + itemName + "?"
+                    , rq.getParentContainer(),
+                    () -> DocumentService.submitDocumentChanges(
+                        SubmitDocumentChangesArgument.of(
+                            (cancelled ? "Cancelled " : "Uncancelled ") + itemName,
+                            new CancelDocumentLineEvent(documentLine, cancelled, read)
+                        )
+                    ));
+            });
     }
 
 }
