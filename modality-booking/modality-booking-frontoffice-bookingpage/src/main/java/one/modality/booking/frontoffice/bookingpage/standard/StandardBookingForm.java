@@ -882,22 +882,24 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
+            .onFailure(Console::log)
+            .inUiThread()
             .compose(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
                     // SOLD_OUT means registration opened and processing happened
                     registrationConfirmedOpen = true;
-                    UiScheduler.runInUiThread(() -> handleAccommodationSoldOut(
+                    handleAccommodationSoldOut(
                         new SoldOutErrorParser.SoldOutInfo(
                             submitResult.soldOutSitePrimaryKey(),
                             submitResult.soldOutItemPrimaryKey(),
                             null
                         )
-                    ));
+                    );
                     return Future.failedFuture("Sold out"); // We still want to stop the flow here
                 }
                 // Handle ENQUEUED status - show queue page and wait for final result
                 if (submitResult.status() == DocumentChangesStatus.ENQUEUED) {
-                    UiScheduler.runInUiThread(() -> handleEnqueued(submitResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation));
+                    handleEnqueued(submitResult, isNewUser, newUserName, newUserEmail, wantsAccountCreation);
                     return Future.failedFuture("Enqueued"); // Stop flow, will continue when final result arrives
                 }
                 // For new users (guest or creating account), skip loading bookings
@@ -921,18 +923,15 @@ public class StandardBookingForm extends MultiPageBookingForm {
                     AuthenticationService.authenticate(credentials);
                 }
 
-                UiScheduler.runInUiThread(() -> {
-                    if (isNewUser) {
-                        // Both guests and account creation users go to pending bookings
-                        // (populated from WorkingBooking, not from database)
-                        populatePendingBookingsForNewUser(newUserName, newUserEmail);
-                        navigateToPendingBookings();
-                    } else {
-                        navigateToPendingBookings();
-                    }
-                });
-            })
-            .onFailure(Console::log);
+                if (isNewUser) {
+                    // Both guests and account creation users go to pending bookings
+                    // (populated from WorkingBooking, not from database)
+                    populatePendingBookingsForNewUser(newUserName, newUserEmail);
+                    navigateToPendingBookings();
+                } else {
+                    navigateToPendingBookings();
+                }
+            });
     }
 
     /**
