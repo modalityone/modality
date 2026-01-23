@@ -170,6 +170,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         DocumentSubmitRequest request = DocumentSubmitRequest.create(argument);
         if (request.document() == null)
             return Future.failedFuture("No document changes to submit");
+        if (request.runId() == null)
+            return Future.failedFuture("No runId could be found for push notification");
 
         // Delegating the call to DocumentSubmitController, which will handle the complexity of the event queue (on big
         // events bookings openings). If no event queue is required, it will call back submitDocumentChangesNow()
