@@ -973,6 +973,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
      * Shows the sold-out recovery page after availabilities have been reloaded.
      */
     private void showSoldOutRecoveryPage(SoldOutErrorParser.SoldOutInfo soldOutInfo, PolicyAggregate policyAggregate) {
+        // Allow forms to clean up previous accommodation state before showing alternatives
+        if (callbacks != null) {
+            callbacks.onEnteringSoldOutRecovery();
+        }
+
         // Find the sold-out item
         EntityStore entityStore = policyAggregate.getEntityStore();
         Site soldOutSite = entityStore.getEntity(Site.class, soldOutInfo.getSitePrimaryKey());
