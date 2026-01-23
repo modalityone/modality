@@ -133,7 +133,6 @@ public class StandardBookingForm extends MultiPageBookingForm {
     // Unified queue section (lazy-initialized) - handles both countdown waiting and queue processing
     private DefaultUnifiedQueueSection unifiedQueueSection;
     private CompositeBookingFormPage unifiedQueuePage;
-    private EventQueueNotification eventQueueNotification;
     private Object currentQueueToken; // Token for the current enqueued booking (used to leave queue)
     private VisibilityListener queueVisibilityListener; // For fetching missed queue results when tab becomes active
 
@@ -1281,7 +1280,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
         // Set up queue notification to track progress
         if (event != null) {
-            eventQueueNotification = EventQueueNotification.getOrCreate(event);
+            EventQueueProgressNotification eventQueueProgressNotification = EventQueueProgressNotification.getOrCreate(event);
 
             // Update progress when queue status changes
             FXProperties.runOnPropertyChange(progress -> {
@@ -1299,11 +1298,11 @@ public class StandardBookingForm extends MultiPageBookingForm {
                         unifiedQueueSection.updateProgress(progress.processedRequests(), progress.totalRequests());
                     });
                 }
-            }, eventQueueNotification.progressProperty());
+            }, eventQueueProgressNotification.progressProperty());
         }
 
         // Register handler for final result (push notification from server)
-        EventQueueNotification.setEnqueuedBookingFinalResultHandler(queueToken, finalResult -> {
+        EventQueueFinalResultNotification.setEnqueuedBookingFinalResultHandler(queueToken, finalResult -> {
             UiScheduler.runInUiThread(() -> {
                 // Stop timers and status rotation
                 if (unifiedQueueSection != null) {
@@ -1495,7 +1494,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
             .onSuccess(result -> {
                 if (result != null && token.equals(currentQueueToken)) {
                     // Remove push handler to prevent duplicate processing
-                    EventQueueNotification.removeEnqueuedBookingFinalResultHandler(token);
+                    EventQueueFinalResultNotification.removeEnqueuedBookingFinalResultHandler(token);
                     UiScheduler.runInUiThread(() ->
                         handleEnqueuedFinalResult(result, storedIsNewUser, storedNewUserName, storedNewUserEmail, storedWantsAccountCreation)
                     );
