@@ -437,6 +437,7 @@ public class StandardBookingForm extends MultiPageBookingForm {
 
     @Override
     public void onWorkingBookingLoaded() {
+        // getWorkingBooking().enableDocumentChangesLog(); // Uncomment for debugging
         switch (entryPoint) {
             case PAY_BOOKING -> {
                 defaultPaymentSection.setWorkingBookingProperties(workingBookingProperties);

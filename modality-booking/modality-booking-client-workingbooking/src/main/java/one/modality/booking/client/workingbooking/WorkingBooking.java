@@ -4,6 +4,7 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
@@ -104,6 +105,12 @@ public final class WorkingBooking {
 
     public PriceCalculator getLatestBookingPriceCalculator() {
         return latestBookingPriceCalculator;
+    }
+
+    public void enableDocumentChangesLog() {
+        FXProperties.runOnPropertyChange(version -> {
+            Console.log("v" + version + ": " + WorkingBookingHistoryHelper.generateHistoryComment(this));
+        }, versionProperty);
     }
 
     // Price calculation shortcuts
