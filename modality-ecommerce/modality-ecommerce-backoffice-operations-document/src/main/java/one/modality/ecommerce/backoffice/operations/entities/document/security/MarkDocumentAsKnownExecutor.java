@@ -12,9 +12,10 @@ final class MarkDocumentAsKnownExecutor {
 
     static Future<Void> executeRequest(MarkDocumentAsKnownRequest rq) {
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(
-                        "Marked as known",
-                        new MarkDocumentAsKnownEvent(rq.getDocument()))
+            new SubmitDocumentChangesArgument(
+                "Marked as known",
+                new MarkDocumentAsKnownEvent(rq.getDocument())
+            )
         ).map(ignored -> null);
     }
 

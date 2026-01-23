@@ -12,17 +12,18 @@ final class DeletePaymentExecutor {
 
     static Future<Void> executeRequest(DeletePaymentRequest rq) {
         return rq.getPayment().<MoneyTransfer>onExpressionLoaded("amount,document") // RemoveMoneyTransferEvent requires access to document
-                .compose(moneyTransfer ->
-                    ModalityDialog.showConfirmationDialogForAsyncOperation(
-                            "Are you sure you want to delete this payment?"
-                            , rq.getParentContainer(),
-                            () -> DocumentService.submitDocumentChanges(
-                                    new SubmitDocumentChangesArgument(
-                                            "Deleted payment " + PriceFormatter.formatWithoutCurrency(moneyTransfer.getAmount()),
-                                            new RemoveMoneyTransferEvent(moneyTransfer))
-                            )
+            .compose(moneyTransfer ->
+                ModalityDialog.showConfirmationDialogForAsyncOperation(
+                    "Are you sure you want to delete this payment?"
+                    , rq.getParentContainer(),
+                    () -> DocumentService.submitDocumentChanges(
+                        new SubmitDocumentChangesArgument(
+                            "Deleted payment " + PriceFormatter.formatWithoutCurrency(moneyTransfer.getAmount()),
+                            new RemoveMoneyTransferEvent(moneyTransfer)
+                        )
                     )
-                );
+                )
+            );
     }
 
 }

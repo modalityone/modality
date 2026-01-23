@@ -23,7 +23,8 @@ final class ToggleCancelDocumentExecutor {
                         () -> DocumentService.submitDocumentChanges(
                             new SubmitDocumentChangesArgument(
                                 cancelled ? "Cancelled booking" : "Uncancelled booking",
-                                new CancelDocumentEvent(document, cancelled, read))
+                                new CancelDocumentEvent(document, cancelled, read)
+                            )
                         ));
                 });
     }

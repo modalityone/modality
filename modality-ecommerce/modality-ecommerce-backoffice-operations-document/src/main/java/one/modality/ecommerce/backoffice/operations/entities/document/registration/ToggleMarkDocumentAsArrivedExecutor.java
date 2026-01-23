@@ -13,15 +13,16 @@ final class ToggleMarkDocumentAsArrivedExecutor {
 
     static Future<Void> executeRequest(ToggleMarkDocumentAsArrivedRequest rq) {
         return rq.getDocument().<Document>onExpressionLoaded("arrived")
-                .compose(document -> {
-                    boolean arrived = !document.isArrived();
-                    boolean read = true;
-                    return DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
-                                    arrived ? "Marked as arrived" : "Unmarked as arrived",
-                                    new MarkDocumentAsArrivedEvent(document, arrived, read))
-                    ).map(x -> null);
-                });
+            .compose(document -> {
+                boolean arrived = !document.isArrived();
+                boolean read = true;
+                return DocumentService.submitDocumentChanges(
+                    new SubmitDocumentChangesArgument(
+                        arrived ? "Marked as arrived" : "Unmarked as arrived",
+                        new MarkDocumentAsArrivedEvent(document, arrived, read)
+                    )
+                ).map(x -> null);
+            });
     }
 
 }

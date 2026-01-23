@@ -58,7 +58,8 @@ final class ToggleConfirmDocumentExecutor {
                     DocumentService.submitDocumentChanges(
                         new SubmitDocumentChangesArgument(
                             sendConfirmationLetter ? "Sent '" + confirmationLetter.getFieldValue("subject_en") + "'" : confirmed ? "Confirmed booking" : "Unconfirmed booking",
-                            new ConfirmDocumentEvent(document, confirmed, read))
+                            new ConfirmDocumentEvent(document, confirmed, read)
+                        )
                     ));
             });
         });

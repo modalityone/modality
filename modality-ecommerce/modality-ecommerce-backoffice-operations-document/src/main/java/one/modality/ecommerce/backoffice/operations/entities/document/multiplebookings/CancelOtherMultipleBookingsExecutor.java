@@ -13,13 +13,15 @@ final class CancelOtherMultipleBookingsExecutor {
 
     static Future<Void> executeRequest(CancelOtherMultipleBookingsRequest rq) {
         return ModalityDialog.showConfirmationDialogForAsyncOperation(
-                "Please confirm"
-                , rq.getParentContainer(),
-                () -> DocumentService.submitDocumentChanges(
-                        new SubmitDocumentChangesArgument(
-                                "Cancelled other multiple bookings",
-                                new CancelOtherMultipleBookingsEvent(rq.getDocument()))
-                ));
+            "Please confirm"
+            , rq.getParentContainer(),
+            () -> DocumentService.submitDocumentChanges(
+                new SubmitDocumentChangesArgument(
+                    "Cancelled other multiple bookings",
+                    new CancelOtherMultipleBookingsEvent(rq.getDocument()
+                    )
+                )
+            ));
     }
 
 }

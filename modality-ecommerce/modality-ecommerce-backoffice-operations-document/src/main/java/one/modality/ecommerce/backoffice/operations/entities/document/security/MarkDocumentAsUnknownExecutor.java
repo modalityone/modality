@@ -12,9 +12,10 @@ final class MarkDocumentAsUnknownExecutor {
 
     static Future<Void> executeRequest(MarkDocumentAsUnknownRequest rq) {
         return DocumentService.submitDocumentChanges(
-                new SubmitDocumentChangesArgument(
-                        "Marked as unknown",
-                        new MarkDocumentAsUnknownEvent(rq.getDocument()))
+            new SubmitDocumentChangesArgument(
+                "Marked as unknown",
+                new MarkDocumentAsUnknownEvent(rq.getDocument())
+            )
         ).map(ignored -> null);
     }
 
