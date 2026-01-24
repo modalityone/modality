@@ -64,6 +64,7 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.binding;
     requires webfx.stack.orm.entity.controls;
+    requires webfx.stack.session.state.client.fx;
 
     // Exported packages
     exports one.modality.booking.frontoffice.bookingpage;

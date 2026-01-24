@@ -11,9 +11,8 @@ import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
-import dev.webfx.stack.session.state.client.fx.FXLoggedOut;
 import dev.webfx.stack.orm.entity.Entities;
-import dev.webfx.stack.orm.entity.EntityStore;
+import dev.webfx.stack.session.state.client.fx.FXLoggedOut;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -27,10 +26,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.shared.entities.*;
-import one.modality.base.shared.entities.util.Attendances;
-import one.modality.base.shared.entities.util.DocumentLines;
-import one.modality.base.shared.entities.util.ScheduledItems;
-import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.*;
@@ -44,15 +39,10 @@ import one.modality.booking.frontoffice.bookingpage.sections.confirmation.Defaul
 import one.modality.booking.frontoffice.bookingpage.sections.confirmation.HasConfirmationSection;
 import one.modality.booking.frontoffice.bookingpage.sections.member.DefaultMemberSelectionSection;
 import one.modality.booking.frontoffice.bookingpage.sections.member.HasMemberSelectionSection;
-import one.modality.booking.frontoffice.bookingpage.sections.payment.DefaultFailedPaymentSection;
-import one.modality.booking.frontoffice.bookingpage.sections.payment.DefaultPaymentSection;
-import one.modality.booking.frontoffice.bookingpage.sections.payment.DefaultPendingPaymentSection;
-import one.modality.booking.frontoffice.bookingpage.sections.payment.HasFailedPaymentSection;
-import one.modality.booking.frontoffice.bookingpage.sections.payment.HasPaymentSection;
+import one.modality.booking.frontoffice.bookingpage.sections.payment.*;
 import one.modality.booking.frontoffice.bookingpage.sections.queue.DefaultPendingBookingsSection;
 import one.modality.booking.frontoffice.bookingpage.sections.queue.HasPendingBookingsSection;
 import one.modality.booking.frontoffice.bookingpage.sections.summary.DefaultSummarySection;
-import one.modality.booking.frontoffice.bookingpage.sections.summary.HasSummarySection;
 import one.modality.booking.frontoffice.bookingpage.sections.user.DefaultCommentsSection;
 import one.modality.booking.frontoffice.bookingpage.sections.user.DefaultYourInformationSection;
 import one.modality.booking.frontoffice.bookingpage.sections.user.HasYourInformationSection;
@@ -63,17 +53,17 @@ import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.document.service.*;
-import one.modality.ecommerce.payment.PaymentAllocation;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import one.modality.event.frontoffice.activities.book.event.EventBookingFormSettings;
 import one.modality.event.frontoffice.activities.book.fx.FXGuestToBook;
 import one.modality.event.frontoffice.activities.book.fx.FXResumePayment;
 
-import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 //import java.util.stream.IntStream;
 
@@ -1090,7 +1080,7 @@ public class StandardBookingForm extends MultiPageBookingForm
         if (getEvent().getState() == EventState.TESTING) {
             Integer bulkCount = ConfigLoader.getRootConfig().getInteger("${{ TEST_BOOKING_QUEUE_SUBMIT_BULK_COUNT }}");
             if (bulkCount != null) {
-                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment, true));
+                IntStream.range(1, bulkCount).forEach(i -> workingBooking.submitChanges(historyComment, true, false));
             }
         }
 

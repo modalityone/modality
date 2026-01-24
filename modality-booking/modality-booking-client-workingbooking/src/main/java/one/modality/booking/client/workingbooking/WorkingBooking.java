@@ -491,6 +491,10 @@ public final class WorkingBooking {
     }
 
     public Future<SubmitDocumentChangesResult> submitChanges(String historyComment, boolean queueCapable) {
+        return submitChanges(historyComment, queueCapable, true);
+    }
+
+    public Future<SubmitDocumentChangesResult> submitChanges(String historyComment, boolean queueCapable, boolean reloadOnApproved) {
         if (document.isNew()) {
             if (document.getPerson() == null && (Strings.isEmpty(document.getFirstName()) || Strings.isEmpty(document.getLastName()) || Strings.isEmpty(document.getEmail())))
                 throw new IllegalStateException("Cannot submit a new booking with incomplete personal details");
@@ -499,7 +503,7 @@ public final class WorkingBooking {
         return DocumentService.submitDocumentChanges(
             new SubmitDocumentChangesArgument(historyComment, documentChanges.toArray(new AbstractDocumentEvent[0]), queueCapable)
         ).compose(result -> {
-            if (result.status() != DocumentChangesStatus.APPROVED) // SOLD_OUT or ENQUEUED
+            if (result.status() != DocumentChangesStatus.APPROVED || reloadOnApproved) // SOLD_OUT or ENQUEUED
                 return Future.succeededFuture(result);
             // The submitting was approved at this point, so we reload the latest version of the booking TODO: make this optional
             return DocumentService.loadDocument(LoadDocumentArgument.ofDocument(result.documentPrimaryKey()))
