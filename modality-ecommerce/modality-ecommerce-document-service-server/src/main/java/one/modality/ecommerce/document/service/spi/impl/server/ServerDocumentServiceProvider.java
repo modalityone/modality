@@ -3,6 +3,7 @@ package one.modality.ecommerce.document.service.spi.impl.server;
 import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstArray;
 import dev.webfx.platform.async.Future;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.util.collection.Collections;
@@ -170,8 +171,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         DocumentSubmitRequest request = DocumentSubmitRequest.create(argument);
         if (request.document() == null)
             return Future.failedFuture("No document changes to submit");
-        if (request.runId() == null)
-            return Future.failedFuture("No runId could be found for push notification");
+        if (request.runId() == null) {
+            String message = "No runId could be found for push notification";
+            Console.log(message + " - " + argument.historyComment());
+            return Future.failedFuture(message);
+        }
 
         // Delegating the call to DocumentSubmitController, which will handle the complexity of the event queue (on big
         // events bookings openings). If no event queue is required, it will call back submitDocumentChangesNow()
