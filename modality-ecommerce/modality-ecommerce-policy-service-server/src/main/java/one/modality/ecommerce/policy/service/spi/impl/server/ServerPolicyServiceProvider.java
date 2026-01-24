@@ -27,14 +27,21 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
         "select name,label,comment,site.name,item.(name,label,code,family.(code,name,label,ord),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
-        ",(select sum(" +
-            "coalesce((select quantity from PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1 limit 1), 0)" +
+        ",(select [" +
+            // male availability
+            "sum(!sr.configuration.allowsMale ? 0 :" +
+            " coalesce((select quantity from PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1 limit 1), 0)" +
             " - coalesce((select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and documentLine.(!frontend_released and (pool = null or pool= " + GENERAL_GUESTS_EVENT_POOL_ID + "))), 0)" +
-            ") from ScheduledResource sr" +
-            // We consider only the resources allocated to the general guest pool for this event
-            " where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)" +
-            " group by scheduledItem)" +
-        " as " + ScheduledItem.guestsAvailability +
+            ")," +
+            // female availability
+            "sum(!sr.configuration.allowsFemale ? 0 :" +
+            " coalesce((select quantity from PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1 limit 1), 0)" +
+            " - coalesce((select sum(documentLine.quantity) from Attendance where scheduledResource=sr and present and documentLine.(!frontend_released and (pool = null or pool= " + GENERAL_GUESTS_EVENT_POOL_ID + "))), 0)" +
+            ")] from ScheduledResource sr" +
+        // We consider only the resources allocated to the general guest pool for this event
+        " where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)" +
+        " group by scheduledItem)" +
+        " as " + ScheduledItem.maleFemaleAvailabilities +
         " from ScheduledItem si";
     private final static String SCHEDULED_BOUNDARIES_QUERY_BASE =
         "select event,scheduledItem,timeline.(startTime,endTime),atStartTime,date" +
