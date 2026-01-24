@@ -193,6 +193,11 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
         VBox.setMargin(description, new Insets(0, 0, 20, 0));
         card.getChildren().add(description);
 
+        // Flexible spacer to push button to bottom (ensures horizontal alignment across cards)
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
+        card.getChildren().add(spacer);
+
         // Select button for enabled cards, "Coming Soon" placeholder for disabled cards
         if (enabled) {
             Button selectButton = new Button();
