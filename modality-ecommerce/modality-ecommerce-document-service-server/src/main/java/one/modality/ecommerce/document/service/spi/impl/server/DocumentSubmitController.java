@@ -94,7 +94,7 @@ final class DocumentSubmitController {
     }
 
     static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result, int retryMaxCount) {
-        Console.log("Notifying client runId = " + request.runId() + " with result from request token = " + result.queueToken());
+        Console.log("Notifying client runId = " + request.runId() + " with result from request token = " + request.queueToken());
         pushingResults.put(request.queueToken(), result);
         DocumentSubmitEventQueue.pushResultToClient(
             SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
