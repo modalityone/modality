@@ -1,5 +1,7 @@
 package one.modality.base.shared.entities;
 
+import dev.webfx.platform.util.Arrays;
+import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
@@ -31,7 +33,7 @@ public interface ScheduledItem extends Entity,
     String online = "online";
     String resource = "resource";
     // Read-only dynamic field computed by PolicyService
-    String guestsAvailability = "guestAvailability";
+    String maleFemaleAvailabilities = "maleFemaleAvailabilities";
 
     default void setProgramScheduledItem(Object value) {
         setForeignField(programScheduledItem, value);
@@ -125,8 +127,24 @@ public interface ScheduledItem extends Entity,
         return getBooleanFieldValue(resource);
     }
 
+    default Object[] getMaleFemaleAvailabilities() {
+        return (Object[]) getFieldValue(maleFemaleAvailabilities);
+    }
+
+    default Integer getMaleAvailability() {
+        return Numbers.toInteger(Arrays.getValue(getMaleFemaleAvailabilities(), 0));
+    }
+
+    default Integer getFemaleAvailability() {
+        return Numbers.toInteger(Arrays.getValue(getMaleFemaleAvailabilities(), 1));
+    }
+
     default Integer getGuestsAvailability() {
-        return getIntegerFieldValue(guestsAvailability);
+        Integer maleAvailability = getMaleAvailability();
+        Integer femaleAvailability = getFemaleAvailability();
+        if (maleAvailability == null && femaleAvailability == null)
+            return null;
+        return maleAvailability == null ? femaleAvailability : femaleAvailability == null ? maleAvailability : maleAvailability + femaleAvailability;
     }
 
 }
