@@ -1,5 +1,6 @@
 package one.modality.booking.frontoffice.bookingpage.sections.generalprogram;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
@@ -126,7 +127,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         discountRow.setVisible(false);
         discountRow.setManaged(false);
 
-        Label discountLabel = new Label("Full term discount");
+        Label discountLabel = I18nControls.newLabel(BookingPageI18nKeys.ClassSelectionFullTermDiscount);
         discountLabel.getStyleClass().add("bookingpage-discount-label");
 
         Region discountSpacer = new Region();
@@ -170,7 +171,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         totalRow.setAlignment(Pos.CENTER_LEFT);
         totalRow.setPadding(new Insets(16, 0, 0, 0));
 
-        totalLabel = new Label("Total");  // Use field for dynamic updates
+        totalLabel = I18nControls.newLabel(BookingPageI18nKeys.Total);
         totalLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
 
         Region totalSpacer = new Region();
@@ -210,7 +211,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
                 datesLabel.setVisible(true);
                 datesLabel.setManaged(true);
             } else {
-                datesLabel.setText("No classes selected");
+                datesLabel.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionNoClassesSelected));
                 datesLabel.setVisible(true);
                 datesLabel.setManaged(true);
             }
@@ -218,9 +219,9 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
             // Update subtotal
             int numSelected = selectedItems.size();
             if (allSelected) {
-                subtotalLabel.setText("All " + numSelected + " classes (full term)");
+                subtotalLabel.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionFullTermPrice, numSelected));
             } else {
-                subtotalLabel.setText(numSelected + " class" + (numSelected != 1 ? "es" : ""));
+                subtotalLabel.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionXSelected, numSelected));
             }
             subtotalValue.setText(formatPrice(subtotal));
 
@@ -238,8 +239,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
             alreadyPaidRow.setVisible(false);
             alreadyPaidRow.setManaged(false);
 
-            // Show normal total
-            totalLabel.setText("Total");
+            // Show normal total (totalLabel already bound via I18nControls)
             totalValue.setText(formatPrice(total));
         }
 
@@ -345,8 +345,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         alreadyPaidRow.setVisible(false);
         alreadyPaidRow.setManaged(false);
 
-        // Update total
-        totalLabel.setText("Total");
+        // Update total (totalLabel already bound via I18nControls)
         totalValue.setText(formatPrice(total));
     }
 }

@@ -112,6 +112,7 @@ public interface BookingPageI18nKeys {
     Object ClassSelectionFullTermDiscount = "ClassSelectionFullTermDiscount";
     Object ClassSelectionFullTermPrice = "ClassSelectionFullTermPrice";
     Object ClassSelectionNewClassesSelected = "ClassSelectionNewClassesSelected";
+    Object ClassSelectionNoClassesSelected = "ClassSelectionNoClassesSelected";
     Object ClassSelectionNoNewClassesSelected = "ClassSelectionNoNewClassesSelected";
     Object ClassSelectionNoSelected = "ClassSelectionNoSelected";
     Object ClassSelectionSave = "ClassSelectionSave";
