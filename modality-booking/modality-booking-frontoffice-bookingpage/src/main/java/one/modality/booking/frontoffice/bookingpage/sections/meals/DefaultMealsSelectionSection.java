@@ -1482,9 +1482,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         if (arrivalDate.isBefore(eventBoundaryStartDate)) {
             return true;
         }
-        // Case 2: Arrival is ON event start date - lunch is early if main event starts at DINNER
+        // Case 2: Arrival is ON event start date with MORNING time - lunch is early arrival
+        // (showEarlyArrivalPricing being true means parent form determined early arrival applies)
         if (arrivalDate.equals(eventBoundaryStartDate)) {
-            return eventBoundaryStartMeal == MealBoundary.DINNER;
+            return true;
         }
         return false;
     }
@@ -1546,7 +1547,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      * - User can eat dinner (departs EVENING)
      * - AND dinner is outside the main event boundary:
      *   - Departure is strictly after event end date, OR
-     *   - Departure is ON event end date but main event ends at BREAKFAST or LUNCH (dinner is after boundary)
+     *   - Departure is ON event end date with EVENING time
      */
     public boolean hasLateDepartureDinner() {
         if (!showLateDeparturePricing || departureDate == null || eventBoundaryEndDate == null) {
@@ -1560,9 +1561,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         if (departureDate.isAfter(eventBoundaryEndDate)) {
             return true;
         }
-        // Case 2: Departure is ON event end date - dinner is late if main event ends at BREAKFAST or LUNCH
+        // Case 2: Departure is ON event end date with EVENING time - dinner is late departure
+        // (showLateDeparturePricing being true means parent form determined late departure applies)
         if (departureDate.equals(eventBoundaryEndDate)) {
-            return eventBoundaryEndMeal == MealBoundary.BREAKFAST || eventBoundaryEndMeal == MealBoundary.LUNCH;
+            return true;
         }
         return false;
     }
