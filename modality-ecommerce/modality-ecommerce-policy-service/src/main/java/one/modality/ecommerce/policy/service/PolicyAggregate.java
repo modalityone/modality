@@ -138,7 +138,6 @@ public final class PolicyAggregate {
         rates = QueryResultToEntitiesMapper.mapQueryResultToEntities(ratesQueryResult, queryMapping, entityStore, "rates");
         queryMapping = dataSourceModel.parseAndCompileSelect(bookablePeriodsQueryBase).getQueryMapping();
         bookablePeriods = QueryResultToEntitiesMapper.mapQueryResultToEntities(bookablePeriodsQueryResult, queryMapping, entityStore, "bookablePeriods");
-        Console.log(scheduledItems.get(2).getGuestsAvailability());
     }
 
     public Future<Void> reloadAvailabilities() {
