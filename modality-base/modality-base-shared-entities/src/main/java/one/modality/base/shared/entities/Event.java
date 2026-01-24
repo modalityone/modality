@@ -53,6 +53,7 @@ public interface Event extends Entity,
     String timezone = "timezone";
     String termsUrlEn = "termsUrlEn";
     String noAccountBooking = "noAccountBooking";
+    String cssClass = "cssClass";
 
     // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate - loaded/computed by ServerPolicyServiceProvider
     String secondsToOpeningDateAtLoadingTime = "secondsToOpeningDateAtLoadingTime";
@@ -375,6 +376,14 @@ public interface Event extends Entity,
 
     default Boolean isNoAccountBooking() {
         return getBooleanFieldValue(noAccountBooking);
+    }
+
+    default void setCssClass(String value) {
+        setFieldValue(cssClass, value);
+    }
+
+    default String getCssClass() {
+        return getStringFieldValue(cssClass);
     }
 
 }

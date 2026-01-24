@@ -3,8 +3,9 @@ package one.modality.booking.frontoffice.bookingpage.sections.payment;
 import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.windowhistory.WindowHistory;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
@@ -12,12 +13,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
-import javafx.scene.text.TextFlow;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -102,26 +99,18 @@ public class PaymentCanceledSection implements BookingFormSection {
         VBox.setMargin(titleLabel, new Insets(0, 0, 8, 0));
 
         // Subtitle with Orders link: "Your booking is saved. Complete your payment anytime from the {0} menu."
-        // Use TextFlow for proper text wrapping across multiple lines
-        String subtitleTemplate = I18n.getI18nText(BookingPageI18nKeys.PaymentCanceledSubtitle, "###LINK###").toString();
-        String[] parts = subtitleTemplate.split("###LINK###");
+        // Use HtmlText for WebFX compatibility (TextFlow with Hyperlink doesn't work in WebFX)
+        HtmlText subtitleHtml = new HtmlText();
+        subtitleHtml.getStyleClass().add("bookingpage-warning-subtitle-text");
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            String template = I18n.getI18nText(BookingPageI18nKeys.PaymentCanceledSubtitle, "###LINK###").toString();
+            String linkText = I18n.getI18nText(BookingPageI18nKeys.Orders);
+            String html = template.replace("###LINK###",
+                "<a href=\"/orders\" class=\"bookingpage-orders-link\">" + linkText + "</a>");
+            subtitleHtml.setText(html);
+        }, I18n.dictionaryProperty());
 
-        Text subtitlePart1 = new Text(parts.length > 0 ? parts[0] : "");
-        subtitlePart1.getStyleClass().add("bookingpage-warning-subtitle-text");
-
-        Hyperlink ordersLink = I18nControls.newHyperlink(BookingPageI18nKeys.Orders);
-        ordersLink.getStyleClass().addAll("bookingpage-warning-subtitle", "bookingpage-orders-link");
-        ordersLink.setCursor(Cursor.HAND);
-        ordersLink.setOnAction(e -> WindowHistory.getProvider().push("/orders"));
-
-        Text subtitlePart2 = new Text(parts.length > 1 ? parts[1] : "");
-        subtitlePart2.getStyleClass().add("bookingpage-warning-subtitle-text");
-
-        TextFlow subtitleFlow = new TextFlow(subtitlePart1, ordersLink, subtitlePart2);
-        subtitleFlow.setTextAlignment(TextAlignment.CENTER);
-        subtitleFlow.setMaxWidth(500);
-
-        header.getChildren().addAll(iconCircle, titleLabel, subtitleFlow);
+        header.getChildren().addAll(iconCircle, titleLabel, subtitleHtml);
         return header;
     }
 

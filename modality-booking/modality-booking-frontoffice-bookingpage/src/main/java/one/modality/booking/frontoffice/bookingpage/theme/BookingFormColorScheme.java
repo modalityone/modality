@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.theme;
 
 import javafx.scene.paint.Color;
+import one.modality.base.shared.entities.Event;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -188,6 +189,43 @@ public final class BookingFormColorScheme {
      */
     public static Iterable<BookingFormColorScheme> getAllSchemes() {
         return SCHEMES_BY_ID.values();
+    }
+
+    /**
+     * Returns a color scheme by its ID.
+     *
+     * @param id The scheme ID (e.g., "wisdom-blue")
+     * @return The matching color scheme, or null if not found
+     */
+    public static BookingFormColorScheme getById(String id) {
+        return id != null ? SCHEMES_BY_ID.get(id) : null;
+    }
+
+    /**
+     * Returns a color scheme by its ID with a fallback.
+     *
+     * @param id The scheme ID (e.g., "wisdom-blue")
+     * @param fallback The fallback scheme if ID is null or not found
+     * @return The matching color scheme, or the fallback
+     */
+    public static BookingFormColorScheme getByIdOrDefault(String id, BookingFormColorScheme fallback) {
+        BookingFormColorScheme scheme = getById(id);
+        return scheme != null ? scheme : fallback;
+    }
+
+    /**
+     * Resolves the color scheme from an Event's cssClass field.
+     * Falls back to WISDOM_BLUE if the event is null, cssClass is not set,
+     * or the cssClass doesn't match any known scheme.
+     *
+     * @param event The event to get the color scheme from
+     * @return The resolved color scheme, or WISDOM_BLUE as fallback
+     */
+    public static BookingFormColorScheme resolveFromEvent(Event event) {
+        if (event == null) {
+            return WISDOM_BLUE;
+        }
+        return getByIdOrDefault(event.getCssClass(), WISDOM_BLUE);
     }
 
     // === CONSTRUCTOR ===

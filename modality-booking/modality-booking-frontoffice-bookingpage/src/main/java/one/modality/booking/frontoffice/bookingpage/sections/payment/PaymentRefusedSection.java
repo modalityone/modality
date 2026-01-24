@@ -3,8 +3,9 @@ package one.modality.booking.frontoffice.bookingpage.sections.payment;
 import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.windowhistory.WindowHistory;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
@@ -12,12 +13,9 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
@@ -292,24 +290,18 @@ public class PaymentRefusedSection implements BookingFormSection {
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PayLater);
         titleLabel.getStyleClass().add("bookingpage-paylater-title");
 
-        // Description with Orders link using TextFlow for proper wrapping
-        String descTemplate = I18n.getI18nText(BookingPageI18nKeys.PayLaterDescription, "###LINK###").toString();
-        String[] descParts = descTemplate.split("###LINK###");
+        // Description with Orders link using HtmlText for WebFX compatibility
+        HtmlText descHtml = new HtmlText();
+        descHtml.getStyleClass().add("bookingpage-paylater-desc-text");
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            String template = I18n.getI18nText(BookingPageI18nKeys.PayLaterDescription, "###LINK###").toString();
+            String linkText = I18n.getI18nText(BookingPageI18nKeys.Orders);
+            String html = template.replace("###LINK###",
+                "<a href=\"/orders\" class=\"bookingpage-orders-link\">" + linkText + "</a>");
+            descHtml.setText(html);
+        }, I18n.dictionaryProperty());
 
-        Text descPart1 = new Text(descParts.length > 0 ? descParts[0] : "");
-        descPart1.getStyleClass().add("bookingpage-paylater-desc-text");
-
-        Hyperlink ordersLink = I18nControls.newHyperlink(BookingPageI18nKeys.Orders);
-        ordersLink.getStyleClass().addAll("bookingpage-paylater-desc", "bookingpage-orders-link");
-        ordersLink.setCursor(Cursor.HAND);
-        ordersLink.setOnAction(e -> WindowHistory.getProvider().push("/orders"));
-
-        Text descPart2 = new Text(descParts.length > 1 ? descParts[1] : "");
-        descPart2.getStyleClass().add("bookingpage-paylater-desc-text");
-
-        TextFlow descFlow = new TextFlow(descPart1, ordersLink, descPart2);
-
-        textContent.getChildren().addAll(titleLabel, descFlow);
+        textContent.getChildren().addAll(titleLabel, descHtml);
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         content.getChildren().addAll(iconCircle, textContent);

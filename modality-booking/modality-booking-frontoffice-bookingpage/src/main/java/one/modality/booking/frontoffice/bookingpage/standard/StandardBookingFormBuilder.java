@@ -1,6 +1,7 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import javafx.scene.Node;
+import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
 import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
@@ -288,11 +289,18 @@ public class StandardBookingFormBuilder {
         // Custom steps are optional - some forms (like STTP) may have no custom steps
         // and rely entirely on the standard checkout flow
 
+        // Auto-resolve color scheme from Event if not explicitly set
+        BookingFormColorScheme resolvedColorScheme = this.colorScheme;
+        if (resolvedColorScheme == BookingFormColorScheme.DEFAULT) {
+            Event event = activity.getWorkingBookingProperties().getWorkingBooking().getEvent();
+            resolvedColorScheme = BookingFormColorScheme.resolveFromEvent(event);
+        }
+
         // Skip flags for common steps
         return new StandardBookingForm(
             activity,
             settings,
-            colorScheme,
+            resolvedColorScheme,
             showUserBadge,
             customSteps,
             yourInformationPageSupplier,
