@@ -532,6 +532,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             var selectionState = form.getSelectionState();
             selectionState.resetRoommateInfo();
             selectionState.resetDates();
+            // Explicitly update selection state before booking, as the bindToSelectionState()
+            // listener fires AFTER this callback (due to listener registration order)
+            selectionState.setSelectedAccommodation(option);
 
             if (festivalDaySection != null && option != null) {
                 festivalDaySection.setMinNightsConstraint(option.getMinNights());
@@ -2101,6 +2104,10 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         bookDietaryItem(workingBooking, policyAggregate);
         bookAudioRecordingItems(workingBooking, policyAggregate);
         bookAdditionalOptionsItems(workingBooking, policyAggregate);
+        // Push roommate names from section to selection state before storing
+        if (roommateInfoSection != null && roommateInfoSection.isVisible()) {
+            roommateInfoSection.pushRoommateNamesToState(form.getSelectionState());
+        }
         storeRoommateInfoOnDocumentLines(workingBooking);
 
         if (mealsSection != null) {
