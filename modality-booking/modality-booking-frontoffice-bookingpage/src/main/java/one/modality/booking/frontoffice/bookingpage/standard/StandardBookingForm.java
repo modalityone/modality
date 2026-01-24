@@ -11,6 +11,7 @@ import dev.webfx.platform.util.Strings;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
+import dev.webfx.stack.session.state.client.fx.FXLoggedOut;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.Bindings;
@@ -706,8 +707,10 @@ public class StandardBookingForm extends MultiPageBookingForm
             if (userPerson != null) {
                 // User logged in - remember we had a logged-in user
                 state.setHadLoggedInUser(true);
-            } else if (state.hadLoggedInUser()) {
-                // User logged out (was logged in, now null) - reset the form
+            } else if (state.hadLoggedInUser() && FXLoggedOut.isLoggedOut()) {
+                // User logged out (was logged in, now null, and FXLoggedOut confirms it's a real logout)
+                // Note: We check FXLoggedOut.isLoggedOut() to avoid reacting to transient null values
+                // that occur during login (FXUserPerson can briefly be null during login transitions)
                 UiScheduler.runInUiThread(this::handleLogout);
             }
         }, FXUserPerson.userPersonProperty());

@@ -1019,9 +1019,17 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
             }
 
+            // Get price and perPerson flag from rates (accommodation daily rate)
+            // Try to find rate for this item - first try with null site, then try all rates
             Rate itemRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
                 .findFirst()
-                .orElse(null);
+                .orElseGet(() -> {
+                    // Fallback: search all daily rates for this item regardless of site
+                    return policyAggregate.getDailyRatesStream()
+                        .filter(r -> r.getItem() != null && Entities.samePrimaryKey(r.getItem(), item))
+                        .findFirst()
+                        .orElse(null);
+                });
 
             int pricePerNight = itemRate != null && itemRate.getPrice() != null ? itemRate.getPrice() : 0;
             boolean perPerson = itemRate == null || !Boolean.FALSE.equals(itemRate.isPerPerson());
@@ -1107,9 +1115,16 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         // Store the breakdown
         accommodationSection.setBreakdownForOption(sharingItem.getPrimaryKey(), priceResult.breakdown);
 
+        // Try to find rate for this item - first try with null site, then try all rates
         Rate itemRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, sharingItem)
             .findFirst()
-            .orElse(null);
+            .orElseGet(() -> {
+                // Fallback: search all daily rates for this item regardless of site
+                return policyAggregate.getDailyRatesStream()
+                    .filter(r -> r.getItem() != null && Entities.samePrimaryKey(r.getItem(), sharingItem))
+                    .findFirst()
+                    .orElse(null);
+            });
         int pricePerNight = itemRate != null && itemRate.getPrice() != null ? itemRate.getPrice() : 0;
 
         HasAccommodationSelectionSection.ConstraintType constraintType = HasAccommodationSelectionSection.ConstraintType.NONE;
@@ -1161,9 +1176,16 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             current = current.plusDays(1);
         }
 
+        // Try to find rate for this item - first try with null site, then try all rates
         Rate itemRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, sharingItem)
             .findFirst()
-            .orElse(null);
+            .orElseGet(() -> {
+                // Fallback: search all daily rates for this item regardless of site
+                return policyAggregate.getDailyRatesStream()
+                    .filter(r -> r.getItem() != null && Entities.samePrimaryKey(r.getItem(), sharingItem))
+                    .findFirst()
+                    .orElse(null);
+            });
         int pricePerNight = itemRate != null && itemRate.getPrice() != null ? itemRate.getPrice() : 0;
         int sharingAccommodationPrice = pricePerNight * accommodationNightsCount;
 
@@ -1719,9 +1741,16 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             current = current.plusDays(1);
         }
 
+        // Try to find rate for this item - first try with null site, then try all rates
         Rate itemRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, sharingItem)
             .findFirst()
-            .orElse(null);
+            .orElseGet(() -> {
+                // Fallback: search all daily rates for this item regardless of site
+                return policyAggregate.getDailyRatesStream()
+                    .filter(r -> r.getItem() != null && Entities.samePrimaryKey(r.getItem(), sharingItem))
+                    .findFirst()
+                    .orElse(null);
+            });
         int pricePerNight = itemRate != null && itemRate.getPrice() != null ? itemRate.getPrice() : 0;
         int sharingAccommodationPrice = pricePerNight * accommodationNightsCount;
 
