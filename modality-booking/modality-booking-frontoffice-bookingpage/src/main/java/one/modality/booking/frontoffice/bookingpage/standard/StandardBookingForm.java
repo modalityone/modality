@@ -1,6 +1,9 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.async.Promise;
@@ -24,7 +27,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import one.modality.base.client.error.ErrorReporter;
 import one.modality.base.client.i18n.I18nEntities;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.*;
 import one.modality.booking.client.workingbooking.*;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
@@ -879,7 +884,10 @@ public class StandardBookingForm extends MultiPageBookingForm
 
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
-            .onFailure(Console::log)
+            .onFailure(error -> {
+                Console.log(error);  // Keep for debugging
+                showSubmissionErrorDialog(error);
+            })
             .inUiThread()
             .compose(submitResult -> {
                 if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
@@ -929,6 +937,56 @@ public class StandardBookingForm extends MultiPageBookingForm
                     navigateToPendingBookings();
                 }
             });
+    }
+
+    /**
+     * Shows an error dialog when booking submission fails due to server/network error.
+     * Displays a user-friendly message with the server error details in a styled box.
+     *
+     * @param error The error/exception from the server
+     */
+    private void showSubmissionErrorDialog(Throwable error) {
+        // Build detailed error message for logging
+        String errorMessage = error != null && error.getMessage() != null
+            ? error.getMessage()
+            : "Unknown error";
+
+        // Get event context for error reporting
+        String eventName = null;
+        Event event = getEvent();
+        if (event != null) {
+            eventName = event.getName();
+        }
+
+        // Build comprehensive error report message
+        StringBuilder reportMessage = new StringBuilder();
+        reportMessage.append("[StandardBookingForm] Booking submission failed: ").append(errorMessage);
+        if (eventName != null) {
+            reportMessage.append(" | Event: ").append(eventName);
+        }
+
+        // Report error to database
+        ErrorReporter.reportError(reportMessage.toString());
+
+        // Show error dialog to user
+        UiScheduler.runInUiThread(() -> {
+            DialogContent errorDialog = DialogContent.createErrorDialogWithTechnicalDetails(
+                I18n.getI18nText(BookingPageI18nKeys.ServerErrorTitle),
+                I18n.getI18nText(BookingPageI18nKeys.ServerErrorHeader),
+                I18n.getI18nText(BookingPageI18nKeys.ServerErrorMessage),
+                errorMessage,  // Technical details - the actual server error
+                null,          // No error code
+                null           // No timestamp
+            );
+
+            // Use DialogUtil to show the dialog
+            DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(
+                errorDialog.build(),
+                FXMainFrameDialogArea.getDialogArea()
+            );
+            errorDialog.setDialogCallback(callback);
+            errorDialog.getPrimaryButton().setOnAction(e -> callback.closeDialog());
+        });
     }
 
     /**

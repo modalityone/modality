@@ -8,8 +8,10 @@ module modality.booking.frontoffice.bookingpage {
     requires javafx.graphics;
     requires modality.base.client.cloud.image;
     requires modality.base.client.entities;
+    requires modality.base.client.error;
     requires modality.base.client.i18n;
     requires modality.base.client.icons;
+    requires modality.base.client.mainframe.fx;
     requires modality.base.client.time;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
@@ -41,6 +43,7 @@ module modality.booking.frontoffice.bookingpage {
     requires webfx.extras.time.format;
     requires webfx.extras.util.border;
     requires webfx.extras.util.control;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.extras.util.scene;
     requires webfx.extras.validation;

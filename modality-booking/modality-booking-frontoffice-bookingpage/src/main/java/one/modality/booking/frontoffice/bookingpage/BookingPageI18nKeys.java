@@ -457,6 +457,9 @@ public interface BookingPageI18nKeys {
     Object SelectYourJourney = "SelectYourJourney";
     Object SendVerificationCode = "SendVerificationCode";
     Object Sending = "Sending";
+    Object ServerErrorHeader = "ServerErrorHeader";
+    Object ServerErrorMessage = "ServerErrorMessage";
+    Object ServerErrorTitle = "ServerErrorTitle";
     Object ShareAccommodation = "ShareAccommodation";
     Object ShareAccommodationDescription = "ShareAccommodationDescription";
     Object ShuttleFromVenue = "ShuttleFromVenue";

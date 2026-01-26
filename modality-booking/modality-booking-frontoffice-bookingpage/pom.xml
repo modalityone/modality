@@ -47,6 +47,12 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-error</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-base-client-i18n</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
@@ -54,6 +60,12 @@
         <dependency>
             <groupId>one.modality</groupId>
             <artifactId>modality-base-client-icons</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-base-client-mainframe-fx</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -240,6 +252,12 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-extras-util-control</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-extras-util-dialog</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
