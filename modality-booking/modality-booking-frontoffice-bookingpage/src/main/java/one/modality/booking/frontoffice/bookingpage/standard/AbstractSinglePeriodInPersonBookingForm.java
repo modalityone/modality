@@ -17,6 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.util.ScheduledBoundaries;
+import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -1075,25 +1076,17 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                                                LocalDate arrivalDate, LocalDate departureDate) {
         WorkingBooking tempBooking = new WorkingBooking(policyAggregate, null);
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
-        if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, true);
-        }
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        tempBooking.bookScheduledItemsOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod, true);
 
-        // Book accommodation
+        // Book accommodation (exclusive end: arrivalDate to departureDate - 1, since accommodation nights don't include departure day)
         if (accommodationItem != null) {
-            List<ScheduledItem> accoItems = policyAggregate.filterAccommodationScheduledItems().stream()
+            List<ScheduledItem> itemAccoItems = policyAggregate.filterAccommodationScheduledItems().stream()
                 .filter(si -> Entities.samePrimaryKey(si.getItem(), accommodationItem))
-                .filter(si -> si.getDate() != null)
-                .filter(si -> !si.getDate().isBefore(arrivalDate) && si.getDate().isBefore(departureDate))
                 .collect(Collectors.toList());
-            if (!accoItems.isEmpty()) {
-                tempBooking.bookScheduledItems(accoItems, true);
-            }
+            Period accoPeriod = createSimplePeriod(arrivalDate, departureDate.minusDays(1));
+            tempBooking.bookScheduledItemsOverPeriod(itemAccoItems, accoPeriod, true);
         }
 
         // Book meals
@@ -1161,14 +1154,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                                                     LocalDate arrivalDate, LocalDate departureDate) {
         WorkingBooking tempBooking = new WorkingBooking(policyAggregate, null);
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
-        if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, true);
-        }
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        tempBooking.bookScheduledItemsOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod, true);
 
         // Calculate sharing accommodation price from rate
         int accommodationNightsCount = 0;
@@ -1228,14 +1216,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
     protected int calculateDayVisitorPrice(PolicyAggregate policyAggregate, LocalDate arrivalDate, LocalDate departureDate) {
         WorkingBooking tempBooking = new WorkingBooking(policyAggregate, null);
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
-        if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, true);
-        }
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        tempBooking.bookScheduledItemsOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod, true);
 
         // Book meals (no breakfast for day visitors)
         bookMealsForPriceCalculation(tempBooking, policyAggregate, arrivalDate, departureDate, false);
@@ -1627,11 +1610,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         LocalDate teachingMaxDate = null;
         int accommodationNightsCount = 0;
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        List<ScheduledItem> teachingItems = ScheduledItems.filterOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod);
         if (!teachingItems.isEmpty()) {
             tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
@@ -1641,14 +1622,14 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             }
         }
 
-        // Book accommodation
+        // Book accommodation (exclusive end: arrivalDate to departureDate - 1)
         List<ScheduledItem> accommodationScheduledItems = new ArrayList<>();
         if (accommodationItem != null) {
-            accommodationScheduledItems = policyAggregate.filterAccommodationScheduledItems().stream()
+            List<ScheduledItem> itemAccoItems = policyAggregate.filterAccommodationScheduledItems().stream()
                 .filter(si -> Entities.samePrimaryKey(si.getItem(), accommodationItem))
-                .filter(si -> si.getDate() != null)
-                .filter(si -> !si.getDate().isBefore(arrivalDate) && si.getDate().isBefore(departureDate))
                 .collect(Collectors.toList());
+            Period accoPeriod = createSimplePeriod(arrivalDate, departureDate.minusDays(1));
+            accommodationScheduledItems = ScheduledItems.filterOverPeriod(itemAccoItems, accoPeriod);
             if (!accommodationScheduledItems.isEmpty()) {
                 tempBooking.bookScheduledItems(accommodationScheduledItems, true);
                 accommodationNightsCount = accommodationScheduledItems.size();
@@ -1698,11 +1679,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         LocalDate teachingMinDate = null;
         LocalDate teachingMaxDate = null;
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        List<ScheduledItem> teachingItems = ScheduledItems.filterOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod);
         if (!teachingItems.isEmpty()) {
             tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
@@ -1770,11 +1749,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         LocalDate teachingMinDate = null;
         LocalDate teachingMaxDate = null;
 
-        // Book teachings
-        List<ScheduledItem> teachingItems = policyAggregate.filterTeachingScheduledItems().stream()
-            .filter(si -> si.getDate() != null)
-            .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
-            .collect(Collectors.toList());
+        // Book teachings (inclusive period: arrivalDate to departureDate)
+        Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+        List<ScheduledItem> teachingItems = ScheduledItems.filterOverPeriod(policyAggregate.filterTeachingScheduledItems(), teachingPeriod);
         if (!teachingItems.isEmpty()) {
             tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
@@ -2098,23 +2075,12 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         LocalDate arrivalDate = selectionState.getArrivalDate();
         LocalDate departureDate = selectionState.getDepartureDate();
 
-        List<ScheduledItem> teachingItems;
         if (arrivalDate != null && departureDate != null) {
-            final LocalDate arrival = arrivalDate;
-            final LocalDate departure = departureDate;
-            teachingItems = allTeachingItems.stream()
-                .filter(si -> {
-                    LocalDate siDate = si.getDate();
-                    if (siDate == null) return false;
-                    return !siDate.isBefore(arrival) && siDate.isBefore(departure);
-                })
-                .collect(Collectors.toList());
-        } else {
-            teachingItems = allTeachingItems;
-        }
-
-        if (!teachingItems.isEmpty()) {
-            workingBooking.bookScheduledItems(teachingItems, true);
+            // Inclusive period: arrivalDate to departureDate (teachings on departure day included)
+            Period teachingPeriod = createSimplePeriod(arrivalDate, departureDate);
+            workingBooking.bookScheduledItemsOverPeriod(allTeachingItems, teachingPeriod, true);
+        } else if (!allTeachingItems.isEmpty()) {
+            workingBooking.bookScheduledItems(allTeachingItems, true);
         }
     }
 
@@ -2133,7 +2099,6 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             return;
         }
 
-        Set<LocalDate> selectedNights = new HashSet<>();
         LocalDate arrivalDate = selectionState.getArrivalDate();
         LocalDate departureDate = selectionState.getDepartureDate();
 
@@ -2150,36 +2115,23 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             }
         }
 
-        if (arrivalDate != null && departureDate != null) {
-            LocalDate currentDate = arrivalDate;
-            while (currentDate.isBefore(departureDate)) {
-                selectedNights.add(currentDate);
-                currentDate = currentDate.plusDays(1);
-            }
-        }
-
-        List<ScheduledItem> allAccommodationItems = policyAggregate.filterAccommodationScheduledItems().stream()
+        // Filter accommodation items by selected item
+        List<ScheduledItem> itemAccoItems = policyAggregate.filterAccommodationScheduledItems().stream()
             .filter(si -> Entities.samePrimaryKey(si.getItem(), selectedItem))
             .collect(Collectors.toList());
 
-        List<ScheduledItem> accommodationItems;
-        if (!selectedNights.isEmpty()) {
-            accommodationItems = allAccommodationItems.stream()
-                .filter(si -> {
-                    LocalDate siDate = si.getDate();
-                    return siDate != null && selectedNights.contains(siDate);
-                })
-                .collect(Collectors.toList());
-
-            if (accommodationItems.isEmpty() && !allAccommodationItems.isEmpty()) {
-                accommodationItems = allAccommodationItems;
+        if (arrivalDate != null && departureDate != null) {
+            // Exclusive end period: arrivalDate to departureDate - 1 (accommodation nights don't include departure day)
+            Period accoPeriod = createSimplePeriod(arrivalDate, departureDate.minusDays(1));
+            List<ScheduledItem> filteredItems = ScheduledItems.filterOverPeriod(itemAccoItems, accoPeriod);
+            if (!filteredItems.isEmpty()) {
+                workingBooking.bookScheduledItems(filteredItems, true);
+            } else if (!itemAccoItems.isEmpty()) {
+                // Fallback to all items if filtering yields no results
+                workingBooking.bookScheduledItems(itemAccoItems, true);
             }
-        } else {
-            accommodationItems = allAccommodationItems;
-        }
-
-        if (!accommodationItems.isEmpty()) {
-            workingBooking.bookScheduledItems(accommodationItems, true);
+        } else if (!itemAccoItems.isEmpty()) {
+            workingBooking.bookScheduledItems(itemAccoItems, true);
         }
     }
 
@@ -2579,6 +2531,19 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
     // ========================================
     // Helper Methods
     // ========================================
+
+    /**
+     * Creates a simple Period from start and end dates.
+     * Uses LocalTime.MIN for start time and LocalTime.MAX for end time to include all items on those dates.
+     */
+    protected Period createSimplePeriod(LocalDate startDate, LocalDate endDate) {
+        return new Period() {
+            @Override public LocalDate getStartDate() { return startDate; }
+            @Override public LocalTime getStartTime() { return LocalTime.MIN; }
+            @Override public LocalDate getEndDate() { return endDate; }
+            @Override public LocalTime getEndTime() { return LocalTime.MAX; }
+        };
+    }
 
     protected void updateExtendedStayStatus(LocalDate arrival, LocalDate departure) {
         if (mealsSection == null || arrival == null || departure == null) return;
