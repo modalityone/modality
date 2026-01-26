@@ -2,7 +2,6 @@ package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.platform.console.Console;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.orm.entity.Entities;
 import javafx.beans.binding.Bindings;
@@ -1256,18 +1255,10 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         BoundaryTimeInfo startBoundary = boundaryInfo.get("startBoundary");
         BoundaryTimeInfo endBoundary = boundaryInfo.get("endBoundary");
 
-        Console.log("[bookMealsForPriceCalculation] arrivalDate=" + arrivalDate + ", departureDate=" + departureDate
-            + ", startBoundary=" + (startBoundary != null ? "date=" + startBoundary.date + " time=" + startBoundary.time : "null")
-            + ", endBoundary=" + (endBoundary != null ? "date=" + endBoundary.date + " time=" + endBoundary.time : "null"));
-
         // Get meal Timelines from PolicyAggregate (no string comparison needed)
         Timeline breakfastTimeline = policyAggregate.getBreakfastTimeline();
         Timeline lunchTimeline = policyAggregate.getLunchTimeline();
         Timeline dinnerTimeline = policyAggregate.getDinnerTimeline();
-
-        Console.log("[bookMealsForPriceCalculation] breakfastTimeline=" + (breakfastTimeline != null ? breakfastTimeline.getStartTime() : "null")
-            + ", lunchTimeline=" + (lunchTimeline != null ? lunchTimeline.getStartTime() : "null")
-            + ", dinnerTimeline=" + (dinnerTimeline != null ? dinnerTimeline.getStartTime() : "null"));
 
         List<ScheduledItem> allMeals = policyAggregate.filterScheduledItemsOfFamily(KnownItemFamily.MEALS);
 
@@ -1554,10 +1545,6 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         EventPart earlyArrivalPart = policyAggregate.getEarlyArrivalPart();
         EventPart lateDeparturePart = policyAggregate.getLateDeparturePart();
 
-        Console.log("[extractBoundaryTimeInfo] mainEventPart=" + (mainEventPart != null ? mainEventPart.getName() : "null")
-            + ", earlyArrivalPart=" + (earlyArrivalPart != null ? earlyArrivalPart.getName() : "null")
-            + ", lateDeparturePart=" + (lateDeparturePart != null ? lateDeparturePart.getName() : "null"));
-
         // Use MAIN EVENT boundaries for price calculation (not early arrival / late departure)
         // The accommodation card prices are based on the main event, not extended stays
         ScheduledBoundary effectiveStartBoundary = null;
@@ -1570,14 +1557,10 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             effectiveEndBoundary = mainEventPart.getEndBoundary();
         }
 
-        Console.log("[extractBoundaryTimeInfo] effectiveStartBoundary=" + effectiveStartBoundary
-            + ", effectiveEndBoundary=" + effectiveEndBoundary);
-
         // Extract start boundary info
         if (effectiveStartBoundary != null) {
             LocalDate date = ScheduledBoundaries.getDate(effectiveStartBoundary, false);
             LocalTime time = ScheduledBoundaries.getTime(effectiveStartBoundary, false);
-            Console.log("[extractBoundaryTimeInfo] startBoundary date=" + date + ", time=" + time);
             if (date != null && time != null) {
                 result.put("startBoundary", new BoundaryTimeInfo(date, time));
             }
@@ -1587,13 +1570,11 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         if (effectiveEndBoundary != null) {
             LocalDate date = ScheduledBoundaries.getDate(effectiveEndBoundary, true);
             LocalTime time = ScheduledBoundaries.getTime(effectiveEndBoundary, true);
-            Console.log("[extractBoundaryTimeInfo] endBoundary date=" + date + ", time=" + time);
             if (date != null && time != null) {
                 result.put("endBoundary", new BoundaryTimeInfo(date, time));
             }
         }
 
-        Console.log("[extractBoundaryTimeInfo] result=" + result.keySet());
         return result;
     }
 
@@ -1614,15 +1595,12 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                                               LocalDate arrivalDate, LocalDate departureDate,
                                               BoundaryTimeInfo startBoundary, BoundaryTimeInfo endBoundary) {
         if (mealTime == null) {
-            Console.log("[isMealWithinBoundaries] mealTime is null, including meal");
             return true; // If no time info, include the meal
         }
 
         // Check start boundary on arrival date
         if (mealDate.equals(arrivalDate) && startBoundary != null && mealDate.equals(startBoundary.date)) {
             if (mealTime.isBefore(startBoundary.time)) {
-                Console.log("[isMealWithinBoundaries] EXCLUDING meal on " + mealDate + " at " + mealTime
-                    + " (before start boundary " + startBoundary.time + ")");
                 return false; // Meal is before the start boundary time
             }
         }
@@ -1630,8 +1608,6 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         // Check end boundary on departure date
         if (mealDate.equals(departureDate) && endBoundary != null && mealDate.equals(endBoundary.date)) {
             if (mealTime.isAfter(endBoundary.time)) {
-                Console.log("[isMealWithinBoundaries] EXCLUDING meal on " + mealDate + " at " + mealTime
-                    + " (after end boundary " + endBoundary.time + ")");
                 return false; // Meal is after the end boundary time
             }
         }
