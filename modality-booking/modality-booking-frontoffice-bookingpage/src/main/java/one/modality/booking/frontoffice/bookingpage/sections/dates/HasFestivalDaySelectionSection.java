@@ -206,6 +206,13 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection, Rese
     ObjectProperty<ArrivalDepartureTime> arrivalTimeProperty();
 
     /**
+     * Gets the currently selected arrival time.
+     */
+    default ArrivalDepartureTime getArrivalTime() {
+        return arrivalTimeProperty().get();
+    }
+
+    /**
      * Sets the departure time (morning/afternoon/evening).
      */
     void setDepartureTime(ArrivalDepartureTime time);
@@ -214,6 +221,13 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection, Rese
      * Gets the departure time property.
      */
     ObjectProperty<ArrivalDepartureTime> departureTimeProperty();
+
+    /**
+     * Gets the currently selected departure time.
+     */
+    default ArrivalDepartureTime getDepartureTime() {
+        return departureTimeProperty().get();
+    }
 
     // === Callbacks ===
 
@@ -283,6 +297,12 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection, Rese
             }
             if (getDepartureDate() != null) {
                 selectionState.setDepartureDate(getDepartureDate());
+            }
+            if (getArrivalTime() != null) {
+                selectionState.setArrivalTime(getArrivalTime());
+            }
+            if (getDepartureTime() != null) {
+                selectionState.setDepartureTime(getDepartureTime());
             }
         }
     }
