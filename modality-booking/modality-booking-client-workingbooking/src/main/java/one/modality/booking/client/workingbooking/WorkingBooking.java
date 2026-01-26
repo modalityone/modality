@@ -313,7 +313,11 @@ public final class WorkingBooking {
     }
 
     public void bookScheduledItemsOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
-        bookScheduledItems(ScheduledItems.filterOverPeriod(scheduledItems, period), false);
+        bookScheduledItemsOverPeriod(scheduledItems, period, false);
+    }
+
+    public void bookScheduledItemsOverPeriod(List<ScheduledItem> scheduledItems, Period period, boolean replaceExistingDates) {
+        bookScheduledItems(ScheduledItems.filterOverPeriod(scheduledItems, period), replaceExistingDates);
     }
 
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
