@@ -297,7 +297,7 @@ public class PaymentRefusedSection implements BookingFormSection {
             String template = I18n.getI18nText(BookingPageI18nKeys.PayLaterDescription, "###LINK###").toString();
             String linkText = I18n.getI18nText(BookingPageI18nKeys.Orders);
             String html = template.replace("###LINK###",
-                "<a href=\"/orders\" class=\"bookingpage-orders-link\">" + linkText + "</a>");
+                "<a href=\"#/orders\" class=\"bookingpage-orders-link\">" + linkText + "</a>");
             descHtml.setText(html);
         }, I18n.dictionaryProperty());
 

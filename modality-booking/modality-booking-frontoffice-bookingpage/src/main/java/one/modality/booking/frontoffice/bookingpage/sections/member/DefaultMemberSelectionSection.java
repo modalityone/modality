@@ -1,6 +1,9 @@
 package one.modality.booking.frontoffice.bookingpage.sections.member;
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.webtext.HtmlText;
+import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableBooleanValue;
@@ -247,6 +250,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
     /**
      * Builds the info box with explanatory text about adding members.
+     * Uses HtmlText to support clickable links in the text.
      * Styled via CSS classes.
      */
     protected HBox buildInfoBox() {
@@ -264,12 +268,16 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         icon.setScaleX(0.8);
         icon.setScaleY(0.8);
 
-        // Info text
-        Label infoLabel = I18nControls.newLabel(BookingPageI18nKeys.MemberSelectionInfoText);
-        infoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning");
-        infoLabel.setWrapText(true);
+        // Info text with HTML link support
+        HtmlText infoText = new HtmlText();
+        infoText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning");
+        // Update text when language changes
+        FXProperties.runNowAndOnPropertiesChange(() -> {
+            infoText.setText(I18n.getI18nText(BookingPageI18nKeys.MemberSelectionInfoText));
+        }, I18n.dictionaryProperty());
+        HBox.setHgrow(infoText, Priority.ALWAYS);
 
-        box.getChildren().addAll(icon, infoLabel);
+        box.getChildren().addAll(icon, infoText);
         return box;
     }
 
