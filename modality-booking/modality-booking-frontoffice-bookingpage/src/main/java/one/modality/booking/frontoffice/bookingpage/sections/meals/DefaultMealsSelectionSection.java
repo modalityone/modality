@@ -814,19 +814,23 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
-     * Sets the arrival date and updates the summary.
+     * Sets the arrival date and rebuilds meal cards to update pricing.
+     * Changing arrival date affects which meals are in the early arrival period,
+     * triggering a full rebuild to recalculate pricing flags.
      */
     public void setArrivalDate(LocalDate date) {
         this.arrivalDate = date;
-        updateSummary();
+        rebuildMealCards();
     }
 
     /**
-     * Sets the departure date and updates the summary.
+     * Sets the departure date and rebuilds meal cards to update pricing.
+     * Changing departure date affects which meals are in the late departure period,
+     * triggering a full rebuild to recalculate pricing flags.
      */
     public void setDepartureDate(LocalDate date) {
         this.departureDate = date;
-        updateSummary();
+        rebuildMealCards();
     }
 
     /**
@@ -1463,110 +1467,186 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     }
 
     /**
-     * Checks if there's at least one early arrival lunch based on arrival date, time, and boundary meal.
-     * Early arrival lunch exists if:
-     * - User can eat lunch (arrives MORNING)
-     * - AND lunch is outside the main event boundary:
-     *   - Arrival is strictly before event start date, OR
-     *   - Arrival is ON event start date but main event starts at DINNER (lunch is before boundary)
+     * Checks if there's at least one early arrival lunch.
+     * Handles three cases:
+     * 1. More than 1 day before: intermediate days have lunches (regardless of arrival time)
+     * 2. Exactly 1 day before: YES if can eat lunch on Day -1 OR Day 0 lunch is early arrival
+     * 3. On boundary date: lunch is early arrival if arrival time allows it AND lunch is before event start meal
      */
     public boolean hasEarlyArrivalLunch() {
-        if (!showEarlyArrivalPricing || arrivalDate == null || eventBoundaryStartDate == null) {
+        if (arrivalDate == null || eventBoundaryStartDate == null) {
             return false;
         }
-        // User must arrive early enough to get lunch (MORNING arrival)
-        if (arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING) {
-            return false;
-        }
-        // Case 1: Arrival is strictly before event start date - all meals are early arrival
-        if (arrivalDate.isBefore(eventBoundaryStartDate)) {
+        // Case 1: More than 1 day before - intermediate days have lunches
+        if (arrivalDate.isBefore(eventBoundaryStartDate.minusDays(1))) {
             return true;
         }
-        // Case 2: Arrival is ON event start date with MORNING time - lunch is early arrival
-        // (showEarlyArrivalPricing being true means parent form determined early arrival applies)
+        // Case 2: Exactly 1 day before - check BOTH Day -1 lunch AND Day 0 lunch
+        if (arrivalDate.equals(eventBoundaryStartDate.minusDays(1))) {
+            // Can eat lunch on Day -1?
+            boolean canEatDay1Lunch = isEarlyArrivalMeal(arrivalTime, MealBoundary.LUNCH);
+            // Day 0 lunch is early arrival if event starts at DINNER (lunch is before event)
+            boolean day0LunchIsEarly = isMealBeforeEventStart(MealBoundary.LUNCH, eventBoundaryStartMeal);
+            return canEatDay1Lunch || day0LunchIsEarly;
+        }
+        // Case 3: On boundary date - lunch must be before event start meal
         if (arrivalDate.equals(eventBoundaryStartDate)) {
-            return true;
+            return isEarlyArrivalMeal(arrivalTime, MealBoundary.LUNCH)
+                && isMealBeforeEventStart(MealBoundary.LUNCH, eventBoundaryStartMeal);
         }
         return false;
     }
 
     /**
-     * Checks if there's at least one early arrival dinner based on arrival date, time, and boundary meal.
-     * Early arrival dinner exists if:
-     * - User can eat dinner (arrives MORNING or AFTERNOON)
-     * - AND dinner is outside the main event boundary:
-     *   - Arrival is strictly before event start date
-     *   - (Note: dinner on start date is never early arrival since DINNER is the last meal of day,
-     *     so if boundary is DINNER or earlier, dinner IS part of main event)
+     * Checks if there's at least one early arrival dinner.
+     * Handles three cases:
+     * 1. More than 1 day before: intermediate days have dinners (regardless of arrival time)
+     * 2. Exactly 1 day before: dinner is early arrival if arrival time allows it
+     * 3. On boundary date: NO (dinner is never early arrival since it's the last meal of the day)
      */
     public boolean hasEarlyArrivalDinner() {
-        if (!showEarlyArrivalPricing || arrivalDate == null || eventBoundaryStartDate == null) {
+        if (arrivalDate == null || eventBoundaryStartDate == null) {
             return false;
         }
-        // User must arrive early enough to get dinner (MORNING or AFTERNOON arrival)
-        if (arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING
-            && arrivalTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON) {
-            return false;
+        // Case 1: More than 1 day before - intermediate days have dinners
+        if (arrivalDate.isBefore(eventBoundaryStartDate.minusDays(1))) {
+            return true;
         }
-        // Dinner on event start date is NEVER early arrival (it's always the boundary or after)
-        // Only dinners BEFORE event start date are early arrival
-        return arrivalDate.isBefore(eventBoundaryStartDate);
+        // Case 2: Exactly 1 day before - dinner is early arrival if arrival time allows it
+        if (arrivalDate.equals(eventBoundaryStartDate.minusDays(1))) {
+            return isEarlyArrivalMeal(arrivalTime, MealBoundary.DINNER);
+        }
+        // Case 3: On boundary date - dinner is never early arrival (it's the last meal of the day)
+        return false;
     }
 
     /**
-     * Checks if there's at least one late departure lunch based on departure date, time, and boundary meal.
-     * Late departure lunch exists if:
-     * - User can eat lunch (departs AFTERNOON or EVENING)
-     * - AND lunch is outside the main event boundary:
-     *   - Departure is strictly after event end date, OR
-     *   - Departure is ON event end date but main event ends at BREAKFAST (lunch is after boundary)
+     * Checks if there's at least one late departure lunch.
+     * Handles three cases:
+     * 1. More than 1 day after: intermediate days have lunches (regardless of departure time)
+     * 2. Exactly 1 day after: YES if can eat lunch on Day +1 OR Day 0 lunch is late departure
+     * 3. On boundary date: lunch is late departure if departure time allows it AND lunch is after event end meal
      */
     public boolean hasLateDepartureLunch() {
-        if (!showLateDeparturePricing || departureDate == null || eventBoundaryEndDate == null) {
+        if (departureDate == null || eventBoundaryEndDate == null) {
             return false;
         }
-        // User must stay long enough to get lunch (AFTERNOON or EVENING departure)
-        if (departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.AFTERNOON
-            && departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
-            return false;
-        }
-        // Case 1: Departure is strictly after event end date - all meals are late departure
-        if (departureDate.isAfter(eventBoundaryEndDate)) {
+        // Case 1: More than 1 day after - intermediate days have lunches
+        if (departureDate.isAfter(eventBoundaryEndDate.plusDays(1))) {
             return true;
         }
-        // Case 2: Departure is ON event end date - lunch is late if main event ends at BREAKFAST
+        // Case 2: Exactly 1 day after - check BOTH Day +1 lunch AND Day 0 lunch
+        if (departureDate.equals(eventBoundaryEndDate.plusDays(1))) {
+            // Can eat lunch on Day +1?
+            boolean canEatDay1Lunch = isLateDepartureMeal(departureTime, MealBoundary.LUNCH);
+            // Day 0 lunch is late departure if event ends at BREAKFAST (lunch is after event)
+            boolean day0LunchIsLate = isMealAfterEventEnd(MealBoundary.LUNCH, eventBoundaryEndMeal);
+            return canEatDay1Lunch || day0LunchIsLate;
+        }
+        // Case 3: On boundary date - lunch must be after event end meal (only when event ends at BREAKFAST)
         if (departureDate.equals(eventBoundaryEndDate)) {
-            return eventBoundaryEndMeal == MealBoundary.BREAKFAST;
+            return isLateDepartureMeal(departureTime, MealBoundary.LUNCH)
+                && isMealAfterEventEnd(MealBoundary.LUNCH, eventBoundaryEndMeal);
         }
         return false;
     }
 
     /**
-     * Checks if there's at least one late departure dinner based on departure date, time, and boundary meal.
-     * Late departure dinner exists if:
-     * - User can eat dinner (departs EVENING)
-     * - AND dinner is outside the main event boundary:
-     *   - Departure is strictly after event end date, OR
-     *   - Departure is ON event end date with EVENING time
+     * Checks if there's at least one late departure dinner.
+     * Handles three cases:
+     * 1. More than 1 day after: intermediate days have dinners (regardless of departure time)
+     * 2. Exactly 1 day after: YES if can eat dinner on Day +1 OR Day 0 dinner is late departure
+     * 3. On boundary date: dinner is late departure if departure time allows it AND dinner is after event end meal
      */
     public boolean hasLateDepartureDinner() {
-        if (!showLateDeparturePricing || departureDate == null || eventBoundaryEndDate == null) {
+        if (departureDate == null || eventBoundaryEndDate == null) {
             return false;
         }
-        // User must stay long enough to get dinner (EVENING departure)
-        if (departureTime != HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING) {
-            return false;
-        }
-        // Case 1: Departure is strictly after event end date - all meals are late departure
-        if (departureDate.isAfter(eventBoundaryEndDate)) {
+        // Case 1: More than 1 day after - intermediate days have dinners
+        if (departureDate.isAfter(eventBoundaryEndDate.plusDays(1))) {
             return true;
         }
-        // Case 2: Departure is ON event end date with EVENING time - dinner is late departure
-        // (showLateDeparturePricing being true means parent form determined late departure applies)
+        // Case 2: Exactly 1 day after - check BOTH Day +1 dinner AND Day 0 dinner
+        if (departureDate.equals(eventBoundaryEndDate.plusDays(1))) {
+            // Can eat dinner on Day +1?
+            boolean canEatDay1Dinner = isLateDepartureMeal(departureTime, MealBoundary.DINNER);
+            // Day 0 dinner is late departure if event ends at BREAKFAST or LUNCH (dinner is after event)
+            boolean day0DinnerIsLate = isMealAfterEventEnd(MealBoundary.DINNER, eventBoundaryEndMeal);
+            return canEatDay1Dinner || day0DinnerIsLate;
+        }
+        // Case 3: On boundary date - dinner must be after event end meal (when event ends at BREAKFAST or LUNCH)
         if (departureDate.equals(eventBoundaryEndDate)) {
-            return true;
+            return isLateDepartureMeal(departureTime, MealBoundary.DINNER)
+                && isMealAfterEventEnd(MealBoundary.DINNER, eventBoundaryEndMeal);
         }
         return false;
+    }
+
+    /**
+     * Returns the order of a meal in the day (BREAKFAST=0, LUNCH=1, DINNER=2).
+     */
+    private int mealOrder(MealBoundary meal) {
+        if (meal == null) return 0;
+        switch (meal) {
+            case BREAKFAST: return 0;
+            case LUNCH: return 1;
+            case DINNER: return 2;
+            default: return 0;
+        }
+    }
+
+    /**
+     * Checks if the specified meal is an early arrival meal based on the arrival time.
+     * MORNING arrival: LUNCH and DINNER are early arrival meals.
+     * AFTERNOON arrival: only DINNER is an early arrival meal.
+     * EVENING arrival: no meals are early arrival meals.
+     */
+    private boolean isEarlyArrivalMeal(HasFestivalDaySelectionSection.ArrivalDepartureTime arrival, MealBoundary meal) {
+        if (arrival == null || meal == null) return false;
+        switch (meal) {
+            case BREAKFAST:
+                return false; // Breakfast can never be early arrival (need to arrive day before)
+            case LUNCH:
+                return arrival == HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING;
+            case DINNER:
+                return arrival != HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if the specified meal is a late departure meal based on the departure time.
+     * MORNING departure: no meals are late departure meals.
+     * AFTERNOON departure: BREAKFAST and LUNCH are late departure meals.
+     * EVENING departure: BREAKFAST, LUNCH and DINNER are late departure meals.
+     */
+    private boolean isLateDepartureMeal(HasFestivalDaySelectionSection.ArrivalDepartureTime departure, MealBoundary meal) {
+        if (departure == null || meal == null) return false;
+        switch (meal) {
+            case BREAKFAST:
+                return departure != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING;
+            case LUNCH:
+                return departure != HasFestivalDaySelectionSection.ArrivalDepartureTime.MORNING;
+            case DINNER:
+                return departure == HasFestivalDaySelectionSection.ArrivalDepartureTime.EVENING;
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if meal is before the event's first included meal (used for early arrival on boundary date).
+     */
+    private boolean isMealBeforeEventStart(MealBoundary meal, MealBoundary eventStartMeal) {
+        return mealOrder(meal) < mealOrder(eventStartMeal);
+    }
+
+    /**
+     * Checks if meal is after the event's last included meal (used for late departure on boundary date).
+     */
+    private boolean isMealAfterEventEnd(MealBoundary meal, MealBoundary eventEndMeal) {
+        return mealOrder(meal) > mealOrder(eventEndMeal);
     }
 
     @Override

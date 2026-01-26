@@ -1958,6 +1958,24 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 mealsSection.setEventBoundaryEndDate(mainEndDate);
             }
 
+            // Extract and set boundary meals from EventPart based on time of day
+            ScheduledBoundary startBoundary = mainEventPart.getStartBoundary();
+            ScheduledBoundary endBoundary = mainEventPart.getEndBoundary();
+
+            if (startBoundary != null) {
+                LocalTime startTime = getBoundaryTime(startBoundary, false);
+                if (startTime != null) {
+                    mealsSection.setEventBoundaryStartMeal(getMealBoundaryFromTime(startTime));
+                }
+            }
+
+            if (endBoundary != null) {
+                LocalTime endTime = getBoundaryTime(endBoundary, true);
+                if (endTime != null) {
+                    mealsSection.setEventBoundaryEndMeal(getMealBoundaryFromTime(endTime));
+                }
+            }
+
             // Set the main event period for isInPeriod checks (EventPart implements Period via BoundaryPeriod)
             mealsSection.setMainEventPeriod(mainEventPart);
 
@@ -2543,6 +2561,58 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             @Override public LocalDate getEndDate() { return endDate; }
             @Override public LocalTime getEndTime() { return LocalTime.MAX; }
         };
+    }
+
+    /**
+     * Gets the time from a ScheduledBoundary. The time comes from the ScheduledItem
+     * or its Timeline, depending on where it's defined.
+     *
+     * @param boundary the ScheduledBoundary to get time from
+     * @param isEndBoundary true if this is an end boundary (affects which time to use)
+     * @return the boundary time, or null if not available
+     */
+    protected LocalTime getBoundaryTime(ScheduledBoundary boundary, boolean isEndBoundary) {
+        if (boundary == null) return null;
+
+        ScheduledItem scheduledItem = boundary.getScheduledItem();
+        if (scheduledItem != null) {
+            // First try to get time directly from ScheduledItem
+            LocalTime time = boundary.isAtStartTime() ? scheduledItem.getStartTime() : scheduledItem.getEndTime();
+            if (time != null) return time;
+
+            // Fall back to Timeline if ScheduledItem doesn't have direct time
+            Timeline timeline = scheduledItem.getTimeline();
+            if (timeline != null) {
+                time = boundary.isAtStartTime() ? timeline.getStartTime() : timeline.getEndTime();
+                if (time != null) return time;
+            }
+        }
+
+        // Fall back to boundary's own timeline
+        Timeline boundaryTimeline = boundary.getTimeline();
+        if (boundaryTimeline != null) {
+            return boundary.isAtStartTime() ? boundaryTimeline.getStartTime() : boundaryTimeline.getEndTime();
+        }
+
+        return null;
+    }
+
+    /**
+     * Converts a time of day to a MealBoundary enum value.
+     * - Before 11:00 → BREAKFAST
+     * - 11:00 to 15:00 → LUNCH
+     * - After 15:00 → DINNER
+     */
+    protected DefaultMealsSelectionSection.MealBoundary getMealBoundaryFromTime(LocalTime time) {
+        if (time == null) return DefaultMealsSelectionSection.MealBoundary.BREAKFAST; // Default
+
+        if (time.isBefore(LocalTime.of(11, 0))) {
+            return DefaultMealsSelectionSection.MealBoundary.BREAKFAST;
+        } else if (time.isBefore(LocalTime.of(15, 0))) {
+            return DefaultMealsSelectionSection.MealBoundary.LUNCH;
+        } else {
+            return DefaultMealsSelectionSection.MealBoundary.DINNER;
+        }
     }
 
     protected void updateExtendedStayStatus(LocalDate arrival, LocalDate departure) {
