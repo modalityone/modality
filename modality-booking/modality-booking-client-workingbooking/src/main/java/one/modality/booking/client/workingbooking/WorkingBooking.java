@@ -312,6 +312,10 @@ public final class WorkingBooking {
         bookScheduledItems(scheduledItemsToBook, true);
     }
 
+    public void bookScheduledItemsOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
+        bookScheduledItems(ScheduledItems.filterOverPeriod(scheduledItems, period), true);
+    }
+
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
         if (scheduledItems.isEmpty())
             return false;
