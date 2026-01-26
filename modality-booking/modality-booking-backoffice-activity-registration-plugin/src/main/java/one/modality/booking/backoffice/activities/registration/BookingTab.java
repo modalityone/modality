@@ -17,29 +17,21 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.History;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ItemFamily;
-import one.modality.base.shared.entities.Rate;
-import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 import one.modality.ecommerce.document.service.DocumentAggregate;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
-import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -507,7 +499,7 @@ public class BookingTab {
         }
 
         // Use WorkingBooking.bookScheduledItems with addOnly=true to add attendance
-        workingBooking.bookScheduledItems(java.util.Collections.singletonList(scheduledItem), true);
+        workingBooking.bookScheduledItems(java.util.Collections.singletonList(scheduledItem), false);
 
         // Manually update hasChangesProperty at UX level for immediate UI feedback
         // (the WorkingBooking's deferred property may not update immediately)

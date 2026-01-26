@@ -1082,7 +1082,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
         }
 
         // Book accommodation
@@ -1093,7 +1093,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 .filter(si -> !si.getDate().isBefore(arrivalDate) && si.getDate().isBefore(departureDate))
                 .collect(Collectors.toList());
             if (!accoItems.isEmpty()) {
-                tempBooking.bookScheduledItems(accoItems, false);
+                tempBooking.bookScheduledItems(accoItems, true);
             }
         }
 
@@ -1168,7 +1168,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
         }
 
         // Calculate sharing accommodation price from rate
@@ -1235,7 +1235,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
         }
 
         // Book meals (no breakfast for day visitors)
@@ -1335,7 +1335,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             }
 
             if (!timelineScheduledItems.isEmpty()) {
-                tempBooking.bookScheduledItems(timelineScheduledItems, true);
+                tempBooking.bookScheduledItems(timelineScheduledItems, false);
             }
         }
     }
@@ -1657,7 +1657,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
                 LocalDate d = si.getDate();
                 if (teachingMinDate == null || d.isBefore(teachingMinDate)) teachingMinDate = d;
@@ -1674,7 +1674,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 .filter(si -> !si.getDate().isBefore(arrivalDate) && si.getDate().isBefore(departureDate))
                 .collect(Collectors.toList());
             if (!accommodationScheduledItems.isEmpty()) {
-                tempBooking.bookScheduledItems(accommodationScheduledItems, false);
+                tempBooking.bookScheduledItems(accommodationScheduledItems, true);
                 accommodationNightsCount = accommodationScheduledItems.size();
             }
         }
@@ -1728,7 +1728,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
                 LocalDate d = si.getDate();
                 if (teachingMinDate == null || d.isBefore(teachingMinDate)) teachingMinDate = d;
@@ -1800,7 +1800,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             .filter(si -> !si.getDate().isBefore(arrivalDate) && !si.getDate().isAfter(departureDate))
             .collect(Collectors.toList());
         if (!teachingItems.isEmpty()) {
-            tempBooking.bookScheduledItems(teachingItems, false);
+            tempBooking.bookScheduledItems(teachingItems, true);
             for (ScheduledItem si : teachingItems) {
                 LocalDate d = si.getDate();
                 if (teachingMinDate == null || d.isBefore(teachingMinDate)) teachingMinDate = d;
@@ -2138,7 +2138,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         }
 
         if (!teachingItems.isEmpty()) {
-            workingBooking.bookScheduledItems(teachingItems, false);
+            workingBooking.bookScheduledItems(teachingItems, true);
         }
     }
 
@@ -2203,7 +2203,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         }
 
         if (!accommodationItems.isEmpty()) {
-            workingBooking.bookScheduledItems(accommodationItems, false);
+            workingBooking.bookScheduledItems(accommodationItems, true);
         }
     }
 
@@ -2242,7 +2242,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             site = itemPolicy.getScope().getSite();
         }
 
-        workingBooking.bookTemporalButNonScheduledItem(site, sharingItem, accommodationDates, false);
+        workingBooking.bookTemporalButNonScheduledItem(site, sharingItem, accommodationDates, true);
     }
 
     protected void bookMealsItems(WorkingBooking workingBooking, PolicyAggregate policyAggregate) {
@@ -2314,7 +2314,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         // Book the filtered meals
         for (List<ScheduledItem> mealList : filteredMeals.values()) {
             if (!mealList.isEmpty()) {
-                workingBooking.bookScheduledItems(mealList, false);
+                workingBooking.bookScheduledItems(mealList, true);
             }
         }
 
@@ -2398,7 +2398,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             workingBooking.unbookScheduledItems(itemsToUnbook);
         }
 
-        workingBooking.bookScheduledItems(itemsToBook, false);
+        workingBooking.bookScheduledItems(itemsToBook, true);
     }
 
     protected void bookAdditionalOptionsItems(WorkingBooking workingBooking, PolicyAggregate policyAggregate) {
@@ -2450,7 +2450,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 .collect(Collectors.toList());
 
             if (!ceremonyScheduledItems.isEmpty()) {
-                workingBooking.bookScheduledItems(ceremonyScheduledItems, true);
+                workingBooking.bookScheduledItems(ceremonyScheduledItems, false);
             }
         }
     }
@@ -2510,7 +2510,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                         .collect(Collectors.toList());
 
                     if (!filteredItems.isEmpty()) {
-                        workingBooking.bookScheduledItems(filteredItems, true);
+                        workingBooking.bookScheduledItems(filteredItems, false);
                     }
                 }
             }
@@ -2535,7 +2535,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                         .collect(Collectors.toList());
 
                     if (!filteredItems.isEmpty()) {
-                        workingBooking.bookScheduledItems(filteredItems, true);
+                        workingBooking.bookScheduledItems(filteredItems, false);
                     }
                 }
             }
@@ -2803,7 +2803,7 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                     .collect(Collectors.toList());
 
                 if (!newAccommodationItems.isEmpty()) {
-                    workingBooking.bookScheduledItems(newAccommodationItems, false);
+                    workingBooking.bookScheduledItems(newAccommodationItems, true);
                 }
             }
         }

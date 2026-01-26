@@ -62,7 +62,7 @@ final class AudioRecordingBookingEditor extends FamilyBookingEditorBase {
                 List<ScheduledItem> restrictedLanguageScheduledItems = Collections.filter(policyLanguageScheduledItems,
                     audioScheduledItem -> bookedTeachingScheduledItems.stream()
                         .anyMatch(teachingScheduledItem -> Objects.equals(teachingScheduledItem.getDate(), audioScheduledItem.getDate())));
-                workingBooking.bookScheduledItems(restrictedLanguageScheduledItems, false);
+                workingBooking.bookScheduledItems(restrictedLanguageScheduledItems, true);
             } else
                 workingBooking.unbookScheduledItems(policyLanguageScheduledItems);
         }

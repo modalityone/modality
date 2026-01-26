@@ -20,7 +20,6 @@ module modality.booking.backoffice.activity.registration.plugin {
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.policy.service;
-    requires modality.ecommerce.shared.pricecalculator;
     requires modality.event.client.activity.eventdependent;
     requires modality.event.client.event.fx;
     requires webfx.extras.canvas.bar;

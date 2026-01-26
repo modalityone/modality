@@ -323,7 +323,7 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
                 if (isSelected) {
                     // Book the item (addOnly=true to not affect other items)
-                    workingBooking.bookScheduledItems(audioItems, true);
+                    workingBooking.bookScheduledItems(audioItems, false);
                 } else if (!isLocked) {
                     // Unbook non-locked, non-selected items
                     workingBooking.unbookScheduledItems(audioItems);

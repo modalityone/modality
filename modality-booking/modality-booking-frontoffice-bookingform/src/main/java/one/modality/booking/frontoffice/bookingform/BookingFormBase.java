@@ -38,7 +38,7 @@ public abstract class BookingFormBase implements BookingForm {
         // Automatically booking the whole event if it's a new booking
         if (workingBooking.isNewBooking()) {
             PolicyAggregate policyAggregate = workingBooking.getPolicyAggregate();
-            workingBooking.bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), false);
+            workingBooking.bookScheduledItems(policyAggregate.filterTeachingScheduledItems(), true);
         }
     }
 

@@ -13,15 +13,15 @@ import java.util.List;
  */
 public final class WorkingBookingSyncer {
 
-    public static void syncWorkingBookingFromScheduledItemsSelector(WorkingBooking workingBooking, ScheduledItemsSelector scheduledItemsSelector, boolean addOnly) {
-        syncWorkingBookingFromSelectedScheduledItems(workingBooking, scheduledItemsSelector.getSelectedScheduledItems(), addOnly);
+    public static void syncWorkingBookingFromScheduledItemsSelector(WorkingBooking workingBooking, ScheduledItemsSelector scheduledItemsSelector, boolean replaceExistingDates) {
+        syncWorkingBookingFromSelectedScheduledItems(workingBooking, scheduledItemsSelector.getSelectedScheduledItems(), replaceExistingDates);
     }
 
-    public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> selectedScheduledItems, boolean addOnly) {
+    public static void syncWorkingBookingFromSelectedScheduledItems(WorkingBooking workingBooking, List<ScheduledItem> selectedScheduledItems, boolean replaceExistingDates) {
         // TODO: investigate to remove this weird code
         if (workingBooking.getDocument() == null)
             workingBooking.cancelChanges(); // weird, but this is to ensure the document is created
-        workingBooking.bookScheduledItems(selectedScheduledItems, addOnly); // We re-apply the selected items to the booking
+        workingBooking.bookScheduledItems(selectedScheduledItems, replaceExistingDates); // We re-apply the selected items to the booking
     }
 
     public static void syncScheduledItemsSelectorFromWorkingBooking(ScheduledItemsSelector scheduledItemsSelector, WorkingBooking workingBooking) {

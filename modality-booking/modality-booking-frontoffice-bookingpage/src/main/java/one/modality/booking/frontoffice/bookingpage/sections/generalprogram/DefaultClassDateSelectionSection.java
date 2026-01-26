@@ -135,7 +135,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         selectedItems.addListener((ListChangeListener<ScheduledItem>) change -> {
             // Keeping the working booking updated when the user selects/deselects classes
             if (workingBookingProperties != null) {
-                workingBookingProperties.getWorkingBooking().bookScheduledItems(selectedItems, false);
+                workingBookingProperties.getWorkingBooking().bookScheduledItems(selectedItems, true);
             }
             updateSelectAllBar();
         });
@@ -567,7 +567,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         // Book selected items into WorkingBooking (replaces existing selections)
         List<ScheduledItem> itemsToBook = new ArrayList<>(selectedItems);
         if (!itemsToBook.isEmpty()) {
-            workingBooking.bookScheduledItems(itemsToBook, false);
+            workingBooking.bookScheduledItems(itemsToBook, true);
         } else {
             // Clear any existing bookings for this event by unbooking all available items
             workingBooking.unbookScheduledItems(new ArrayList<>(availableItems));

@@ -4,7 +4,10 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -23,7 +26,6 @@ import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
-import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -639,7 +641,7 @@ public class AddOptionPanel {
 
         if (!scheduledItemsToBook.isEmpty()) {
             // Book all scheduled items for this item
-            workingBooking.bookScheduledItems(scheduledItemsToBook, true);
+            workingBooking.bookScheduledItems(scheduledItemsToBook, false);
             System.out.println("AddOptionPanel: Booked " + scheduledItemsToBook.size() + " scheduled items");
         }
     }

@@ -240,7 +240,7 @@ public final class BookingElements {
         selectedProperty.set(workingBooking.areScheduledItemsBooked(bookableScheduledItems));
         FXProperties.runOnPropertyChange(selected -> {
             if (selected)
-                workingBooking.bookScheduledItems(bookableScheduledItems, false);
+                workingBooking.bookScheduledItems(bookableScheduledItems, true);
             else
                 workingBooking.unbookScheduledItems(bookableScheduledItems);
         }, selectedProperty);
@@ -248,7 +248,7 @@ public final class BookingElements {
         WorkingBooking periodWorkingBooking = new WorkingBooking(policyAggregate, workingBooking.getInitialDocumentAggregate());
         periodWorkingBooking.unbookScheduledItems(bookableScheduledItems);
         int unbookedTotalPrice = new PriceCalculator(periodWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
-        periodWorkingBooking.bookScheduledItems(bookableScheduledItems, false);
+        periodWorkingBooking.bookScheduledItems(bookableScheduledItems, true);
         int bookedTotalPrice = new PriceCalculator(periodWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
         int optionPrice = bookedTotalPrice - unbookedTotalPrice;
         priceLabel.setText(EventPriceFormatter.formatWithCurrency(optionPrice, policyAggregate.getEvent()));

@@ -218,11 +218,11 @@ public final class WorkingBooking {
         }
     }
 
-    public DocumentLine bookTemporalButNonScheduledItem(Site site, Item item, List<LocalDate> dates, boolean addOnly) {
-        return bookDatesOrScheduledItems(site, item, dates, addOnly);
+    public DocumentLine bookTemporalButNonScheduledItem(Site site, Item item, List<LocalDate> dates, boolean replaceExistingDates) {
+        return bookDatesOrScheduledItems(site, item, dates, replaceExistingDates);
     }
 
-    public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean addOnly) {
+    public void bookScheduledItems(List<ScheduledItem> scheduledItems, boolean replaceExistingDates) {
         if (scheduledItems.isEmpty())
             return;
         // Group scheduled items by (site, item) and process each group separately.
@@ -233,7 +233,7 @@ public final class WorkingBooking {
         for (List<ScheduledItem> group : groupedBySiteItem.values()) {
             if (!group.isEmpty()) {
                 ScheduledItem sample = group.get(0);
-                bookDatesOrScheduledItems(sample.getSite(), sample.getItem(), group, addOnly);
+                bookDatesOrScheduledItems(sample.getSite(), sample.getItem(), group, replaceExistingDates);
             }
         }
     }
@@ -244,7 +244,7 @@ public final class WorkingBooking {
         return siteKey + ":" + itemKey;
     }
 
-    private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean addOnly) {
+    private DocumentLine bookDatesOrScheduledItems(Site site, Item item, List<?> datesOrScheduledItems, boolean replaceExistingDates) {
         if (datesOrScheduledItems.isEmpty())
             return null;
         boolean allocate = Collections.first(datesOrScheduledItems) instanceof ScheduledItem &&
@@ -274,7 +274,7 @@ public final class WorkingBooking {
         }).filter(Objects::nonNull).toArray(Attendance[]::new);
         if (newAttendances.length > 0)
             integrateNewDocumentEvent(new AddAttendancesEvent(newAttendances), false);
-        if (!addOnly) {
+        if (replaceExistingDates) {
             // We remove all existing attendances not referencing the passed dates or scheduledItems
             List<Attendance> attendancesToRemove = Collections.filter(existingAttendances, a ->
                 Collections.findFirst(datesOrScheduledItems, dateOrScheduledItem -> Attendances.attendanceMatchesDateOrScheduledItem(a, dateOrScheduledItem)) == null);
@@ -309,11 +309,11 @@ public final class WorkingBooking {
 
     public void bookSiteItemOverPeriod(Site site, Item item, Period period) {
         List<ScheduledItem> scheduledItemsToBook = ScheduledItems.filterSiteItemOverPeriod(getPolicyScheduledItems(), site, item, period);
-        bookScheduledItems(scheduledItemsToBook, true);
+        bookScheduledItems(scheduledItemsToBook, false);
     }
 
     public void bookScheduledItemsOverPeriod(List<ScheduledItem> scheduledItems, Period period) {
-        bookScheduledItems(ScheduledItems.filterOverPeriod(scheduledItems, period), true);
+        bookScheduledItems(ScheduledItems.filterOverPeriod(scheduledItems, period), false);
     }
 
     public boolean areScheduledItemsBooked(List<ScheduledItem> scheduledItems) {
@@ -327,8 +327,9 @@ public final class WorkingBooking {
         return existingDocumentLine != null;
     }
 
+    @Deprecated // Use EventSelection instead (and an accommodation type included)
     public void bookWholeEvent() {
-        bookScheduledItems(ScheduledItems.filterNotCancelled(policyAggregate.filterTeachingScheduledItems()), false);
+        bookScheduledItems(ScheduledItems.filterNotCancelled(policyAggregate.filterTeachingScheduledItems()), true);
     }
 
     public void removeDocumentLine(DocumentLine documentLine) {

@@ -70,7 +70,7 @@ public final class RecurringEventBookingForm extends MultiPageBookingForm {
     }
 
     public void syncWorkingBookingFromScheduledItemsSelector() {
-        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(getWorkingBooking(), boxScheduledItemsSelector, true);
+        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(getWorkingBooking(), boxScheduledItemsSelector, false);
     }
 
     public void syncScheduledItemsSelectorFromWorkingBooking() {

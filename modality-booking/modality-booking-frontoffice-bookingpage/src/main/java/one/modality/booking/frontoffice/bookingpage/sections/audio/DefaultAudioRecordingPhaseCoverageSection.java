@@ -502,7 +502,7 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         int unbookedTotalPrice = new PriceCalculator(tempWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
 
         // Calculate price with these items (booked)
-        tempWorkingBooking.bookScheduledItems(scheduledItems, false);
+        tempWorkingBooking.bookScheduledItems(scheduledItems, true);
         int bookedTotalPrice = new PriceCalculator(tempWorkingBooking.getLastestDocumentAggregate()).calculateTotalPrice();
 
         // The option price is the difference

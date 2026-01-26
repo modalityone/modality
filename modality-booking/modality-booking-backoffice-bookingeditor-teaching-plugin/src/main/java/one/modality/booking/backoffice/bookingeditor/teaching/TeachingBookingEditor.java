@@ -52,7 +52,7 @@ final class TeachingBookingEditor extends FamilyBookingEditorBase {
 
     @Override
     public void syncWorkingBookingFromUi() {
-        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, false);
+        WorkingBookingSyncer.syncWorkingBookingFromScheduledItemsSelector(workingBooking, boxScheduledItemsSelector, true);
     }
 
 }
