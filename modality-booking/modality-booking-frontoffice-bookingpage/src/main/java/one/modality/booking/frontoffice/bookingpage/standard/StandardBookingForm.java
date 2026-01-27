@@ -890,17 +890,39 @@ public class StandardBookingForm extends MultiPageBookingForm
             })
             .inUiThread()
             .compose(submitResult -> {
-                if (submitResult.status() == DocumentChangesStatus.SOLD_OUT) {
-                    // SOLD_OUT means registration opened and processing happened
+                if (submitResult.status() == DocumentChangesStatus.REJECTED) {
+                    // REJECTED means registration opened and processing happened
                     state.setRegistrationConfirmedOpen(true);
-                    handleAccommodationSoldOut(
-                        new SoldOutErrorParser.SoldOutInfo(
-                            submitResult.soldOutSitePrimaryKey(),
-                            submitResult.soldOutItemPrimaryKey(),
-                            null
-                        )
-                    );
-                    return Future.failedFuture("Sold out"); // We still want to stop the flow here
+                    DocumentChangesRejectedReason reason = submitResult.rejectedReason();
+                    if (reason == null) {
+                        // Rejected without a reason - show generic error
+                        showSubmissionErrorDialog(new RuntimeException("Booking rejected"));
+                        return Future.failedFuture("Rejected");
+                    }
+                    switch (reason) {
+                        case SOLD_OUT -> {
+                            handleAccommodationSoldOut(
+                                new SoldOutErrorParser.SoldOutInfo(
+                                    submitResult.soldOutSitePrimaryKey(),
+                                    submitResult.soldOutItemPrimaryKey(),
+                                    null
+                                )
+                            );
+                            return Future.failedFuture("Sold out");
+                        }
+                        case EVENT_ON_HOLD -> {
+                            showOfflinePage(getEvent());
+                            return Future.failedFuture("Event on hold");
+                        }
+                        case TECHNICAL_ERROR -> {
+                            showSubmissionErrorDialog(new RuntimeException(submitResult.errorMessage()));
+                            return Future.failedFuture("Technical error");
+                        }
+                        case ALREADY_BOOKED -> {
+                            showAlreadyBookedErrorDialogInternal();
+                            return Future.failedFuture("Already booked");
+                        }
+                    }
                 }
                 // Handle ENQUEUED status - show queue page and wait for final result
                 if (submitResult.status() == DocumentChangesStatus.ENQUEUED) {
@@ -977,6 +999,42 @@ public class StandardBookingForm extends MultiPageBookingForm
                 errorMessage,  // Technical details - the actual server error
                 null,          // No error code
                 null           // No timestamp
+            );
+
+            // Use DialogUtil to show the dialog
+            DialogCallback callback = DialogUtil.showModalNodeInGoldLayout(
+                errorDialog.build(),
+                FXMainFrameDialogArea.getDialogArea()
+            );
+            errorDialog.setDialogCallback(callback);
+            errorDialog.getPrimaryButton().setOnAction(e -> callback.closeDialog());
+        });
+    }
+
+    /**
+     * Shows an error dialog when user already has a booking for this event.
+     * Reports the error to the database and displays a user-friendly message.
+     */
+    private void showAlreadyBookedErrorDialogInternal() {
+        // Get event context for error reporting
+        String eventName = null;
+        Event event = getEvent();
+        if (event != null) {
+            eventName = event.getName();
+        }
+
+        // Report to database
+        ErrorReporter.reportError("[StandardBookingForm] User already has booking for event: " + eventName);
+
+        // Show error dialog to user
+        UiScheduler.runInUiThread(() -> {
+            DialogContent errorDialog = DialogContent.createErrorDialogWithTechnicalDetails(
+                I18n.getI18nText(BookingPageI18nKeys.AlreadyBookedTitle),
+                I18n.getI18nText(BookingPageI18nKeys.AlreadyBookedHeader),
+                I18n.getI18nText(BookingPageI18nKeys.AlreadyBookedMessage),
+                null,  // No technical details needed
+                null,
+                null
             );
 
             // Use DialogUtil to show the dialog
@@ -1099,6 +1157,24 @@ public class StandardBookingForm extends MultiPageBookingForm
     @Override
     public WorkingBookingProperties getWorkingBookingProperties() {
         return workingBookingProperties;
+    }
+
+    /**
+     * Shows the offline/maintenance page.
+     * Called by the queue handler when event is on hold.
+     */
+    @Override
+    public void showOfflinePage() {
+        showOfflinePage(getEvent());
+    }
+
+    /**
+     * Shows the "already booked" error dialog.
+     * Called by the queue handler when user already has a booking.
+     */
+    @Override
+    public void showAlreadyBookedErrorDialog() {
+        showAlreadyBookedErrorDialogInternal();
     }
 
     /**

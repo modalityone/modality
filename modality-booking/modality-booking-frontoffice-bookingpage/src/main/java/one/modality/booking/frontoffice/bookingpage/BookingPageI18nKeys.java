@@ -33,6 +33,9 @@ public interface BookingPageI18nKeys {
     Object AllocationMinDepositWarning = "AllocationMinDepositWarning";
     Object AllocationMismatchWarning = "AllocationMismatchWarning";
     Object AlreadyBookedForEvent = "AlreadyBookedForEvent";
+    Object AlreadyBookedHeader = "AlreadyBookedHeader";
+    Object AlreadyBookedMessage = "AlreadyBookedMessage";
+    Object AlreadyBookedTitle = "AlreadyBookedTitle";
     Object AlreadyIncluded = "AlreadyIncluded";
     Object AlreadyPaid = "AlreadyPaid";
     Object AmountDue = "AmountDue";
@@ -396,6 +399,7 @@ public interface BookingPageI18nKeys {
     Object Progress = "Progress";
     Object Purchased = "Purchased";
     Object QuestionsContactUs = "QuestionsContactUs";
+    Object QueueErrorMessage = "QueueErrorMessage";
     Object QueueStep1Desc = "QueueStep1Desc";
     Object QueueStep1Title = "QueueStep1Title";
     Object QueueStep2Desc = "QueueStep2Desc";

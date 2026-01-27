@@ -1,6 +1,9 @@
 package one.modality.booking.frontoffice.bookingpage.standard;
 
 import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
@@ -11,15 +14,19 @@ import dev.webfx.platform.visibility.VisibilityState;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateAccountCreationCredentials;
+import one.modality.base.client.error.ErrorReporter;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Event;
 import one.modality.booking.client.workingbooking.EventQueueFinalResultNotification;
 import one.modality.booking.client.workingbooking.EventQueueProgressNotification;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
+import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.CompositeBookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.sections.queue.DefaultUnifiedQueueSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
+import one.modality.ecommerce.document.service.DocumentChangesRejectedReason;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
@@ -80,6 +87,12 @@ public class BookingFormQueueHandler {
 
         /** Set registration confirmed open flag */
         void setRegistrationConfirmedOpen(boolean confirmed);
+
+        /** Show the offline/maintenance page */
+        void showOfflinePage();
+
+        /** Show "already booked" error dialog */
+        void showAlreadyBookedErrorDialog();
     }
 
     private final QueueFormCallback callback;
@@ -228,18 +241,86 @@ public class BookingFormQueueHandler {
                         .onSuccess(ignored -> UiScheduler.runInUiThread(callback::navigateToPendingBookings));
                 }
             }
-            case SOLD_OUT -> {
-                callback.handleAccommodationSoldOut(new SoldOutErrorParser.SoldOutInfo(
-                    finalResult.soldOutSitePrimaryKey(),
-                    finalResult.soldOutItemPrimaryKey(),
-                    null
-                ));
+            case REJECTED -> {
+                DocumentChangesRejectedReason reason = finalResult.rejectedReason();
+                if (reason == null) {
+                    showQueueErrorDialog("Booking rejected without reason");
+                    callback.navigateToSummary();
+                } else {
+                    switch (reason) {
+                        case SOLD_OUT -> {
+                            callback.handleAccommodationSoldOut(new SoldOutErrorParser.SoldOutInfo(
+                                finalResult.soldOutSitePrimaryKey(),
+                                finalResult.soldOutItemPrimaryKey(),
+                                null
+                            ));
+                        }
+                        case EVENT_ON_HOLD -> {
+                            callback.showOfflinePage();
+                        }
+                        case TECHNICAL_ERROR -> {
+                            showQueueErrorDialog(finalResult.errorMessage());
+                            callback.navigateToSummary();
+                        }
+                        case ALREADY_BOOKED -> {
+                            callback.showAlreadyBookedErrorDialog();
+                            callback.navigateToSummary();
+                        }
+                    }
+                }
             }
             default -> {
-                // Unexpected status - go back to summary
+                // Unexpected status - show error and report it
+                showQueueErrorDialog("Unexpected queue result status: " + finalResult.status());
                 callback.navigateToSummary();
             }
         }
+    }
+
+    /**
+     * Shows an error dialog when queue processing fails.
+     * Reports the error to the database and displays a user-friendly message.
+     *
+     * @param errorMessage The error message from the server
+     */
+    private void showQueueErrorDialog(String errorMessage) {
+        String message = errorMessage != null ? errorMessage : "Unknown error";
+
+        // Get event context for error reporting
+        String eventName = null;
+        Event event = callback.getEvent();
+        if (event != null) {
+            eventName = event.getName();
+        }
+
+        // Build error report message
+        StringBuilder reportMessage = new StringBuilder();
+        reportMessage.append("[BookingFormQueueHandler] Queue processing failed: ").append(message);
+        if (eventName != null) {
+            reportMessage.append(" | Event: ").append(eventName);
+        }
+
+        // Report error to database
+        ErrorReporter.reportError(reportMessage.toString());
+
+        // Show error dialog to user
+        UiScheduler.runInUiThread(() -> {
+            DialogContent errorDialog = DialogContent.createErrorDialogWithTechnicalDetails(
+                I18n.getI18nText(BookingPageI18nKeys.ServerErrorTitle),
+                I18n.getI18nText(BookingPageI18nKeys.ServerErrorHeader),
+                I18n.getI18nText(BookingPageI18nKeys.QueueErrorMessage),
+                message,  // Technical details - the actual server error
+                null,     // No error code
+                null      // No timestamp
+            );
+
+            DialogCallback dialogCallback = DialogUtil.showModalNodeInGoldLayout(
+                errorDialog.build(),
+                FXMainFrameDialogArea.getDialogArea()
+            );
+            errorDialog.setDialogCallback(dialogCallback);
+            errorDialog.getPrimaryButton().setOnAction(e -> dialogCallback.closeDialog());
+        });
     }
 
     /**
@@ -342,7 +423,10 @@ public class BookingFormQueueHandler {
                 }
                 // If result is null, still processing - do nothing, wait for push
             })
-            .onFailure(error -> Console.log("Fallback queue fetch failed: " + error.getMessage()));
+            .onFailure(error -> {
+                Console.log("Fallback queue fetch failed: " + error.getMessage());
+                showQueueErrorDialog(error.getMessage());
+            });
     }
 
     /**
