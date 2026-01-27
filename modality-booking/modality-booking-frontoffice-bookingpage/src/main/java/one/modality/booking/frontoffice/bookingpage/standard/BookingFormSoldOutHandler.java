@@ -24,6 +24,7 @@ import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,6 +77,15 @@ public class BookingFormSoldOutHandler {
 
         /** Set returned from sold-out recovery flag */
         void setReturnedFromSoldOutRecovery(boolean returned);
+
+        /** Get the booking selection state for date checking */
+        BookingSelectionState getSelectionState();
+
+        /** Get the main event start date (first day of main event, not early arrival) */
+        LocalDate getMainEventStartDate();
+
+        /** Get the main event end date (last day of main event, not late departure) */
+        LocalDate getMainEventEndDate();
     }
 
     private final SoldOutFormCallback callback;
@@ -178,6 +188,17 @@ public class BookingFormSoldOutHandler {
         soldOutSection.setEventName(callback.getEvent() != null ? callback.getEvent().getName() : "");
         soldOutSection.setOriginalSelection(soldOutItemName, soldOutPrice);
         soldOutSection.setNumberOfNights(numberOfNights);
+
+        // Bind to selection state for date restriction checking
+        BookingSelectionState selectionState = callback.getSelectionState();
+        if (selectionState != null) {
+            soldOutSection.bindToSelectionState(selectionState);
+        }
+
+        // Pass main event dates for date restriction checking
+        soldOutSection.setMainEventStartDate(callback.getMainEventStartDate());
+        soldOutSection.setMainEventEndDate(callback.getMainEventEndDate());
+
         soldOutSection.setAlternativeOptions(alternatives);
 
         // Create the recovery page using CompositeBookingFormPage with custom buttons
@@ -286,16 +307,24 @@ public class BookingFormSoldOutHandler {
                 int pricePerNight = rate != null && rate.getPrice() != null ? rate.getPrice() : 0;
                 boolean perPerson = rate == null || rate.isPerPerson();
 
-                // Get constraint from ItemPolicy
+                // Get constraint and early/late arrival flags from ItemPolicy
                 ItemPolicy itemPolicy = policy.getItemPolicy(item);
                 HasAccommodationSelectionSection.ConstraintType constraintType = HasAccommodationSelectionSection.ConstraintType.NONE;
                 String constraintLabel = null;
                 int minNights = 0;
+                // Default to true (allowed) if not specified
+                boolean earlyArrivalAllowed = true;
+                boolean lateDepartureAllowed = true;
 
-                if (itemPolicy != null && itemPolicy.getMinDay() != null && itemPolicy.getMinDay() > 0) {
-                    constraintType = HasAccommodationSelectionSection.ConstraintType.MIN_NIGHTS;
-                    minNights = itemPolicy.getMinDay();
-                    constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
+                if (itemPolicy != null) {
+                    if (itemPolicy.getMinDay() != null && itemPolicy.getMinDay() > 0) {
+                        constraintType = HasAccommodationSelectionSection.ConstraintType.MIN_NIGHTS;
+                        minNights = itemPolicy.getMinDay();
+                        constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
+                    }
+                    // Read early/late arrival restrictions (null = allowed)
+                    earlyArrivalAllowed = !Boolean.FALSE.equals(itemPolicy.isEarlyAccommodationAllowed());
+                    lateDepartureAllowed = !Boolean.FALSE.equals(itemPolicy.isLateAccommodationAllowed());
                 }
 
                 HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
@@ -308,9 +337,12 @@ public class BookingFormSoldOutHandler {
                     constraintType,
                     constraintLabel,
                     minNights,
-                    false,
-                    null,
-                    perPerson
+                    false,         // isDayVisitor
+                    null,          // imageUrl
+                    perPerson,
+                    -1,            // preCalculatedTotalPrice
+                    earlyArrivalAllowed,
+                    lateDepartureAllowed
                 );
 
                 options.add(option);
@@ -334,6 +366,10 @@ public class BookingFormSoldOutHandler {
                     .orElse(null);
                 int sharePricePerNight = shareRate != null && shareRate.getPrice() != null ? shareRate.getPrice() : 0;
 
+                // Read early/late arrival restrictions from the sharing item policy
+                boolean shareEarlyAllowed = !Boolean.FALSE.equals(sharingAccommodationItemPolicy.isEarlyAccommodationAllowed());
+                boolean shareLateAllowed = !Boolean.FALSE.equals(sharingAccommodationItemPolicy.isLateAccommodationAllowed());
+
                 HasAccommodationSelectionSection.AccommodationOption shareAccommodation = new HasAccommodationSelectionSection.AccommodationOption(
                     sharingItem.getPrimaryKey(),
                     sharingItem,
@@ -346,13 +382,17 @@ public class BookingFormSoldOutHandler {
                     0,
                     false,          // isDayVisitor = false
                     null,
-                    true            // perPerson
+                    true,           // perPerson
+                    -1,             // preCalculatedTotalPrice
+                    shareEarlyAllowed,
+                    shareLateAllowed
                 );
                 options.add(shareAccommodation);
             }
         }
 
         // Always add Day Visitor option at the end as a fallback
+        // Day visitors don't stay overnight, so early arrival and late departure don't apply
         HasAccommodationSelectionSection.AccommodationOption dayVisitor = new HasAccommodationSelectionSection.AccommodationOption(
             "DAY_VISITOR",  // special itemId
             null,           // no itemEntity
@@ -365,7 +405,10 @@ public class BookingFormSoldOutHandler {
             0,
             true,           // isDayVisitor = true
             null,
-            true            // perPerson
+            true,           // perPerson
+            -1,             // preCalculatedTotalPrice
+            false,          // earlyArrivalAllowed = false (day visitors stay within event only)
+            false           // lateDepartureAllowed = false
         );
         options.add(dayVisitor);
 

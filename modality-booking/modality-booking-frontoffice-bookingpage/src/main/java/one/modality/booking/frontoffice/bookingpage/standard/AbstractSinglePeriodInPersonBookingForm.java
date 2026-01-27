@@ -159,6 +159,11 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
     protected boolean transportOptionsPopulated = false;
     protected boolean additionalOptionsPopulated = false;
 
+    // === Sold-out Recovery Mode Flag ===
+
+    /** Flag to prevent date reset when updating accommodation during sold-out recovery. */
+    protected boolean inSoldOutRecoveryMode = false;
+
     // ========================================
     // Constructor
     // ========================================
@@ -531,7 +536,12 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
 
             var selectionState = form.getSelectionState();
             selectionState.resetRoommateInfo();
-            selectionState.resetDates();
+
+            // Only reset dates during NORMAL accommodation selection, not during sold-out recovery
+            if (!inSoldOutRecoveryMode) {
+                selectionState.resetDates();
+            }
+
             // Explicitly update selection state before booking, as the bindToSelectionState()
             // listener fires AFTER this callback (due to listener registration order)
             selectionState.setSelectedAccommodation(option);
@@ -539,7 +549,15 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             if (festivalDaySection != null && option != null) {
                 festivalDaySection.setMinNightsConstraint(option.getMinNights());
                 festivalDaySection.setIsDayVisitor(option.isDayVisitor());
-                festivalDaySection.reset();
+
+                // Set early arrival / late departure restrictions
+                festivalDaySection.setEarlyArrivalAllowed(option.isEarlyArrivalAllowed());
+                festivalDaySection.setLateDepartureAllowed(option.isLateDepartureAllowed());
+
+                // Only reset festival day section during NORMAL selection
+                if (!inSoldOutRecoveryMode) {
+                    festivalDaySection.reset();
+                }
             }
 
             if (mealsSection != null && option != null) {
@@ -1022,6 +1040,11 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
             }
 
+            // Read early arrival / late departure restrictions from ItemPolicy
+            // null or true means allowed, only explicit false means not allowed
+            boolean earlyArrivalAllowed = itemPolicy == null || !Boolean.FALSE.equals(itemPolicy.isEarlyAccommodationAllowed());
+            boolean lateDepartureAllowed = itemPolicy == null || !Boolean.FALSE.equals(itemPolicy.isLateAccommodationAllowed());
+
             // Get price and perPerson flag from rates (accommodation daily rate)
             // Try to find rate for this item - first try with null site, then try all rates
             Rate itemRate = policyAggregate.filterDailyRatesStreamOfSiteAndItem(null, item)
@@ -1056,7 +1079,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
                 false,
                 null,
                 perPerson,
-                priceResult.totalPrice
+                priceResult.totalPrice,
+                earlyArrivalAllowed,
+                lateDepartureAllowed
             );
 
             accommodationSection.addAccommodationOption(option);
@@ -1131,6 +1156,10 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             constraintLabel = I18n.getI18nText(BookingPageI18nKeys.MinNights, minNights);
         }
 
+        // Read early arrival / late departure restrictions from sharingItemPolicy
+        boolean earlyArrivalAllowed = !Boolean.FALSE.equals(sharingItemPolicy.isEarlyAccommodationAllowed());
+        boolean lateDepartureAllowed = !Boolean.FALSE.equals(sharingItemPolicy.isLateAccommodationAllowed());
+
         HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
             sharingItem.getPrimaryKey(),
             sharingItem,
@@ -1144,7 +1173,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             false,
             null,
             true,
-            priceResult.totalPrice
+            priceResult.totalPrice,
+            earlyArrivalAllowed,
+            lateDepartureAllowed
         );
 
         accommodationSection.addAccommodationOption(option);
@@ -1194,6 +1225,8 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         // Store the breakdown
         accommodationSection.setBreakdownForOption("DAY_VISITOR", priceResult.breakdown);
 
+        // Day visitors don't stay overnight, so early arrival and late departure are not applicable
+        // Setting both to false prevents date selection outside the main event period
         HasAccommodationSelectionSection.AccommodationOption option = new HasAccommodationSelectionSection.AccommodationOption(
             "DAY_VISITOR",
             null,
@@ -1207,7 +1240,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             true,
             null,
             true,
-            priceResult.totalPrice
+            priceResult.totalPrice,
+            false,  // No early arrival for day visitors
+            false   // No late departure for day visitors
         );
 
         accommodationSection.addAccommodationOption(option);
@@ -2724,6 +2759,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
 
     @Override
     public void onEnteringSoldOutRecovery() {
+        // Set flag to prevent date reset when accommodation property changes during recovery
+        inSoldOutRecoveryMode = true;
+
         form.getSelectionState().resetRoommateInfo();
 
         if (roommateInfoSection != null) {
@@ -2731,13 +2769,8 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             roommateInfoSection.setVisible(false);
         }
 
-        if (workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null) {
-            WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-            List<DocumentLine> oldAccommodationLines = workingBooking.getFamilyDocumentLines(KnownItemFamily.ACCOMMODATION);
-            for (DocumentLine line : oldAccommodationLines) {
-                workingBooking.removeDocumentLine(line);
-            }
-        }
+        // DON'T remove accommodation document lines - we'll swap items in onAccommodationSoldOutRecovery()
+        // This preserves dates (stored in Attendances) and keeps everything else intact
 
         if (accommodationSection != null) {
             accommodationSection.selectedOptionProperty().set(null);
@@ -2756,70 +2789,42 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         }
 
         WorkingBooking workingBooking = workingBookingProperties.getWorkingBooking();
-        PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();
+        Item newItem = newOption != null ? newOption.getItemEntity() : null;
 
-        Set<LocalDate> oldAccommodationDates = new HashSet<>();
-        List<DocumentLine> oldAccommodationLines = workingBooking.getFamilyDocumentLines(KnownItemFamily.ACCOMMODATION);
-        for (DocumentLine line : oldAccommodationLines) {
-            List<Attendance> attendances = workingBooking.getLastestDocumentAggregate().getLineAttendances(line);
-            for (Attendance attendance : attendances) {
-                if (attendance.getDate() != null) {
-                    oldAccommodationDates.add(attendance.getDate());
-                }
+        // Get existing accommodation document lines (preserved from original booking)
+        List<DocumentLine> accommodationLines = workingBooking.getFamilyDocumentLines(KnownItemFamily.ACCOMMODATION);
+
+        if (newItem != null && !accommodationLines.isEmpty()) {
+            // Simply swap the Item on existing document lines - Attendances (dates) stay intact!
+            for (DocumentLine line : accommodationLines) {
+                line.setItem(newItem);
+            }
+        } else if (newOption != null && newOption.isDayVisitor()) {
+            // Day visitor - remove accommodation lines entirely
+            for (DocumentLine line : accommodationLines) {
+                workingBooking.removeDocumentLine(line);
             }
         }
 
-        LocalDate arrivalDate = null;
-        LocalDate departureDate = null;
-        if (!oldAccommodationDates.isEmpty()) {
-            arrivalDate = oldAccommodationDates.stream().min(Comparator.naturalOrder()).orElse(null);
-            LocalDate maxDate = oldAccommodationDates.stream().max(Comparator.naturalOrder()).orElse(null);
-            if (maxDate != null) {
-                departureDate = maxDate.plusDays(1);
-            }
-        }
-
-        // Remove old accommodation lines
-        for (DocumentLine line : oldAccommodationLines) {
-            workingBooking.removeDocumentLine(line);
-        }
-
-        // Update selection state and sections
+        // Update selection state and UI
         form.getSelectionState().setSelectedAccommodation(newOption);
 
         if (accommodationSection != null) {
             accommodationSection.selectedOptionProperty().set(newOption);
         }
 
+        // Update constraints on festival day section
         if (festivalDaySection != null && newOption != null) {
             festivalDaySection.setMinNightsConstraint(newOption.getMinNights());
             festivalDaySection.setIsDayVisitor(newOption.isDayVisitor());
-            if (arrivalDate != null) {
-                festivalDaySection.arrivalDateProperty().set(arrivalDate);
-            }
-            if (departureDate != null) {
-                festivalDaySection.departureDateProperty().set(departureDate);
-            }
+            festivalDaySection.setEarlyArrivalAllowed(newOption.isEarlyArrivalAllowed());
+            festivalDaySection.setLateDepartureAllowed(newOption.isLateDepartureAllowed());
         }
 
+        // Configure roommate section for new accommodation type
         configureRoommateSection(newOption);
 
-        // Book new accommodation
-        if (policyAggregate != null && !oldAccommodationDates.isEmpty()) {
-            Item newItem = newOption.getItemEntity();
-            if (newItem != null) {
-                List<ScheduledItem> newAccommodationItems = policyAggregate.filterAccommodationScheduledItems().stream()
-                    .filter(si -> Entities.samePrimaryKey(si.getItem(), newItem))
-                    .filter(si -> si.getDate() != null && oldAccommodationDates.contains(si.getDate()))
-                    .collect(Collectors.toList());
-
-                if (!newAccommodationItems.isEmpty()) {
-                    workingBooking.bookScheduledItems(newAccommodationItems, true);
-                }
-            }
-        }
-
-        // Apply roommate info
+        // Apply roommate info to the (now swapped) accommodation lines
         if (roommateInfo != null && roommateInfo.hasData() && roommateInfoSection != null && roommateInfoSection.isVisible()) {
             List<DocumentLine> newAccommodationLines = workingBooking.getFamilyDocumentLines(KnownItemFamily.ACCOMMODATION);
 
@@ -2841,7 +2846,53 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
             }
         }
 
-        continueToSummary.run();
+        // Clear the recovery mode flag now that we're done with the accommodation swap
+        inSoldOutRecoveryMode = false;
+
+        // Validate: Check if current dates meet new accommodation's minNights constraint
+        boolean constraintsSatisfied = validateSoldOutRecoveryMinNightsConstraint(newOption);
+
+        if (constraintsSatisfied) {
+            continueToSummary.run();
+        } else {
+            // Dates don't meet new constraint - navigate to booking details so user can adjust
+            if (bookingDetailsPage != null) {
+                form.navigateTo(bookingDetailsPage);
+            } else {
+                // Fallback: navigate to summary anyway and let validation catch the issue
+                continueToSummary.run();
+            }
+        }
+    }
+
+    /**
+     * Validates that current dates satisfy the new accommodation's minNights constraint.
+     * Used during sold-out recovery to determine if user needs to adjust dates.
+     *
+     * @param option the new accommodation option
+     * @return true if constraint is satisfied (or no constraint), false otherwise
+     */
+    protected boolean validateSoldOutRecoveryMinNightsConstraint(HasAccommodationSelectionSection.AccommodationOption option) {
+        if (option == null || option.getMinNights() <= 0) {
+            return true; // No constraint
+        }
+
+        if (option.isDayVisitor()) {
+            return true; // Day visitor has no minimum nights
+        }
+
+        var selectionState = form.getSelectionState();
+        LocalDate arrival = selectionState.getArrivalDate();
+        LocalDate departure = selectionState.getDepartureDate();
+
+        if (arrival == null || departure == null) {
+            return false; // No dates selected
+        }
+
+        // Count nights
+        long nights = java.time.temporal.ChronoUnit.DAYS.between(arrival, departure);
+
+        return nights >= option.getMinNights();
     }
 
     // ========================================

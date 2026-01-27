@@ -64,13 +64,16 @@ public interface HasAccommodationSelectionSection extends BookingFormSection, Re
         private final String imageUrl;
         private final boolean perPerson;  // true = price per person, false = price per room
         private final int preCalculatedTotalPrice;  // Pre-calculated total price from WorkingBooking (-1 = not set)
+        private final boolean earlyArrivalAllowed;  // true if early arrival before main event is allowed
+        private final boolean lateDepartureAllowed; // true if late departure after main event is allowed
 
-        // Full constructor with pre-calculated price
+        // Full constructor with all parameters including early/late arrival restrictions
         public AccommodationOption(Object itemId, Item itemEntity, String name, String description,
                                    int pricePerNight, AvailabilityStatus availability,
                                    ConstraintType constraintType, String constraintLabel,
                                    int minNights, boolean isDayVisitor, String imageUrl,
-                                   boolean perPerson, int preCalculatedTotalPrice) {
+                                   boolean perPerson, int preCalculatedTotalPrice,
+                                   boolean earlyArrivalAllowed, boolean lateDepartureAllowed) {
             this.itemId = itemId;
             this.itemEntity = itemEntity;
             this.name = name;
@@ -84,6 +87,19 @@ public interface HasAccommodationSelectionSection extends BookingFormSection, Re
             this.imageUrl = imageUrl;
             this.perPerson = perPerson;
             this.preCalculatedTotalPrice = preCalculatedTotalPrice;
+            this.earlyArrivalAllowed = earlyArrivalAllowed;
+            this.lateDepartureAllowed = lateDepartureAllowed;
+        }
+
+        // Constructor with pre-calculated price (defaults to early/late allowed)
+        public AccommodationOption(Object itemId, Item itemEntity, String name, String description,
+                                   int pricePerNight, AvailabilityStatus availability,
+                                   ConstraintType constraintType, String constraintLabel,
+                                   int minNights, boolean isDayVisitor, String imageUrl,
+                                   boolean perPerson, int preCalculatedTotalPrice) {
+            this(itemId, itemEntity, name, description, pricePerNight, availability,
+                 constraintType, constraintLabel, minNights, isDayVisitor, imageUrl, perPerson, preCalculatedTotalPrice,
+                 true, true);
         }
 
         public AccommodationOption(Object itemId, Item itemEntity, String name, String description,
@@ -125,6 +141,8 @@ public interface HasAccommodationSelectionSection extends BookingFormSection, Re
         public boolean isPerPerson() { return perPerson; }
         public int getPreCalculatedTotalPrice() { return preCalculatedTotalPrice; }
         public boolean hasPreCalculatedPrice() { return preCalculatedTotalPrice >= 0; }
+        public boolean isEarlyArrivalAllowed() { return earlyArrivalAllowed; }
+        public boolean isLateDepartureAllowed() { return lateDepartureAllowed; }
 
         public boolean isAvailable() {
             return availability != AvailabilityStatus.SOLD_OUT;
@@ -132,6 +150,13 @@ public interface HasAccommodationSelectionSection extends BookingFormSection, Re
 
         public boolean hasConstraint() {
             return constraintType != ConstraintType.NONE;
+        }
+
+        /**
+         * Returns true if this accommodation has date restrictions (no early arrival or no late departure).
+         */
+        public boolean hasDateRestrictions() {
+            return !earlyArrivalAllowed || !lateDepartureAllowed;
         }
     }
 

@@ -154,6 +154,20 @@ public interface HasFestivalDaySelectionSection extends BookingFormSection, Rese
     void setIsDayVisitor(boolean isDayVisitor);
 
     /**
+     * Sets whether early arrival (before main event start) is allowed for the selected accommodation.
+     * When false, arrival dates before the main event start date will be disabled.
+     * @param allowed true if early arrival is allowed, false otherwise
+     */
+    void setEarlyArrivalAllowed(boolean allowed);
+
+    /**
+     * Sets whether late departure (after main event end) is allowed for the selected accommodation.
+     * When false, departure dates after the main event end date will be disabled.
+     * @param allowed true if late departure is allowed, false otherwise
+     */
+    void setLateDepartureAllowed(boolean allowed);
+
+    /**
      * Resets the section to initial state.
      * Clears selected dates, times, and any other selection state.
      */

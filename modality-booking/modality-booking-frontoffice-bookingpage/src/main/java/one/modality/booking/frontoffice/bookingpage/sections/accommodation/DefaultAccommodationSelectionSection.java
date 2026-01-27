@@ -371,12 +371,33 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             }
         }
 
-        // === BADGES ROW: Constraint badge only (LIMITED badge removed per user request) ===
-        if (option.hasConstraint()) {
-            HBox badgesRow = new HBox(8);
+        // === BADGES ROW: Constraint badges (MIN_NIGHTS, FULL_EVENT_ONLY) + date restriction badges ===
+        // Use FlowPane to wrap badges to next line if not enough horizontal space
+        boolean hasBadges = option.hasConstraint() || option.hasDateRestrictions();
+        if (hasBadges) {
+            FlowPane badgesRow = new FlowPane();
+            badgesRow.setHgap(8);
+            badgesRow.setVgap(4);
             badgesRow.setAlignment(Pos.CENTER_LEFT);
-            HBox constraintBadge = createConstraintBadge(option, isSoldOut);
-            badgesRow.getChildren().add(constraintBadge);
+
+            // Existing constraint badge (MIN_NIGHTS, FULL_EVENT_ONLY)
+            if (option.hasConstraint()) {
+                HBox constraintBadge = createConstraintBadge(option, isSoldOut);
+                badgesRow.getChildren().add(constraintBadge);
+            }
+
+            // No Early Arrival badge
+            if (!option.isEarlyArrivalAllowed()) {
+                HBox earlyBadge = createDateRestrictionBadge(BookingPageI18nKeys.NoEarlyArrival, isSoldOut);
+                badgesRow.getChildren().add(earlyBadge);
+            }
+
+            // No Late Departure badge
+            if (!option.isLateDepartureAllowed()) {
+                HBox lateBadge = createDateRestrictionBadge(BookingPageI18nKeys.NoLateDeparture, isSoldOut);
+                badgesRow.getChildren().add(lateBadge);
+            }
+
             contentBox.getChildren().add(badgesRow);
         }
 
@@ -562,6 +583,40 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
                 : I18n.getI18nText(BookingPageI18nKeys.MinNights, option.getMinNights());
         }
         Label textLabel = new Label(constraintText);
+        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+
+        badge.getChildren().addAll(infoIcon, textLabel);
+        return badge;
+    }
+
+    /**
+     * Creates a date restriction badge (No Early Arrival / No Late Departure).
+     * Uses the same visual style as constraint badges.
+     *
+     * @param i18nKey the i18n key for the badge text
+     * @param isSoldOut whether the option is sold out (affects styling)
+     * @return an HBox containing the badge
+     */
+    protected HBox createDateRestrictionBadge(Object i18nKey, boolean isSoldOut) {
+        HBox badge = new HBox(5);
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setPadding(new Insets(4, 10, 4, 10));
+        badge.setMaxWidth(Region.USE_PREF_SIZE);
+        badge.getStyleClass().add("bookingpage-badge-constraint");
+
+        if (isSoldOut) {
+            badge.getStyleClass().add("disabled");
+        }
+
+        // Info icon (same as constraint badge)
+        SVGPath infoIcon = new SVGPath();
+        infoIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z");
+        infoIcon.setScaleX(0.5);
+        infoIcon.setScaleY(0.5);
+        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
+
+        // Text from i18n key
+        Label textLabel = I18nControls.newLabel(i18nKey);
         textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
 
         badge.getChildren().addAll(infoIcon, textLabel);
