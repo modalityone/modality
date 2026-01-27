@@ -86,37 +86,35 @@ final class DocumentSubmitController {
         Console.log("Processing enqueue request token = " + request.queueToken() + " from client runId = " + request.runId());
         processRequest(request, eventQueue)
             .onComplete(ar -> {
-                SubmitDocumentChangesResult result = ar.succeeded() ? ar.result() :
-                    // Temporary SoldOut result when an exception is raised (ex: double booking)
-                    SubmitDocumentChangesResult.createSoldOutResult(null, null);
+                SubmitDocumentChangesResult result = ar.succeeded() ? SubmitDocumentChangesResult.withQueueToken(ar.result(), request.queueToken()) :
+                    // Special result when a technical exception is raised
+                    SubmitDocumentChangesResult.technicalErrorResult(ar.cause().getMessage(), request.queueToken());
                 notifyClient(request, result, 30);
             });
     }
 
     static void notifyClient(DocumentSubmitRequest request, SubmitDocumentChangesResult result, int retryMaxCount) {
-        Console.log("Notifying client runId = " + request.runId() + " with result from request token = " + request.queueToken());
+        Console.log("Notifying client runId = " + request.runId() + " with result from request token = " + result.queueToken());
         pushingResults.put(request.queueToken(), result);
-        DocumentSubmitEventQueue.pushResultToClient(
-            SubmitDocumentChangesResult.withQueueToken(result, request.queueToken()),
-            request.runId()
-        ).onComplete(ar -> {
-            if (ar.succeeded()) {
-                Console.log("✅ Successfully pushed token " + request.queueToken() + " to client " + request.runId());
-                pushingResults.remove(request.queueToken());
-            } else {
-                Console.log("❌ Failed pushing token " + request.queueToken() + " to client " + request.runId());
-                if (!pushingResults.containsKey(request.queueToken())) { // Can happen if fetchEventQueueResult() was called
-                    Console.log("🤷 But token " + request.queueToken() + " is not present anymore (maybe fetchEventQueueResult() was called)");
-                    return;
-                }
-                if (retryMaxCount > 0) {
-                    Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId() + " (retryMaxCount = " + (retryMaxCount - 1) + ")");
-                    notifyClient(request, result, retryMaxCount - 1);
+        DocumentSubmitEventQueue.pushResultToClient(result, request.runId())
+            .onComplete(ar -> {
+                if (ar.succeeded()) {
+                    Console.log("✅ Successfully pushed token " + request.queueToken() + " to client " + request.runId());
+                    pushingResults.remove(request.queueToken());
                 } else {
-                    Console.log("🤷 Giving up push of token " + request.queueToken() + " to client " + request.runId());
+                    Console.log("❌ Failed pushing token " + request.queueToken() + " to client " + request.runId());
+                    if (!pushingResults.containsKey(request.queueToken())) { // Can happen if fetchEventQueueResult() was called
+                        Console.log("🤷 But token " + request.queueToken() + " is not present anymore (maybe fetchEventQueueResult() was called)");
+                        return;
+                    }
+                    if (retryMaxCount > 0) {
+                        Console.log("Retrying push of token " + request.queueToken() + " to client " + request.runId() + " (retryMaxCount = " + (retryMaxCount - 1) + ")");
+                        notifyClient(request, result, retryMaxCount - 1);
+                    } else {
+                        Console.log("🤷 Giving up push of token " + request.queueToken() + " to client " + request.runId());
+                    }
                 }
-            }
-        });
+            });
     }
 
     static void releaseEventQueue(DocumentSubmitEventQueue eventQueue) {

@@ -227,17 +227,29 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
             // Detecting sold-out exception from the database
             .recover(ex -> {
                 String message = ex.getMessage();
-                // If it's not a sold-out exception, we rethrow it
-                if (message == null || !message.toUpperCase().contains("SoldOut".toUpperCase()))
-                    return Future.failedFuture(ex);
-                Object sitePk = readSiteOrItemPrimaryKey(message, true);
-                Object itemPk = readSiteOrItemPrimaryKey(message, false);
-                return Future.succeededFuture(SubmitDocumentChangesResult.createSoldOutResult(sitePk, itemPk));
+                if (message != null) {
+                    // If it's a double-booking exception
+                    if (message.contains("DOUBLEBOOKING")) { // PLSQL trigger_document_auto_ref() code: raise exception 'DOUBLEBOOKING';
+                        return Future.succeededFuture(SubmitDocumentChangesResult.createAlreadyBookedResult());
+                    }
+                    // If it's an event-on-hold exception
+                    if (message.contains("EVENT_ON_HOLD")) { // PLSQL trigger_document_auto_ref() code: raise exception 'EVENT_ON_HOLD';
+                        return Future.succeededFuture(SubmitDocumentChangesResult.createEventOnHoldResult());
+                    }
+                    // If it's a sold-out exception
+                    if (message.contains("SoldOut".toUpperCase())) { // PLSQL deferred_allocate_document_line() code: RAISE EXCEPTION 'SOLDOUT ...';
+                        Object sitePk = readSiteOrItemPrimaryKey(message, true);
+                        Object itemPk = readSiteOrItemPrimaryKey(message, false);
+                        return Future.succeededFuture(SubmitDocumentChangesResult.createSoldOutResult(sitePk, itemPk));
+                    }
+                }
+                // If none of the above, it's a technical exception, so we return it as is
+                return Future.failedFuture(ex);
             });
     }
 
     private static Object readSiteOrItemPrimaryKey(String message, boolean isSite) {
-        // Here is the Postgres database code: RAISE EXCEPTION 'SOLDOUT site_id=%, item_id=% (no resource found)', NEW.site_id, NEW.item_id;
+        // PLSQL deferred_allocate_document_line() code: RAISE EXCEPTION 'SOLDOUT site_id=%, item_id=% (no resource found)', NEW.site_id, NEW.item_id;
         String token = isSite ? "site_id=" : "item_id=";
         int index = message.indexOf(token);
         if (index >= 0) {

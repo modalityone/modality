@@ -9,6 +9,6 @@ public enum DocumentChangesStatus {
 
     ENQUEUED,
 
-    SOLD_OUT
+    REJECTED
 
 }
