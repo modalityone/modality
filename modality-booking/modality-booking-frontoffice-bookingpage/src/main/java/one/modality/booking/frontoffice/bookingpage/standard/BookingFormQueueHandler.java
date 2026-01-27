@@ -29,7 +29,6 @@ import one.modality.booking.frontoffice.bookingpage.util.SoldOutErrorParser;
 import one.modality.ecommerce.document.service.DocumentChangesRejectedReason;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesResult;
-import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 /**
  * Handles registration queue processing for booking forms.
@@ -421,11 +420,14 @@ public class BookingFormQueueHandler {
                         handleEnqueuedFinalResult(result, storedIsNewUser, storedNewUserName, storedNewUserEmail, storedWantsAccountCreation)
                     );
                 }
-                // If result is null, still processing - do nothing, wait for push
+                // If the result is null, still processing - do nothing, wait for push
             })
             .onFailure(error -> {
                 Console.log("Fallback queue fetch failed: " + error.getMessage());
-                showQueueErrorDialog(error.getMessage());
+                // Note: if there is a technical issue (ex: bus closed), we don't show an error dialog here because this
+                // is just a double-verification (when the tab becomes visible) in addition to the push notification
+                // (which remains the main process). There is no point in making the user worry about a technical issue
+                // happening during this double-verification.
             });
     }
 
