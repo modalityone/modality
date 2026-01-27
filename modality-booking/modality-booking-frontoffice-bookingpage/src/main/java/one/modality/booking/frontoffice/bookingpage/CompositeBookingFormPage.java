@@ -3,6 +3,7 @@ package one.modality.booking.frontoffice.bookingpage;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableBooleanValue;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.VBox;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -30,6 +31,7 @@ public class CompositeBookingFormPage implements BookingFormPage {
 
     public CompositeBookingFormPage(Object titleI18nKey, BookingFormSection... sections) {
         this.titleI18nKey = titleI18nKey;
+        container.setAlignment(Pos.TOP_CENTER);
         for (BookingFormSection section : sections) {
             addSection(section);
         }
