@@ -1,9 +1,11 @@
 package one.modality.booking.frontoffice.bookingpage.sections.dates;
 
 import dev.webfx.extras.i18n.I18n;
-import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.beans.property.*;
+import dev.webfx.stack.orm.entity.EntityList;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,17 +13,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.EventPart;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ScheduledBoundary;
-import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.Timeline;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.util.ScheduledBoundaries;
 import one.modality.base.shared.knownitems.KnownItemFamily;
-import dev.webfx.stack.orm.entity.EntityList;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
@@ -174,9 +169,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         instructionBox = buildInstructionBox();
 
         // Days container (FlowPane for wrapping like JSX flex-wrap)
-        daysContainer = new FlowPane();
-        daysContainer.setHgap(8);
-        daysContainer.setVgap(8);
+        daysContainer = new FlowPane(8, 12); // bigger vertical gap for breathing space above DEPARTURE tag
         daysContainer.setAlignment(Pos.CENTER);
         daysContainer.setPadding(new Insets(8, 0, 20, 0));
 
