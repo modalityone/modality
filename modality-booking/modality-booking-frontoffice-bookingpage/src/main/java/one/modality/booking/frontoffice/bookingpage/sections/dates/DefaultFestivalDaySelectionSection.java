@@ -77,6 +77,8 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     // === CONSTRAINT ===
     protected int minNightsConstraint = 0; // 0 means no constraint
     protected boolean isDayVisitor = false; // true for day visitor (0 nights allowed)
+    protected boolean earlyArrivalAllowed = true; // false to disable dates before mainEventStartDate
+    protected boolean lateDepartureAllowed = true; // false to disable dates after mainEventEndDate
     protected String changingDateMode = null; // null, "arrival", or "departure"
 
     // === DATA ===
@@ -979,6 +981,20 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     protected boolean isDateDisabled(LocalDate date, LocalDate arrival, LocalDate departure) {
         if (changingDateMode == null) return false;
 
+        // Check early arrival restriction - dates before main event are disabled for arrival selection
+        if (!earlyArrivalAllowed && mainEventStartDate != null && date.isBefore(mainEventStartDate)) {
+            if (changingDateMode.equals("arrival")) {
+                return true; // Can't select arrival date before main event if early arrival not allowed
+            }
+        }
+
+        // Check late departure restriction - dates after main event are disabled for departure selection
+        if (!lateDepartureAllowed && mainEventEndDate != null && date.isAfter(mainEventEndDate)) {
+            if (changingDateMode.equals("departure")) {
+                return true; // Can't select departure date after main event if late departure not allowed
+            }
+        }
+
         // Day visitors have no minimum nights (can arrive and depart same day)
         // All other accommodations require at least 1 night
         int effectiveMinNights = isDayVisitor ? 0 : Math.max(1, minNightsConstraint);
@@ -1028,13 +1044,26 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
     }
 
     protected boolean isDateClickable(LocalDate date, LocalDate arrival, LocalDate departure) {
-        if (arrival == null) return true;
+        // Check early arrival restriction for initial arrival selection
+        if (arrival == null) {
+            // Selecting arrival - check if early arrival is allowed
+            if (!earlyArrivalAllowed && mainEventStartDate != null && date.isBefore(mainEventStartDate)) {
+                return false; // Can't select arrival before main event if early arrival not allowed
+            }
+            return true;
+        }
+
         // When selecting departure:
         // - Day visitors can depart same day as arrival (0 nights)
         // - All others must depart at least 1 day after arrival
         if (departure == null) {
+            // Check late departure restriction for initial departure selection
+            if (!lateDepartureAllowed && mainEventEndDate != null && date.isAfter(mainEventEndDate)) {
+                return false; // Can't select departure after main event if late departure not allowed
+            }
             return isDayVisitor ? !date.isBefore(arrival) : date.isAfter(arrival);
         }
+
         if (changingDateMode != null) return true;
         return false;
     }
@@ -1190,6 +1219,20 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         this.isDayVisitor = isDayVisitor;
         // Update validity and rebuild cards when day visitor status changes
         updateValidity();
+    }
+
+    @Override
+    public void setEarlyArrivalAllowed(boolean allowed) {
+        this.earlyArrivalAllowed = allowed;
+        // Rebuild cards to reflect constraint changes - dates before main event may now be disabled
+        rebuildDayCards();
+    }
+
+    @Override
+    public void setLateDepartureAllowed(boolean allowed) {
+        this.lateDepartureAllowed = allowed;
+        // Rebuild cards to reflect constraint changes - dates after main event may now be disabled
+        rebuildDayCards();
     }
 
     @Override

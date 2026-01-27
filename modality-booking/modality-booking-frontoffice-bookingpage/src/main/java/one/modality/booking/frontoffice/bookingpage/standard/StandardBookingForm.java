@@ -18,6 +18,7 @@ import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.session.state.client.fx.FXLoggedOut;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
+import java.time.LocalDate;
 import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
@@ -1100,6 +1101,30 @@ public class StandardBookingForm extends MultiPageBookingForm
     @Override
     public void setReturnedFromSoldOutRecovery(boolean returned) {
         state.setReturnedFromSoldOutRecovery(returned);
+    }
+
+    /**
+     * Returns the main event start date (first day of main event, not early arrival).
+     * Used for date restriction checking on the sold-out page.
+     * This base implementation uses Event.startDate. Subclasses (e.g., AbstractSinglePeriodInPersonBookingForm)
+     * can override to use EventPart for events with early arrival/late departure parts.
+     */
+    @Override
+    public LocalDate getMainEventStartDate() {
+        Event event = getEvent();
+        return event != null ? event.getStartDate() : null;
+    }
+
+    /**
+     * Returns the main event end date (last day of main event, not late departure).
+     * Used for date restriction checking on the sold-out page.
+     * This base implementation uses Event.endDate. Subclasses (e.g., AbstractSinglePeriodInPersonBookingForm)
+     * can override to use EventPart for events with early arrival/late departure parts.
+     */
+    @Override
+    public LocalDate getMainEventEndDate() {
+        Event event = getEvent();
+        return event != null ? event.getEndDate() : null;
     }
 
     // === Registration Queue Handling ===
@@ -2355,7 +2380,9 @@ public class StandardBookingForm extends MultiPageBookingForm
     /**
      * Returns the selection state for user booking choices.
      * Subclasses should bind their sections to this state via bindToSelectionState().
+     * Also used by SoldOutFormCallback for date restriction checking.
      */
+    @Override
     public BookingSelectionState getSelectionState() {
         return selectionState;
     }

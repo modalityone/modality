@@ -3,9 +3,11 @@ package one.modality.booking.frontoffice.bookingpage.sections.accommodation;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
+import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.standard.StandardBookingFormCallbacks;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -66,6 +68,37 @@ public interface HasAccommodationSoldOutSection extends BookingFormSection {
      * @param nights Number of nights the user is booking
      */
     void setNumberOfNights(int nights);
+
+    // === Selection State Binding (for date restriction checking) ===
+
+    /**
+     * Binds this section to a BookingSelectionState.
+     * The section uses the selection state to read the user's current arrival/departure dates
+     * when checking if accommodations are compatible with those dates.
+     *
+     * <p>On the sold-out recovery page, if the user's current dates violate an accommodation's
+     * restrictions (e.g., early arrival when not allowed), that accommodation becomes
+     * non-selectable (grayed out like sold-out) rather than resetting the dates.</p>
+     *
+     * @param selectionState the selection state to bind to
+     */
+    void bindToSelectionState(BookingSelectionState selectionState);
+
+    /**
+     * Sets the main event start date (first day of the main event, not early arrival).
+     * Used together with earlyArrivalAllowed to determine if user's dates violate restrictions.
+     *
+     * @param eventStartDate the main event start date
+     */
+    void setMainEventStartDate(LocalDate eventStartDate);
+
+    /**
+     * Sets the main event end date (last day of the main event, not late departure).
+     * Used together with lateDepartureAllowed to determine if user's dates violate restrictions.
+     *
+     * @param eventEndDate the main event end date
+     */
+    void setMainEventEndDate(LocalDate eventEndDate);
 
     // === Alternative Options ===
 

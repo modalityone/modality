@@ -195,6 +195,15 @@ public abstract class AbstractGeneralProgramClassBookingForm implements Standard
     protected void onExistingBookingDocumentSelected(DocumentAggregate docAggregate) {
         // Recreate WorkingBooking with the selected booking data
         Console.log("Recreating WorkingBooking with selected booking's DocumentAggregate");
+
+        // Set FXPersonToBook to the person from the existing booking BEFORE creating WorkingBooking
+        // This ensures the global person-to-book registry is correct for the rest of the booking flow
+        Person existingPerson = docAggregate.getDocument().getPerson();
+        if (existingPerson != null) {
+            FXPersonToBook.setPersonToBook(existingPerson);
+            Console.log("  Set FXPersonToBook to existing booking's person: " + existingPerson.getFullName());
+        }
+
         WorkingBooking newWorkingBooking = new WorkingBooking(
             form.getWorkingBookingProperties().getPolicyAggregate(),
             docAggregate,
@@ -225,20 +234,15 @@ public abstract class AbstractGeneralProgramClassBookingForm implements Standard
         String email = memberInfo.getEmail();
         Person person = memberInfo.getPersonEntity();
 
-        // Parse fullName into firstName/lastName
-        String firstName = "";
-        String lastName = "";
-        if (fullName != null && !fullName.isEmpty()) {
-            String[] parts = fullName.trim().split("\\s+", 2);
-            firstName = parts[0];
-            lastName = parts.length > 1 ? parts[1] : "";
-        }
-
         Console.log("Creating fresh WorkingBooking for new booking - MemberInfo details:");
         Console.log("  fullName: " + fullName);
-        Console.log("  firstName (parsed): " + firstName);
-        Console.log("  lastName (parsed): " + lastName);
         Console.log("  email: " + email);
+
+        // IMPORTANT: Set FXPersonToBook BEFORE creating WorkingBooking
+        // The WorkingBooking constructor calls cancelChanges() which uses FXPersonToBook.getPersonToBook()
+        // to set the person on both the Document AND the AddDocumentEvent
+        FXPersonToBook.setPersonToBook(person);
+        Console.log("  Set FXPersonToBook to: " + fullName);
 
         WorkingBooking newWorkingBooking = new WorkingBooking(
             form.getWorkingBookingProperties().getPolicyAggregate(),
@@ -248,23 +252,15 @@ public abstract class AbstractGeneralProgramClassBookingForm implements Standard
         // Mark that member was explicitly selected
         newWorkingBooking.setMemberExplicitlySelected(true);
 
-        // Set the person on the fresh document
-        newWorkingBooking.getDocument().setPerson(person);
-
-        // Copy personal details to document
-        newWorkingBooking.getDocument().setFirstName(firstName);
-        newWorkingBooking.getDocument().setLastName(lastName);
-        newWorkingBooking.getDocument().setEmail(email);
-
-        Console.log("  Document firstName after set: " + newWorkingBooking.getDocument().getFirstName());
-        Console.log("  Document lastName after set: " + newWorkingBooking.getDocument().getLastName());
-
-        // Update the form with the new WorkingBooking FIRST
+        // Update the form with the new WorkingBooking
         form.getWorkingBookingProperties().setWorkingBooking(newWorkingBooking);
 
-        // Set FXPersonToBook so submission uses correct person
-        FXPersonToBook.setPersonToBook(person);
-        Console.log("  Set FXPersonToBook to: " + fullName);
+        // Use applyPersonalDetails() to update BOTH the Document AND the AddDocumentEvent
+        // This ensures the correct person information is used when the booking is submitted
+        newWorkingBooking.applyPersonalDetails(person);
+
+        Console.log("  Document firstName after applyPersonalDetails: " + newWorkingBooking.getDocument().getFirstName());
+        Console.log("  Document lastName after applyPersonalDetails: " + newWorkingBooking.getDocument().getLastName());
 
         // Set the attendee name directly on the summary section
         if (summarySection != null) {

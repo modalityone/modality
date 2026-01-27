@@ -24,16 +24,17 @@ import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
+import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.standard.StandardBookingFormCallbacks;
 import one.modality.booking.frontoffice.bookingpage.sections.roommate.DefaultRoommateInfoSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 /**
@@ -94,6 +95,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     private int originalPrice = 0;
     private String eventName = "";
     private int numberOfNights = 0;  // For calculating total price from per-night rates
+
+    // === SELECTION STATE (for checking date restrictions) ===
+    private BookingSelectionState selectionState;
+    private LocalDate mainEventStartDate;
+    private LocalDate mainEventEndDate;
 
     // === UI COMPONENTS ===
     private final VBox container = new VBox();
@@ -480,19 +486,23 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     /**
      * Creates an accommodation option card using the same pattern as DefaultAccommodationSelectionSection.
      * Uses a responsive header that switches between horizontal and vertical layouts.
+     * If user's current dates violate the option's restrictions, the card is non-selectable.
      */
     private VBox createOptionCard(HasAccommodationSelectionSection.AccommodationOption option, boolean isSelected) {
         boolean isSoldOut = option.getAvailability() == HasAccommodationSelectionSection.AvailabilityStatus.SOLD_OUT;
-        boolean isAvailable = option.isAvailable();
+        boolean datesViolate = datesViolateRestrictions(option);
+        // On sold-out page: card is NOT selectable if sold out OR if dates violate restrictions
+        boolean isSelectable = option.isAvailable() && !datesViolate;
+        boolean isDisabled = isSoldOut || datesViolate;
 
         VBox card = new VBox(8);
         card.setMaxWidth(Double.MAX_VALUE);
-        if (!isSoldOut) {
+        if (!isDisabled) {
             card.setPadding(new Insets(20));
         }
         card.getStyleClass().add("bookingpage-selectable-card");
 
-        if (isSoldOut) {
+        if (isDisabled) {
             card.getStyleClass().addAll("soldout", "disabled");
         } else if (isSelected) {
             card.getStyleClass().add("selected");
@@ -500,7 +510,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Content container
         VBox contentBox = new VBox(8);
-        if (isSoldOut) {
+        if (isDisabled) {
             contentBox.setPadding(new Insets(20));
         }
 
@@ -510,7 +520,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         // Room name
         Label nameLabel = new Label(option.getName());
         nameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
-        if (isSoldOut) {
+        if (isDisabled) {
             nameLabel.getStyleClass().add("bookingpage-text-muted-light");
         } else {
             nameLabel.getStyleClass().add("bookingpage-text-dark");
@@ -525,7 +535,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             // Per-night price with "/night" label
             Label perNightLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricePerNight, formatPrice(pricePerNight)));
             perNightLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
-            if (isSoldOut) {
+            if (isDisabled) {
                 perNightLabel.getStyleClass().addAll("bookingpage-text-muted-light", "bookingpage-text-strikethrough");
             } else {
                 perNightLabel.getStyleClass().add("bookingpage-text-dark");
@@ -547,7 +557,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
                 String nightsText = I18n.getI18nText(nightsKey);
                 Label totalLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.TotalForNightsFormat, formatPrice(totalForDuration), numberOfNights, nightsText));
                 totalLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
-                if (isSoldOut) {
+                if (isDisabled) {
                     totalLabel.getStyleClass().add("bookingpage-text-strikethrough");
                 }
                 priceContainer.getChildren().add(totalLabel);
@@ -562,7 +572,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             // Day visitor - just show "Free" or the price
             Label priceLabel = new Label(pricePerNight == 0 ? I18n.getI18nText(BookingPageI18nKeys.Free) : formatPrice(pricePerNight));
             priceLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
-            if (isSoldOut) {
+            if (isDisabled) {
                 priceLabel.getStyleClass().addAll("bookingpage-text-muted-light", "bookingpage-text-strikethrough");
             } else {
                 priceLabel.getStyleClass().add("bookingpage-text-dark");
@@ -572,23 +582,44 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Store checkmark badge reference (will be created later)
         StackPane checkmarkBadge = null;
-        if (isAvailable) {
+        if (isSelectable) {
             checkmarkBadge = BookingPageUIBuilder.createCheckmarkBadgeCss(32);
             checkmarkBadge.setVisible(isSelected);
             checkmarkBadgeMap.put(option, checkmarkBadge);
         }
 
         // Track header components for responsive layout switching
-        cardHeaderList.add(new CardHeaderComponents(headerContainer, nameLabel, priceContainer, checkmarkBadge, isAvailable));
+        cardHeaderList.add(new CardHeaderComponents(headerContainer, nameLabel, priceContainer, checkmarkBadge, isSelectable));
 
         contentBox.getChildren().add(headerContainer);
 
-        // === BADGES ROW: Constraint badge (minimum nights, etc.) ===
-        if (option.hasConstraint()) {
-            HBox badgesRow = new HBox(8);
+        // === BADGES ROW: Constraint badge + date restriction badges ===
+        // Use FlowPane to wrap badges to next line if not enough horizontal space
+        boolean hasBadges = option.hasConstraint() || option.hasDateRestrictions();
+        if (hasBadges) {
+            FlowPane badgesRow = new FlowPane();
+            badgesRow.setHgap(8);
+            badgesRow.setVgap(4);
             badgesRow.setAlignment(Pos.CENTER_LEFT);
-            HBox constraintBadge = createConstraintBadge(option, isSoldOut);
-            badgesRow.getChildren().add(constraintBadge);
+
+            // Constraint badge (minimum nights, full event only)
+            if (option.hasConstraint()) {
+                HBox constraintBadge = createConstraintBadge(option, isDisabled);
+                badgesRow.getChildren().add(constraintBadge);
+            }
+
+            // No Early Arrival badge
+            if (!option.isEarlyArrivalAllowed()) {
+                HBox earlyBadge = createDateRestrictionBadge(BookingPageI18nKeys.NoEarlyArrival, isDisabled);
+                badgesRow.getChildren().add(earlyBadge);
+            }
+
+            // No Late Departure badge
+            if (!option.isLateDepartureAllowed()) {
+                HBox lateBadge = createDateRestrictionBadge(BookingPageI18nKeys.NoLateDeparture, isDisabled);
+                badgesRow.getChildren().add(lateBadge);
+            }
+
             contentBox.getChildren().add(badgesRow);
         }
 
@@ -596,7 +627,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label descLabel = new Label(option.getDescription());
             descLabel.getStyleClass().add("bookingpage-text-sm");
-            if (isSoldOut) {
+            if (isDisabled) {
                 descLabel.getStyleClass().add("bookingpage-text-muted-disabled");
             } else {
                 descLabel.getStyleClass().add("bookingpage-text-muted");
@@ -613,7 +644,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             if (capacity != null && capacity > 1) {
                 Label sharingNote = I18nControls.newLabel(BookingPageI18nKeys.RoomBookingSharingNote);
                 sharingNote.getStyleClass().add("bookingpage-text-sm");
-                if (isSoldOut) {
+                if (isDisabled) {
                     sharingNote.getStyleClass().add("bookingpage-text-muted-disabled");
                 } else {
                     sharingNote.getStyleClass().add("bookingpage-text-muted");
@@ -623,8 +654,8 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             }
         }
 
-        // Wrap content with checkmark badge or sold out ribbon
-        if (isAvailable) {
+        // Wrap content with checkmark badge or sold out/disabled ribbon
+        if (isSelectable) {
             // Use the checkmark badge already created and stored in checkmarkBadgeMap
             StackPane existingCheckmarkBadge = checkmarkBadgeMap.get(option);
 
@@ -634,7 +665,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
             card.getChildren().add(wrapper);
         } else {
-            // Add sold out ribbon
+            // Add sold out ribbon (only for truly sold out, not date violations)
             StackPane wrapper = new StackPane(contentBox);
             wrapper.setMaxWidth(Double.MAX_VALUE);
             if (isSoldOut) {
@@ -652,8 +683,8 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             card.getChildren().add(wrapper);
         }
 
-        // Click handler
-        if (isAvailable) {
+        // Click handler - only for selectable cards
+        if (isSelectable) {
             card.setOnMouseClicked(e -> selectedOptionProperty.set(option));
         }
 
@@ -714,6 +745,70 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         badge.getChildren().addAll(infoIcon, textLabel);
         return badge;
+    }
+
+    /**
+     * Creates a date restriction badge (e.g., "No Early Arrival", "No Late Departure").
+     * Same visual style as constraint badges.
+     *
+     * @param i18nKey the i18n key for the badge text
+     * @param isDisabled whether the card is disabled (affects styling)
+     * @return an HBox containing the badge
+     */
+    private HBox createDateRestrictionBadge(Object i18nKey, boolean isDisabled) {
+        HBox badge = new HBox(5);
+        badge.setAlignment(Pos.CENTER_LEFT);
+        badge.setPadding(new Insets(4, 10, 4, 10));
+        badge.setMaxWidth(Region.USE_PREF_SIZE);
+        badge.getStyleClass().add("bookingpage-badge-constraint");
+
+        if (isDisabled) {
+            badge.getStyleClass().add("disabled");
+        }
+
+        // Info icon
+        SVGPath infoIcon = new SVGPath();
+        infoIcon.setContent(ICON_INFO);
+        infoIcon.setScaleX(0.5);
+        infoIcon.setScaleY(0.5);
+        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
+
+        // Text
+        Label textLabel = I18nControls.newLabel(i18nKey);
+        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+
+        badge.getChildren().addAll(infoIcon, textLabel);
+        return badge;
+    }
+
+    /**
+     * Checks if the user's current dates violate an accommodation option's restrictions.
+     * On the sold-out page, if dates violate restrictions, the card becomes non-selectable.
+     *
+     * @param option the accommodation option to check
+     * @return true if dates violate restrictions, false otherwise
+     */
+    private boolean datesViolateRestrictions(HasAccommodationSelectionSection.AccommodationOption option) {
+        if (selectionState == null) {
+            return false;
+        }
+
+        LocalDate arrivalDate = selectionState.getArrivalDate();
+        LocalDate departureDate = selectionState.getDepartureDate();
+
+        // Check early arrival restriction
+        if (!option.isEarlyArrivalAllowed() && arrivalDate != null &&
+            mainEventStartDate != null && arrivalDate.isBefore(mainEventStartDate)) {
+            return true;
+        }
+
+        // Check late departure restriction
+        if (!option.isLateDepartureAllowed() && departureDate != null &&
+            mainEventEndDate != null && departureDate.isAfter(mainEventEndDate)) {
+            return true;
+        }
+
+        return false;
     }
 
     private void updateExplanationText() {
@@ -852,6 +947,26 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     @Override
     public void setNumberOfNights(int nights) {
         this.numberOfNights = nights;
+    }
+
+    @Override
+    public void bindToSelectionState(BookingSelectionState selectionState) {
+        this.selectionState = selectionState;
+        if (selectionState != null) {
+            // Listen for date changes to rebuild cards when dates change
+            selectionState.arrivalDateProperty().addListener((obs, oldVal, newVal) -> rebuildOptionCards());
+            selectionState.departureDateProperty().addListener((obs, oldVal, newVal) -> rebuildOptionCards());
+        }
+    }
+
+    @Override
+    public void setMainEventStartDate(LocalDate eventStartDate) {
+        this.mainEventStartDate = eventStartDate;
+    }
+
+    @Override
+    public void setMainEventEndDate(LocalDate eventEndDate) {
+        this.mainEventEndDate = eventEndDate;
     }
 
     @Override

@@ -299,6 +299,8 @@ public interface BookingPageI18nKeys {
     Object Night = "Night";
     Object Nights = "Nights";
     Object NoBookingYet = "NoBookingYet";
+    Object NoEarlyArrival = "NoEarlyArrival";
+    Object NoLateDeparture = "NoLateDeparture";
     Object NoNeedToRush = "NoNeedToRush";
     Object NoRecordingsAvailable = "NoRecordingsAvailable";
     Object NoVideoRecordingMessage = "NoVideoRecordingMessage";
