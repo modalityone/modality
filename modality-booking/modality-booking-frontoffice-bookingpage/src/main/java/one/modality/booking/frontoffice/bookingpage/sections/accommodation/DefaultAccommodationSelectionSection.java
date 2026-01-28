@@ -441,7 +441,7 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
             // StackPane wrapper to position checkmark in top-right corner
             StackPane wrapper = new StackPane(contentBox, existingCheckmarkBadge);
             StackPane.setAlignment(existingCheckmarkBadge, Pos.TOP_RIGHT);
-            StackPane.setMargin(existingCheckmarkBadge, new Insets(-8, -8, 0, 0));
+            StackPane.setMargin(existingCheckmarkBadge, new Insets(20 - 8, 20 - 8, 0, 0)); // 20 added after removing the card padding
 
             card.getChildren().add(wrapper);
         } else {
