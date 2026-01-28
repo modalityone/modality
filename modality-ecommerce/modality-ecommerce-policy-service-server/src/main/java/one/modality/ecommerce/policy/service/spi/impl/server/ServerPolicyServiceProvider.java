@@ -20,7 +20,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     private static final int GENERAL_GUESTS_EVENT_POOL_ID = 4; // temporarily hardcoded
 
     private final static String EVENT_QUERY_BASE =
-        "select venue.(name,label), state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn, organization.privacyUrlLabel, openingDate, bookingProcessStart, timezone, noAccountBooking" +
+        "select venue.(name,label), state, shortDescriptionLabel, longDescriptionLabel, termsUrlEn, organization.privacyUrlLabel, openingDate, bookingProcessStart, timezone, noAccountBooking, inPersonAllowed, onlineAllowed, vodEnabled" +
         ", date_part('epoch', openingDate - now()) as " + Event.secondsToOpeningDateAtLoadingTime +
         ", date_part('epoch', coalesce(bookingProcessStart, openingDate) - now()) as " + Event.secondsToBookingProcessStartAtLoadingTime +
         " from Event"; // loading terms url for US Festival (way to load terms will change later)

@@ -54,6 +54,9 @@ public interface Event extends Entity,
     String termsUrlEn = "termsUrlEn";
     String noAccountBooking = "noAccountBooking";
     String cssClass = "cssClass";
+    String inPersonAllowed = "inPersonAllowed";
+    String onlineAllowed = "onlineAllowed";
+    String vodEnabled = "vodEnabled";
 
     // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate - loaded/computed by ServerPolicyServiceProvider
     String secondsToOpeningDateAtLoadingTime = "secondsToOpeningDateAtLoadingTime";
@@ -337,9 +340,28 @@ public interface Event extends Entity,
         return type == null ? null : type.isRecurring();
     }
 
-    default Boolean isOnlineEvent() { // Temporary method while in-person and online events are separated
-        String name = getName();
-        return name == null ? null : name.toLowerCase().contains("online");
+    default void setInPersonAllowed(Boolean value) {
+        setFieldValue(inPersonAllowed, value);
+    }
+
+    default Boolean isInPersonAllowed() {
+        return getBooleanFieldValue(inPersonAllowed);
+    }
+
+    default void setOnlineAllowed(Boolean value) {
+        setFieldValue(onlineAllowed, value);
+    }
+
+    default Boolean isOnlineAllowed() {
+        return getBooleanFieldValue(onlineAllowed);
+    }
+
+    default void setVodEnabled(Boolean value) {
+        setFieldValue(vodEnabled, value);
+    }
+
+    default Boolean isVodEnabled() {
+        return getBooleanFieldValue(vodEnabled);
     }
 
     default void setTimezone(String value) {

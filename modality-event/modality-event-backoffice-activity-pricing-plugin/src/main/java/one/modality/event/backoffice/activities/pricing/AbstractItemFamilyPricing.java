@@ -264,7 +264,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         rate.setPerDay(true);
         rate.setPerPerson(true);
         // Hardcoded 100% min deposit for online events (to change this when in-person and online events are merged)
-        if (getEvent().isOnlineEvent())
+        if (getEvent().isOnlineAllowed())
             rate.setMinDeposit(100);
     }
 
