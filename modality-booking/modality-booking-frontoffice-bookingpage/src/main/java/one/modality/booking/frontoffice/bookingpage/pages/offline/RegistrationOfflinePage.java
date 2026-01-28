@@ -23,8 +23,6 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
-import java.time.LocalDate;
-
 /**
  * A page that displays when the booking form is temporarily unavailable (offline).
  *
