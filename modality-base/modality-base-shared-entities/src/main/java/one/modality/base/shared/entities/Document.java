@@ -31,6 +31,7 @@ public interface Document extends
     String dates = "dates";
     String checkedOut = "checkedOut";
     String groupDocument = "groupDocument";
+    String inPerson = "inPerson";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -148,19 +149,40 @@ public interface Document extends
         return getStringFieldValue(request);
     }
 
-    default String getDates() {return getStringFieldValue(dates);}
+    default String getDates() {
+        return getStringFieldValue(dates);
+    }
 
-    default void setDates(String value) {setFieldValue(dates, value);}
+    default void setDates(String value) {
+        setFieldValue(dates, value);
+    }
 
-    default Boolean getCheckedOut() {return getBooleanFieldValue(checkedOut);}
+    default Boolean getCheckedOut() {
+        return getBooleanFieldValue(checkedOut);
+    }
 
-    default void setCheckedOut(Boolean value) {setFieldValue(checkedOut, value);}
+    default void setCheckedOut(Boolean value) {
+        setFieldValue(checkedOut, value);
+    }
 
-    default Document getGroupDocument() {return getForeignEntity(groupDocument);}
+    default Document getGroupDocument() {
+        return getForeignEntity(groupDocument);
+    }
 
     default EntityId getGroupDocumentId() {
         return getForeignEntityId(groupDocument);
     }
 
-    default void setGroupDocument(Object value) {setForeignField(groupDocument, value);}
+    default void setGroupDocument(Object value) {
+        setForeignField(groupDocument, value);
+    }
+
+    default Boolean isInPerson() {
+        return getBooleanFieldValue(inPerson);
+    }
+
+    default void setInPerson(Boolean value) {
+        setFieldValue(inPerson, value);
+    }
+
 }

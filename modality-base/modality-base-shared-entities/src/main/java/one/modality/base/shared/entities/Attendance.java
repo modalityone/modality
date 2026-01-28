@@ -16,6 +16,7 @@ public interface Attendance extends Entity,
 
     String attended = "attended";
     String scheduledResource = "scheduledResource";
+    String videoAccessEnabled = "videoAccessEnabled";
 
     default Boolean isAttended() {
         return getBooleanFieldValue(attended);
@@ -35,6 +36,14 @@ public interface Attendance extends Entity,
 
     default ScheduledResource getScheduledResource() {
         return getForeignEntity(scheduledResource);
+    }
+
+    default Boolean isVideoAccessEnabled() {
+        return getBooleanFieldValue(videoAccessEnabled);
+    }
+
+    default void setVideoAccessEnabled(Boolean value) {
+        setFieldValue(videoAccessEnabled, value);
     }
 
 }

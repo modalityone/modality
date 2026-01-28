@@ -4,8 +4,9 @@ import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.orm.entity.Entities;
-import javafx.beans.property.*;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -28,7 +29,6 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -292,9 +292,11 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
         card.setMaxWidth(Double.MAX_VALUE);  // Full width cards
         // Note: Padding is applied to contentBox instead of card when soldout,
         // so the ribbon can extend to card edges
+/*
         if (!isSoldOut) {
             card.setPadding(new Insets(20));
         }
+*/
         card.getStyleClass().add("bookingpage-selectable-card");
 
         // Apply CSS classes for different states (styling handled in CSS)
@@ -306,9 +308,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
 
         // Content container - has padding when soldout (since card doesn't)
         VBox contentBox = new VBox(8);
-        if (isSoldOut) {
+        //if (isSoldOut) {
             contentBox.setPadding(new Insets(20));
-        }
+        //}
 
         // === HEADER ROW: Room name (left) + Total Price (right) ===
         // Using VBox as container for responsive layout switching (horizontal/vertical)
@@ -459,6 +461,9 @@ public class DefaultAccommodationSelectionSection implements HasAccommodationSel
                 clip.widthProperty().bind(card.widthProperty());
                 clip.heightProperty().bind(card.heightProperty());
                 card.setClip(clip);
+
+                // Adding a right margin so that the prices in sold-out accommodation types align with those not sold-out.
+                StackPane.setMargin(contentBox, new Insets(0, 40, 0, 0));
             }
             card.getChildren().add(wrapper);
         }
