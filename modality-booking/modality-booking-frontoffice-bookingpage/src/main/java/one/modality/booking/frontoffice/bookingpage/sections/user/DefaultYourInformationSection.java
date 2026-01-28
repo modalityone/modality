@@ -2056,7 +2056,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
         passwordProperty.set("");
         firstNameProperty.set("");
         lastNameProperty.set("");
-        createAccountProperty.set(false);
+        createAccountProperty.set(forceAccountCreationProperty.get());
         verificationCodeProperty.set("");
         // Reset account creation password fields
         createAccountPasswordProperty.set("");
