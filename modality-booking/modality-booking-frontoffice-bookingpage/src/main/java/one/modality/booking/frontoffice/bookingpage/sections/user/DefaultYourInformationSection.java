@@ -1742,9 +1742,10 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
     protected void handleForgotPassword() {
         String email = emailProperty.get();
-        if (email == null || email.isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             return;
         }
+        email = email.trim().toLowerCase();
 
         // Show the verification code input form
         flowStateProperty.set(FlowState.FORGOT_PASSWORD);
@@ -1832,9 +1833,10 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Resend the verification code email
         String email = emailProperty.get();
-        if (email == null || email.isEmpty()) {
+        if (email == null || email.trim().isEmpty()) {
             return;
         }
+        email = email.trim().toLowerCase();
 
         SendMagicLinkCredentials credentials = new SendMagicLinkCredentials(
             email,
