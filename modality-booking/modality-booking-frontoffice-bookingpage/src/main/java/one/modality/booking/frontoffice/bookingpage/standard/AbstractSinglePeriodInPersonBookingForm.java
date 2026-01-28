@@ -217,6 +217,9 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
 
         this.form = builder.build();
 
+        // Bind sections to selection state FIRST (ensures state is updated before booking listeners read it)
+        bindSectionsToSelectionState();
+
         // Wire up section callbacks only for new bookings
         if (entryPoint == BookingFormEntryPoint.NEW_BOOKING) {
             setupAccommodationCallbacks();
@@ -235,9 +238,6 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
 
         // Set up listener for when WorkingBooking becomes available
         setupWorkingBookingListener();
-
-        // Bind sections to selection state (Selection Model Pattern)
-        bindSectionsToSelectionState();
     }
 
     // ========================================
@@ -2303,6 +2303,22 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
 
     protected void bookDietaryItem(WorkingBooking workingBooking, PolicyAggregate policyAggregate) {
         var selectionState = form.getSelectionState();
+
+        // If no meals are selected, remove all diet items from booking
+        if (!selectionState.hasAnyMeals()) {
+            List<ItemPolicy> dietPolicies = policyAggregate.getDietItemPolicies();
+            for (ItemPolicy policy : dietPolicies) {
+                Item dietItem = policy.getItem();
+                if (dietItem != null) {
+                    Site dietSite = null;
+                    if (policy.getScope() != null) {
+                        dietSite = policy.getScope().getSite();
+                    }
+                    workingBooking.unbookItem(dietSite, dietItem);
+                }
+            }
+            return;
+        }
 
         Item selectedDietaryItem = selectionState.getSelectedDietaryItem();
 
