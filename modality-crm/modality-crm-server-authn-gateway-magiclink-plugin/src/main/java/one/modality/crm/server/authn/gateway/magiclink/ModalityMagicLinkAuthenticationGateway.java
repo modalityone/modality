@@ -85,7 +85,7 @@ public final class ModalityMagicLinkAuthenticationGateway implements ServerAuthe
         // the "Unknown account" email doesn't propose any further action.
         String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
         return EntityStore.create(dataSourceModel)
-            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, request.getEmail())
+            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and lower(username)=lower(?) limit 1", 1, request.getEmail())
             .compose(accounts -> {
                     boolean unknown = accounts.isEmpty();
                     return MagicLinkService.createAndSendMagicLink(

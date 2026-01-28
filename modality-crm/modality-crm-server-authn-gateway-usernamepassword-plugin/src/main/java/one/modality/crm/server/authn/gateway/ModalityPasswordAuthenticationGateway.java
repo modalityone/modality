@@ -118,7 +118,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         return EntityStore.create(dataSourceModel)
             // Note: accounts are created from the front-office and can first be used only to log in in the front-office,
             // but an admin or superadmin can mark them as back-office and can then be used to log in in the back-office as well.
-            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and username=? and !removed and !disabled and (?=false or backoffice)) order by owner desc, id limit 1", 1, username, isBackofficeAuthentication)
+            .<Person>executeQuery("select id,frontendAccount.(password, salt) from Person where frontendAccount.(corporation=? and lower(username)=lower(?) and !removed and !disabled and (?=false or backoffice)) order by owner desc, id limit 1", 1, username, isBackofficeAuthentication)
             .compose(persons -> {
                 if (persons.size() != 1)
                     return Future.failedFuture("[%s] Wrong user or password".formatted(ModalityAuthenticationI18nKeys.AuthnWrongUserOrPasswordError));
@@ -158,7 +158,7 @@ public final class ModalityPasswordAuthenticationGateway implements ServerAuthen
         String loginRunId = ThreadLocalStateHolder.getRunId(); // Capturing the loginRunId before async operation
         boolean verificationCodeOnly = credentials.isVerificationCodeOnly();
         return EntityStore.create(dataSourceModel)
-            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and username=? limit 1", 1, credentials.getEmail())
+            .<FrontendAccount>executeQuery("select FrontendAccount where corporation=? and lower(username)=lower(?) limit 1", 1, credentials.getEmail())
             .compose(accounts -> {
                     boolean doesntExists = accounts.isEmpty();
                     // Choose the appropriate email body based on verificationCodeOnly flag
