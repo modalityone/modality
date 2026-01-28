@@ -177,8 +177,8 @@ public class RegistrationCountdownPage implements BookingFormPage {
         titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
         VBox.setMargin(titleLabel, new Insets(0, 0, 8, 0));
 
-        // Formatted opening date/time
-        Label dateLabel = new Label(formatOpeningDate());
+        // Formatted opening date/time (uses i18n key for hardcoded display)
+        Label dateLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationOpeningDateTime);
         dateLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
         VBox.setMargin(dateLabel, new Insets(0, 0, 32, 0));
 

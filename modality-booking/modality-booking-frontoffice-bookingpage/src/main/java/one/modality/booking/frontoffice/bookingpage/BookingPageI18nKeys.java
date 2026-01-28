@@ -418,6 +418,7 @@ public interface BookingPageI18nKeys {
     Object RegisterForParkingPass = "RegisterForParkingPass";
     Object RegistrationNumber = "RegistrationNumber";
     Object RegistrationNumberPlaceholder = "RegistrationNumberPlaceholder";
+    Object RegistrationOpeningDateTime = "RegistrationOpeningDateTime";
     Object RegistrationOpeningSoon = "RegistrationOpeningSoon";
     Object RegistrationOpensIn = "RegistrationOpensIn";
     Object RegistrationOpensSoon = "RegistrationOpensSoon";
