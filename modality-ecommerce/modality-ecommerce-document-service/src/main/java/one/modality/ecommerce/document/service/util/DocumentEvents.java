@@ -55,7 +55,11 @@ public final class DocumentEvents {
             return simplifyPriceDocumentLineEvent(event, documentEvents, initialDocumentEvents);
 
         if (e instanceof EditShareOwnerInfoDocumentLineEvent event) {
+            return simplifyEditShareOwnerInfoDocumentLineEvent(event, documentEvents);
+        }
 
+        if (e instanceof EditShareMateInfoDocumentLineEvent event) {
+            return simplifyEditShareMateInfoDocumentLineEvent(event, documentEvents);
         }
 
         return e;
@@ -240,6 +244,18 @@ public final class DocumentEvents {
             // TODO: undo the possible change made on document request
             return null;
         }
+        return event;
+    }
+
+    private static AbstractDocumentEvent simplifyEditShareOwnerInfoDocumentLineEvent(EditShareOwnerInfoDocumentLineEvent event, List<AbstractDocumentEvent> documentEvents) {
+        // This new event will override all previous events of the same type, so we can get rid of those
+        documentEvents.removeIf(e -> e instanceof EditShareOwnerInfoDocumentLineEvent);
+        return event;
+    }
+
+    private static AbstractDocumentEvent simplifyEditShareMateInfoDocumentLineEvent(EditShareMateInfoDocumentLineEvent event, List<AbstractDocumentEvent> documentEvents) {
+        // This new event will override all previous events of the same type, so we can get rid of those
+        documentEvents.removeIf(e -> e instanceof EditShareMateInfoDocumentLineEvent);
         return event;
     }
 
