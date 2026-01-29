@@ -233,4 +233,14 @@ public interface HasRoommateInfoSection extends BookingFormSection, ResettableSe
             selectionState.setRoommateNames(getAllRoommateNames());
         }
     }
+
+    // === Callback for Booking Updates ===
+
+    /**
+     * Sets a callback to be invoked when roommate names change.
+     * This allows the form to update the WorkingBooking when the user edits roommate fields.
+     *
+     * @param callback the callback to invoke when roommate names change
+     */
+    void setOnRoommateNamesChanged(Runnable callback);
 }
