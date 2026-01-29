@@ -171,6 +171,40 @@ public final class DocumentAggregate {
             .collect(Collectors.toList());
     }
 
+    public Stream<AddDocumentLineEvent> getAddDocumentLineEventStream(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof AddDocumentLineEvent)
+            .map(e -> (AddDocumentLineEvent) e);
+    }
+
+    public Stream<DocumentLine> getDocumentLinesAddedStream(boolean excludePreviousVersionEvents) {
+        return getAddDocumentLineEventStream(excludePreviousVersionEvents)
+            .map(AddDocumentLineEvent::getDocumentLine);
+    }
+
+    public List<DocumentLine> getNonTemporalDocumentLinesAdded(boolean excludePreviousVersionEvents) {
+        return getDocumentLinesAddedStream(excludePreviousVersionEvents)
+            .filter(dl -> !dl.getItem().isTemporal())
+            .collect(Collectors.toList());
+    }
+
+    public Stream<RemoveDocumentLineEvent> getRemoveDocumentLineEventStream(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof RemoveDocumentLineEvent)
+            .map(e -> (RemoveDocumentLineEvent) e);
+    }
+
+    public Stream<DocumentLine> getDocumentLinesRemovedStream(boolean excludePreviousVersionEvents) {
+        return getRemoveDocumentLineEventStream(excludePreviousVersionEvents)
+            .map(RemoveDocumentLineEvent::getDocumentLine);
+    }
+
+    public List<DocumentLine> getNonTemporalDocumentLinesRemoved(boolean excludePreviousVersionEvents) {
+        return getDocumentLinesRemovedStream(excludePreviousVersionEvents)
+            .filter(dl -> !dl.getItem().isTemporal())
+            .collect(Collectors.toList());
+    }
+
     public AddDocumentEvent findAddDocumentEvent(boolean excludePreviousVersionEvents) {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof AddDocumentEvent)
@@ -204,6 +238,20 @@ public final class DocumentAggregate {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof ApplyFacilityFeeEvent)
             .map(e -> (ApplyFacilityFeeEvent) e)
+            .findFirst().orElse(null);
+    }
+
+    public EditShareMateInfoDocumentLineEvent findEditShareMateInfoDocumentLineEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof EditShareMateInfoDocumentLineEvent)
+            .map(e -> (EditShareMateInfoDocumentLineEvent) e)
+            .findFirst().orElse(null);
+    }
+
+    public EditShareOwnerInfoDocumentLineEvent findEditShareOwnerInfoDocumentLineEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof EditShareOwnerInfoDocumentLineEvent)
+            .map(e -> (EditShareOwnerInfoDocumentLineEvent) e)
             .findFirst().orElse(null);
     }
 

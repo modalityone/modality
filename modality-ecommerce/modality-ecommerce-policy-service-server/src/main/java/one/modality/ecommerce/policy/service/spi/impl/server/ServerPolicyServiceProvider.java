@@ -25,7 +25,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         ", date_part('epoch', coalesce(bookingProcessStart, openingDate) - now()) as " + Event.secondsToBookingProcessStartAtLoadingTime +
         " from Event"; // loading terms url for US Festival (way to load terms will change later)
     private final static String SCHEDULED_ITEMS_QUERY_BASE =
-        "select name,label,comment,site.name,item.(name,label,code,family.(code,name,label,ord),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
+        "select name,label,comment,site.name,item.(name,label,code,temporal,family.(code,name,label,ord),capacity,share_mate,ord),date,startTime,timeline.(site,item,startTime,endTime),cancelled,resource" +
         // We also compute the remaining available space for guests
         ",(select [" +
             // male availability
@@ -65,7 +65,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
         " from ItemFamilyPolicy ifp";
     private final static String ITEM_POLICIES_QUERY_BASE =
         "select scope.(organization,site,eventType,event)" +
-        ",item.(name,label,code,family.(code,name,label,ord),capacity,share_mate,ord)" +
+        ",item.(name,label,code,temporal,family.(code,name,label,ord),capacity,share_mate,ord)" +
         ",descriptionLabel,noticeLabel,minDay,default,genderInfoRequired,earlyAccommodationAllowed,lateAccommodationAllowed,minOccupancy,forceSoldOut" +
         " from ItemPolicy ip";
     private final static String RATES_QUERY_BASE =

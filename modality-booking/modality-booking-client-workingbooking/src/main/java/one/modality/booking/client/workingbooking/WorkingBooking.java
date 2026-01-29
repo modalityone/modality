@@ -626,6 +626,14 @@ public final class WorkingBooking {
         return getLastestDocumentAggregate().getAttendancesRemoved(fromChangesOnly);
     }
 
+    public List<DocumentLine> getNonTemporalDocumentLinesAdded(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getNonTemporalDocumentLinesAdded(fromChangesOnly);
+    }
+
+    public List<DocumentLine> getNonTemporalDocumentLinesRemoved(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().getNonTemporalDocumentLinesRemoved(fromChangesOnly);
+    }
+
     public AddDocumentEvent findAddDocumentEvent(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().findAddDocumentEvent(fromChangesOnly);
     }
@@ -636,6 +644,14 @@ public final class WorkingBooking {
 
     public ApplyFacilityFeeEvent findApplyFacilityFeeEvent(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().findApplyFacilityFeeEvent(fromChangesOnly);
+    }
+
+    public EditShareMateInfoDocumentLineEvent findEditShareMateInfoDocumentLineEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findEditShareMateInfoDocumentLineEvent(fromChangesOnly);
+    }
+
+    public EditShareOwnerInfoDocumentLineEvent findEditShareOwnerInfoDocumentLineEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findEditShareOwnerInfoDocumentLineEvent(fromChangesOnly);
     }
 
     public PriceDocumentLineEvent findPriceDocumentLineEvent(boolean fromChangesOnly) {
