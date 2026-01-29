@@ -17,6 +17,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
@@ -89,6 +90,12 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
 
     // === DATA ===
     protected WorkingBookingProperties workingBookingProperties;
+
+    // === SELECTION STATE BINDING (for Room Booking mode auto-sync) ===
+    protected BookingSelectionState boundSelectionState;
+
+    // === CALLBACK ===
+    protected Runnable onRoommateNamesChanged;
 
     public DefaultRoommateInfoSection() {
         buildUI();
@@ -192,8 +199,21 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         HBox.setHgrow(textField, Priority.ALWAYS);
         roommateTextFields.add(textField);
 
-        // Listen for changes to update validity
-        nameProperty.addListener((obs, oldVal, newVal) -> updateValidity());
+        // Listen for changes to update validity and sync to selection state
+        nameProperty.addListener((obs, oldVal, newVal) -> {
+            updateValidity();
+            // Push to selection state for Room Booking mode (auto-sync on each keystroke)
+            if (boundSelectionState != null) {
+                boundSelectionState.setRoommateNames(getAllRoommateNames());
+            }
+        });
+
+        // When user finishes editing (focus lost), notify form to store to WorkingBooking
+        textField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (!isFocused && onRoommateNamesChanged != null) {
+                onRoommateNamesChanged.run();
+            }
+        });
 
         fieldContainer.getChildren().addAll(labelRow, textField);
         return fieldContainer;
@@ -264,6 +284,13 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         nameField.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(nameField, Priority.ALWAYS);
 
+        // When user finishes editing (focus lost), notify form to store to WorkingBooking
+        nameField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (!isFocused && onRoommateNamesChanged != null) {
+                onRoommateNamesChanged.run();
+            }
+        });
+
         fieldContainer.getChildren().addAll(labelRow, nameField);
         return fieldContainer;
     }
@@ -286,6 +313,8 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
 
     protected void setupBindings() {
         // Update validity when name changes (Share Accommodation mode)
+        // Note: The callback is triggered on focus lost (in createShareAccommodationNameField),
+        // not on every keystroke, to avoid creating many document events.
         roommateNameProperty.addListener((obs, oldVal, newVal) -> updateValidity());
 
         // Update validity when visibility changes
@@ -486,6 +515,12 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
             prop.set("");
         }
 
+        // Reset isRoomBooker to ensure the binding listener fires when mode is set again
+        // This fixes a bug where selectionState.isRoomBooker gets out of sync after
+        // selectionState.resetRoommateInfo() is called but setIsRoomBooker(true) doesn't
+        // trigger the binding listener because the property value hasn't changed.
+        isRoomBookerProperty.set(false);
+
         updateValidity();
     }
 
@@ -511,5 +546,28 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         }
 
         return names;
+    }
+
+    // === CALLBACK ===
+
+    @Override
+    public void setOnRoommateNamesChanged(Runnable callback) {
+        this.onRoommateNamesChanged = callback;
+    }
+
+    // === SELECTION STATE BINDING ===
+
+    /**
+     * Binds this section to a BookingSelectionState.
+     * Stores the reference for use when creating new roommate fields in Room Booking mode,
+     * ensuring changes are automatically synced to the selection state.
+     *
+     * @param selectionState the selection state to bind to
+     */
+    @Override
+    public void bindToSelectionState(BookingSelectionState selectionState) {
+        this.boundSelectionState = selectionState;
+        // Call default implementation for Share mode binding
+        HasRoommateInfoSection.super.bindToSelectionState(selectionState);
     }
 }

@@ -935,6 +935,13 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         }
         if (roommateInfoSection != null) {
             roommateInfoSection.bindToSelectionState(selectionState);
+            // Store to WorkingBooking when user finishes editing a roommate field (on focus lost).
+            // This avoids creating many document events on every keystroke.
+            roommateInfoSection.setOnRoommateNamesChanged(() -> {
+                if (workingBookingProperties != null && workingBookingProperties.getWorkingBooking() != null) {
+                    storeRoommateInfoOnDocumentLines(workingBookingProperties.getWorkingBooking());
+                }
+            });
         }
         if (transportSection != null) {
             transportSection.bindToSelectionState(selectionState);
