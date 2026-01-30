@@ -593,7 +593,7 @@ public final class WorkingBooking {
         return DocumentLines.isFreeOfCharge(documentLine);
     }
 
-    // Shorthand methods to PolicyAggregate
+    // Some shorthand methods to PolicyAggregate
 
     public List<ScheduledItem> getPolicyScheduledItems() {
         return getPolicyAggregate().getScheduledItems();
@@ -621,7 +621,7 @@ public final class WorkingBooking {
         return Collections.filter(attendancesAdded, attendance -> !attendancesRemoved.contains(attendance));
     }
 
-    // Shorthand methods to lastestDocumentAggregate
+    // Some shorthand methods to lastestDocumentAggregate
 
     public List<Attendance> getAttendancesAdded(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().getAttendancesAdded(fromChangesOnly);
@@ -657,6 +657,10 @@ public final class WorkingBooking {
 
     public EditShareOwnerInfoDocumentLineEvent findEditShareOwnerInfoDocumentLineEvent(boolean fromChangesOnly) {
         return getLastestDocumentAggregate().findEditShareOwnerInfoDocumentLineEvent(fromChangesOnly);
+    }
+
+    public EditCarersInfoEvent findEditCarersInfoEvent(boolean fromChangesOnly) {
+        return getLastestDocumentAggregate().findEditCarersInfoEvent(fromChangesOnly);
     }
 
     public PriceDocumentLineEvent findPriceDocumentLineEvent(boolean fromChangesOnly) {

@@ -6,10 +6,7 @@ import one.modality.base.shared.entities.Attendance;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.util.Attendances;
-import one.modality.ecommerce.document.service.events.book.AddRequestEvent;
-import one.modality.ecommerce.document.service.events.book.ApplyFacilityFeeEvent;
-import one.modality.ecommerce.document.service.events.book.EditShareMateInfoDocumentLineEvent;
-import one.modality.ecommerce.document.service.events.book.EditShareOwnerInfoDocumentLineEvent;
+import one.modality.ecommerce.document.service.events.book.*;
 import one.modality.ecommerce.document.service.events.registration.documentline.PriceDocumentLineEvent;
 
 import java.time.LocalDate;
@@ -37,6 +34,21 @@ public final class WorkingBookingHistoryHelper {
         EditShareOwnerInfoDocumentLineEvent editShareOwnerInfoDocumentLineEvent = workingBooking.findEditShareOwnerInfoDocumentLineEvent(true);
         if (editShareOwnerInfoDocumentLineEvent != null) {
             newSection(sb).append("Room mate(s): ").append(String.join(", ", editShareOwnerInfoDocumentLineEvent.getMatesNames()));
+        }
+        EditCarersInfoEvent editCarersInfoEvent = workingBooking.findEditCarersInfoEvent(true);
+        if (editCarersInfoEvent != null) {
+            newSection(sb).append("Carer(s): ");
+            if (editCarersInfoEvent.getCarer1Name() != null) {
+                if (editCarersInfoEvent.getCarer1DocumentPrimaryKey() != null)
+                    sb.append("🔗");
+                sb.append(editCarersInfoEvent.getCarer1Name());
+            }
+            if (editCarersInfoEvent.getCarer2Name() != null) {
+                sb.append(", ");
+                if (editCarersInfoEvent.getCarer2DocumentPrimaryKey() != null)
+                    sb.append("🔗");
+                sb.append(editCarersInfoEvent.getCarer2Name());
+            }
         }
         // "Selected member rate" if the user selected the member rate
         ApplyFacilityFeeEvent applyFacilityFeeEvent = workingBooking.findApplyFacilityFeeEvent(true);

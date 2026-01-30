@@ -234,6 +234,13 @@ public final class DocumentAggregate {
             .findFirst().orElse(null);
     }
 
+    public EditCarersInfoEvent findEditCarersInfoEvent(boolean excludePreviousVersionEvents) {
+        return getNewDocumentEventsStream(excludePreviousVersionEvents)
+            .filter(e -> e instanceof EditCarersInfoEvent)
+            .map(e -> (EditCarersInfoEvent) e)
+            .findFirst().orElse(null);
+    }
+
     public ApplyFacilityFeeEvent findApplyFacilityFeeEvent(boolean excludePreviousVersionEvents) {
         return getNewDocumentEventsStream(excludePreviousVersionEvents)
             .filter(e -> e instanceof ApplyFacilityFeeEvent)
