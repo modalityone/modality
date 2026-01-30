@@ -93,10 +93,10 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                         SCHEDULED_ITEMS_QUERY_BASE + " where" +
                         // Only bookable items
                         " bookableScheduledItem=id" +
-                        // specific to this event
+                        // bound to this event
                         " and (select si.event = coalesce(e.repeatedEvent, e) " +
-                        // or global sites of the organization with scheduled items over the period of the event
-                        "      or si.event=null and si.timeline..site..organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
+                        // or not bound to an event but happening in the event venue with over the period of the event
+                        "      or si.event=null and si.site = e.venue and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
                         // excluding accommodation items with no resource allocated to the general guest pool for this event
                         " and (si.item.family.code!='acco' or exists(select ScheduledResource sr where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)))" +
                         " order by site..ord,item..ord,date", eventPk)
