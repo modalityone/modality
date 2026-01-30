@@ -325,7 +325,7 @@ public class AvailabilityModal implements ReceptionDialogManager.ManagedDialog {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.executeQuery(
                         "select id,name,startDate,endDate from Event " +
-                                "where organization=? and startDate>=? order by startDate",
+                                "where organization=$1 and startDate>=$2 order by startDate",
                         organizationId, LocalDate.now().minusMonths(1))
                 .onSuccess(list -> {
                     events.clear();
@@ -394,7 +394,7 @@ public class AvailabilityModal implements ReceptionDialogManager.ManagedDialog {
 
         entityStore.executeQuery(
                         "select id,name,max,item.(id,name) from ResourceConfiguration " +
-                                "where item.family.code='acco' and item.organization=? order by name",
+                                "where item.family.code='acco' and item.organization=$1 order by name",
                         organizationId)
                 .onSuccess(rcList -> {
                     for (Object obj : rcList) {
@@ -419,9 +419,9 @@ public class AvailabilityModal implements ReceptionDialogManager.ManagedDialog {
         entityStore.executeQuery(
                         "select id,resourceConfiguration from DocumentLine " +
                                 "where resourceConfiguration.item.family.code='acco' " +
-                                "and resourceConfiguration.item.organization=? " +
+                                "and resourceConfiguration.item.organization=$1 " +
                                 "and !cancelled " +
-                                "and startDate<? and endDate>?",
+                                "and startDate<$2 and endDate>$3",
                         organizationId, checkOut, checkIn)
                 .onSuccess(dlList -> {
                     for (Object obj : dlList) {

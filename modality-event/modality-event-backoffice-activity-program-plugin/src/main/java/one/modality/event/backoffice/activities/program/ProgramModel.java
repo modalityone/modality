@@ -381,23 +381,23 @@ final class ProgramModel {
         // Execute queries in batch to avoid synchronization issues between threads
         return entityStore.executeQueryBatch(
                         // Index 0: day templates
-                        new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate, shortDescription, shortDescriptionLabel.(en,fr,de,es,pt,zhs,zht,el,vi)), dates from DayTemplate dt where event=? order by name", selectedEvent),
+                        new EntityStoreQuery("select name, event.(livestreamUrl,vodExpirationDate,audioExpirationDate, shortDescription, shortDescriptionLabel.(en,fr,de,es,pt,zhs,zht,el,vi)), dates from DayTemplate dt where event=$1 order by name", selectedEvent),
                         // Index 1: program site (singleton list)
-                        new EntityStoreQuery("select name from Site where event=? and main limit 1", selectedEvent),
+                        new EntityStoreQuery("select name from Site where event=$1 and main limit 1", selectedEvent),
                         // Index 2: items for this program item family + audio recording + video
-                        new EntityStoreQuery("select name,family.code, deprecated from Item where organization=? and family.code in (?,?,?)",
+                        new EntityStoreQuery("select name,family.code, deprecated from Item where organization=$1 and family.code in ($2, $3, $4)",
                                 selectedEvent.getOrganization(), programItemFamily.getCode(), KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.VIDEO.getCode()),
                         // Index 3: bookableScheduledItem for this event (teachings + optional audio), created during the event setup.
-                        new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=? and bookableScheduledItem=si", selectedEvent),
+                        new EntityStoreQuery("select item, date, timeline, programScheduledItem, bookableScheduledItem from ScheduledItem si where event=$1 and bookableScheduledItem=si", selectedEvent),
                         // Index 4: we load some fields from the Event table that are not yet loaded. We don't need to look for the result, the result will be loaded automatically in `selectedEvent` because it has the same id.
-                        new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket, type.recurringItem from Event where id=?", selectedEvent),
+                        new EntityStoreQuery("select teachingsDayTicket, audioRecordingsDayTicket, type.recurringItem from Event where id=$1", selectedEvent),
                         // Index 5: available audio languages
-                        new EntityStoreQuery("select distinct name, code from item  where family.code = ? and organization = ? and not deprecated order by name",
+                        new EntityStoreQuery("select distinct name, code from item  where family.code = $1 and organization = $2 and not deprecated order by name",
                                 KnownItemFamily.AUDIO_RECORDING.getCode(), FXEvent.getEvent().getOrganization()),
                         // Index 6: Check if program scheduled items exist (NOT bookable items themselves)
-                new EntityStoreQuery("select id from ScheduledItem si where event=? and item.family.code=? and bookableScheduledItem!=si limit 1",
+                new EntityStoreQuery("select id from ScheduledItem si where event=$1 and item.family.code=$2 and bookableScheduledItem!=si limit 1",
                     selectedEvent, KnownItemFamily.TEACHING.getCode()),
-                        new EntityStoreQuery("select name, code from item  where code = ?",
+                        new EntityStoreQuery("select name, code from item  where code = $1",
                                 KnownItem.PROGRAM_SESSION.getCode()))
                 .onFailure(Console::log)
                 .inUiThread()
@@ -601,7 +601,7 @@ final class ProgramModel {
 
         // Query all scheduled items for this event
         return entityStore.<ScheduledItem>executeQuery(
-                "select id, item.family.code from ScheduledItem si where event=? order by name", getLoadedEvent()
+                "select id, item.family.code from ScheduledItem si where event=$1 order by name", getLoadedEvent()
         ).compose(scheduledItems -> {
             // First delete audio and video items (children of teaching items)
             scheduledItems.forEach(currentScheduledItem -> {
@@ -1079,11 +1079,11 @@ final class ProgramModel {
         // Query current state
         return entityStore.executeQueryBatch(
             new EntityStoreQuery(
-                "select id from ScheduledItem where programScheduledItem=? and item.family.code=?",
+                "select id from ScheduledItem where programScheduledItem=$1 and item.family.code=$2",
                 programScheduledItem, KnownItemFamily.AUDIO_RECORDING.getCode()
             ),
             new EntityStoreQuery(
-                "select id from ScheduledItem where programScheduledItem=? and item.family.code=?",
+                "select id from ScheduledItem where programScheduledItem=$1 and item.family.code=$2",
                 programScheduledItem, KnownItemFamily.VIDEO.getCode()
             )
         ).map(results -> {

@@ -136,7 +136,7 @@ public class ScheduledItemGenerationView {
         Console.log("loadOrganizationInfo: Fetching info for organization " + organizationId);
 
         EntityStore entityStore = EntityStore.create();
-        entityStore.executeQuery("select name, globalSite, globalSite.name from Organization where id=?", organizationId)
+        entityStore.executeQuery("select name, globalSite, globalSite.name from Organization where id=$1", organizationId)
                 .onFailure(e -> Console.log("Error fetching organization info", e))
                 .onSuccess(result -> {
                     if (!result.isEmpty()) {
@@ -173,7 +173,7 @@ public class ScheduledItemGenerationView {
         Console.log("fetchTimelinesForGlobalSite: Fetching timelines for global site: " + globalSite.getName());
 
         // Fetch timelines - can have either item (specific item) or itemFamily (all items of family)
-        String timelineDql = "select id, name, item, item.name, item.deprecated, item.family, item.family.code, itemFamily, itemFamily.code, startTime, endTime from Timeline where site=?";
+        String timelineDql = "select id, name, item, item.name, item.deprecated, item.family, item.family.code, itemFamily, itemFamily.code, startTime, endTime from Timeline where site=$1";
 
         entityStore.executeQuery(timelineDql, globalSite)
                 .onFailure(e -> {
@@ -229,7 +229,7 @@ public class ScheduledItemGenerationView {
         // This tells us which accommodation types (Items) have resources (rooms) at this site
         String configDql = "select id, resource, resource.id, resource.name, resource.building, resource.building.name, " +
                 "item, item.id, item.name, item.family, item.family.code " +
-                "from ResourceConfiguration where resource.site=? order by item.name, resource.building.name, resource.name";
+                "from ResourceConfiguration where resource.site=$1 order by item.name, resource.building.name, resource.name";
 
         entityStore.executeQuery(configDql, globalSite)
                 .onFailure(e -> {
@@ -293,8 +293,8 @@ public class ScheduledItemGenerationView {
         Console.log("refreshStatus: Fetching ScheduledItems and ScheduledResources from " + start + " to " + end + " for organization "
                 + organizationId);
 
-        String siDql = "select date, item.family.code from ScheduledItem where site.organization.id=? and date >= ? and date < ? order by date";
-        String srDql = "select date from ScheduledResource sr where sr.configuration.resource.site.organization.id=? and date >= ? and date < ? order by date";
+        String siDql = "select date, item.family.code from ScheduledItem where site.organization.id=$1 and date >= $2 and date < $3 order by date";
+        String srDql = "select date from ScheduledResource sr where sr.configuration.resource.site.organization.id=$1 and date >= $2 and date < $3 order by date";
 
         EntityStore entityStore = EntityStore.create();
 
@@ -476,7 +476,7 @@ public class ScheduledItemGenerationView {
             } else {
                 // For non-accommodation (e.g., meals), fetch all non-deprecated items
                 Console.log("generateSchedule: Fetching all items for family '" + familyCode + "' (family-wide timeline)");
-                String itemDql = "select id, name, family, family.code from Item where family.code=? and organization.id=? and (deprecated is null or deprecated=false)";
+                String itemDql = "select id, name, family, family.code from Item where family.code=$1 and organization.id=$2 and (deprecated is null or deprecated=false)";
 
                 EntityStore.create().executeQuery(itemDql, familyCode, organizationId)
                         .onFailure(e -> handleError("Error fetching items for family", e))
@@ -1096,8 +1096,8 @@ public class ScheduledItemGenerationView {
                 "sr.configuration.item, sr.configuration.item.name, " +
                 "sr.configuration.event, sr.configuration.event.id, sr.configuration.event.name " +
                 "from ScheduledResource sr " +
-                "where sr.configuration.resource.site.id=? " +
-                "and sr.date >= ? and sr.date <= ? " +
+                "where sr.configuration.resource.site.id=$1 " +
+                "and sr.date >= $2 and sr.date <= $3 " +
                 "order by sr.configuration.resource.building.name, sr.configuration.resource.name, sr.date";
 
         EntityStore.create().executeQuery(dql, globalSite.getPrimaryKey(), monthStart, monthEnd)

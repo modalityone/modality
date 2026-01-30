@@ -257,8 +257,8 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                             {label: 'Having', expression: 'havingClause'},
                             {label: 'Limit', expression: 'limitClause'}
                         ]""")
-                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
+                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like $1", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = $1", s.toLowerCase()))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
@@ -286,8 +286,8 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                             {label: 'GroupBy', expression: 'groupByClause'},
                             {label: 'OrderBy', expression: 'orderByClause'}
                         ]""")
-                .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .always(selectedFilter, s -> s != null ? where("lower(class) = ?", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
+                .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like $1", "%" + s.toLowerCase() + "%"))
+                .always(selectedFilter, s -> s != null ? where("lower(class) = $1", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
@@ -316,7 +316,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                 .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
                 .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
                 .ifNotNull(selectedFilter, s -> s.getOrderByClause() != null && !s.getOrderByClause().isEmpty() ? parse("orderBy: '" + s.getOrderByClause() + "'") : null)
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it

@@ -221,7 +221,7 @@ public class HistoryTab {
 
             historyMapper = ReactiveEntitiesMapper.<History>createPushReactiveChain(activity)
                 .always("{class: 'History', fields: 'username,comment,request', orderBy: 'id desc'}")
-                .always(documentIdProperty, docId -> where("document=?", docId))
+                .always(documentIdProperty, docId -> where("document=$1", docId))
                 .storeEntitiesInto(loadedHistory)
                 .start();
 

@@ -353,7 +353,7 @@ public class RolesView {
                 UpdateStore updateStoreForRoleOps = UpdateStore.createAbove(store);
 
                 // First, get all role operations that belong to this role and delete them
-                updateStoreForRoleOps.<AuthorizationRoleOperation>executeQuery("select id from AuthorizationRoleOperation where role=?", role.getPrimaryKey())
+                updateStoreForRoleOps.<AuthorizationRoleOperation>executeQuery("select id from AuthorizationRoleOperation where role=$1", role.getPrimaryKey())
                     .onSuccess(roleOperations -> {
                         // Delete all role operations first (foreign key constraint)
                         for (AuthorizationRoleOperation roleOp : roleOperations) {

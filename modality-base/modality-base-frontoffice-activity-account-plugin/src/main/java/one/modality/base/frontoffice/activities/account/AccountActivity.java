@@ -122,7 +122,7 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
             .always(DqlStatement.where("event.endDate >= now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=$1", mup.getUserAccountId()))
             .storeEntitiesInto(upcomingBookingsFeed)
             //.setResultCacheEntry("kbs/account/upcoming-bookings-documents")
             .start();
@@ -134,8 +134,8 @@ final class AccountActivity extends ViewDomainActivityBase implements OperationA
             .always(DqlStatement.fields(BookingView.BOOKING_REQUIRED_FIELDS))
             .always(DqlStatement.where("event.endDate < now()"))
             .always(DqlStatement.where("!cancelled or price_deposit>0"))
-            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=?", mup.getUserAccountId()))
-            .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < ?", date))
+            .ifNotNullOtherwiseEmpty(FXModalityUserPrincipal.modalityUserPrincipalProperty(), mup -> where("person.frontendAccount=$1", mup.getUserAccountId()))
+            .ifNotNull(loadPastEventsBeforeDateProperty, date -> DqlStatement.where("event.startDate < $1", date))
             .storeEntitiesInto(pastBookingsFeed)
             //.setResultCacheEntry("kbs/account/past-bookings-documents")
             .start();

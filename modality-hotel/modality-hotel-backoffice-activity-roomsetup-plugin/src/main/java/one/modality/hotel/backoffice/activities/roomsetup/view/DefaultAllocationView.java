@@ -720,7 +720,7 @@ public class DefaultAllocationView {
                     .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,resource.(name,site,building,buildingZone)'}")
                     .always(where("startDate is null and endDate is null"))
                     .always(orderBy("resource.building.name,resource.name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=$1", o))
                     .storeEntitiesInto(resourceConfigurations)
                     .addEntitiesHandler(entities -> {
                         roomsLoaded = true;
@@ -745,7 +745,7 @@ public class DefaultAllocationView {
             poolAllocationRem = ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
                     .always("{class: 'PoolAllocation', fields: 'pool.(name,graphic,webColor),resource,resource.name,quantity,event'}")
                     .always(where("event is null"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=$1", o))
                     .storeEntitiesInto(poolAllocations)
                     .addEntitiesHandler(entities -> {
                         allocationsLoaded = true;
@@ -758,7 +758,7 @@ public class DefaultAllocationView {
             buildingRem = ReactiveEntitiesMapper.<Building>createPushReactiveChain(mixin)
                     .always("{class: 'Building', fields: 'name,site'}")
                     .always(orderBy("name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=$1", o))
                     .storeEntitiesInto(buildings)
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-buildings")
                     .start();
@@ -766,10 +766,10 @@ public class DefaultAllocationView {
             // Load accommodation Items
             itemRem = ReactiveEntitiesMapper.<Item>createPushReactiveChain(mixin)
                     .always("{class: 'Item', fields: 'name,code,ord,family.code'}")
-                    .always(where("family.code=?", KnownItemFamily.ACCOMMODATION.getCode()))
+                    .always(where("family.code=$1", KnownItemFamily.ACCOMMODATION.getCode()))
                     .always(where("(deprecated is null or deprecated=false)"))
                     .always(orderBy("ord,name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("organization=$1", o))
                     .storeEntitiesInto(accommodationItems)
                     .setResultCacheEntry("modality/hotel/roomsetup/default-alloc-items")
                     .start();

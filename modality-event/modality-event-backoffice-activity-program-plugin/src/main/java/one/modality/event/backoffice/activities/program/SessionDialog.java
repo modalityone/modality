@@ -8,19 +8,19 @@ import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
 import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.extras.validation.ValidationSupport;
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -31,8 +31,6 @@ import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.Site;
-import one.modality.base.shared.entities.Timeline;
-import one.modality.base.shared.knownitems.KnownItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -41,7 +39,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-import static one.modality.event.backoffice.activities.program.ProgramI18nKeys.*;
+import static one.modality.event.backoffice.activities.program.ProgramI18nKeys.AddSession;
+import static one.modality.event.backoffice.activities.program.ProgramI18nKeys.SaveProgram;
 
 /**
  * Dialog for creating and editing program sessions (ScheduledItem).
@@ -212,7 +211,7 @@ public class SessionDialog {
         if (isEdit) {
             // Query for existing audio and video child scheduledItems to determine initial state
             entityStore.executeQuery(
-                "select id from ScheduledItem where programScheduledItem=? and item.family.code=?",
+                "select id from ScheduledItem where programScheduledItem=$1 and item.family.code=$2",
                 scheduledItem, KnownItemFamily.AUDIO_RECORDING.getCode()
             ).onSuccess(audioScheduledItems -> {
                 boolean audioOfferedValue = audioScheduledItems.size() > 0;
@@ -220,7 +219,7 @@ public class SessionDialog {
                 initialAudioOffered.set(audioOfferedValue);
 
                 entityStore.executeQuery(
-                    "select id from ScheduledItem where programScheduledItem=? and item.family.code=?",
+                    "select id from ScheduledItem where programScheduledItem=$1 and item.family.code=$2",
                     scheduledItem, KnownItemFamily.VIDEO.getCode()
                 ).onSuccess(videoScheduledItems -> {
                     boolean videoOfferedValue = videoScheduledItems.size() > 0;
@@ -492,7 +491,7 @@ public class SessionDialog {
                                                      boolean initialVideoOffered, EntityStore entityStore) {
         // Query for audio child scheduledItems with media
         entityStore.executeQuery(
-            "select id from Media where scheduledItem.programScheduledItem=? and type=?",
+            "select id from Media where scheduledItem.programScheduledItem=$1 and type=$2",
             scheduledItem, "AUDIO"
         ).onSuccess(audioMediaList -> {
             boolean hasAudioMedia = audioMediaList.size() > 0;
@@ -520,7 +519,7 @@ public class SessionDialog {
 
         // Query for video child scheduledItems with media
         entityStore.executeQuery(
-            "select id from Media where scheduledItem.programScheduledItem=? and (type=? or type=?)",
+            "select id from Media where scheduledItem.programScheduledItem=$1 and (type=$2 or type=$3)",
             scheduledItem, "VOD", "LIVESTREAM"
         ).onSuccess(videoMediaList -> {
             boolean hasVideoMedia = videoMediaList.size() > 0;

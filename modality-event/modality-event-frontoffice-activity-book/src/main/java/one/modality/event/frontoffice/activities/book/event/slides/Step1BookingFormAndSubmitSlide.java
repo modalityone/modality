@@ -126,7 +126,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
         // Set up email existence check callback for guest checkout
         guestPanel.setEmailCheckCallback(email -> {
             EntityStore.create(getBookEventActivity().getDataSourceModel())
-                .<Person>executeQuery("select id from Person where email=? and owner=true and removed!=true limit 1", email)
+                .<Person>executeQuery("select id from Person where email=$1 and owner=true and removed!=true limit 1", email)
                 .onFailure(e -> Console.log("Error checking email existence: " + e.getMessage()))
                 .onSuccess(persons -> UiScheduler.runInUiThread(() -> {
                     if (persons.isEmpty()) {

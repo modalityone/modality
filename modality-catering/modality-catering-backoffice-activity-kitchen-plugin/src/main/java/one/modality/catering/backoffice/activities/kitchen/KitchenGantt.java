@@ -156,7 +156,7 @@ final class KitchenGantt {
             .always( // language=JSON5
                 "{class: 'Item', fields: 'name', where: 'family.code=`diet`', orderBy: 'ord'}")
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), o -> where("organization=?", o))
+            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), o -> where("organization=$1", o))
             // Storing the result directly in the events layer
             .storeEntitiesInto(organizationDietItems)
             // We are now ready to start
@@ -178,10 +178,10 @@ final class KitchenGantt {
             })
             .always(orderBy("documentLine.item,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
+            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), o -> where("documentLine.document.event.organization=$1", o))
             // Restricting events to those appearing in the time window
-            .always(dataLayout.timeWindowStartProperty(), startDate -> where("date >= ?", startDate))
-            .always(dataLayout.timeWindowEndProperty(), endDate -> where("date <= ?", endDate))
+            .always(dataLayout.timeWindowStartProperty(), startDate -> where("date >= $1", startDate))
+            .always(dataLayout.timeWindowEndProperty(), endDate -> where("date <= $1", endDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(mealsAttendancesWithDietCounts)
             // We are now ready to start

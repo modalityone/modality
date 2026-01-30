@@ -58,10 +58,10 @@ public final class AttendanceLoader {
                     // Order is important for TimeBarUtil
                     .always(orderBy("scheduledResource.configuration.item.ord,scheduledResource.configuration.name,documentLine.document.person_lastName,documentLine.document.person_firstName,date"))
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=$1", o))
                     // Restricting events to those appearing in the time window
-                    .always(pm.timeWindowStartProperty(), startDate -> where("a.date +1 >= ?", startDate)) // +1 is to avoid the round corners on left  for bookings exceeding the time window
-                    .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date -1 <= ?", endDate))   // -1 is to avoid the round corners on right for bookings exceeding the time window
+                    .always(pm.timeWindowStartProperty(), startDate -> where("a.date +1 >= $1", startDate)) // +1 is to avoid the round corners on left  for bookings exceeding the time window
+                    .always(pm.timeWindowEndProperty(),   endDate   -> where("a.date -1 <= $1", endDate))   // -1 is to avoid the round corners on right for bookings exceeding the time window
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(attendances)
                     // We are now ready to start

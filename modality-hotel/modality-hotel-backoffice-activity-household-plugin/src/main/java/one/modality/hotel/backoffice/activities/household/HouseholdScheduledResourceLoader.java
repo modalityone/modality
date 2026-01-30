@@ -46,9 +46,9 @@ final class HouseholdScheduledResourceLoader {
                 // Filter by organization and optional site ID
                 .always(pm.organizationIdProperty(), org -> {
                     if (SITE_ID_FILTER != null) {
-                        return where("resource.site.organization=? and resource.site=?", org, SITE_ID_FILTER);
+                        return where("resource.site.organization=$1 and resource.site=$2", org, SITE_ID_FILTER);
                     } else {
-                        return where("resource.site.organization=?", org);
+                        return where("resource.site.organization=$1", org);
                     }
                 })
                 .storeEntitiesInto(resourceConfigurations)

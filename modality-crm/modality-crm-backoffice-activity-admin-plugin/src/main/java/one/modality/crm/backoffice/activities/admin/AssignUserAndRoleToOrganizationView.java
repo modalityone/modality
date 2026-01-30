@@ -128,7 +128,7 @@ public class AssignUserAndRoleToOrganizationView {
             .setDataSourceModel(dataSourceModel)
             .always("{class: 'AuthorizationOrganizationUserAccess', alias: 'ua', fields: 'user.(firstName,lastName,email),role.(id,name),event.(id,name),readOnly,date,organization', orderBy: 'user.firstName,user.lastName'}")
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(),
-                orgId -> DqlStatement.where("organization=?", orgId))
+                orgId -> DqlStatement.where("organization=$1", orgId))
             .storeEntitiesInto(userAccess)
             .start();
 

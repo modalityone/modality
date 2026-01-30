@@ -264,7 +264,7 @@ final class ManageRecurringEventView {
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
             .always( // language=JSON5
                 "{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
-            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
+            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o))
             .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
             .setEntityColumns(EVENT_COLUMNS)
             .setStore(entityStore)
@@ -277,9 +277,9 @@ final class ManageRecurringEventView {
         //We need initialize the audio and video Item Id.
         entityStore.executeQueryBatch(
                 //Index 0: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?", KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
+                new EntityStoreQuery("select Item where family=$1 and organization=$2", KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 1: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
+                new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language", KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(entityLists -> {
@@ -340,12 +340,12 @@ final class ManageRecurringEventView {
                 new EntityStoreQuery("""
                     select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, cancelled, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance \
                      where scheduledItem=si limit 1) as attendance \
-                     from ScheduledItem si where event=?""", e),
+                     from ScheduledItem si where event=$1""", e),
                 //Index 1: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?",
+                new EntityStoreQuery("select Item where family=$1 and organization=$2",
                     KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language",
+                new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language",
                     KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
             .onFailure(Console::log)
             .inUiThread()
@@ -607,7 +607,7 @@ final class ManageRecurringEventView {
             eventDetailsVBox.setManaged(true);
             currentEditedEvent = updateStore.insertEntity(Event.class);
             currentObservedEvent = currentEditedEvent;
-            entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
+            entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=$1", FXOrganization.getOrganization())
                 .onFailure(Console::log)
                 .inUiThread()
                 .onSuccess(e -> {
@@ -688,7 +688,7 @@ final class ManageRecurringEventView {
                             }, searchTextField.textProperty());
                             return super.getOrCreateButtonContentFromSelectedItem();
                         }
-                    }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
+                    }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o)).autoSelectFirstEntity();
                     siteSelector.selectedItemProperty().addListener(observable -> {
                         eventSite = siteSelector.getSelectedItem();
                         currentEditedEvent.setVenue(eventSite);

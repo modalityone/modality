@@ -1714,7 +1714,7 @@ public class BookingTab {
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
             .<DocumentLine>executeQuery(
                 "select document,item,item.family,price_net,price_minDeposit,price_custom,price_discount " +
-                "from DocumentLine where document=? and site=null order by id",
+                "from DocumentLine where document=$1 and site=null order by id",
                 docPk)
             .onSuccess(additionalLines -> {
                 javafx.application.Platform.runLater(() -> {

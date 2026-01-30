@@ -6,20 +6,14 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.ScheduledResource;
+import one.modality.base.shared.entities.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -243,7 +237,7 @@ public class RoomAllocationModal {
         entityStore.<ResourceConfiguration>executeQuery(
             "{class: 'ResourceConfiguration', alias: 'rc', " +
             "columns: ['name', 'resource.name', 'resource.site.name', 'max'], " +
-            "where: 'resource.site.organization=?', " +
+            "where: 'resource.site.organization=$1', " +
             "orderBy: 'resource.name,name'}",
             document.getOrganization() != null ? document.getOrganization().getPrimaryKey() : 1
         ).onFailure(error -> {
@@ -256,7 +250,7 @@ public class RoomAllocationModal {
             entityStore.<Attendance>executeQuery(
                 "{class: 'Attendance', alias: 'a', " +
                 "columns: ['date', 'resourceConfiguration.id', 'documentLine.document.person_firstName', 'documentLine.document.person_lastName', 'documentLine.document.id'], " +
-                "where: 'date>=? and date<? and resourceConfiguration!=null', " +
+                "where: 'date>=$1 and date<$2 and resourceConfiguration!=null', " +
                 "orderBy: 'resourceConfiguration.id,date'}",
                 queryStart, queryEnd
             ).onFailure(error -> {

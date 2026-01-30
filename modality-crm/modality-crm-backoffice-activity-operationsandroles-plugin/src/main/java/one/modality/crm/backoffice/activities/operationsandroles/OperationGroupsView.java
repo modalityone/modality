@@ -314,7 +314,7 @@ public class OperationGroupsView {
                 UpdateStore updateStore = UpdateStore.createAbove(store);
 
                 // First, get all operations that belong to this group and unassign them
-                store.<Operation>executeQuery("select id from Operation where group=?", group.getPrimaryKey())
+                store.<Operation>executeQuery("select id from Operation where group=$1", group.getPrimaryKey())
                     .onSuccess(operations -> {
                         // Unassign all operations from this group
                         for (Operation operation : operations) {

@@ -45,7 +45,7 @@ public final class TermsAndConditionsPage implements BookingFormPage {
 
     public TermsAndConditionsPage(BookingForm bookingForm) {
         Event event = ((EventBookingFormSettings) bookingForm.getSettings()).event();
-        event.getStore().<Letter>executeQuery("select <frontend_loadEvent> from Letter where event=? and type.terms limit 1", event)
+        event.getStore().<Letter>executeQuery("select <frontend_loadEvent> from Letter where event=$1 and type.terms limit 1", event)
             .inUiThread()
             .onSuccess(letters -> {
                 Letter termsLetter = Collections.first(letters);

@@ -62,7 +62,7 @@ final class RegistrationActivity extends EventDependentViewDomainActivity implem
         Object documentId = getParameter("documentId");
         if (documentId != null) {
             EntityStore.create(getDataSourceModel())
-                .<Document>executeQuery("select event.organization,ref from Document where id=? limit 1", documentId)
+                .<Document>executeQuery("select event.organization,ref from Document where id=$1 limit 1", documentId)
                 .onSuccess(documents -> {
                     Document document = Collections.first(documents);
                     if (document != null) {

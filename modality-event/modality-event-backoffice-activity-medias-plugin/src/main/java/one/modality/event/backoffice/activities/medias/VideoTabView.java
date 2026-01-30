@@ -2,7 +2,6 @@ package one.modality.event.backoffice.activities.medias;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import javafx.scene.layout.*;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
@@ -22,10 +21,16 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
@@ -274,11 +279,11 @@ final class VideoTabView {
     private BorderPane buildIndividualLinksContainer() {
         BorderPane container = new BorderPane();
         entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
+                new EntityStoreQuery("select distinct name,family.code from Item where organization=$1 and family.code = $2 order by name",
                     currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()),
-                new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, comment, commentLabel, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
+                new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, comment, commentLabel, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event = $1 and item.code = $2 and programScheduledItem.item.family.code = $3 order by date",
                     currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()),
-                new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = ? and scheduledItem.item.code = ? order by id",
+                new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = $1 and scheduledItem.item.code = $2 order by id",
                     currentEditedEvent, KnownItem.VIDEO.getCode())
             ).onFailure(Console::log)
             .inUiThread()

@@ -72,8 +72,8 @@ public class RolesDialog {
                 new EntityStoreQuery("select id,name from Operation where backend=true order by name"),
                 new EntityStoreQuery("select id,name from OperationGroup order by name"),
                 new EntityStoreQuery("select id,name,rule from AuthorizationRule order by name"),
-                new EntityStoreQuery("select id,operation,operationGroup from AuthorizationRoleOperation where role=? order by id", role.getPrimaryKey()),
-                new EntityStoreQuery("select id,name,rule from AuthorizationRule where role=? order by name", role.getPrimaryKey())
+                new EntityStoreQuery("select id,operation,operationGroup from AuthorizationRoleOperation where role=$1 order by id", role.getPrimaryKey()),
+                new EntityStoreQuery("select id,name,rule from AuthorizationRule where role=$1 order by name", role.getPrimaryKey())
             ).inUiThread().onSuccess(entityLists -> buildAndShowDialog(
                 role, isEdit, isDuplicate, updateStore,
                 entityLists[0], // operations

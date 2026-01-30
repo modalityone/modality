@@ -92,7 +92,7 @@ final class RecurringEventAttendanceView {
         ReactiveVisualMapper<Event> eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
             .always( // language=JSON5
                 "{class: 'Event', alias: 'e', where: 'type.recurringItem != null and kbs3'}")
-            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
+            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o))
             .setEntityColumns(EVENT_COLUMNS)
             .visualizeResultInto(eventTable.visualResultProperty())
             .setVisualSelectionProperty(eventTable.visualSelectionProperty())
@@ -103,8 +103,8 @@ final class RecurringEventAttendanceView {
         scheduledItemObjectMapper = ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(activity)
             .always( // language=JSON5
                 "{class: 'ScheduledItem', alias: 's', fields: 'date', where: 'event.(type.recurringItem != null and kbs3)', orderBy: 'date'}")
-            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), event -> where("event=?", event))
-            .ifInstanceOf(FXGanttSelection.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("s = ?", si))
+            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), event -> where("event=$1", event))
+            .ifInstanceOf(FXGanttSelection.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("s = $1", si))
             .setIndividualEntityToObjectMapperFactory(IndividualScheduledItemToBoxMapper::new)
             .storeMappedObjectsInto(attendancePane.getChildren())
             .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
@@ -141,7 +141,7 @@ final class RecurringEventAttendanceView {
                 .always( // language=JSON5
                     "{class: 'DocumentLine', alias: 'dl', fields: 'document.confirmed', orderBy: 'document.person_lastName,document.person_firstName,document.ref'}")
                 .setEntityColumns(BOOKINGS_COLUMNS)
-                .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=? and a.scheduledItem=?)", si.getDate(), si))
+                .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=$1 and a.scheduledItem=$2)", si.getDate(), si))
                 .visualizeResultInto(linesGrid.visualResultProperty())
                 .start();
 

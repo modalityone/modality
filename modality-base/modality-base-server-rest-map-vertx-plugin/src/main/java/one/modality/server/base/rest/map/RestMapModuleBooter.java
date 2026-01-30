@@ -40,7 +40,7 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                     int organizationId = Integer.parseInt(ctx.pathParam("organizationId"));
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "12";
                     EntityStore.create()
-                            .<Organization>executeQuery("select latitude,longitude from Organization where id=?", organizationId)
+                            .<Organization>executeQuery("select latitude,longitude from Organization where id=$1", organizationId)
                             .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;
@@ -58,7 +58,7 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                     int countryId = Integer.parseInt(ctx.pathParam("countryId"));
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "5";
                     EntityStore.create()
-                            .<Country>executeQuery("select latitude,longitude from Country where id=?", countryId)
+                            .<Country>executeQuery("select latitude,longitude from Country where id=$1", countryId)
                             .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;

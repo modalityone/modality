@@ -119,7 +119,7 @@ public final class SquareRestApiJob implements ApplicationJob {
 
     private static Future<Void> loadAndUpdatePaymentStatus(String field, Object value, boolean live, ReadOnlyAstObject payload, String textPayload, String logPrefix) {
         return EntityStore.create()
-            .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = ?", value)
+            .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = $1", value)
             .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
             .compose(payments -> {
                 int n = payments.size();

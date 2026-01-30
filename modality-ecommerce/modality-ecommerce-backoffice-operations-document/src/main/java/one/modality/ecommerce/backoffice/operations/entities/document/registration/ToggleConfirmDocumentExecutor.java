@@ -25,7 +25,7 @@ final class ToggleConfirmDocumentExecutor {
     static Future<Void> executeRequest(ToggleConfirmDocumentRequest rq) {
         return Future.all(
             rq.getDocument().<Document>onExpressionLoaded("confirmed,passReady"),
-            rq.getDocument().getStore().executeQuery("select subject_en from Letter where event=? and active and type.confirmation", rq.getDocument().getEvent())
+            rq.getDocument().getStore().executeQuery("select subject_en from Letter where event=$1 and active and type.confirmation", rq.getDocument().getEvent())
         ).compose(compositeFuture -> {
             Document document = compositeFuture.resultAt(0);
             List<Letter> letters = compositeFuture.resultAt(1);

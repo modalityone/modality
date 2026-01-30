@@ -1354,7 +1354,7 @@ public class ReceptionView {
                 buttonFactory, contentArea, activity.getDataSourceModel()
         )
                 // Filter by organization
-                .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("organization=?", o));
+                .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("organization=$1", o));
 
         // Create "All Guests" null entity
         Event allGuestsEvent = eventSelector.getStore().createEntity(Event.class);

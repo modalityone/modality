@@ -172,7 +172,7 @@ final class LivestreamAndVideoPlayers {
     }
 
     private void loadMediaAndWatch() {
-        entityStore.<Media>executeQuery("select url from Media where scheduledItem=? order by id", getWatchingVideoItem())
+        entityStore.<Media>executeQuery("select url from Media where scheduledItem=$1 order by id", getWatchingVideoItem())
             .onFailure(Console::log)
             .inUiThread()
             .onSuccess(mediaLists -> {

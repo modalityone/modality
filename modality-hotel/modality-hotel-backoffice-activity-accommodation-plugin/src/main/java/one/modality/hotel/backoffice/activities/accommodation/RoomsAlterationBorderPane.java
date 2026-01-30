@@ -34,7 +34,7 @@ class RoomsAlterationBorderPane {
                 "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
                 activity, activity.container, activity.getDataSourceModel()
         )
-                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
+                .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=$1))", Entities.getPrimaryKey(orgId)))
                 .setAutoOpenOnMouseEntered(true)
                 .appendNullEntity(true);
         // Creating the null Entity (the entity the selector will use to display null) to say "<All>"

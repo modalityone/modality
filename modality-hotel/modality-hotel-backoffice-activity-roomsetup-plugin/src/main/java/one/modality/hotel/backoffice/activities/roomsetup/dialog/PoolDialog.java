@@ -1,19 +1,18 @@
 package one.modality.hotel.backoffice.activities.roomsetup.dialog;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.application.Platform;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,16 +20,19 @@ import javafx.beans.property.StringProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.EventType;
 import one.modality.base.shared.entities.Pool;
 import one.modality.crm.backoffice.organization.fx.FXOrganizationId;
 import one.modality.hotel.backoffice.activities.roomsetup.RoomSetupI18nKeys;
 import one.modality.hotel.backoffice.activities.roomsetup.util.UIComponentDecorators;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 
 /**
  * Dialog for creating and editing pools (both source pools and category pools).
@@ -518,7 +520,7 @@ public class PoolDialog implements DialogManager.ManagedDialog {
         if (orgId == null) return;
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
-        entityStore.<EventType>executeQuery("select id,name,organization from EventType where organization=? limit 1", orgId)
+        entityStore.<EventType>executeQuery("select id,name,organization from EventType where organization=$1 limit 1", orgId)
                 .onSuccess(eventTypes -> {
                     if (!eventTypes.isEmpty()) {
                         resolvedEventType = eventTypes.get(0);

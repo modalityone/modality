@@ -310,7 +310,7 @@ public final class AlterRoomPane extends VBox {
             "{class: 'Item', alias: 'i', where: 'family.code=`acco`'}",
             mixin, this, selectedResourceConfigurationProperty.get().getStore().getDataSourceModel()
         )
-            .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=?))", Entities.getPrimaryKey(orgId)))
+            .always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("exists(select ScheduledResource where configuration.(item=i and resource.site.organization=$1))", Entities.getPrimaryKey(orgId)))
             .setAutoOpenOnMouseEntered(true)
             .appendNullEntity(true);
         roomTypeSelector.setReadOnly(true);
@@ -536,7 +536,7 @@ public final class AlterRoomPane extends VBox {
         EntityId organizationId = (EntityId) pm.organizationIdProperty().get();
         LocalDate startDate = getSelectedResourceConfigurationStartDate();
         LocalDate endDate = getSelectedResourceConfigurationEndDate();
-        EntityStore.create().<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=? and a.scheduledResource.configuration.resource.id=? and a.scheduledResource.date>=? and a.scheduledResource.date<=?", organizationId.getPrimaryKey(), resourceId.getPrimaryKey(), startDate, endDate)
+        EntityStore.create().<Attendance>executeQuery("select date,documentLine.document.(person_guest,person_male,person_resident) from Attendance a where a.documentLine.document.event.organization=$1 and a.scheduledResource.configuration.resource.id=$2 and a.scheduledResource.date>=$3 and a.scheduledResource.date<=$4", organizationId.getPrimaryKey(), resourceId.getPrimaryKey(), startDate, endDate)
             .onFailure(error -> {
                 Console.log("Error while reading attendances", error);
                 success.set(false);
@@ -650,7 +650,7 @@ public final class AlterRoomPane extends VBox {
 
         // Find ScheduledItems with this item type
         Object itemId = selectedRc.getItem().getPrimaryKey();
-        EntityStore.create().<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=? and si.date>=? and si.date<=?", itemId, startDate, endDate)
+        EntityStore.create().<ScheduledItem>executeQuery("select id,timeline,site,item,date,startTime,endTime,available,online,resource from ScheduledItem si where si.item.id=$1 and si.date>=$2 and si.date<=$3", itemId, startDate, endDate)
             .onFailure(error -> {
                 Console.log("Error while reading scheduled items.", error);
                 success.set(false);
@@ -705,7 +705,7 @@ public final class AlterRoomPane extends VBox {
         ResourceConfiguration selectedRc = selectedResourceConfigurationProperty.get();
         Object itemId = selectedRc.getItem().getPrimaryKey();
 
-        EntityStore.create().<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, startDate, endDate)
+        EntityStore.create().<ScheduledResource>executeQuery("select date,sr.configuration.(name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsFemale,allowsMale,startDate,endDate,resource.site) from ScheduledResource sr where sr.scheduledItem.item.id=$1 and sr.date>=$2 and sr.date<=$3", itemId, startDate, endDate)
             .onFailure(error -> {
                 Console.log("Error while reading scheduled resources.", error);
                 success.set(false);
@@ -814,7 +814,7 @@ public final class AlterRoomPane extends VBox {
 
         // Select all ScheduledResources for the item within the time window
         Object itemId = selectedResourceConfigurationProperty.get().getItem().getPrimaryKey();
-        EntityStore.create().<ScheduledResource>executeQuery("select date from ScheduledResource sr where sr.scheduledItem.item.id=? and sr.date>=? and sr.date<=?", itemId, min, max)
+        EntityStore.create().<ScheduledResource>executeQuery("select date from ScheduledResource sr where sr.scheduledItem.item.id=$1 and sr.date>=$2 and sr.date<=$3", itemId, min, max)
             .onFailure(error -> {
                 Console.log("Error while reading scheduled resources.", error);
                 success.set(false);
@@ -921,8 +921,8 @@ public final class AlterRoomPane extends VBox {
                             {label: 'From', expression: 'startDate'},
                             {label: 'To', expression: 'endDate'}
                         ]""")
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
-                .ifNotNullOtherwiseEmpty(resourceConfigurationProperty, rc -> where("resource = ?", rc.getResource()))
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=$1 and event=null)", o))
+                .ifNotNullOtherwiseEmpty(resourceConfigurationProperty, rc -> where("resource = $1", rc.getResource()))
                 .applyDomainModelRowStyle()
                 .autoSelectSingleRow()
                 .visualizeResultInto(table)

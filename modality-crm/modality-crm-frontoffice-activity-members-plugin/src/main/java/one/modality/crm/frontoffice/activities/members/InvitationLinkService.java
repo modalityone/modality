@@ -301,7 +301,7 @@ public final class InvitationLinkService {
             return entityStore.<Person>executeQuery(
                     "select id,firstName,lastName,email,frontendAccount,accountPerson,owner " +
                     "from Person " +
-                    "where frontendAccount=? and lower(email)=? and owner=false and removed!=true limit 1",
+                    "where frontendAccount=$1 and lower(email)=$2 and owner=false and removed!=true limit 1",
                     inviter.getFrontendAccount().getId(),
                     invitee.getEmail().toLowerCase())
                 .compose(existingPersons -> {
@@ -358,7 +358,7 @@ public final class InvitationLinkService {
                 .<Invitation>executeQuery(
                         "select id,inviter.(id,fullName,email,frontendAccount),invitee.(id,fullName,email,frontendAccount)," +
                         "aliasFirstName,aliasLastName,pending,accepted,token,creationDate,inviterPayer " +
-                        "from Invitation where token=? and pending=true limit 1",
+                        "from Invitation where token=$1 and pending=true limit 1",
                         token)
                 .map(invitations -> invitations.isEmpty() ? null : invitations.get(0));
     }

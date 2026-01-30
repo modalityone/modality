@@ -52,11 +52,11 @@ final class CreateEventActivity extends ViewDomainActivityBase
         EntityButtonSelector<EventType> typeSelector = new EntityButtonSelector<EventType>( // language=JSON5
             "{class: 'EventType', where: '!deprecated', orderBy :'name'}",
             this, FXMainFrameDialogArea::getDialogArea, DataSourceModelService.getDefaultDataSourceModel()
-        ).always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("organization=?", orgId));
+        ).always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("organization=$1", orgId));
         EntityButtonSelector<Site> siteSelector = new EntityButtonSelector<Site>( // language=JSON5
             "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
             this, FXMainFrameDialogArea::getDialogArea, DataSourceModelService.getDefaultDataSourceModel()
-        ).always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("organization=?", orgId));
+        ).always(FXOrganizationId.organizationIdProperty(), orgId -> DqlStatement.where("organization=$1", orgId));
 
         DateField startDateField = createDateField(BaseI18nKeys.StartDate);
         DateField endDateField = createDateField(BaseI18nKeys.EndDate);

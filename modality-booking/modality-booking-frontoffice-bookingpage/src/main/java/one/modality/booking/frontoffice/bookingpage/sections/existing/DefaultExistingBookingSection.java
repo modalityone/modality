@@ -764,7 +764,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
     private Future<Set<Object>> loadPendingInvitations(EntityStore entityStore, Object personId) {
         return entityStore.<Invitation>executeQuery(
                 "select id,invitee.(id,fullName,firstName,lastName,email) from Invitation " +
-                "where inviter=? and pending=true and inviterPayer=true",
+                "where inviter=$1 and pending=true and inviterPayer=true",
                 personId)
             .map(pendingInvitations -> {
                 Set<Object> pendingInviteeIds = new HashSet<>();
@@ -790,7 +790,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         // Query with accountPerson to check if member is linked to another account
         return entityStore.<Person>executeQuery(
                 "select id,fullName,firstName,lastName,email,accountPerson.(id,fullName,email) " +
-                "from Person where frontendAccount=? and removed!=true",
+                "from Person where frontendAccount=$1 and removed!=true",
                 accountId)
             .compose(allMembers -> {
                 // Collect emails to check for account owners (NEEDS_VALIDATION)

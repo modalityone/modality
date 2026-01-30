@@ -142,7 +142,7 @@ public final class SiteComparisonDataLoader {
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
             .<Resource>executeQuery(
                 "select name,site.(id,name,event.(id,name,startDate,endDate)),kbs2ToKbs3GlobalResource.id " +
-                "from Resource where site=? order by name limit 200",
+                "from Resource where site=$1 order by name limit 200",
                 siteId)
             .onFailure(error -> {
                 Console.log("[SiteComparisonDataLoader] Failed to load site resources: " + error.getMessage());
@@ -226,7 +226,7 @@ public final class SiteComparisonDataLoader {
         Console.log("[SiteComparisonDataLoader] Loading organization: " + organizationId);
 
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-            .<Organization>executeQuery("select name,globalSite.(id,name) from Organization where id=?", organizationId)
+            .<Organization>executeQuery("select name,globalSite.(id,name) from Organization where id=$1", organizationId)
             .onFailure(error -> {
                 Console.log("[SiteComparisonDataLoader] Failed to load organization: " + error.getMessage());
                 organizationLoaded = true;
@@ -266,7 +266,7 @@ public final class SiteComparisonDataLoader {
 
         ReactiveEntitiesMapper.<Resource>createPushReactiveChain(mixin)
             .always("{class: 'Resource', fields: 'name', orderBy: 'name', limit: '500'}")
-            .always(where("site=?", globalSiteId))
+            .always(where("site=$1", globalSiteId))
             .storeEntitiesInto(globalSiteResources)
             .addEntitiesHandler(resources -> {
                 Console.log("[SiteComparisonDataLoader] Global site resources loaded: " + resources.size());
@@ -289,7 +289,7 @@ public final class SiteComparisonDataLoader {
                     "orderBy: 'event.startDate,name', " +
                     "limit: '100'}")
             .always(where("event is not null and event.startDate >= current_date()"))
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org -> where("organization=?", org))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org -> where("organization=$1", org))
             .storeEntitiesInto(eventSites)
             .addEntitiesHandler(sites -> {
                 Console.log("[SiteComparisonDataLoader] Event sites loaded: " + sites.size());

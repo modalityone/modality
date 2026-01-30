@@ -1631,7 +1631,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
 
         // Check if email exists in database (Person with owner=true means they have an account)
         EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-            .<Person>executeQuery("select id from Person where lower(email)=? and owner=true and removed!=true limit 1", email)
+            .<Person>executeQuery("select id from Person where lower(email)=$1 and owner=true and removed!=true limit 1", email)
             .onFailure(error -> UiScheduler.runInUiThread(() -> {
                 // On error, default to new user flow (guest checkout)
                 emailExists = false;

@@ -240,7 +240,7 @@ final class DayTemplateModel {
         // Only query database if template exists (not newly created in UI)
         if (!dayTemplate.getId().isNew()) {
             programModel.getEntityStore().<Timeline>executeQuery(
-                    "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=? order by startTime"
+                    "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=$1 order by startTime"
                     , dayTemplate
                 )
                 .onFailure(Console::log)

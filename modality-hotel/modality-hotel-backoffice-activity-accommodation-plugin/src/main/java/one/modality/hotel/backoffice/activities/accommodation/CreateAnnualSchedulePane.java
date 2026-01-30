@@ -89,7 +89,7 @@ public final class CreateAnnualSchedulePane extends VBox {
 
     private void displayItemsWithOpenConfiguration() {
         EntityId organizationId = FXOrganizationId.getOrganizationId();
-        EntityStore.create().<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=? and rc.resource.site.event is null and rc.endDate is null", organizationId)
+        EntityStore.create().<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=$1 and rc.resource.site.event is null and rc.endDate is null", organizationId)
                 .onFailure(error -> {
                     Console.log("Error while reading scheduled items.", error);
                 })

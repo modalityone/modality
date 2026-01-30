@@ -26,8 +26,8 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
             //.setStore(EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()))
             .always( // language=JSON5
                 "{class: 'Item', fields: 'code,name', orderBy: 'ord,id'}")
-            .always(DqlStatement.where("!deprecated and family.code = ?", KnownItemFamily.AUDIO_RECORDING.getCode()))
-            .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = ?", lang))
+            .always(DqlStatement.where("!deprecated and family.code = $1", KnownItemFamily.AUDIO_RECORDING.getCode()))
+            .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = $1", lang))
             .storeEntitiesInto(ORGANIZATION_RECORDING_ITEMS)
             .start();
     }

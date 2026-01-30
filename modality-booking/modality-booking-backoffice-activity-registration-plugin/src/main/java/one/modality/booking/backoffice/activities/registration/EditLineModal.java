@@ -18,6 +18,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -25,15 +26,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.History;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ResourceConfiguration;
-import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
@@ -420,7 +414,7 @@ public class EditLineModal {
         if (event != null) {
             // Get items scheduled for this event with accommodation family
             accommodationTypeSelector.always(DqlStatement.where(
-                "family=1 and exists(select 1 from ScheduledItem si where si.item=i and si.event=?)",
+                "family=1 and exists(select 1 from ScheduledItem si where si.item=i and si.event=$1)",
                 Entities.getPrimaryKey(event)));
         } else {
             // Fallback: just filter by accommodation family
@@ -468,12 +462,12 @@ public class EditLineModal {
                 Item selectedItem = selectedAccommodationType.get();
                 if (selectedItem != null) {
                     // Filter by globalSite and selected item type
-                    roomSelector.always(DqlStatement.where("item=? and resource.site=?",
+                    roomSelector.always(DqlStatement.where("item=$1 and resource.site=$2",
                         Entities.getPrimaryKey(selectedItem),
                         Entities.getPrimaryKey(finalGlobalSite)));
                 } else {
                     // Just filter by globalSite
-                    roomSelector.always(DqlStatement.where("resource.site=?",
+                    roomSelector.always(DqlStatement.where("resource.site=$1",
                         Entities.getPrimaryKey(finalGlobalSite)));
                 }
             }, selectedAccommodationType);

@@ -44,9 +44,9 @@ public class KitchenDataService {
                 new EntityStoreQuery(
                         "select date, item.(id,name,ord), site " +
                                 "from ScheduledItem " +
-                                "where site.organization=? " +
-                                "and item.family.code=? " +
-                                "and date>=? and date<=? " +
+                                "where site.organization=$1 " +
+                                "and item.family.code=$2 " +
+                                "and date>=$3 and date<=$4 " +
                                 "order by date, item.ord",
                         organizationId, KnownItemFamily.MEALS.getCode(), startDate, endDate),
 
@@ -54,7 +54,7 @@ public class KitchenDataService {
                 new EntityStoreQuery(
                         "select id, name, code, ord " +
                                 "from Item " +
-                                "where organization=? and family.code=? " +
+                                "where organization=$1 and family.code=$2 " +
                                 "order by ord",
                         organizationId, KnownItemFamily.MEALS.getCode()),
 
@@ -62,7 +62,7 @@ public class KitchenDataService {
                 new EntityStoreQuery(
                         "select id, name, code, ord, deprecated " +
                                 "from Item " +
-                                "where organization=? and family.code=? " +
+                                "where organization=$1 and family.code=$2 " +
                                 "order by ord",
                         organizationId, KnownItemFamily.DIET.getCode()),
 
@@ -70,15 +70,15 @@ public class KitchenDataService {
                 new EntityStoreQuery(
                         "select id, scheduledItem.(date,item), documentLine.(id,document,cancelled) " +
                                 "from Attendance " +
-                                "where scheduledItem.site.organization=? " +
-                                "and scheduledItem.date>=? and scheduledItem.date<=?",
+                                "where scheduledItem.site.organization=$1 " +
+                                "and scheduledItem.date>=$2 and scheduledItem.date<=$3",
                         organizationId, startDate, endDate),
 
                 // Query 4: All document lines for the documents involved in the attendances
                 new EntityStoreQuery(
                         "select id, document, item, cancelled " +
                                 "from DocumentLine " +
-                                "where document in (select documentLine.document from Attendance where scheduledItem.site.organization=? and scheduledItem.date>=? and scheduledItem.date<=?)",
+                                "where document in (select documentLine.document from Attendance where scheduledItem.site.organization=$1 and scheduledItem.date>=$2 and scheduledItem.date<=$3)",
                         organizationId, startDate, endDate))
                 .map(results -> processKitchenData(
                         entityStore,

@@ -156,7 +156,7 @@ final class BookingActivity extends ViewDomainActivityBase implements ButtonFact
         // Loading local events
         ReactiveObjectsMapper.<Event, Node>createPushReactiveChain(this)
             .always(commonDqlStart + ", type.(name,label.<loadAll>,ord), state', where: 'endDate > now() and !bookingClosed and type.name != `Not event`', orderBy: 'startDate'}")
-            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=?", orgId))
+            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("organization=$1", orgId))
             .storeEntitiesInto(localEvents)
             .setResultCacheEntry("modality/event/booking/local-events")
             .start();

@@ -75,7 +75,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         Object documentId = getParameter("documentId");
         if (documentId != null) {
             EntityStore.create(getDataSourceModel())
-                .<Document>executeQuery("select event.organization,ref from Document where id=? limit 1", documentId)
+                .<Document>executeQuery("select event.organization,ref from Document where id=$1 limit 1", documentId)
                 .onSuccess(documents -> {
                     Document document = Collections.first(documents);
                     if (document != null) {
@@ -206,14 +206,14 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
                 "{class: 'Document', alias: 'd'}")
             // Applying the event condition
             //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=$1", organizationId))
             .ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = $1)", day))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = $1)", si))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=$1", event))
             .setResultCacheEntry("modality/ecommerce/bookings/group-documents")
             .start();
 
@@ -225,20 +225,20 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
             .always(fields(BookingDetailsPanel.REQUIRED_FIELDS))
             // Applying the event condition
             //.ifNotNullOtherwiseEmpty(pm.eventIdProperty(), eventId -> where("event=?", eventId))
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=?", organizationId))
-            .ifNotNull(pm.eventIdProperty(), eventId -> where("event=?", eventId))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), organizationId -> where("organization=$1", organizationId))
+            .ifNotNull(pm.eventIdProperty(), eventId -> where("event=$1", eventId))
             //.ifNotNullOtherwiseEmpty(pm.ganttSelectedObjectProperty(), x -> where("true"))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = $1)", day))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = $1)", si))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=$1", event))
             // Applying the user search
             .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s))
-                    : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
-                    : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+                Character.isDigit(s.charAt(0)) ? where("ref = $1", Integer.parseInt(s))
+                    : s.contains("@") ? where("lower(person_email) like $1", "%" + s.toLowerCase() + "%")
+                    : where("person_abcNames like $1", AbcNames.evaluate(s, true)))
             .setResultCacheEntry("modality/ecommerce/bookings/documents")
             .applyDomainModelRowStyle() // Colorizing the rows
             .autoSelectSingleRow() // When the result is a single row, automatically select it

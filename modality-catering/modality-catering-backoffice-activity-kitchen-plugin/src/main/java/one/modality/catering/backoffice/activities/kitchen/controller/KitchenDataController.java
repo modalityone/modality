@@ -124,8 +124,8 @@ public final class KitchenDataController {
         String attendanceQuery = "select " +
                 "id, scheduledItem.(id,date,item.(name,id),site.name), documentLine.(id,cancelled,document.(id,person_firstName,person_lastName,dates,event.(id,name,startDate))) " +
                 "from Attendance " +
-                "where scheduledItem.site.organization=? " +
-                "and scheduledItem.date=?";
+                "where scheduledItem.site.organization=$1 " +
+                "and scheduledItem.date=$2";
 
         Console.log("Query: " + attendanceQuery);
         Console.log("Parameters: [org=" + organizationId + ", date=" + date + "]");
@@ -176,8 +176,8 @@ public final class KitchenDataController {
                             "from DocumentLine " +
                             "where document in (" +
                             "  select documentLine.document from Attendance " +
-                            "  where scheduledItem.site.organization=? " +
-                            "  and scheduledItem.date=?" +
+                            "  where scheduledItem.site.organization=$1 " +
+                            "  and scheduledItem.date=$2" +
                             ")";
 
                     return entityStore.executeQuery(documentLinesQuery, organizationId, date)
@@ -344,8 +344,8 @@ public final class KitchenDataController {
         String attendanceQuery = "select " +
                 "id, scheduledItem.(id,date,item.(name,id),site.name), documentLine.(id,cancelled,document.(id,person_firstName,person_lastName,dates,event.(id,name,startDate))) " +
                 "from Attendance " +
-                "where scheduledItem.site.organization=? " +
-                "and scheduledItem.date=?";
+                "where scheduledItem.site.organization=$1 " +
+                "and scheduledItem.date=$2";
 
         Console.log("Query: " + attendanceQuery);
         Console.log("Parameters: [org=" + organizationId + ", date=" + date + "]");
@@ -376,8 +376,8 @@ public final class KitchenDataController {
                             "from DocumentLine " +
                             "where document in (" +
                             "  select documentLine.document from Attendance " +
-                            "  where scheduledItem.site.organization=? " +
-                            "  and scheduledItem.date=?" +
+                            "  where scheduledItem.site.organization=$1 " +
+                            "  and scheduledItem.date=$2" +
                             ")";
 
                     return entityStore.executeQuery(documentLinesQuery, organizationId, date)

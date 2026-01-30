@@ -37,7 +37,7 @@ public class MainFrameHeaderEventSelectorProvider implements MainFrameHeaderNode
                     "{class: 'Event', alias: 'e', columns: 'icon,name,dateIntervalFormat(startDate,endDate)', orderBy: 'startDate desc'}",
                     buttonFactory, frameContainer, dataSourceModel)
                     .always(DqlStatement.fields(FXEvent.EXPECTED_FIELDS))
-                    .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("organization = ?", o))
+                    .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("organization = $1", o))
             ;
             EntityStore store = eventSelector.getStore();
             Event nullEvent = store.createEntity(Event.class);

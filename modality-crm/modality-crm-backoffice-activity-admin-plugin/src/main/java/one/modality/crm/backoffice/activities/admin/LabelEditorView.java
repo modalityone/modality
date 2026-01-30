@@ -4,8 +4,6 @@ import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.extras.util.dialog.DialogCallback;
-import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.db.query.QueryArgument;
@@ -132,13 +130,11 @@ public class LabelEditorView {
         labelMapper = ReactiveVisualMapper.<Label>createPushReactiveChain(mixin)
             .always("{class: 'Label', alias: 'l', fields: 'id,ref,en,fr,es,de,pt,zhs,zht,el,vi,icon,organization.name', orderBy: 'id desc', limit: 100}")
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(),
-                orgId -> DqlStatement.where("organization=? or organization is null", orgId))
+                orgId -> DqlStatement.where("organization=$1 or organization is null", orgId))
             // Database-side search across all language fields
             .ifTrimNotEmpty(searchTextProperty, s -> DqlStatement.where(
-                "lower(en) like ? or lower(fr) like ? or lower(es) like ? or lower(de) like ? or lower(pt) like ? or lower(zhs) like ? or lower(zht) like ? or lower(el) like ? or lower(vi) like ?",
-                "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%",
-                "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%",
-                "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%", "%" + s.toLowerCase() + "%"))
+                "lower(en) like $1 or lower(fr) like $1 or lower(es) like $1 or lower(de) like $1 or lower(pt) like $1 or lower(zhs) like $1 or lower(zht) like $1 or lower(el) like $1 or lower(vi) like $1",
+                "%" + s.toLowerCase() + "%"))
             .setEntityColumns(LABEL_COLUMNS)
             .visualizeResultInto(labelGrid.visualResultProperty())
             .addEntitiesHandler(entityList -> {

@@ -242,12 +242,12 @@ public final class EventsGanttCanvas {
             .always( // language=JSON5
                 "{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem,venue.main'}")
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=?", o))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=$1", o))
             // Restricting events to those appearing in the time window
-            .always(pm.timeWindowStartProperty(), startDate -> where("e.endDate >= ?", startDate))
-            .always(pm.timeWindowEndProperty(), endDate -> where("e.startDate <= ?", endDate))
+            .always(pm.timeWindowStartProperty(), startDate -> where("e.endDate >= $1", startDate))
+            .always(pm.timeWindowEndProperty(), endDate -> where("e.startDate <= $1", endDate))
             // Ordering events in a way that the widest in the time window will be first (=> the smallest events will appear at the bottom)
-            .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, ?),id", startDate))
+            .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, $1),id", startDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(allOrganizationEventsInTimeWindow)
             .setResultCacheEntry("modality/event/gantt-canvas/events")
@@ -259,10 +259,10 @@ public final class EventsGanttCanvas {
             .always( // language=JSON5
                 "{class: 'ScheduledItem', alias: 'si', fields: 'date,event', where: 'event.type.recurringItem != null'}")
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.organization=?", o))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.organization=$1", o))
             // Restricting events to those appearing in the time window
-            .always(pm.timeWindowStartProperty(), startDate -> where("si.date >= ?", startDate))
-            .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= ?", endDate))
+            .always(pm.timeWindowStartProperty(), startDate -> where("si.date >= $1", startDate))
+            .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= $1", endDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(recurringEventDatesLayer.getChildren())
             //.setResultCacheEntry("modality/event/gantt-canvas/scheduled-items")

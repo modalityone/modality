@@ -537,7 +537,7 @@ public class RoomDialog implements DialogManager.ManagedDialog {
     private void querySiteItemFamilyAndSave(DialogCallback dialogCallback, Site site, Building building) {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<SiteItemFamily>executeQuery(
-                "select id from SiteItemFamily where site=? and itemFamily.code=?",
+                "select id from SiteItemFamily where site=$1 and itemFamily.code=$2",
                 site, KnownItemFamily.ACCOMMODATION.getCode()
         ).onFailure(error -> Console.log("Error querying SiteItemFamily: " + error.getMessage())).onSuccess(siteItemFamilies -> {
             if (siteItemFamilies.isEmpty()) {

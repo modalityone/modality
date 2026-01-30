@@ -55,9 +55,9 @@ public final class TodayScheduledResourceLoader {
                     .always( // language=JSON5
                         "{class: 'ScheduledResource', alias: 'sr', fields: 'max,configuration,(select count(1) from Attendance where present and scheduledResource=sr and !documentLine.cancelled) as booked'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=$1", o))
                     // Restricting events to those appearing in the time window
-                    .always(FXToday.todayProperty(), today -> where("sr.date = ?", today))
+                    .always(FXToday.todayProperty(), today -> where("sr.date = $1", today))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(todayScheduledResources)
                     .setResultCacheEntry("modality/hotel/accommodation/today-scheduled-resources")

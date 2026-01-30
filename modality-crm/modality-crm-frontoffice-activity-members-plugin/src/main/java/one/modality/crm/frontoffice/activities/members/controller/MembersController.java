@@ -88,7 +88,7 @@ public class MembersController {
 
         // Load current user's email for display
         entityStore.<Person>executeQuery(
-                        "select email from Person where id=? limit 1",
+                        "select email from Person where id=$1 limit 1",
                         personId)
                 .onSuccess(persons -> {
                     if (!persons.isEmpty()) {
@@ -118,7 +118,7 @@ public class MembersController {
         // First, query for pending invitations where members have validation requests
         entityStore.<Invitation>executeQuery(
                         "select id,invitee.(id) from Invitation " +
-                        "where inviter=? and pending=true and inviterPayer=true",
+                        "where inviter=$1 and pending=true and inviterPayer=true",
                         personId)
                 .onFailure(error -> {
                     Console.log("Error loading pending invitations: " + error);
@@ -137,7 +137,7 @@ public class MembersController {
                                     "country.(id,name),organization.(id,name)," +
                                     "accountPerson.(id,fullName,email) " +
                                     "from Person " +
-                                    "where frontendAccount=? and owner=false and removed!=true",
+                                    "where frontendAccount=$1 and owner=false and removed!=true",
                                     accountId)
                             .onFailure(error -> {
                                 Console.log("Error loading members: " + error);
@@ -182,7 +182,7 @@ public class MembersController {
                         return;
                     }
 
-                    // Build WHERE clause for email matching (case insensitive)
+                    // Build WHERE clause for email matching (case-insensitive)
                     StringBuilder emailConditions = new StringBuilder();
                     for (int i = 0; i < memberEmails.size(); i++) {
                         if (i > 0) emailConditions.append(" or ");
@@ -282,7 +282,7 @@ public class MembersController {
         entityStore.<Person>executeQuery(
                         "select id,fullName,email,frontendAccount,accountPerson,owner,removed " +
                         "from Person " +
-                        "where accountPerson=? and owner=false and frontendAccount!=? and removed!=true",
+                        "where accountPerson=$1 and owner=false and frontendAccount!=$2 and removed!=true",
                         personId, currentAccountId)
                 .onFailure(error -> {
                     Console.log("Error loading managers: " + error);
@@ -345,7 +345,7 @@ public class MembersController {
                         "select id,inviter.(id,firstName,fullName,email,frontendAccount),invitee.(id,fullName,email,frontendAccount)," +
                         "aliasFirstName,aliasLastName,pending,accepted,token,creationDate,inviterPayer " +
                         "from Invitation " +
-                        "where (inviter=? or invitee=?) and pending=true " +
+                        "where (inviter=$1 or invitee=$2) and pending=true " +
                         "order by creationDate desc",
                         personId, personId)
                 .onFailure(error -> {
@@ -448,7 +448,7 @@ public class MembersController {
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Person>executeQuery(
-                        "select id,fullName,email from Person where id=? limit 1",
+                        "select id,fullName,email from Person where id=$1 limit 1",
                         principal.getUserPersonId())
                 .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                         showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
@@ -481,7 +481,7 @@ public class MembersController {
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Person>executeQuery(
-                        "select id,fullName,email from Person where id=? limit 1",
+                        "select id,fullName,email from Person where id=$1 limit 1",
                         principal.getUserPersonId())
                 .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                         showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
@@ -495,7 +495,7 @@ public class MembersController {
                     // Load account owner with same email
                     EntityStore checkStore = EntityStore.create(dataSourceModel);
                     checkStore.<Person>executeQuery(
-                                    "select id,fullName,email from Person where email=? and owner=true limit 1",
+                                    "select id,fullName,email from Person where email=$1 and owner=true limit 1",
                                     member.getEmail())
                             .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                                     showErrorDialog("Error", "Failed to send validation request: " + error.getMessage())))
@@ -883,8 +883,8 @@ public class MembersController {
         // Much more efficient than two separate queries!
         return entityStore.<Person>executeQuery(
                         "select id,removed,frontendAccount from Person where " +
-                        "(frontendAccount=? and accountPerson=?) or " +
-                        "(frontendAccount=? and accountPerson=?)",
+                        "(frontendAccount=$1 and accountPerson=$2) or " +
+                        "(frontendAccount=$3 and accountPerson=$4)",
                         managerAccountId, currentUserId,      // Person in manager's account
                         currentUserAccountId, managerPersonId) // Person in my account
                 .compose(persons -> {
@@ -1103,7 +1103,7 @@ public class MembersController {
 
         // First, get current user's email
         entityStore.<Person>executeQuery(
-                "select id,email from Person where id=? limit 1",
+                "select id,email from Person where id=$1 limit 1",
                 principal.getUserPersonId())
             .onFailure(error -> {
                 Console.log("Error fetching current user: " + error);
@@ -1122,7 +1122,7 @@ public class MembersController {
 
                 // Check if email exists as an account owner
                 entityStore.<Person>executeQuery(
-                        "select id,fullName,email,owner from Person where email=? and owner=true and removed!=true limit 1",
+                        "select id,fullName,email,owner from Person where email=$1 and owner=true and removed!=true limit 1",
                         email)
                     .onFailure(error -> {
                         Console.log("Error checking email: " + error);
@@ -1190,7 +1190,7 @@ public class MembersController {
         // Get current user person as inviter
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Person>executeQuery(
-                "select id,fullName,email from Person where id=? limit 1",
+                "select id,fullName,email from Person where id=$1 limit 1",
                 principal.getUserPersonId())
                 .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                         view.showErrorDialog("Error", "Failed to fetch user: " + error.getMessage())))
@@ -1260,7 +1260,7 @@ public class MembersController {
         // Get current user person as inviter
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Person>executeQuery(
-                "select id,fullName,firstName,lastName,email from Person where id=? limit 1",
+                "select id,fullName,firstName,lastName,email from Person where id=$1 limit 1",
                 principal.getUserPersonId())
                 .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                         view.showErrorDialog("Error", "Failed to fetch user: " + error.getMessage())))
@@ -1274,7 +1274,7 @@ public class MembersController {
                     // Check if manager person exists (must be an account owner)
                     EntityStore checkStore = EntityStore.create(dataSourceModel);
                     checkStore.<Person>executeQuery(
-                            "select id,fullName,firstName,lastName,email,frontendAccount from Person where email=? and owner=true limit 1",
+                            "select id,fullName,firstName,lastName,email,frontendAccount from Person where email=$1 and owner=true limit 1",
                             email)
                             .onFailure(error -> UiScheduler.scheduleDeferred(() ->
                                     view.showErrorDialog("Error", "Failed to check email: " + error.getMessage())))
@@ -1364,7 +1364,7 @@ public class MembersController {
     private void checkExistingManagerAccess(Person manager, Person accountOwner, java.util.function.Consumer<Boolean> callback) {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Person>executeQuery(
-                "select id from Person where frontendAccount=? and accountPerson=? and removed!=true limit 1",
+                "select id from Person where frontendAccount=$1 and accountPerson=$2 and removed!=true limit 1",
                 manager.getFrontendAccount() != null ? manager.getFrontendAccount().getId() : null,
                 accountOwner.getId())
                 .onFailure(error -> {
@@ -1386,7 +1386,7 @@ public class MembersController {
     private void checkExistingInvitation(Object inviterId, Object inviteeId, Boolean inviterPayer, java.util.function.Consumer<Invitation> callback) {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.<Invitation>executeQuery(
-                "select id,pending,accepted,creationDate,inviterPayer from Invitation where inviter=? and invitee=? and inviterPayer=? " +
+                "select id,pending,accepted,creationDate,inviterPayer from Invitation where inviter=$1 and invitee=$2 and inviterPayer=$3 " +
                         "and pending=true " +
                         "order by creationDate desc limit 1",
                 inviterId, inviteeId, inviterPayer)

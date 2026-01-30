@@ -1,6 +1,5 @@
 package one.modality.event.backoffice.activities.roomsetup;
 
-import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
@@ -167,8 +166,8 @@ public class EventRoomSetupDataModel {
             .always("{class: 'Resource', alias: 'r', fields: 'name,site.(name,organization),building.name,buildingZone.name,siteItemFamily.(name,itemFamily.name)'}")
             .always(orderBy("r.building.name,r.name"))
             .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o ->
-                where("r.siteItemFamily.itemFamily.code='acco' and (r.site.organization=? or r.id in (select resource from PoolAllocation pa where pa.event.organization=? and pa.resource.site.organization<>?))",
-                    o.getPrimaryKey(), o.getPrimaryKey(), o.getPrimaryKey()))
+                where("r.siteItemFamily.itemFamily.code='acco' and (r.site.organization=$1 or r.id in (select resource from PoolAllocation pa where pa.event.organization=$1 and pa.resource.site.organization<>$1))",
+                    o.getPrimaryKey()))
             .storeEntitiesInto(resources)
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Resources loaded: " + entities.size());
@@ -181,7 +180,7 @@ public class EventRoomSetupDataModel {
             .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,comment,resource.(name,site.(name,organization),building.name,buildingZone.name,siteItemFamily.itemFamily.name)'}")
             .always(where("startDate is null and endDate is null"))
             .always(orderBy("resource.building.name,resource.name"))
-            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("resource.site.organization=?", o.getPrimaryKey()))
+            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("resource.site.organization=$1", o.getPrimaryKey()))
             .storeEntitiesInto(permanentRoomConfigs)
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Permanent configs loaded: " + entities.size());
@@ -194,7 +193,7 @@ public class EventRoomSetupDataModel {
         defaultAllocationsRem = ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
             .always("{class: 'PoolAllocation', fields: 'pool.(name,webColor,graphic,eventPool),resource.(name),quantity'}")
             .always(where("event is null"))
-            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("resource.site.organization=?", o.getPrimaryKey()))
+            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> where("resource.site.organization=$1", o.getPrimaryKey()))
             .storeEntitiesInto(defaultAllocations)
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Default allocations loaded: " + entities.size());
@@ -211,7 +210,7 @@ public class EventRoomSetupDataModel {
         // Event-specific room configurations (overrides)
         eventConfigsRem = ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
             .always("{class: 'ResourceConfiguration', fields: 'resource,item.(name),max,allowsMale,allowsFemale,allowsGuest,allowsVolunteer,allowsResident,comment'}")
-            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), e -> where("event=?", e.getPrimaryKey()))
+            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), e -> where("event=$1", e.getPrimaryKey()))
             .storeEntitiesInto(eventRoomConfigs)
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Event configs loaded: " + entities.size());
@@ -225,7 +224,7 @@ public class EventRoomSetupDataModel {
         // Event-specific pool allocations (category assignments)
         eventAllocationsRem = ReactiveEntitiesMapper.<PoolAllocation>createPushReactiveChain(mixin)
             .always("{class: 'PoolAllocation', fields: 'pool.(name,webColor,graphic,eventPool),resource.(name),quantity,event'}")
-            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), e -> where("event=?", e.getPrimaryKey()))
+            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), e -> where("event=$1", e.getPrimaryKey()))
             .storeEntitiesInto(eventAllocations)
             .addEntitiesHandler(entities -> {
                 Console.log("EventRoomSetupDataModel: Event allocations loaded: " + entities.size());

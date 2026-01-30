@@ -81,7 +81,7 @@ final class ModalityClientProfilePanel {
                     .setDataSourceModel(userPerson.getStore().getDataSourceModel())
                     .always( // language=JSON5
                         "{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")
-                    .always(DqlStatement.where("active and management.user=?", userPerson))
+                    .always(DqlStatement.where("active and management.user=$1", userPerson))
                     .visualizeResultInto(roleGrid)
                     .start();
             } else {

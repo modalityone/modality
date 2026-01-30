@@ -124,7 +124,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                         select name, label, shortDescription, shortDescriptionLabel, audioExpirationDate
                                 , startDate, endDate, livestreamUrl, vodExpirationDate, repeatAudio, repeatedEvent
                             from Event
-                            where id=?
+                            where id=$1
                             limit 1""", eventId)
                     .onFailure(Console::log)
                     .onCacheAndOrSuccess(events -> {
@@ -175,7 +175,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                 new EntityStoreQuery("""
                                     select url, durationMillis, scheduledItem.(date, event, name, published)
                                      from Media
-                                     where scheduledItem.(event=? and online and published and item.code in (?,?))""",
+                                     where scheduledItem.(event=$1 and online and published and item.code in ($2, $3))""",
                                     eventIdContainingAudios, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()))
                             .onFailure(Console::log)
                             .inUiThread()

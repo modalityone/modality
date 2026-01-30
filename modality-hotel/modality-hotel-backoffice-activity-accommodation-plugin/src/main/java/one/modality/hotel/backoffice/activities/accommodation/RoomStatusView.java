@@ -224,10 +224,10 @@ public class RoomStatusView {
                     .always( // language=JSON5
                         "{class: 'Rate', alias: 'r', fields: 'startDate,endDate,item.id,price'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=$1", o))
                     // Restricting events to those appearing in the time window
-                    .ifNotNullOtherwise(fromProperty, startDate -> where("r.startDate >= ?", startDate), where("1 = 0"))
-                    .ifNotNullOtherwise(toProperty, endDate -> where("r.endDate <= ?", endDate), where("1 = 0"))
+                    .ifNotNullOtherwise(fromProperty, startDate -> where("r.startDate >= $1", startDate), where("1 = 0"))
+                    .ifNotNullOtherwise(toProperty, endDate -> where("r.endDate <= $1", endDate), where("1 = 0"))
                     .ifNotNullOtherwise(commaSeparatedRoomIds, ids -> where("item.id in (" + ids + ")"), where("1 = 0"))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(rates)

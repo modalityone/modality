@@ -101,7 +101,7 @@ final class OperationsActivity extends ViewDomainActivityBase implements Modalit
             .always( // language=JSON5
                 "{class: 'Operation', alias: 'o', orderBy: 'code'}")
             // Search box condition
-            .ifTrimNotEmpty(searchBox.textProperty(), s -> where("lower(code) like ?", "%" + s.toLowerCase() + "%"))
+            .ifTrimNotEmpty(searchBox.textProperty(), s -> where("lower(code) like $1", "%" + s.toLowerCase() + "%"))
             // Limit condition
             //.ifPositive(pm.limitProperty(), l -> limit("?", l))
             .setEntityColumns(OPERATION_COLUMNS)

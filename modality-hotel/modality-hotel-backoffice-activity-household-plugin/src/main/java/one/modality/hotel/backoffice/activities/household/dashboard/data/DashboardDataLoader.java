@@ -93,7 +93,7 @@ public final class DashboardDataLoader {
                         "item.(name,family)," +
                         "resourceConfiguration.(name,item.(name,family),resource.(id,cleaningState,lastCleaningDate,lastInspectionDate))'," +
                         "where: 'resourceConfiguration is not null'}")
-                .always(pm.organizationIdProperty(), org -> where("document.event.organization=?", org))
+                .always(pm.organizationIdProperty(), org -> where("document.event.organization=$1", org))
                 .always(FXProperties.combine(FXToday.todayProperty(), daysToDisplay, (today, days) -> {
                     // Date range for bookings:
                     // - Start: yesterday (for checkout detection)
@@ -102,7 +102,7 @@ public final class DashboardDataLoader {
                     int endOffset = Math.max(days.intValue(), MIN_LOOKAHEAD_DAYS);
                     LocalDate end = today.plusDays(endOffset);
                     // Find bookings that overlap with the date range: startDate <= end AND endDate >= start
-                    return where("dl.startDate <= ? and dl.endDate >= ? and !cancelled and !document.cancelled", end, start);
+                    return where("dl.startDate <= $1 and dl.endDate >= $2 and !cancelled and !document.cancelled", end, start);
                 }), dql -> dql)
                 .storeEntitiesInto(documentLines)
                 .start();
@@ -118,14 +118,14 @@ public final class DashboardDataLoader {
                         "fields: 'date,documentLine', " +
                         "where: 'documentLine.hasAttendanceGap = true and !documentLine.cancelled and !documentLine.document.cancelled'}")
                 .always(pm.organizationIdProperty(), org ->
-                        where("documentLine.document.event.organization=?", org))
+                        where("documentLine.document.event.organization=$1", org))
                 .always(FXProperties.combine(FXToday.todayProperty(), daysToDisplay, (today, days) -> {
                     LocalDate start = today.minusDays(1);
                     int endOffset = Math.max(days.intValue(), MIN_LOOKAHEAD_DAYS);
                     LocalDate end = today.plusDays(endOffset);
                     // Filter by both booking overlap AND attendance date within window
                     // This avoids loading all attendance records for long bookings
-                    return where("a.date >= ? and a.date < ?",
+                    return where("a.date >= $1 and a.date < $2",
                             start, end);
                 }), dql -> dql)
                 .storeEntitiesInto(attendancesForGaps)

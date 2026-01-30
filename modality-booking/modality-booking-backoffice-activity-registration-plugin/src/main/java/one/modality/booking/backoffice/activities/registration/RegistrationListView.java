@@ -495,23 +495,23 @@ public class RegistrationListView {
             // Limit results to 100 records for performance
             .always(limit("100"))
             // Filter by organization (required)
-            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("event.organization=?", orgId))
+            .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId -> where("event.organization=$1", orgId))
             // Optional event filter
-            .ifNotNull(FXEventId.eventIdProperty(), eventId -> where("event=?", eventId))
+            .ifNotNull(FXEventId.eventIdProperty(), eventId -> where("event=$1", eventId))
 
             // Gantt selection filtering (like BookingsActivity)
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = ?)", day))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= ? and date <= ?)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = ?)", si))
-            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=?", event))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), LocalDate.class, day -> where("exists(select Attendance where documentLine.document=d and date = $1)", day))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearWeek.class, week -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfWeek(week), TimeUtil.getLastDayOfWeek(week)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), YearMonth.class, month -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfMonth(month), TimeUtil.getLastDayOfMonth(month)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Year.class, year -> where("exists(select Attendance where documentLine.document=d and date >= $1 and date <= $2)", TimeUtil.getFirstDayOfYear(year), TimeUtil.getLastDayOfYear(year)))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("exists(select Attendance where documentLine.document=d and scheduledItem = $1)", si))
+            .ifInstanceOf(pm.ganttSelectedObjectProperty(), Event.class, event -> where("event=$1", event))
 
             // Optimized search filter using AbcNames (like BookingsActivity)
             .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                Character.isDigit(s.charAt(0)) ? where("ref = ?", Integer.parseInt(s.replaceAll("[^0-9]", "")))
-                    : s.contains("@") ? where("lower(person_email) like ?", "%" + s.toLowerCase() + "%")
-                    : where("person_abcNames like ?", AbcNames.evaluate(s, true)))
+                Character.isDigit(s.charAt(0)) ? where("ref = $1", Integer.parseInt(s.replaceAll("[^0-9]", "")))
+                    : s.contains("@") ? where("lower(person_email) like $1", "%" + s.toLowerCase() + "%")
+                    : where("person_abcNames like $1", AbcNames.evaluate(s, true)))
 
             // Quick filters - these actually query the database when active
             .ifTrue(createFilterActiveBinding("confirmed"), where("confirmed and !cancelled"))
@@ -604,9 +604,9 @@ public class RegistrationListView {
                     "orderBy: 'document.id'}")
             // Same filters as main query to ensure we only load relevant accommodation
             .ifNotNullOtherwiseEmpty(FXOrganizationId.organizationIdProperty(), orgId ->
-                where("document.event.organization=?", orgId))
+                where("document.event.organization=$1", orgId))
             .ifNotNull(FXEventId.eventIdProperty(), eventId ->
-                where("document.event=?", eventId))
+                where("document.event=$1", eventId))
             // Store entities and rebuild the lookup map
             .storeEntitiesInto(accommodationLines)
             .addEntitiesHandler(lines -> {

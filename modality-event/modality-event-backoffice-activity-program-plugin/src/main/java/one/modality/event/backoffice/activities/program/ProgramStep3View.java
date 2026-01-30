@@ -813,7 +813,7 @@ final class ProgramStep3View {
             "select name, label.(en,fr,es,pt,de,zhs,zht,el,vi), date, startTime, endTime, " +
             "timeline?.(startTime,endTime,item.name), item.name, cancelled, bookableScheduledItem " +
             "from ScheduledItem si " +
-            "where event=? and item.family.code=? and bookableScheduledItem!=si " +
+            "where event=$1 and item.family.code=$2 and bookableScheduledItem!=si " +
             "order by date, coalesce(timeline?.startTime, startTime)",
             event, KnownItemFamily.TEACHING.getCode()
         )

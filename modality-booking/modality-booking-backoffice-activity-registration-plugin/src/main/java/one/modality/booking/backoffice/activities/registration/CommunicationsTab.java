@@ -453,7 +453,7 @@ public class CommunicationsTab {
 
             mailHistoryMapper = ReactiveEntitiesMapper.<Mail>createPushReactiveChain(activity)
                 .always("{class: 'Mail', fields: 'date,subject,fromName,transmitted,error', orderBy: 'date desc'}")
-                .always(documentIdProperty, docId -> where("document=?", docId))
+                .always(documentIdProperty, docId -> where("document=$1", docId))
                 .storeEntitiesInto(loadedMails)
                 .start();
 

@@ -604,7 +604,7 @@ public class PaymentsTab {
 
             paymentsMapper = ReactiveEntitiesMapper.<MoneyTransfer>createPushReactiveChain(activity)
                 .always("{class: 'MoneyTransfer', fields: 'date,method.name,transactionRef,comment,amount,pending,successful', orderBy: 'date desc'}")
-                .always(documentIdProperty, docId -> where("document=?", docId))
+                .always(documentIdProperty, docId -> where("document=$1", docId))
                 .storeEntitiesInto(loadedPayments)
                 .start();
 

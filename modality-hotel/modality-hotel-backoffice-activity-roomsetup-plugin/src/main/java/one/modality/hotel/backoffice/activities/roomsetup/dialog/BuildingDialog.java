@@ -328,7 +328,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
         if (orgId == null) return;
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
-        entityStore.<Organization>executeQuery("select globalSite from Organization where id=?", orgId)
+        entityStore.<Organization>executeQuery("select globalSite from Organization where id=$1", orgId)
                 .onSuccess(organizations -> {
                     if (!organizations.isEmpty()) {
                         Organization org = organizations.get(0);
@@ -406,7 +406,7 @@ public class BuildingDialog implements DialogManager.ManagedDialog {
                 return;
             }
             EntityStore entityStore = EntityStore.create(dataSourceModel);
-            entityStore.<Organization>executeQuery("select globalSite from Organization where id=?", orgId)
+            entityStore.<Organization>executeQuery("select globalSite from Organization where id=$1", orgId)
                     .onSuccess(organizations -> {
                         Console.log("Organization query returned " + organizations.size() + " results");
                         if (!organizations.isEmpty()) {

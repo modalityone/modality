@@ -274,11 +274,11 @@ public final class OrderCard {
         orderDetailsLoaded = true;
         return orderDocument.getStore().executeQueryBatch(
                 new EntityStoreQuery("select " + DOCUMENT_LINE_REQUIRED_FIELDS + " from DocumentLine dl " +
-                                     " where dl.document.id = ? and !item.family.summaryHidden " +
+                                     " where dl.document.id = $1 and !item.family.summaryHidden " +
                                      " order by item.family ", orderDocument),
                 // Note: this will update the fields of the already present orderDocument because we use the same entity store
                 new EntityStoreQuery("select " + ORDER_REQUIRED_FIELDS + " from Document d " +
-                                     " where d = ?", orderDocument))
+                                     " where d = $1", orderDocument))
             .onFailure(Console::log)
             // We update orderDocumentLines, which will consequently update both the card and details UI (so we do that in the UI thread)
             .inUiThread()

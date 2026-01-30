@@ -118,7 +118,7 @@ public final class HouseholdMemberLoader {
 
         return entityStore.<Invitation>executeQuery(
                 "select id,invitee.(id,fullName,firstName,lastName,email,birthdate) from Invitation " +
-                "where inviter=? and pending=true and inviterPayer=true",
+                "where inviter=$1 and pending=true and inviterPayer=true",
                 personId)
             .map(pendingInvitations -> {
                 // Build set of invitee IDs to exclude from direct members list
@@ -160,7 +160,7 @@ public final class HouseholdMemberLoader {
         return entityStore.<Person>executeQuery(
                 "select id,fullName,firstName,lastName,email,birthdate,accountPerson.(id,fullName,email) " +
                 "from Person " +
-                "where frontendAccount=? and owner=false and removed!=true",
+                "where frontendAccount=$1 and owner=false and removed!=true",
                 accountId)
             .compose(allMembers -> {
                 // Collect emails to check for account owners
@@ -214,7 +214,7 @@ public final class HouseholdMemberLoader {
         Console.log("Checking existing bookings for event=" + eventId + ", account=" + accountId);
 
         return entityStore.<Document>executeQuery(
-                "select person.id from Document where event=? and person.frontendAccount=? and !cancelled",
+                "select person.id from Document where event=$1 and person.frontendAccount=$2 and !cancelled",
                 eventId, accountId)
             .map(existingBookings -> {
                 Console.log("Query returned " + existingBookings.size() + " existing bookings");

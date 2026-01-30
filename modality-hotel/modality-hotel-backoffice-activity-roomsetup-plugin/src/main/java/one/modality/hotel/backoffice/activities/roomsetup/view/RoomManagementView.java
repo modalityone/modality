@@ -610,7 +610,7 @@ public class RoomManagementView {
                     .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,item.family.code,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer,allowsMale,allowsFemale,comment,resource.(name,site,building,buildingZone,building.name,buildingZone.name)'}")
                     .always(where("startDate is null and endDate is null"))
                     .always(orderBy("item.ord,resource.name"))
-                    .always(pm.organizationIdProperty(), o -> where("resource.site=(select globalSite from Organization where id=?)",o))
+                    .always(pm.organizationIdProperty(), o -> where("resource.site=(select globalSite from Organization where id=$1)",o))
                     .storeEntitiesInto(resourceConfigurations)
                     .addEntitiesHandler(entities -> {
                         // Force UI update when entities are received (after refresh)
@@ -625,7 +625,7 @@ public class RoomManagementView {
             buildingRem = ReactiveEntitiesMapper.<Building>createPushReactiveChain(mixin)
                     .always("{class: 'Building', fields: 'name,site'}")
                     .always(orderBy("name"))
-                    .always(pm.organizationIdProperty(), o -> where("site.organization=?", o))
+                    .always(pm.organizationIdProperty(), o -> where("site.organization=$1", o))
                     .storeEntitiesInto(buildings)
                     .setResultCacheEntry("modality/hotel/roomsetup/buildings")
                     .start();
@@ -634,7 +634,7 @@ public class RoomManagementView {
             buildingZoneRem = ReactiveEntitiesMapper.<BuildingZone>createPushReactiveChain(mixin)
                     .always("{class: 'BuildingZone', fields: 'name,building.name,building.site'}")
                     .always(orderBy("building.name,name"))
-                    .always(pm.organizationIdProperty(), o -> where("building.site.organization=?", o))
+                    .always(pm.organizationIdProperty(), o -> where("building.site.organization=$1", o))
                     .storeEntitiesInto(buildingZones)
                     .setResultCacheEntry("modality/hotel/roomsetup/building-zones")
                     .start();
@@ -642,9 +642,9 @@ public class RoomManagementView {
             // Load accommodation Items (accommodation family, not deprecated, for current organization)
             itemRem = ReactiveEntitiesMapper.<Item>createPushReactiveChain(mixin)
                     .always("{class: 'Item', fields: 'name,code,ord,family.code'}")
-                    .always(where("family.code=?", KnownItemFamily.ACCOMMODATION.getCode()))
+                    .always(where("family.code=$1", KnownItemFamily.ACCOMMODATION.getCode()))
                     .always(where("(deprecated is null or deprecated=false)"))
-                    .always(pm.organizationIdProperty(), o -> where("organization=?", o))
+                    .always(pm.organizationIdProperty(), o -> where("organization=$1", o))
                     .always(orderBy("ord,name"))
                     .storeEntitiesInto(accommodationItems)
                     .setResultCacheEntry("modality/hotel/roomsetup/items")

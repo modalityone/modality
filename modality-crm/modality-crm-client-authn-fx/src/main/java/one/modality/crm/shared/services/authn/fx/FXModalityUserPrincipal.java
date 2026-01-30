@@ -59,7 +59,7 @@ public final class FXModalityUserPrincipal {
                     if (email != null) { // Yes, the user provided an email
                         // Loading the Modality user (i.e., Person) owning a frontend account whose username is that exact same email
                         EntityStore.create()
-                                .<Person>executeQuery("select id, frontendAccount.id from Person where frontendAccount.(username=? and corporation=1) and !removed order by id limit 1", email)
+                                .<Person>executeQuery("select id, frontendAccount.id from Person where frontendAccount.(username=$1 and corporation=1) and !removed order by id limit 1", email)
                                 .onFailure(Console::log)
                                 .onSuccess(personList -> {
                                     // We should get only one matching person

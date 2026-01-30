@@ -189,19 +189,19 @@ final class RecordingsTabView {
                     new EntityStoreQuery("""
                             select distinct item.(name, code)
                              from ScheduledItem
-                             where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ?
+                             where programScheduledItem.event = $1 and item.family.code = $2 and programScheduledItem.item.family.code = $3
                              order by item.name""",
                         currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
                     new EntityStoreQuery("""
                             select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime, audioOffered)), event, site, item.code, published, expirationDate, available
                              from ScheduledItem
-                             where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ?
+                             where programScheduledItem.event = $1 and item.family.code = $2 and programScheduledItem.item.family.code = $3
                              order by date, programScheduledItem?.timeline?.startTime""",
                         currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
                     new EntityStoreQuery("""
                             select url, durationMillis, scheduledItem.(item.code, programScheduledItem, date, published)
                              from Media
-                             where scheduledItem.(event= ? and item.family.code = ?)""",
+                             where scheduledItem.(event = $1 and item.family.code = $2)""",
                         currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()))
                 .onFailure(Console::log)
                 .inUiThread()

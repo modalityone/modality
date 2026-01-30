@@ -246,9 +246,9 @@ final class CustomersView {
             .setStore(entityStore)
             // Apply search filter
             .ifTrimNotEmpty(pm.searchTextProperty(), s ->
-                Character.isDigit(s.charAt(0)) ? where("id = ?", Integer.parseInt(s))
-                    : s.contains("@") ? where("lower(email) like ?", "%" + s.toLowerCase() + "%")
-                    : where("abcNames like ?",AbcNames.evaluate(s, true)))
+                Character.isDigit(s.charAt(0)) ? where("id = $1", Integer.parseInt(s))
+                    : s.contains("@") ? where("lower(email) like $1", "%" + s.toLowerCase() + "%")
+                    : where("abcNames like $1",AbcNames.evaluate(s, true)))
             // Apply account type filter (null = show all, otherwise filter by type)
             .ifNotNull(pm.accountTypeFilterProperty(), accountType -> switch (accountType) {
                 case "frontoffice" -> where("!frontendAccount.backoffice");
@@ -295,7 +295,7 @@ final class CustomersView {
                     accountId = person.getAccountPerson().getFrontendAccount().getPrimaryKey();
                 }
                 if (accountId != null) {
-                    return where("frontendAccount=?", accountId);
+                    return where("frontendAccount=$1", accountId);
                 }
                 // If no account found, return empty (no linked accounts)
                 return where("false"); // Always false condition
@@ -324,10 +324,10 @@ final class CustomersView {
                     accountId = person.getAccountPerson().getFrontendAccount().getPrimaryKey();
                 }
                 if (accountId != null) {
-                    return where("accountCanAccessPersonOrders(?, person)", accountId);
+                    return where("accountCanAccessPersonOrders($1, person)", accountId);
                 }
                 // If no account found, show documents where person matches directly
-                return where("person=?", person.getPrimaryKey());
+                return where("person=$1", person.getPrimaryKey());
             })
             .addEntitiesHandler(entityList -> {
                 // Update the feed

@@ -56,7 +56,7 @@ public class OperationGroupDialog {
 
         // Load operations: only backend operations with no group, or belonging to the current group (if editing)
         String query = isEdit
-            ? "select id,name,group from Operation where backend=true and (group is null or group=?) order by name"
+            ? "select id,name,group from Operation where backend=true and (group is null or group=$1) order by name"
             : "select id,name,group from Operation where backend=true and group is null order by name";
 
         if (isEdit) {

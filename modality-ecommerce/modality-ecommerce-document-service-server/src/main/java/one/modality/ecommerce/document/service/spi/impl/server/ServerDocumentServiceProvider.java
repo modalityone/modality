@@ -56,31 +56,31 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
             // 0 - Loading document
-            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request,personCarer1Name, personCarer1Document, personCarer2Name, personCarer2Document from Document where id=? order by id", docPk),
+            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request,personCarer1Name, personCarer1Document, personCarer2Name, personCarer2Document from Document where id=$1 order by id", docPk),
             // 1 - Loading document lines
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
                                  ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
                                  ",share_mate,share_mate_ownerName,share_mate_ownerDocumentLine,share_mate_ownerPerson" +
                                  ",resourceConfiguration,allocate" +
-                                 " from DocumentLine where document=? and site!=null order by id", docPk),
+                                 " from DocumentLine where document=$1 and site!=null order by id", docPk),
             // 2 - Loading attendances
-            new EntityStoreQuery("select documentLine,scheduledItem,date from Attendance where documentLine.document=? order by id", docPk),
+            new EntityStoreQuery("select documentLine,scheduledItem,date from Attendance where documentLine.document=$1 order by id", docPk),
             // 3 - Loading money transfers
-            new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=? order by id", docPk)
+            new EntityStoreQuery("select document,amount,pending,successful from MoneyTransfer where document=$1 order by id", docPk)
         };
         boolean personProvided = argument.personPrimaryKey() != null;
         boolean accountProvided = argument.accountPrimaryKey() != null;
         if (personProvided || accountProvided) {
-            String queryReplacement = " in (select Document where !cancelled and (%field%=? and event=?) order by id desc %limit%)"
+            String queryReplacement = " in (select Document where !cancelled and (%field%=$1 and event=$2) order by id desc %limit%)"
                 .replace("%field%", personProvided ? "person" : "person.frontendAccount")
                 .replace("%limit%", limitTo1 ? "limit 1" : "");
             Object[] queryArguments = {personProvided ? argument.personPrimaryKey() : argument.accountPrimaryKey(), argument.eventPrimaryKey()};
             if (docPk != null) {
-                queryReplacement = queryReplacement.replace(") order by", " or id=?) order by");
+                queryReplacement = queryReplacement.replace(") order by", " or id=$2) order by");
                 queryArguments = Arrays.add(Object[]::new, queryArguments, docPk);
             }
             for (int i = 0; i < queries.length; i++) {
-                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=?", queryReplacement), queryArguments);
+                queries[i] = new EntityStoreQuery(queries[i].getSelect().replace("=$1", queryReplacement), queryArguments);
             }
         }
         return EntityStore.create()
@@ -138,11 +138,11 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
     }
 
     private Future<DocumentAggregate> loadDocumentFromHistory(LoadDocumentArgument argument) {
-        String select = "select changes from History where document=? and id<=? order by id";
+        String select = "select changes from History where document=$1 and id<=$2 order by id";
         Object[] parameters = {argument.documentPrimaryKey(), argument.historyPrimaryKey()};
         if (parameters[0] == null) {
             parameters = new Object[]{argument.personPrimaryKey(), argument.eventPrimaryKey(), argument.historyPrimaryKey()};
-            select = select.replace("document=?", "document=(select Document where person=? and event=? and !cancelled order by id desc limit 1)");
+            select = select.replace("document=$1 and id<=$2", "document=(select Document where person=$1 and event=$2 and !cancelled order by id desc limit 1) and id<=$3");
         }
         return EntityStore.create()
             .<History>executeQuery(select, parameters)

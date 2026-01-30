@@ -137,7 +137,7 @@ public final class HouseholdGanttDataLoader {
             .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,comment,event.id,resource.(id,name,cleaningState,lastCleaningDate,lastInspectionDate,buildingZone.name,kbs2ToKbs3GlobalResource.id),item.(name,ord,family.name),max', orderBy: 'item.ord,item.name,name'}")
             // Filter by organization and optional site ID
             // Only get current configurations (no end date or future configs)
-            .always(pm.organizationIdProperty(), org -> where("resource.site.organization=? and resource.site=? and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER))
+            .always(pm.organizationIdProperty(), org -> where("resource.site.organization=$1 and resource.site=$2 and (endDate is null or endDate >= current_date())", org, SITE_ID_FILTER))
             .storeEntitiesInto(resourceConfigurations)
             .start();
     }
@@ -166,7 +166,7 @@ public final class HouseholdGanttDataLoader {
                 "where: '!cancelled and !document.cancelled and resourceConfiguration is not null'}")
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
-                where("document.event.organization=?", org))
+                where("document.event.organization=$1", org))
             // Filter by date range - bookings that overlap with the time window
             // A booking overlaps if: startDate <= windowEnd AND endDate >= windowStart
             .always(pm.timeWindowStartProperty(), start -> {
@@ -177,7 +177,7 @@ public final class HouseholdGanttDataLoader {
                 }
 
                 // Include bookings that overlap with the time window
-                return where("dl.startDate <= ? and dl.endDate >= ?", end, start);
+                return where("dl.startDate <= $1 and dl.endDate >= $2", end, start);
             })
             .storeEntitiesInto(documentLines)
             .start();
@@ -199,7 +199,7 @@ public final class HouseholdGanttDataLoader {
                 "where: 'documentLine.hasAttendanceGap = true and !documentLine.cancelled and !documentLine.document.cancelled'}")
             // Filter by organization
             .always(pm.organizationIdProperty(), org ->
-                where("documentLine.document.event.organization=?", org))
+                where("documentLine.document.event.organization=$1", org))
             // Filter by date range - both booking overlap AND attendance date within window
             // This avoids loading all attendance records for long bookings
             .always(pm.timeWindowStartProperty(), start -> {
@@ -210,8 +210,8 @@ public final class HouseholdGanttDataLoader {
                 }
 
                 // Include only attendances within the time window for bookings that overlap
-                return where("documentLine.startDate <= ? and documentLine.endDate >= ? and a.date >= ? and a.date < ?",
-                        end, start, start, end);
+                return where("documentLine.startDate <= $1 and documentLine.endDate >= $2 and a.date >= $2 and a.date < $1",
+                        end, start);
             })
             .storeEntitiesInto(attendancesForGaps)
             .start();
@@ -242,7 +242,7 @@ public final class HouseholdGanttDataLoader {
                 "where: 'event is null'}")
             // Filter by organization via resource.site
             .always(pm.organizationIdProperty(), org ->
-                where("resource.site.organization=?", org))
+                where("resource.site.organization=$1", org))
             .storeEntitiesInto(poolAllocations)
             .start();
     }

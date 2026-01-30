@@ -59,7 +59,7 @@ public final class ResourceConfigurationLoader {
                     .always(where("endDate is null or !exists(select ResourceConfiguration where resource=rc.resource and startDate > rc.endDate)"))
                     .always(orderBy("item.ord,name"))
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=$1 and event=null)", o))
                     // Restricting events to those appearing in the time window // TODO: looks like not implemented?
                     .storeEntitiesInto(resourceConfigurations)
                     .setResultCacheEntry("modality/hotel/accommodation/resource-configurations")

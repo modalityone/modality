@@ -18,7 +18,6 @@ import one.modality.hotel.backoffice.activities.reception.ReceptionPresentationM
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
 
@@ -352,10 +351,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -363,7 +362,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and !d.arrived and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate=? and !dl.cancelled)", t))
+                              "and dl.startDate=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/arriving")
                 .start();
@@ -379,10 +378,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -390,7 +389,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.endDate=? and !dl.cancelled)", t))
+                              "and dl.endDate=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/departing")
                 .start();
@@ -406,10 +405,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -417,7 +416,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)", t, t))
+                              "and dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/inhouse")
                 .start();
@@ -433,10 +432,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -444,7 +443,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and !d.arrived and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<? and dl.startDate>=? and !dl.cancelled)",
+                              "and dl.startDate<$1 and dl.startDate>=$2 and !dl.cancelled)",
                               t, t.minusDays(7)))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/noshows")
@@ -461,10 +460,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -472,7 +471,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.endDate>=? and dl.endDate<=? and !dl.cancelled " +
+                              "and dl.endDate>=$1 and dl.endDate<=$2 and !dl.cancelled " +
                               "and dl.resourceConfiguration is not null)",
                               t.minusDays(1), t))
                 .storeEntitiesInto(currentTabDocuments)
@@ -492,10 +491,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -503,7 +502,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and d.price_net>0 and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)", t, t))
+                              "and dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/unpaid")
                 .start();
@@ -520,10 +519,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -531,7 +530,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)",
+                              "and dl.startDate<=$1 and dl.endDate>=$2 and !dl.cancelled)",
                               t.plusDays(7), t.minusDays(1)))
                 .storeEntitiesInto(currentTabDocuments)
                 .setResultCacheEntry("modality/hotel/reception/all")
@@ -548,17 +547,17 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and !d.arrived and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate=? and !dl.cancelled)", t))
+                              "and dl.startDate=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(arrivingDocuments)
                 .setResultCacheEntry("modality/hotel/reception/arriving-upfront")
                 .start();
@@ -570,10 +569,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -581,7 +580,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.endDate=? and !dl.cancelled)", t))
+                              "and dl.endDate=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(departingDocuments)
                 .setResultCacheEntry("modality/hotel/reception/departing-upfront")
                 .start();
@@ -593,10 +592,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -604,7 +603,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)", t, t))
+                              "and dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(inHouseDocuments)
                 .setResultCacheEntry("modality/hotel/reception/inhouse-upfront")
                 .start();
@@ -616,17 +615,17 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and !d.arrived and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<? and dl.startDate>=? and !dl.cancelled)",
+                              "and dl.startDate<$1 and dl.startDate>=$2 and !dl.cancelled)",
                               t, t.minusDays(7)))
                 .storeEntitiesInto(noShowsDocuments)
                 .setResultCacheEntry("modality/hotel/reception/noshows-upfront")
@@ -639,10 +638,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -650,7 +649,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and d.checkedOut and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.endDate>=? and dl.endDate<=? and !dl.cancelled " +
+                              "and dl.endDate>=$1 and dl.endDate<=$2 and !dl.cancelled " +
                               "and dl.resourceConfiguration is not null)",
                               t.minusDays(1), t))
                 .storeEntitiesInto(checkedOutDocuments)
@@ -664,10 +663,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
@@ -675,7 +674,7 @@ public final class ReceptionDataLoader {
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and d.arrived and !d.checkedOut and d.price_net>0 and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)", t, t))
+                              "and dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(unpaidDocuments)
                 .setResultCacheEntry("modality/hotel/reception/unpaid-upfront")
                 .start();
@@ -688,17 +687,17 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<Document>createPushReactiveChain(mixin)
                 .always("{class: 'Document', alias: 'd', fields: '" + DOCUMENT_LIST_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("d.event.organization=?", org))
+                        where("d.event.organization=$1", org))
                 .ifNotNull(pm.eventFilterProperty(), eventFilter -> {
                     if (eventFilter instanceof one.modality.base.shared.entities.Event) {
-                        return where("d.event=?", eventFilter);
+                        return where("d.event=$1", eventFilter);
                     }
                     return null;
                 })
                 .always(FXToday.todayProperty(), t ->
                         where("!d.cancelled and exists(" +
                               "select 1 from DocumentLine dl where dl.document=d " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)",
+                              "and dl.startDate<=$1 and dl.endDate>=$2 and !dl.cancelled)",
                               t.plusDays(7), t.minusDays(1)))
                 .storeEntitiesInto(allDocuments)
                 .setResultCacheEntry("modality/hotel/reception/all-upfront")
@@ -714,9 +713,9 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.startDate<=? and dl.endDate>=? and !dl.cancelled " +
+                        where("dl.startDate<=$1 and dl.endDate>=$2 and !dl.cancelled " +
                               "and !dl.document.cancelled and dl.resourceConfiguration is not null",
                               t.plusDays(7), t.minusDays(7)))
                 .storeEntitiesInto(documentLines)
@@ -732,10 +731,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t -> {
                     String dateField = isArrival ? "dl.startDate" : "dl.endDate";
-                    return where(dateField + "=? and !dl.cancelled and !dl.document.cancelled " +
+                    return where(dateField + "=$1 and !dl.cancelled and !dl.document.cancelled " +
                                 "and dl.resourceConfiguration is not null", t);
                 })
                 .storeEntitiesInto(documentLines)
@@ -747,11 +746,11 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.startDate<=? and dl.endDate>=? and !dl.cancelled " +
+                        where("dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled " +
                               "and !dl.document.cancelled and dl.document.arrived and !dl.document.checkedOut " +
-                              "and dl.resourceConfiguration is not null", t, t))
+                              "and dl.resourceConfiguration is not null", t))
                 .storeEntitiesInto(documentLines)
                 .setResultCacheEntry("modality/hotel/reception/lines-inhouse")
                 .start();
@@ -761,9 +760,9 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.startDate<? and dl.startDate>=? and !dl.cancelled " +
+                        where("dl.startDate<$1 and dl.startDate>=$2 and !dl.cancelled " +
                               "and !dl.document.cancelled and !dl.document.arrived " +
                               "and dl.resourceConfiguration is not null", t, t.minusDays(7)))
                 .storeEntitiesInto(documentLines)
@@ -775,9 +774,9 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.endDate>=? and dl.endDate<=? and !dl.cancelled " +
+                        where("dl.endDate>=$1 and dl.endDate<=$2 and !dl.cancelled " +
                               "and !dl.document.cancelled and dl.document.arrived and dl.document.checkedOut " +
                               "and dl.resourceConfiguration is not null", t.minusDays(1), t))
                 .storeEntitiesInto(documentLines)
@@ -789,11 +788,11 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.startDate<=? and dl.endDate>=? and !dl.cancelled " +
+                        where("dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled " +
                               "and !dl.document.cancelled and dl.document.arrived and !dl.document.checkedOut " +
-                              "and dl.resourceConfiguration is not null", t, t))
+                              "and dl.resourceConfiguration is not null", t))
                 .storeEntitiesInto(documentLines)
                 .setResultCacheEntry("modality/hotel/reception/lines-unpaid")
                 .start();
@@ -803,9 +802,9 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<DocumentLine>createPushReactiveChain(mixin)
                 .always("{class: 'DocumentLine', alias: 'dl', fields: '" + DOCUMENT_LINE_FIELDS + "'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("dl.document.event.organization=?", org))
+                        where("dl.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), t ->
-                        where("dl.startDate<=? and dl.endDate>=? and !dl.cancelled " +
+                        where("dl.startDate<=$1 and dl.endDate>=$2 and !dl.cancelled " +
                               "and !dl.document.cancelled and dl.resourceConfiguration is not null",
                               t.plusDays(7), t.minusDays(1)))
                 .storeEntitiesInto(documentLines)
@@ -823,10 +822,10 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<MoneyTransfer>createPushReactiveChain(mixin)
                 .always("{class: 'MoneyTransfer', alias: 'mt', fields: 'document,amount'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("mt.document.event.organization=?", org))
+                        where("mt.document.event.organization=$", org))
                 .always(FXToday.todayProperty(), t ->
                         where("mt.document.arrived and exists(select 1 from DocumentLine dl where dl.document=mt.document " +
-                              "and dl.startDate<=? and dl.endDate>=? and !dl.cancelled)", t, t))
+                              "and dl.startDate<=$1 and dl.endDate>=$1 and !dl.cancelled)", t))
                 .storeEntitiesInto(transfers)
                 .setResultCacheEntry("modality/hotel/reception/transfers-unpaid")
                 .start();
@@ -859,9 +858,9 @@ public final class ReceptionDataLoader {
         ReactiveEntitiesMapper.<MoneyTransfer>createPushReactiveChain(mixin)
                 .always("{class: 'MoneyTransfer', alias: 'mt', fields: 'document,amount,method,date'}")
                 .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), org ->
-                        where("mt.document.event.organization=?", org))
+                        where("mt.document.event.organization=$1", org))
                 .always(FXToday.todayProperty(), today ->
-                        where("mt.date>=? and mt.date<?", today.atStartOfDay(), today.plusDays(1).atStartOfDay()))
+                        where("mt.date>=$1 and mt.date<$2", today.atStartOfDay(), today.plusDays(1).atStartOfDay()))
                 .storeEntitiesInto(todayTransfers)
                 .setResultCacheEntry("modality/hotel/reception/today-transfers")
                 .start();

@@ -13,14 +13,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,9 +22,7 @@ import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.ResourceConfiguration;
 import one.modality.hotel.backoffice.activities.reception.i18n.ReceptionI18nKeys;
-import one.modality.hotel.backoffice.activities.reception.util.ReceptionColors;
 import one.modality.hotel.backoffice.activities.reception.util.ReceptionStyles;
 
 import java.time.LocalDate;
@@ -149,7 +140,7 @@ public class NewBookingModal implements ReceptionDialogManager.ManagedDialog {
 
     private void loadEvents() {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
-        entityStore.executeQuery("select id,name,startDate,endDate from Event where organization=? and endDate>=? order by startDate",
+        entityStore.executeQuery("select id,name,startDate,endDate from Event where organization=$1 and endDate>=$2 order by startDate",
                         organizationId, LocalDate.now())
                 .onSuccess(list -> {
                     events.clear();

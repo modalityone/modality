@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.activities.reception.modal;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.util.dialog.DialogCallback;
 import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
@@ -14,22 +13,13 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.MoneyTransfer;
-import one.modality.base.shared.entities.Person;
+import one.modality.base.shared.entities.*;
 import one.modality.hotel.backoffice.activities.reception.i18n.ReceptionI18nKeys;
 import one.modality.hotel.backoffice.activities.reception.util.ReceptionStyles;
 
@@ -131,7 +121,7 @@ public class BookMealsModal implements ReceptionDialogManager.ManagedDialog {
     private void loadMealItems() {
         EntityStore entityStore = EntityStore.create(dataSourceModel);
         entityStore.executeQuery(
-                        "select id,name,code from Item where family.code='meals' and organization=? order by name",
+                        "select id,name,code from Item where family.code='meals' and organization=$1 order by name",
                         organizationId)
                 .onSuccess(list -> {
                     for (Object obj : list) {

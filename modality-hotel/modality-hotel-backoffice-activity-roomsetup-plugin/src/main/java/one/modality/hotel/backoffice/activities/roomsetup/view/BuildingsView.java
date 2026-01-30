@@ -610,7 +610,7 @@ public class BuildingsView {
         if (orgId == null) return;
 
         EntityStore entityStore = EntityStore.create(dataSourceModel);
-        entityStore.<Organization>executeQuery("select globalSite from Organization where id=?", orgId)
+        entityStore.<Organization>executeQuery("select globalSite from Organization where id=$1", orgId)
                 .onSuccess(organizations -> {
                     Platform.runLater(() -> {
                         if (!organizations.isEmpty()) {
@@ -642,7 +642,7 @@ public class BuildingsView {
             buildingRem = ReactiveEntitiesMapper.<Building>createPushReactiveChain(mixin)
                     .always("{class: 'Building', fields: 'name,site'}")
                     .always(orderBy("name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("site.organization=$1", o))
                     .storeEntitiesInto(buildings)
                     .addEntitiesHandler(entities -> {
                         // Force UI update when entities are received (after refresh)
@@ -655,7 +655,7 @@ public class BuildingsView {
             buildingZoneRem = ReactiveEntitiesMapper.<BuildingZone>createPushReactiveChain(mixin)
                     .always("{class: 'BuildingZone', fields: 'name,building.name,building.site'}")
                     .always(orderBy("building.name,name"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("building.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("building.site.organization=$1", o))
                     .storeEntitiesInto(buildingZones)
                     .addEntitiesHandler(entities -> {
                         // Force UI update when entities are received (after refresh)
@@ -668,7 +668,7 @@ public class BuildingsView {
             resourceConfigRem = ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
                     .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'resource.name,resource.site,resource.building,resource.buildingZone'}")
                     .always(where("startDate is null and endDate is null"))
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.organization=$1", o))
                     .storeEntitiesInto(resourceConfigurations)
                     .addEntitiesHandler(entities -> {
                         // Force UI update when entities are received (after refresh)

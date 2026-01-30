@@ -186,7 +186,7 @@ final class ProgramStep1View {
         itemSelector = new EntityButtonSelector<Item>( // language=JSON5
             "{class: 'Item', alias: 's', where: 'family.code=`teach`', orderBy :'name'}",
             buttonFactory, FXMainFrameDialogArea::getDialogArea, programModel.getEntityStore().getDataSourceModel())
-            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o));
+            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o));
         Button itemSelectorButton = itemSelector.getButton();
         itemSelectorButton.setMinWidth(250);
         itemSelectorButton.setPadding(new Insets(12, 16, 12, 16));
