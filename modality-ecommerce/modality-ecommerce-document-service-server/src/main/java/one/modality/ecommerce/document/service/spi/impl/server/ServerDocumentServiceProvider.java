@@ -56,7 +56,7 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
         Object docPk = argument.documentPrimaryKey();
         EntityStoreQuery[] queries = {
             // 0 - Loading document
-            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request from Document where id=? order by id", docPk),
+            new EntityStoreQuery("select event,person,ref,person_lang,person_firstName,person_lastName,person_email,person_facilityFee,request,personCarer1Name, personCarer1Document, personCarer2Name, personCarer2Document from Document where id=? order by id", docPk),
             // 1 - Loading document lines
             new EntityStoreQuery("select document,site,item,price_net,price_minDeposit,price_custom,price_discount" +
                                  ",share_owner,share_owner_mate1Name,share_owner_mate2Name,share_owner_mate3Name,share_owner_mate4Name,share_owner_mate5Name,share_owner_mate6Name,share_owner_mate7Name" +
@@ -96,6 +96,8 @@ public class ServerDocumentServiceProvider implements DocumentServiceProvider {
                         documentEvents.add(new ApplyFacilityFeeEvent(document, true));
                     if (!Strings.isBlank(document.getRequest()))
                         documentEvents.add(new AddRequestEvent(document, document.getRequest()));
+                    if (!Strings.isBlank(document.getCarer1Name()) || !Strings.isBlank(document.getCarer2Name()) || document.getCarer1Document() != null || document.getCarer2Document() != null)
+                        documentEvents.add(new EditCarersInfoEvent(document, document.getCarer1Name(), document.getCarer1Document(), document.getCarer2Name(), document.getCarer2Document()));
                 });
                 // Aggregating document lines by adding AddDocumentLineEvent and PriceDocumentLineEvent for each document
                 ((List<DocumentLine>) entityLists[1]).forEach(documentLine -> {

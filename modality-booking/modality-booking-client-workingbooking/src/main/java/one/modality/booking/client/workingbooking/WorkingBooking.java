@@ -407,6 +407,11 @@ public final class WorkingBooking {
         lastestDocumentAggregate = null;
     }
 
+    public void setCarersInfo(String carer1Name, Document carer1Document, String carer2Name, Document carer2Document) {
+        integrateNewDocumentEvent(new EditCarersInfoEvent(document, carer1Name, carer1Document, carer2Name, carer2Document), true);
+        lastestDocumentAggregate = null;
+    }
+
     public void applyFacilityFeeRate(boolean apply) {
         integrateNewDocumentEvent(new ApplyFacilityFeeEvent(document, apply), true);
     }

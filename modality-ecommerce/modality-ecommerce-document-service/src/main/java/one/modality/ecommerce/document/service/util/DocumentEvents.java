@@ -62,6 +62,10 @@ public final class DocumentEvents {
             return simplifyEditShareMateInfoDocumentLineEvent(event, documentEvents);
         }
 
+        if (e instanceof EditCarersInfoEvent event) {
+            return simplifyEditCarersInfoEvent(event, documentEvents);
+        }
+
         return e;
     }
 
@@ -256,6 +260,12 @@ public final class DocumentEvents {
     private static AbstractDocumentEvent simplifyEditShareMateInfoDocumentLineEvent(EditShareMateInfoDocumentLineEvent event, List<AbstractDocumentEvent> documentEvents) {
         // This new event will override all previous events of the same type, so we can get rid of those
         documentEvents.removeIf(e -> e instanceof EditShareMateInfoDocumentLineEvent);
+        return event;
+    }
+
+    private static AbstractDocumentEvent simplifyEditCarersInfoEvent(EditCarersInfoEvent event, List<AbstractDocumentEvent> documentEvents) {
+        // This new event will override all previous events of the same type, so we can get rid of those
+        documentEvents.removeIf(e -> e instanceof EditCarersInfoEvent);
         return event;
     }
 

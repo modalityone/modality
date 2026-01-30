@@ -15,7 +15,7 @@ public interface Document extends
     EntityHasPerson,
     EntityHasPersonalDetailsCopy {
     String ref = "ref";
-    String person_lang = "person_lang";
+    String personLang = "person_lang";
     String cart = "cart";
     String priceNet = "price_net";
     String priceDeposit = "price_deposit";
@@ -32,6 +32,8 @@ public interface Document extends
     String checkedOut = "checkedOut";
     String groupDocument = "groupDocument";
     String inPerson = "inPerson";
+    String carer1Document = "person_carer1Document";
+    String carer2Document = "person_carer2Document";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -42,11 +44,11 @@ public interface Document extends
     }
 
     default void setPersonLang(String value) {
-        setFieldValue(person_lang, value);
+        setFieldValue(personLang, value);
     }
 
     default String getPersonLang() {
-        return getStringFieldValue(person_lang);
+        return getStringFieldValue(personLang);
     }
 
     default void setCart(Object value) {
@@ -183,6 +185,30 @@ public interface Document extends
 
     default void setInPerson(Boolean value) {
         setFieldValue(inPerson, value);
+    }
+
+    default Document getCarer1Document() {
+        return getForeignEntity(carer1Document);
+    }
+
+    default EntityId getCarer1DocumentId() {
+        return getForeignEntityId(carer1Document);
+    }
+
+    default void setCarer1Document(Object value) {
+        setForeignField(carer1Document, value);
+    }
+
+    default Document getCarer2Document() {
+        return getForeignEntity(carer2Document);
+    }
+
+    default EntityId getCarer2DocumentId() {
+        return getForeignEntityId(carer2Document);
+    }
+
+    default void setCarer2Document(Object value) {
+        setForeignField(carer2Document, value);
     }
 
 }

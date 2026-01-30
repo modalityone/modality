@@ -68,7 +68,7 @@ final class DocumentSubmitController {
         if (isTheOnlyRequest && eventQueue.isReady() && !eventQueue.isProcessing()) {
             Console.log("Executing immediately request token = " + request.queueToken() + " from client runId = " + request.runId());
             eventQueue.setProcessingRequest(request); // We inform the queue we process the request now
-            return processRequest(request, eventQueue); // We process it (this will also remove it from the queue and eventually process the next one)
+            return processRequest(request, eventQueue, false); // We process it (this will also remove it from the queue and eventually process the next one)
         }
 
         Console.log("Enqueued request token = " + request.queueToken() + " from client runId = " + request.runId());
@@ -76,20 +76,16 @@ final class DocumentSubmitController {
         return Future.succeededFuture(SubmitDocumentChangesResult.createEnqueuedResult(request.queueToken()));
     }
 
-    private static Future<SubmitDocumentChangesResult> processRequest(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
+    static Future<SubmitDocumentChangesResult> processRequest(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue, boolean pushResult) {
         return ServerDocumentServiceProvider.submitDocumentChangesNow(request)
             // And once processed, we inform the queue the request can be removed
-            .onComplete(ar -> eventQueue.removedProcessedRequest(request));
-    }
-
-    static void processRequestAndNotifyClient(DocumentSubmitRequest request, DocumentSubmitEventQueue eventQueue) {
-        Console.log("Processing enqueue request token = " + request.queueToken() + " from client runId = " + request.runId());
-        processRequest(request, eventQueue)
             .onComplete(ar -> {
-                SubmitDocumentChangesResult result = ar.succeeded() ? SubmitDocumentChangesResult.withQueueToken(ar.result(), request.queueToken()) :
+                SubmitDocumentChangesResult result =
+                    !pushResult ? null :
+                    ar.succeeded() ? SubmitDocumentChangesResult.withQueueToken(ar.result(), request.queueToken()) :
                     // Special result when a technical exception is raised
                     SubmitDocumentChangesResult.technicalErrorResult(ar.cause().getMessage(), request.queueToken());
-                notifyClient(request, result, 30);
+                eventQueue.removedProcessedRequest(request, result);
             });
     }
 

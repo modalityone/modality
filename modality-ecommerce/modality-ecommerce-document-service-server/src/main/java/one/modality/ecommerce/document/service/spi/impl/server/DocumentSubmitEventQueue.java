@@ -87,7 +87,7 @@ final class DocumentSubmitEventQueue {
         if (isReady() && !isProcessing()) {
             DocumentSubmitRequest nextRequest = pollProcessingRequest();
             if (nextRequest != null) {
-                DocumentSubmitController.processRequestAndNotifyClient(nextRequest, this);
+                DocumentSubmitController.processRequest(nextRequest, this, true);
             } else {
                 DocumentSubmitController.releaseEventQueue(this);
                 log("Released after processing " + processedRequests + " request(s)");
@@ -95,12 +95,12 @@ final class DocumentSubmitEventQueue {
         }
     }
 
-    public void removedProcessedRequest(DocumentSubmitRequest processedRequest) {
+    public void removedProcessedRequest(DocumentSubmitRequest request, SubmitDocumentChangesResult result) {
         processedRequests++;
-        removeRequest(processedRequest);
-        publishProgress();
-        if (this.processingRequest == processedRequest) {
-            this.processingRequest = null;
+        removeRequest(request);
+        publishProgressAndResult(request, result);
+        if (processingRequest == request) {
+            processingRequest = null;
             processNextRequestIfReadyAndNotProcessing();
         }
     }
@@ -114,6 +114,10 @@ final class DocumentSubmitEventQueue {
     }
 
     void publishProgress() {
+        publishProgressAndResult(null, null);
+    }
+
+    void publishProgressAndResult(DocumentSubmitRequest request, SubmitDocumentChangesResult result) {
         int remainingRequests = queue.size();
         int totalRequests = processedRequests + remainingRequests;
         log("Processed " + processedRequests + " request(s) over " + totalRequests + " (" + remainingRequests + " remaining)");
@@ -128,6 +132,8 @@ final class DocumentSubmitEventQueue {
                 .addFieldChange(event, Event.queueProgress, processedRequests + "/" + totalRequests)
                 .build()
         );
+        if (request != null && result != null)
+            DocumentSubmitController.notifyClient(request, result, 30);
     }
 
     static Future<Object> pushResultToClient(SubmitDocumentChangesResult result, Object clientRunId) {
