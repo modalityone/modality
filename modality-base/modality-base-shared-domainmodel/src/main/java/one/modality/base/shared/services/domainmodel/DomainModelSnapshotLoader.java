@@ -50,10 +50,10 @@ final class DomainModelSnapshotLoader {
             new AbcNames("alphaSearch").register();
             new Function("interpret_brackets", PrimType.STRING).register();
             new Function("compute_dates").register();
-            new InlineFunction("searchMatchesDocument", "d", new Type[]{new DomainClassType("Document")}, "d..ref=?searchInteger or d..person_abcNames like ?abcSearchLike or d..person_email like ?searchEmailLike", "Document", domainModel.getParserDomainModelReader()).register();
-            new InlineFunction("searchMatchesPerson", "p", new Type[]{new DomainClassType("Person")}, "abcNames(p..fullName) like ?abcSearchLike or p..email like ?searchEmailLike", "Person", domainModel.getParserDomainModelReader()).register();
-            new InlineFunction("accountCanAccessPersonMedias", "a,p", new Type[]{new ObjectType(Object.class), new DomainClassType("Person")}, "p..frontendAccount=a and p..accountPerson=null or p..accountPerson..frontendAccount=a", "Person", domainModel.getParserDomainModelReader()).register();
-            new InlineFunction("accountCanAccessPersonOrders", "a,p", new Type[]{new ObjectType(Object.class), new DomainClassType("Person")}, "p..frontendAccount=a or p..accountPerson..frontendAccount=a", "Person", domainModel.getParserDomainModelReader()).register();
+            new InlineFunction("searchMatchesDocument", "d", new Type[]{new DomainClassType("Document")}, "d?.ref=?searchInteger or d?.person_abcNames like ?abcSearchLike or d?.person_email like ?searchEmailLike", "Document", domainModel.getParserDomainModelReader()).register();
+            new InlineFunction("searchMatchesPerson", "p", new Type[]{new DomainClassType("Person")}, "abcNames(p?.fullName) like ?abcSearchLike or p?.email like ?searchEmailLike", "Person", domainModel.getParserDomainModelReader()).register();
+            new InlineFunction("accountCanAccessPersonMedias", "a,p", new Type[]{new ObjectType(Object.class), new DomainClassType("Person")}, "p?.frontendAccount=a and p?.accountPerson=null or p?.accountPerson?.frontendAccount=a", "Person", domainModel.getParserDomainModelReader()).register();
+            new InlineFunction("accountCanAccessPersonOrders", "a,p", new Type[]{new ObjectType(Object.class), new DomainClassType("Person")}, "p?.frontendAccount=a or p?.accountPerson?.frontendAccount=a", "Person", domainModel.getParserDomainModelReader()).register();
             return domainModel;
         } catch (Exception e) {
             e.printStackTrace();

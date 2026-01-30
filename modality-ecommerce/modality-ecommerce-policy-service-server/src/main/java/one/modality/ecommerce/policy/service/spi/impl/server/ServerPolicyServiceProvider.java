@@ -99,7 +99,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                         "      or si.event=null and si.site = e.venue and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
                         // excluding accommodation items with no resource allocated to the general guest pool for this event
                         " and (si.item.family.code!='acco' or exists(select ScheduledResource sr where scheduledItem=si and exists(select PoolAllocation where resource=sr.configuration.resource and pool= " + GENERAL_GUESTS_EVENT_POOL_ID + " and event=$1)))" +
-                        " order by site..ord,item..ord,date", eventPk)
+                        " order by site?.ord,item?.ord,date", eventPk)
                     // 2 - Loading scheduled boundaries (of this event or of the repeated event if set)
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     SCHEDULED_BOUNDARIES_QUERY_BASE + " where (select sb.event = coalesce(e.repeatedEvent, e) from Event e where id=$1)" +
@@ -124,7 +124,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_FAMILY_POLICIES_QUERY_BASE + " where (select ifp.scope.(" +
                     " organization = e.organization" +
-                    " and (site = null or site..event = null or site..event = coalesce(e.repeatedEvent, e))" +
+                    " and (site = null or site?.event = null or site?.event = coalesce(e.repeatedEvent, e))" +
                     " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
@@ -133,7 +133,7 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
                     , DqlQueries.newQueryArgumentForDefaultDataSource(
                     ITEM_POLICIES_QUERY_BASE + " where (select ip.scope.(" +
                     " organization = e.organization" +
-                    " and (site = null or site..event = null or site..event = coalesce(e.repeatedEvent, e))" +
+                    " and (site = null or site?.event = null or site?.event = coalesce(e.repeatedEvent, e))" +
                     " and (eventType = null or eventType = coalesce(e.repeatedEvent.type, e.type))" +
                     " and (event = null or event = coalesce(e.repeatedEvent, e))" +
                     " ) from Event e where id=$1)" +
@@ -172,8 +172,8 @@ public final class ServerPolicyServiceProvider implements PolicyServiceProvider 
     public Future<QueryResult> loadAvailabilities(LoadPolicyArgument argument) {
         return QueryService.executeQuery(
             DqlQueries.newQueryArgumentForDefaultDataSource(
-                SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline..site..organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
-                " order by site..ord,item..ord,date", argument.getEventPk())
+                SCHEDULED_ITEMS_QUERY_BASE + " where bookableScheduledItem=id and (select si.event = coalesce(e.repeatedEvent, e) or si.event=null and si.timeline?.site?.organization = e.organization and (si.date >= e.startDate and si.date <= e.endDate or exists(select EventPart ep where ep.event=e and si.date>=coalesce(ep.startBoundary.date, ep.startBoundary.scheduledItem.date) and si.date<=coalesce(ep.endBoundary.date, ep.endBoundary.scheduledItem.date))) from Event e where id=$1)" +
+                " order by site?.ord,item?.ord,date", argument.getEventPk())
         );
     }
 }

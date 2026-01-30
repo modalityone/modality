@@ -344,7 +344,7 @@ public class AssignUserAndRoleToOrganizationDialog {
         }
             // Inline function doesn't work TODO: fix it
             //.setSearchCondition("searchMatchesPerson(p)")
-            .setSearchCondition("abcNames(p..fullName) like ?abcSearchLike or lower(p..email) like ?searchEmailLike");
+            .setSearchCondition("abcNames(p?.fullName) like ?abcSearchLike or lower(p?.email) like ?searchEmailLike");
     }
 
     /**

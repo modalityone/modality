@@ -152,7 +152,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                             and exists(select Attendance
                                                 where scheduledItem=si.bookableScheduledItem
                                                     and documentLine.(!cancelled and document.(accountCanAccessPersonMedias($1, person) and event=$5)))
-                                        order by date, startTime, programScheduledItem.timeline..startTime""",
+                                        order by date, startTime, programScheduledItem.timeline?.startTime""",
                                     userAccountId, eventIdContainingAudios, KnownItemFamily.AUDIO_RECORDING.getCode(), pathItemCodeProperty.get(), event),
                                 // Index 1: we look for the scheduledItem of audio type having a `bookableScheduledItem` which is a teaching type (case of STTP)
                                 // TODO: for now we take only the English audio recording scheduledItem in that case. We should take the default language of the organization instead
@@ -169,7 +169,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                         and exists(select Attendance
                                             where scheduledItem=si.bookableScheduledItem
                                                 and documentLine.(!cancelled and document.(accountCanAccessPersonMedias($1, person) and event=$5)))
-                                     order by date, startTime, programScheduledItem.timeline..startTime""",
+                                     order by date, startTime, programScheduledItem.timeline?.startTime""",
                                     userAccountId, eventIdContainingAudios, KnownItemFamily.TEACHING.getCode(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode(), event),
                                 // Index 2: the medias
                                 new EntityStoreQuery("""

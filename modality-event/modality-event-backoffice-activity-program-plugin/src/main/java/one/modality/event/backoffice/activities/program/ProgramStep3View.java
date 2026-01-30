@@ -811,10 +811,10 @@ final class ProgramStep3View {
         // Query: Get all program scheduled items
         entityStore.<ScheduledItem>executeQuery(
             "select name, label.(en,fr,es,pt,de,zhs,zht,el,vi), date, startTime, endTime, " +
-            "timeline..(startTime,endTime,item.name), item.name, cancelled, bookableScheduledItem " +
+            "timeline?.(startTime,endTime,item.name), item.name, cancelled, bookableScheduledItem " +
             "from ScheduledItem si " +
             "where event=? and item.family.code=? and bookableScheduledItem!=si " +
-            "order by date, coalesce(timeline..startTime, startTime)",
+            "order by date, coalesce(timeline?.startTime, startTime)",
             event, KnownItemFamily.TEACHING.getCode()
         )
         .inUiThread()

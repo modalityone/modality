@@ -56,7 +56,7 @@ public final class ModalityAuthorizationServerServiceProvider implements Authori
                 .map(operations -> grantOperations(operations, new StringBuilder()).toString()),
             // Loading operations and rules granted to the user
             entityStore.<AuthorizationOrganizationUserAccess>executeQuery(
-                    "select organization.id,event.id,role.id from AuthorizationOrganizationUserAccess where user.email=$1 order by organization.id,event..id", userEmail)
+                    "select organization.id,event.id,role.id from AuthorizationOrganizationUserAccess where user.email=$1 order by organization.id,event?.id", userEmail)
                 .compose(userAccesses -> {
                     int n = userAccesses.size();
                     return new Batch<>(userAccesses.toArray(new AuthorizationOrganizationUserAccess[n]))

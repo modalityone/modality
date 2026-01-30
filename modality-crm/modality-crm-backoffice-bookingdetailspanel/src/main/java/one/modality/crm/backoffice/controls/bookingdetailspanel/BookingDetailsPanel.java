@@ -131,7 +131,7 @@ public final class BookingDetailsPanel implements
         container.setCenter(new TabPane(
             createTab(BookingDetailsI18nKeys.PersonalDetailsTab, buildPersonalDetailsView()),
             createFilterTab(BookingDetailsI18nKeys.OptionsTab, // language=JSON5
-                "{class: 'DocumentLine', columns: 'site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit', where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
+                "{class: 'DocumentLine', columns: 'site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit', where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site?.ord,item.ord'}"),
             createFilterTab(BookingDetailsI18nKeys.PaymentsTab, // language=JSON5
                 "{class: 'MoneyTransfer', columns: 'date,method,transactionRef,comment,amount,verified', where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
             createTab(BookingDetailsI18nKeys.CommentsTab, buildCommentView()),

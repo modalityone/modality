@@ -173,7 +173,7 @@ final class AssignAdminToOrganizationDialog {
                 super.setSearchParameters(search, store);
                 store.setParameterValue("abcSearchLike", AbcNames.evaluate(search, true));
             }
-        }.setSearchCondition("abcNames(p..fullName) like ?abcSearchLike or lower(p..email) like ?searchEmailLike");
+        }.setSearchCondition("abcNames(p?.fullName) like ?abcSearchLike or lower(p?.email) like ?searchEmailLike");
 
         Button adminButton = adminSelector.getButton();
         adminButton.setMaxWidth(Double.MAX_VALUE);
