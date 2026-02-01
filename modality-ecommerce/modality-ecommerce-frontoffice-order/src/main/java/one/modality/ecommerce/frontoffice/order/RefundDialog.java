@@ -17,6 +17,8 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.shared.entities.Event;
 
+import static one.modality.ecommerce.frontoffice.order.OrderCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -60,7 +62,7 @@ final class RefundDialog extends BaseDialog {
         Label explanationLabel = I18nControls.newLabel(OrderI18nKeys.RefundExplanation);
         explanationLabel.setWrapText(true);
         explanationLabel.setTextAlignment(TextAlignment.CENTER);
-        explanationLabel.getStyleClass().add("thank-you-message");
+        explanationLabel.getStyleClass().add(thank_you_message);
         explanationLabel.setPadding(new Insets(0, 0, 20, 0));
 
         // Temple project link

@@ -37,6 +37,7 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
 
 final class RecurringEventAttendanceView {
 
@@ -133,7 +134,7 @@ final class RecurringEventAttendanceView {
 
             Label totalCountLabel = I18nControls.newLabel("Total {0}" /* ??? */, linesGrid.rowCountProperty());
             totalCountLabel.setPadding(new Insets(5, 0, 0, 0));
-            totalCountLabel.getStyleClass().add("booking-total-count");
+            totalCountLabel.getStyleClass().add(booking_total_count);
             boxesContainer.setBottom(totalCountLabel);
 
             ReactiveVisualMapper.<DocumentLine>createPushReactiveChain(activity)

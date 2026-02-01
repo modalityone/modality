@@ -15,6 +15,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.reception.ReceptionRouting$RouteToReceptionRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.hotel.backoffice.activities.reception.ReceptionI18nKeys"/>
+    <java-ui-api package="one.modality.hotel.backoffice.activities.reception" prefix="Reception">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

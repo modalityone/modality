@@ -1,26 +1,22 @@
 package one.modality.booking.frontoffice.bookingpage.navigation;
 
-import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
-import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
-import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
-
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.MonoPane;
-import dev.webfx.kit.util.properties.FXProperties;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.scene.input.MouseEvent;
-import javafx.event.EventHandler;
+import one.modality.booking.frontoffice.bookingpage.BookingFormHeader;
+import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
+import one.modality.booking.frontoffice.bookingpage.MultiPageBookingForm;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * @author Bruno Salmon
@@ -40,7 +36,7 @@ public class StepProgressHeader implements BookingFormHeader {
         HBox.setHgrow(stepsBox, Priority.ALWAYS);
 
         container.getChildren().addAll(progressLine, stepsBox);
-        container.getStyleClass().add("step-progress");
+        container.getStyleClass().add(step_progress);
         container.setPadding(new javafx.geometry.Insets(0, 0, 24, 0));
 
         // Progress line styling
@@ -99,12 +95,12 @@ public class StepProgressHeader implements BookingFormHeader {
     private Node createStepNode(int stepNumber, Object titleKey, int pageIndex) {
         VBox stepItem = new VBox(8);
         stepItem.setAlignment(Pos.TOP_CENTER);
-        stepItem.getStyleClass().add("step-progress-item");
+        stepItem.getStyleClass().add(step_progress_item);
         stepItem.setUserData(pageIndex); // Store the actual page index
 
         // Bubble - styling handled by CSS
         StackPane bubble = new StackPane();
-        bubble.getStyleClass().add("step-bubble");
+        bubble.getStyleClass().add(step_bubble);
         bubble.setPrefSize(40, 40);
         bubble.setMaxSize(40, 40);
         bubble.setMinSize(40, 40);
@@ -119,7 +115,7 @@ public class StepProgressHeader implements BookingFormHeader {
         // Label - styling handled by CSS
         Label label = new Label();
         I18nControls.bindI18nProperties(label, titleKey);
-        label.getStyleClass().add("step-progress-label");
+        label.getStyleClass().add(step_progress_label);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
@@ -187,14 +183,14 @@ public class StepProgressHeader implements BookingFormHeader {
                 boolean isCompleted = stepPageIndex < effectivePageIndex;
 
                 // Remove all state classes first
-                stepItem.getStyleClass().removeAll("active", "completed");
+                stepItem.getStyleClass().removeAll(active, completed);
 
                 if (isActive) {
-                    stepItem.getStyleClass().add("active");
+                    stepItem.getStyleClass().add(active);
                     // Reset text to number (in case it was a checkmark)
                     numberLabel.setText(String.valueOf(i + 1));
                 } else if (isCompleted) {
-                    stepItem.getStyleClass().add("completed");
+                    stepItem.getStyleClass().add(completed);
                     numberLabel.setText("✓");
                 } else {
                     // Pending state - ensure text shows step number

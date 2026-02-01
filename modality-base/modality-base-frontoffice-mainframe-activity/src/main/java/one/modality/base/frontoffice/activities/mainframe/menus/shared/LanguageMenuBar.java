@@ -12,6 +12,8 @@ import javafx.scene.layout.HBox;
 import one.modality.base.frontoffice.activities.mainframe.menus.MenuConfig;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 
+import static one.modality.base.frontoffice.activities.mainframe.MainFrameCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -34,7 +36,7 @@ public final class LanguageMenuBar {
         Layouts.setFixedHeight(languageSection, MenuConfig.LANG_MENU_HEIGHT);
         FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(languageSection);  // to fit like the mount node
         MonoPane collapsePane = new MonoPane(languageSection);
-        collapsePane.getStyleClass().setAll("menu-bar", "lang-menu-bar", "non-mobile");
+        collapsePane.getStyleClass().setAll(menu_bar, lang_menu_bar, non_mobile);
         return collapsePane;
     }
 }

@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Invitation;
 
+import static one.modality.crm.frontoffice.activities.members.MembersCssSelectors.*;
+
 /**
  * Activity that handles declining of member invitations via email link.
  * Route: /members/decline/:token
@@ -49,14 +51,14 @@ final class DeclineInvitationActivity extends ViewDomainActivityBase {
         messageLabel = new Label();
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(TextAlignment.CENTER);
-        messageLabel.getStyleClass().add("invitation-message");
+        messageLabel.getStyleClass().add(invitation_message);
         messageLabel.setPadding(new Insets(20, 0, 10, 0));
 
         // Details label
         detailsLabel = new Label();
         detailsLabel.setWrapText(true);
         detailsLabel.setTextAlignment(TextAlignment.CENTER);
-        detailsLabel.getStyleClass().add("invitation-details");
+        detailsLabel.getStyleClass().add(invitation_details);
         detailsLabel.setPadding(new Insets(10, 0, 30, 0));
 
         // Action button (optional - user might just close the page)
@@ -130,7 +132,7 @@ final class DeclineInvitationActivity extends ViewDomainActivityBase {
 
     private void showLoading() {
         I18n.bindI18nProperties(messageLabel, MembersI18nKeys.ProcessingRequest);
-        messageLabel.getStyleClass().setAll("invitation-message", "text-muted");
+        messageLabel.getStyleClass().setAll(invitation_message, text_muted);
         detailsLabel.setText("");
         actionButton.setVisible(false);
         actionButton.setManaged(false);
@@ -138,18 +140,18 @@ final class DeclineInvitationActivity extends ViewDomainActivityBase {
 
     private void showSuccess() {
         I18n.bindI18nProperties(messageLabel, MembersI18nKeys.DeclineSuccessTitle);
-        messageLabel.getStyleClass().setAll("invitation-message", "text-success");
+        messageLabel.getStyleClass().setAll(invitation_message, text_success);
         I18n.bindI18nProperties(detailsLabel, MembersI18nKeys.DeclineSuccessDescription);
-        detailsLabel.getStyleClass().setAll("invitation-details", "text-muted");
+        detailsLabel.getStyleClass().setAll(invitation_details, text_muted);
         actionButton.setVisible(true);
         actionButton.setManaged(true);
     }
 
     private void showError(Object titleKey, Object detailsKey) {
         I18n.bindI18nProperties(messageLabel, titleKey);
-        messageLabel.getStyleClass().setAll("invitation-message", "text-danger");
+        messageLabel.getStyleClass().setAll(invitation_message, text_danger);
         I18n.bindI18nProperties(detailsLabel, detailsKey);
-        detailsLabel.getStyleClass().setAll("invitation-details", "text-muted");
+        detailsLabel.getStyleClass().setAll(invitation_details, text_muted);
         actionButton.setVisible(true);
         actionButton.setManaged(true);
     }

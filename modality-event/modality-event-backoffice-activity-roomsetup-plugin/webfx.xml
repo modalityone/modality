@@ -25,6 +25,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.roomsetup.EventRoomSetupRouting$RouteToEventRoomSetupRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.event.backoffice.activities.roomsetup.EventRoomSetupI18nKeys"/>
+    <java-ui-api package="one.modality.event.backoffice.activities.roomsetup" prefix="EventRoomSetup">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

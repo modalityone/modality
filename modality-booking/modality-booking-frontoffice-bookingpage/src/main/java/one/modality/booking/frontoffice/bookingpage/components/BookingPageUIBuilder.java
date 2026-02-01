@@ -1,4 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.components;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.BooleanProperty;
@@ -21,6 +22,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Factory class for creating common UI elements used across booking form pages.
@@ -223,7 +226,7 @@ public final class BookingPageUIBuilder {
     public static SVGPath createThemedIcon(String svgPath, double scale) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPath);
-        icon.getStyleClass().add("bookingpage-icon-primary");
+        icon.getStyleClass().add(bookingpage_icon_primary);
         icon.setStrokeWidth(2);
         icon.setFill(Color.TRANSPARENT);
         icon.setScaleX(scale);
@@ -243,7 +246,7 @@ public final class BookingPageUIBuilder {
     public static SVGPath createMutedIcon(String svgPath, double scale) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPath);
-        icon.getStyleClass().add("bookingpage-icon-muted");
+        icon.getStyleClass().add(bookingpage_icon_muted);
         icon.setStrokeWidth(2);
         icon.setFill(Color.TRANSPARENT);
         icon.setScaleX(scale);
@@ -292,11 +295,11 @@ public final class BookingPageUIBuilder {
      */
     public static StackPane createSoldOutRibbon() {
         Label label = new Label("SOLD OUT");
-        label.getStyleClass().add("bookingpage-soldout-ribbon-text");
+        label.getStyleClass().add(bookingpage_soldout_ribbon_text);
         label.setPadding(new Insets(4, 40, 4, 40));
 
         StackPane ribbon = new StackPane(label);
-        ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
+        ribbon.getStyleClass().add(bookingpage_soldout_ribbon);
         // Rotate 45 degrees
         ribbon.getTransforms().add(new javafx.scene.transform.Rotate(45, 0, 0));
         ribbon.setAlignment(Pos.CENTER);
@@ -319,31 +322,31 @@ public final class BookingPageUIBuilder {
         HBox badge = new HBox(5);
         badge.setAlignment(Pos.CENTER_LEFT);
         badge.setPadding(new Insets(4, 10, 4, 10));
-        badge.getStyleClass().add("bookingpage-badge-constraint");
+        badge.getStyleClass().add(bookingpage_badge_constraint);
 
         // Info icon (small, 12x12) - CSS handles colors
         SVGPath infoCircle = new SVGPath();
         infoCircle.setContent("M12 2a10 10 0 100 20 10 10 0 000-20z");
         infoCircle.setScaleX(0.5);
         infoCircle.setScaleY(0.5);
-        infoCircle.getStyleClass().add("bookingpage-badge-constraint-icon");
+        infoCircle.getStyleClass().add(bookingpage_badge_constraint_icon);
 
         SVGPath infoI = new SVGPath();
         infoI.setContent("M12 16v-4M12 8h.01");
         infoI.setScaleX(0.5);
         infoI.setScaleY(0.5);
-        infoI.getStyleClass().add("bookingpage-badge-constraint-icon");
+        infoI.getStyleClass().add(bookingpage_badge_constraint_icon);
 
         StackPane infoIcon = new StackPane(infoCircle, infoI);
         infoIcon.setMinSize(12, 12);
         infoIcon.setMaxSize(12, 12);
 
         Label textLabel = new Label(text);
-        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+        textLabel.getStyleClass().add(bookingpage_badge_constraint_text);
 
         // Apply disabled class for sold out state - CSS handles colors
         if (isSoldOut) {
-            badge.getStyleClass().add("disabled");
+            badge.getStyleClass().add(disabled);
         }
 
         badge.getChildren().addAll(infoIcon, textLabel);
@@ -360,7 +363,7 @@ public final class BookingPageUIBuilder {
      */
     public static Label createLimitedBadge() {
         Label badge = new Label("LIMITED");
-        badge.getStyleClass().add("bookingpage-badge-limited");
+        badge.getStyleClass().add(bookingpage_badge_limited);
         badge.setPadding(new Insets(4, 8, 4, 8));
         return badge;
     }
@@ -403,7 +406,7 @@ public final class BookingPageUIBuilder {
         Rectangle rect = new Rectangle(size, size);
         rect.setArcWidth(6);  // 3px radius * 2
         rect.setArcHeight(6);
-        rect.getStyleClass().add("booking-form-checkbox-rect");
+        rect.getStyleClass().add(booking_form_checkbox_rect);
 
         // Checkmark - styled via CSS
         SVGPath checkmark = new SVGPath();
@@ -411,24 +414,24 @@ public final class BookingPageUIBuilder {
         checkmark.setScaleX(0.42);
         checkmark.setScaleY(0.42);
         checkmark.setVisible(false);
-        checkmark.getStyleClass().add("booking-form-checkbox-checkmark");
+        checkmark.getStyleClass().add(booking_form_checkbox_checkmark);
 
         StackPane container = new StackPane(rect, checkmark);
         container.setMinSize(size, size);
         container.setMaxSize(size, size);
         container.setAlignment(Pos.CENTER);
-        container.getStyleClass().add("booking-form-checkbox-indicator");
+        container.getStyleClass().add(booking_form_checkbox_indicator);
 
         // Update CSS classes based on selection (colors handled by CSS)
         Runnable updateStyle = () -> {
             boolean selected = selectedProperty.get();
             if (selected) {
-                rect.getStyleClass().add("selected");
-                container.getStyleClass().add("selected");
+                rect.getStyleClass().add(BookingPageCssSelectors.selected);
+                container.getStyleClass().add(BookingPageCssSelectors.selected);
                 checkmark.setVisible(true);
             } else {
-                rect.getStyleClass().remove("selected");
-                container.getStyleClass().remove("selected");
+                rect.getStyleClass().remove(BookingPageCssSelectors.selected);
+                container.getStyleClass().remove(BookingPageCssSelectors.selected);
                 checkmark.setVisible(false);
             }
         };
@@ -460,32 +463,32 @@ public final class BookingPageUIBuilder {
 
         // Outer circle - styled via CSS
         Circle outer = new Circle(size / 2);
-        outer.getStyleClass().add("booking-form-radio-outer");
+        outer.getStyleClass().add(booking_form_radio_outer);
 
         // Inner dot - styled via CSS
         Circle inner = new Circle(dotSize / 2);
         inner.setVisible(false);
-        inner.getStyleClass().add("booking-form-radio-inner");
+        inner.getStyleClass().add(booking_form_radio_inner);
 
         StackPane container = new StackPane(outer, inner);
         container.setMinSize(size, size);
         container.setMaxSize(size, size);
         container.setAlignment(Pos.CENTER);
-        container.getStyleClass().add("booking-form-radio-indicator");
+        container.getStyleClass().add(booking_form_radio_indicator);
 
         // Update CSS classes based on selection (colors handled by CSS)
         Runnable updateStyle = () -> {
             boolean selected = selectedProperty.get();
             if (selected) {
-                outer.getStyleClass().add("selected");
-                inner.getStyleClass().add("selected");
+                outer.getStyleClass().add(BookingPageCssSelectors.selected);
+                inner.getStyleClass().add(BookingPageCssSelectors.selected);
                 inner.setVisible(true);
-                container.getStyleClass().add("selected");
+                container.getStyleClass().add(BookingPageCssSelectors.selected);
             } else {
-                outer.getStyleClass().remove("selected");
-                inner.getStyleClass().remove("selected");
+                outer.getStyleClass().remove(BookingPageCssSelectors.selected);
+                inner.getStyleClass().remove(BookingPageCssSelectors.selected);
                 inner.setVisible(false);
-                container.getStyleClass().remove("selected");
+                container.getStyleClass().remove(BookingPageCssSelectors.selected);
             }
         };
 
@@ -512,14 +515,14 @@ public final class BookingPageUIBuilder {
     public static StackPane createCheckmarkBadgeCss(double size) {
         // Circular background - styled via CSS
         Circle circle = new Circle(size / 2);
-        circle.getStyleClass().add("booking-form-checkmark-circle");
+        circle.getStyleClass().add(booking_form_checkmark_circle);
 
         // Checkmark - styled via CSS
         SVGPath checkmark = new SVGPath();
         checkmark.setContent(ICON_CHECK);
         checkmark.setScaleX(size / 48);  // Scale based on size
         checkmark.setScaleY(size / 48);
-        checkmark.getStyleClass().add("booking-form-checkmark-icon");
+        checkmark.getStyleClass().add(booking_form_checkmark_icon);
 
         StackPane badge = new StackPane(circle, checkmark);
         badge.setMinSize(size, size);
@@ -544,7 +547,7 @@ public final class BookingPageUIBuilder {
      */
     public static StackPane createEmptyCircleIndicator(double size) {
         Circle circle = new Circle(size / 2);
-        circle.getStyleClass().add("booking-form-empty-circle");
+        circle.getStyleClass().add(booking_form_empty_circle);
 
         StackPane container = new StackPane(circle);
         container.setMinSize(size, size);
@@ -579,19 +582,19 @@ public final class BookingPageUIBuilder {
         card.setPadding(new Insets(16));
         card.setCursor(Cursor.HAND);
         card.setMaxWidth(Double.MAX_VALUE);
-        card.getStyleClass().add("bookingpage-card");
+        card.getStyleClass().add(bookingpage_card);
 
         // Title - CSS handles font and color
         Label titleLabel = new Label(title);
-        titleLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         // Amount - CSS handles font size and primary color
         Label amountLabel = new Label(amount);
-        amountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+        amountLabel.getStyleClass().addAll(bookingpage_price_medium, bookingpage_text_primary);
 
         // Description - CSS handles styling
         Label descLabel = new Label(description);
-        descLabel.getStyleClass().addAll("bookingpage-label-small", "bookingpage-text-center");
+        descLabel.getStyleClass().addAll(bookingpage_label_small, bookingpage_text_center);
         descLabel.setWrapText(true);
 
         // Content container
@@ -606,7 +609,7 @@ public final class BookingPageUIBuilder {
             StackPane.setAlignment(checkmarkBadge, Pos.TOP_RIGHT);
             StackPane.setMargin(checkmarkBadge, new Insets(-8, -8, 0, 0));
             card.getChildren().add(wrapper);
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(BookingPageCssSelectors.selected);
         } else {
             card.getChildren().add(content);
         }
@@ -635,7 +638,7 @@ public final class BookingPageUIBuilder {
      */
     public static VBox createPassiveCard() {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-passive-card");
+        card.getStyleClass().add(bookingpage_passive_card);
         card.setPadding(new Insets(20));
         return card;
     }
@@ -659,7 +662,7 @@ public final class BookingPageUIBuilder {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         // Checkbox indicator on left - with color scheme support
         StackPane checkbox = createColorSchemeCheckboxIndicator(selectedProperty, colorSchemeProperty);
@@ -748,7 +751,7 @@ public final class BookingPageUIBuilder {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-radio-card");
+        card.getStyleClass().add(bookingpage_radio_card);
 
         // Radio indicator on left
         StackPane radio = createRadioIndicator(selectedProperty);
@@ -764,15 +767,15 @@ public final class BookingPageUIBuilder {
 
         // Update CSS class based on selection
         if (selectedProperty.get()) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
         selectedProperty.addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
         });
 
@@ -813,17 +816,17 @@ public final class BookingPageUIBuilder {
         Button btn = I18nControls.newButton(i18nKey);
         btn.setCursor(Cursor.HAND);
         btn.setPadding(new Insets(14, 32, 14, 32)); // Set in Java for WebFX/GWT compatibility
-        btn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
+        btn.getStyleClass().addAll(booking_form_primary_btn, booking_form_primary_btn_text);
 
         // Disabled state - update CSS class and cursor
         btn.disabledProperty().addListener((obs, old, disabled) -> {
             if (disabled) {
-                if (!btn.getStyleClass().contains("disabled")) {
-                    btn.getStyleClass().add("disabled");
+                if (!btn.getStyleClass().contains(BookingPageCssSelectors.disabled)) {
+                    btn.getStyleClass().add(BookingPageCssSelectors.disabled);
                 }
                 btn.setCursor(Cursor.DEFAULT);
             } else {
-                btn.getStyleClass().remove("disabled");
+                btn.getStyleClass().remove(BookingPageCssSelectors.disabled);
                 btn.setCursor(Cursor.HAND);
             }
         });
@@ -850,14 +853,14 @@ public final class BookingPageUIBuilder {
         Button btn = new Button();
         // Arrow prefix as graphic
         Label arrowLabel = new Label("← "); // ←
-        arrowLabel.getStyleClass().add("booking-form-back-btn-text");
+        arrowLabel.getStyleClass().add(booking_form_back_btn_text);
         btn.setGraphic(arrowLabel);
         btn.setContentDisplay(ContentDisplay.LEFT);
         I18nControls.bindI18nProperties(btn, i18nKey);
 
         btn.setCursor(Cursor.HAND);
         btn.setPadding(new Insets(14, 32, 14, 32)); // Set in Java for WebFX/GWT compatibility
-        btn.getStyleClass().addAll("booking-form-back-btn", "booking-form-back-btn-text");
+        btn.getStyleClass().addAll(booking_form_back_btn, booking_form_back_btn_text);
 
         // Hover effects handled by CSS via .booking-form-back-btn:hover
 
@@ -892,7 +895,7 @@ public final class BookingPageUIBuilder {
     public static Hyperlink createThemedHyperlink(Object i18nKey) {
         Hyperlink link = new Hyperlink();
         I18nControls.bindI18nProperties(link, i18nKey);
-        link.getStyleClass().add("bookingpage-link-primary");
+        link.getStyleClass().add(bookingpage_link_primary);
         link.setCursor(Cursor.HAND);
         return link;
     }
@@ -916,7 +919,7 @@ public final class BookingPageUIBuilder {
      */
     public static Label createStatusBadge(String text, BadgeType type) {
         Label badge = new Label(text);
-        badge.getStyleClass().add("bookingpage-badge");
+        badge.getStyleClass().add(bookingpage_badge);
         badge.getStyleClass().add("bookingpage-badge-" + type.name().toLowerCase());
         badge.setPadding(new Insets(4, 8, 4, 8));
         return badge;
@@ -935,7 +938,7 @@ public final class BookingPageUIBuilder {
         StackPane circle = new StackPane();
         circle.setMinSize(size, size);
         circle.setMaxSize(size, size);
-        circle.getStyleClass().add("bookingpage-icon-circle-themed");
+        circle.getStyleClass().add(bookingpage_icon_circle_themed);
         circle.setAlignment(Pos.CENTER);
         return circle;
     }
@@ -971,7 +974,7 @@ public final class BookingPageUIBuilder {
         HBox box = new HBox(12);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setPadding(new Insets(14, 16, 14, 16));
-        box.getStyleClass().add("bookingpage-info-box");
+        box.getStyleClass().add(bookingpage_info_box);
 
         // Icon based on type - CSS handles colors
         String iconUnicode;
@@ -1007,12 +1010,12 @@ public final class BookingPageUIBuilder {
         // Only add icon if not empty (NEUTRAL type has no icon)
         if (!iconUnicode.isEmpty()) {
             Label iconLabel = new Label(iconUnicode);
-            iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+            iconLabel.getStyleClass().add(bookingpage_info_box_icon);
             box.getChildren().add(iconLabel);
         }
 
         Label messageLabel = new Label(message);
-        messageLabel.getStyleClass().add("bookingpage-info-box-message");
+        messageLabel.getStyleClass().add(bookingpage_info_box_message);
         messageLabel.setWrapText(true);
 
         box.getChildren().add(messageLabel);
@@ -1030,7 +1033,7 @@ public final class BookingPageUIBuilder {
         HBox box = new HBox(12);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setPadding(new Insets(14, 16, 14, 16));
-        box.getStyleClass().add("bookingpage-info-box");
+        box.getStyleClass().add(bookingpage_info_box);
 
         // Icon based on type - CSS handles colors
         String iconUnicode;
@@ -1067,12 +1070,12 @@ public final class BookingPageUIBuilder {
         // Only add icon if not empty (NEUTRAL type has no icon)
         if (!iconUnicode.isEmpty()) {
             Label iconLabel = new Label(iconUnicode);
-            iconLabel.getStyleClass().add("bookingpage-info-box-icon");
+            iconLabel.getStyleClass().add(bookingpage_info_box_icon);
             box.getChildren().add(iconLabel);
         }
 
         Label messageLabel = I18nControls.newLabel(i18nKey);
-        messageLabel.getStyleClass().add("bookingpage-info-box-message");
+        messageLabel.getStyleClass().add(bookingpage_info_box_message);
         messageLabel.setWrapText(true);
 
         box.getChildren().add(messageLabel);
@@ -1133,7 +1136,7 @@ public final class BookingPageUIBuilder {
             digitField.setPrefHeight(48);
             digitField.setMinHeight(48);
             digitField.setAlignment(Pos.CENTER);
-            digitField.getStyleClass().add("bookingpage-digit-field");
+            digitField.getStyleClass().add(bookingpage_digit_field);
             digitField.setPadding(new Insets(12, 0, 12, 0));
 
             // Handle input - only allow single digit
@@ -1180,16 +1183,16 @@ public final class BookingPageUIBuilder {
             });
 
             // Set initial border styling via CSS class
-            digitField.getStyleClass().add("bookingpage-input-bordered");
+            digitField.getStyleClass().add(bookingpage_input_bordered);
 
             // Focus styling - toggle CSS class on focus (theme colors via CSS variables)
             digitField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
                 if (isFocused) {
-                    digitField.getStyleClass().remove("bookingpage-input-bordered");
-                    digitField.getStyleClass().add("bookingpage-input-focused");
+                    digitField.getStyleClass().remove(bookingpage_input_bordered);
+                    digitField.getStyleClass().add(bookingpage_input_focused);
                 } else {
-                    digitField.getStyleClass().remove("bookingpage-input-focused");
-                    digitField.getStyleClass().add("bookingpage-input-bordered");
+                    digitField.getStyleClass().remove(bookingpage_input_focused);
+                    digitField.getStyleClass().add(bookingpage_input_bordered);
                 }
             });
 
@@ -1378,7 +1381,7 @@ public final class BookingPageUIBuilder {
         HBox box = new HBox(0);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setPadding(new Insets(14, 18, 14, 18));
-        box.getStyleClass().add("bookingpage-price-includes-box");
+        box.getStyleClass().add(bookingpage_price_includes_box);
 
         // Create a TextFlow-like layout using VBox with wrapping labels
         // Since TextFlow may have GWT compatibility issues, use labels
@@ -1389,11 +1392,11 @@ public final class BookingPageUIBuilder {
 
         // Bold "Price includes:" label on its own line
         Label boldLabel = new Label("Price includes:");
-        boldLabel.getStyleClass().add("bookingpage-price-includes-bold");
+        boldLabel.getStyleClass().add(bookingpage_price_includes_bold);
 
         // Primary text on next line, will wrap naturally
         Label primaryLabel = new Label(primaryText);
-        primaryLabel.getStyleClass().add("bookingpage-price-includes-primary");
+        primaryLabel.getStyleClass().add(bookingpage_price_includes_primary);
         primaryLabel.setWrapText(true);
         primaryLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -1402,7 +1405,7 @@ public final class BookingPageUIBuilder {
         // Secondary text (if provided)
         if (secondaryText != null && !secondaryText.isEmpty()) {
             Label secondaryLabel = new Label("(" + secondaryText + ")");
-            secondaryLabel.getStyleClass().add("bookingpage-price-includes-secondary");
+            secondaryLabel.getStyleClass().add(bookingpage_price_includes_secondary);
             secondaryLabel.setWrapText(true);
             secondaryLabel.setMaxWidth(Double.MAX_VALUE);
             textContainer.getChildren().add(secondaryLabel);
@@ -1437,7 +1440,7 @@ public final class BookingPageUIBuilder {
         HBox box = new HBox(12);
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(14, 18, 14, 18));
-        box.getStyleClass().add("bookingpage-price-includes-box-amber");
+        box.getStyleClass().add(bookingpage_price_includes_box_amber);
 
         // Info icon (circle with "i") - amber colored
         SVGPath infoCircle = new SVGPath();
@@ -1467,11 +1470,11 @@ public final class BookingPageUIBuilder {
 
         // Bold "Price includes:" followed by primary text on same conceptual line
         Label boldLabel = new Label("Price includes:");
-        boldLabel.getStyleClass().add("bookingpage-price-includes-amber-bold");
+        boldLabel.getStyleClass().add(bookingpage_price_includes_amber_bold);
 
         // Primary text on next line, will wrap naturally
         Label primaryLabel = new Label(primaryText);
-        primaryLabel.getStyleClass().add("bookingpage-price-includes-amber-primary");
+        primaryLabel.getStyleClass().add(bookingpage_price_includes_amber_primary);
         primaryLabel.setWrapText(true);
         primaryLabel.setMaxWidth(Double.MAX_VALUE);
 
@@ -1480,7 +1483,7 @@ public final class BookingPageUIBuilder {
         // Secondary text (if provided)
         if (secondaryText != null && !secondaryText.isEmpty()) {
             Label secondaryLabel = new Label(secondaryText);
-            secondaryLabel.getStyleClass().add("bookingpage-price-includes-amber-secondary");
+            secondaryLabel.getStyleClass().add(bookingpage_price_includes_amber_secondary);
             secondaryLabel.setWrapText(true);
             secondaryLabel.setMaxWidth(Double.MAX_VALUE);
             VBox.setMargin(secondaryLabel, new Insets(4, 0, 0, 0));
@@ -1529,21 +1532,21 @@ public final class BookingPageUIBuilder {
         Region leftLine = new Region();
         leftLine.setMinHeight(2);
         leftLine.setMaxHeight(2);
-        leftLine.getStyleClass().add("bookingpage-no-accommodation-line");
+        leftLine.getStyleClass().add(bookingpage_no_accommodation_line);
         HBox.setHgrow(leftLine, Priority.ALWAYS);
 
         // Center pill with icon and text
         HBox pill = new HBox(10);
         pill.setAlignment(Pos.CENTER);
         pill.setPadding(new Insets(10, 20, 10, 20));
-        pill.getStyleClass().add("bookingpage-no-accommodation-pill");
+        pill.getStyleClass().add(bookingpage_no_accommodation_pill);
 
         // Map pin with X icon
         StackPane mapIcon = createMapPinWithXIcon();
 
         // "NO ACCOMMODATION" text (uppercase)
         Label text = new Label("NO ACCOMMODATION");
-        text.getStyleClass().add("bookingpage-no-accommodation-text");
+        text.getStyleClass().add(bookingpage_no_accommodation_text);
 
         pill.getChildren().addAll(mapIcon, text);
 
@@ -1551,7 +1554,7 @@ public final class BookingPageUIBuilder {
         Region rightLine = new Region();
         rightLine.setMinHeight(2);
         rightLine.setMaxHeight(2);
-        rightLine.getStyleClass().add("bookingpage-no-accommodation-line");
+        rightLine.getStyleClass().add(bookingpage_no_accommodation_line);
         HBox.setHgrow(rightLine, Priority.ALWAYS);
 
         separator.getChildren().addAll(leftLine, pill, rightLine);

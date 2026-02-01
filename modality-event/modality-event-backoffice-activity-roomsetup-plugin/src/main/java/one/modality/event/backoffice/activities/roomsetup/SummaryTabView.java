@@ -6,8 +6,8 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
+import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
-import one.modality.base.client.bootstrap.ModalityStyle;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -26,19 +26,14 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.shared.entities.Building;
-import dev.webfx.stack.orm.entity.Entities;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.Pool;
-import one.modality.base.shared.entities.PoolAllocation;
-import one.modality.base.shared.entities.Resource;
-import one.modality.base.shared.entities.ResourceConfiguration;
+import one.modality.base.client.bootstrap.ModalityStyle;
+import one.modality.base.shared.entities.*;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.*;
-import java.util.Collections;
 import java.util.stream.Collectors;
+
+import static one.modality.event.backoffice.activities.roomsetup.EventRoomSetupCssSelectors.*;
 
 /**
  * Tab 3: Summary - Review totals and room assignments.
@@ -86,12 +81,12 @@ final class SummaryTabView {
 
         // Create loading overlay
         loadingOverlay = new StackPane();
-        loadingOverlay.getStyleClass().add("roomsetup-modal-overlay");
+        loadingOverlay.getStyleClass().add(roomsetup_modal_overlay);
         Region spinner = Controls.createPageSizeSpinner();
         VBox loadingBox = new VBox(10);
         loadingBox.setAlignment(Pos.CENTER);
         Label loadingLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.LoadingData);
-        loadingLabel.getStyleClass().add("roomsetup-stat-label");
+        loadingLabel.getStyleClass().add(roomsetup_stat_label);
         loadingBox.getChildren().addAll(spinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
@@ -110,7 +105,7 @@ final class SummaryTabView {
      */
     private StackPane createNoEventSelectedOverlay() {
         StackPane overlay = new StackPane();
-        overlay.getStyleClass().add("roomsetup-modal-overlay");
+        overlay.getStyleClass().add(roomsetup_modal_overlay);
 
         // Create message container
         VBox messageBox = new VBox(16);
@@ -275,7 +270,7 @@ final class SummaryTabView {
         categoryBreakdown.setPadding(new Insets(0));
 
         // Notes section
-        notesSection.getStyleClass().add("roomsetup-notes-section");
+        notesSection.getStyleClass().add(roomsetup_notes_section);
         notesSection.setPadding(new Insets(20));
 
         // Toolbar with search and group by
@@ -286,7 +281,7 @@ final class SummaryTabView {
 
         // Non-bookable rooms section (hidden by default, shown if non-bookable rooms exist)
         nonBookableSection.setPadding(new Insets(20));
-        nonBookableSection.getStyleClass().add("roomsetup-notes-section");
+        nonBookableSection.getStyleClass().add(roomsetup_notes_section);
         nonBookableSection.setVisible(false);
         nonBookableSection.setManaged(false);
 
@@ -305,7 +300,7 @@ final class SummaryTabView {
         TextField searchField = new TextField();
         searchField.setPromptText("Search rooms...");
         searchField.setPrefWidth(250);
-        searchField.getStyleClass().add("roomsetup-search-input");
+        searchField.getStyleClass().add(roomsetup_search_input);
         searchField.textProperty().bindBidirectional(searchText);
         searchField.textProperty().addListener((obs, old, newVal) -> refreshRoomsList());
 
@@ -314,7 +309,7 @@ final class SummaryTabView {
 
         // Group by label
         Label groupByLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.GroupBy);
-        groupByLabel.getStyleClass().add("roomsetup-pool-title");
+        groupByLabel.getStyleClass().add(roomsetup_pool_title);
 
         // Group by buttons
         HBox groupByButtons = new HBox(4);
@@ -461,16 +456,16 @@ final class SummaryTabView {
         VBox card = new VBox(8);
         card.setAlignment(Pos.CENTER);
         card.setPadding(new Insets(20));
-        card.getStyleClass().add("roomsetup-stat-card");
+        card.getStyleClass().add(roomsetup_stat_card);
         HBox.setHgrow(card, Priority.ALWAYS);
 
         Label valueLabel = new Label(value);
-        valueLabel.getStyleClass().add("roomsetup-stat-value");
+        valueLabel.getStyleClass().add(roomsetup_stat_value);
         // Apply dynamic color for the value (color varies per card type) - use cross-platform helper
         applyDynamicTextFill(valueLabel, color);
 
         Label descLabel = I18nControls.newLabel(labelKey);
-        descLabel.getStyleClass().add("roomsetup-stat-label");
+        descLabel.getStyleClass().add(roomsetup_stat_label);
 
         card.getChildren().addAll(valueLabel, descLabel);
         return card;
@@ -513,7 +508,7 @@ final class SummaryTabView {
         HBox pill = new HBox(10);
         pill.setAlignment(Pos.CENTER_LEFT);
         pill.setPadding(new Insets(12, 16, 12, 16));
-        pill.getStyleClass().add("roomsetup-category-pill");
+        pill.getStyleClass().add(roomsetup_category_pill);
 
         if (muted) {
             // Muted styling for non-bookable pools
@@ -527,13 +522,13 @@ final class SummaryTabView {
         StackPane iconPane = createPoolIcon(graphic, color, 24);
 
         Label nameLabel = new Label(name);
-        nameLabel.getStyleClass().add("roomsetup-category-pill-label");
+        nameLabel.getStyleClass().add(roomsetup_category_pill_label);
         // Dynamic color from database - use cross-platform helper
         applyDynamicTextFill(nameLabel, color);
 
         Label countBadge = new Label(String.valueOf(bedCount));
         countBadge.setPadding(new Insets(4, 10, 4, 10));
-        countBadge.getStyleClass().add("roomsetup-category-pill-value");
+        countBadge.getStyleClass().add(roomsetup_category_pill_value);
         // Dynamic color from database - use cross-platform helper
         applyDynamicBackground(countBadge, color, new CornerRadii(10));
 
@@ -543,7 +538,7 @@ final class SummaryTabView {
         if (muted) {
             Label nonBookableLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NotBookable);
             nonBookableLabel.setPadding(new Insets(2, 6, 2, 6));
-            nonBookableLabel.getStyleClass().add("roomsetup-category-pill-label");
+            nonBookableLabel.getStyleClass().add(roomsetup_category_pill_label);
             applyDynamicTextFill(nonBookableLabel, "#a8a29e");
             pill.getChildren().add(nonBookableLabel);
         }
@@ -559,7 +554,7 @@ final class SummaryTabView {
         notesSection.getChildren().clear();
 
         Label notesTitle = I18nControls.newLabel(EventRoomSetupI18nKeys.NotesAndObservations);
-        notesTitle.getStyleClass().add("roomsetup-pool-title");
+        notesTitle.getStyleClass().add(roomsetup_pool_title);
         notesSection.getChildren().add(notesTitle);
 
         VBox notesList = new VBox(10);
@@ -679,7 +674,7 @@ final class SummaryTabView {
         HBox note = new HBox(10);
         note.setAlignment(Pos.CENTER_LEFT);
         note.setPadding(new Insets(12, 14, 12, 14));
-        note.getStyleClass().addAll("roomsetup-note-item", noteClass);
+        note.getStyleClass().addAll(roomsetup_note_item, noteClass);
 
         Label iconLabel = new Label(icon);
 
@@ -721,24 +716,24 @@ final class SummaryTabView {
         header.setPadding(new Insets(0, 0, 12, 0));
 
         Label iconLabel = new Label("\u2298"); // ⊘ symbol
-        iconLabel.getStyleClass().add("roomsetup-pool-title");
+        iconLabel.getStyleClass().add(roomsetup_pool_title);
         applyDynamicTextFill(iconLabel, "#78716c");
 
         Label titleLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NonBookableRooms);
-        titleLabel.getStyleClass().add("roomsetup-pool-title");
+        titleLabel.getStyleClass().add(roomsetup_pool_title);
         applyDynamicTextFill(titleLabel, "#78716c");
 
         int totalNonBookableBeds = nonBookableRooms.stream().mapToInt(this::getBedCount).sum();
         Label statsLabel = new Label(nonBookableRooms.size() + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + totalNonBookableBeds + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
-        statsLabel.getStyleClass().add("roomsetup-pool-count");
+        statsLabel.getStyleClass().add(roomsetup_pool_count);
 
         header.getChildren().addAll(iconLabel, titleLabel, statsLabel);
 
         // Description
         Label descLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NonBookableBedsDescription);
-        descLabel.getStyleClass().add("roomsetup-pool-count");
+        descLabel.getStyleClass().add(roomsetup_pool_count);
         descLabel.setWrapText(true);
 
         nonBookableSection.getChildren().addAll(header, descLabel);
@@ -772,7 +767,7 @@ final class SummaryTabView {
      */
     private VBox createNonBookableGroupCardForPool(Pool pool, List<PoolAllocation> allocations, int bedCount) {
         VBox card = new VBox();
-        card.getStyleClass().add("roomsetup-pool-card");
+        card.getStyleClass().add(roomsetup_pool_card);
 
         String groupName = pool.getName() != null ? pool.getName() : "Unknown";
         String mutedColor = "#78716c";
@@ -781,20 +776,20 @@ final class SummaryTabView {
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(14, 20, 14, 20));
-        header.getStyleClass().add("roomsetup-pool-header");
+        header.getStyleClass().add(roomsetup_pool_header);
         applyDynamicBackground(header, "#f5f5f4", new CornerRadii(8, 8, 0, 0, false));
 
         // Pool icon with muted color
         Node iconNode = createPoolIcon(pool.getGraphic(), mutedColor, 28);
 
         Label nameLabel = new Label(groupName);
-        nameLabel.getStyleClass().add("roomsetup-pool-title");
+        nameLabel.getStyleClass().add(roomsetup_pool_title);
         applyDynamicTextFill(nameLabel, mutedColor);
 
         Label statsLabel = new Label(allocations.size() + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + bedCount + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
-        statsLabel.getStyleClass().add("roomsetup-pool-count");
+        statsLabel.getStyleClass().add(roomsetup_pool_count);
 
         header.getChildren().addAll(iconNode, nameLabel, statsLabel);
 
@@ -825,20 +820,20 @@ final class SummaryTabView {
         HBox chip = new HBox(6);
         chip.setPadding(new Insets(10, 14, 10, 14));
         chip.setAlignment(Pos.CENTER_LEFT);
-        chip.getStyleClass().add("roomsetup-room-chip");
+        chip.getStyleClass().add(roomsetup_room_chip);
 
         // Muted styling
         applyDynamicBackgroundAndBorder(chip, "#f5f5f4", "#e7e5e4", 1, new CornerRadii(8));
 
         // Room ID
         Label idLabel = new Label(room.getName() != null ? room.getName() : "Room");
-        idLabel.getStyleClass().add("roomsetup-room-id");
+        idLabel.getStyleClass().add(roomsetup_room_id);
         applyDynamicTextFill(idLabel, "#78716c");
 
         // Bed count
         Label bedsLabel = new Label(String.valueOf(beds));
         bedsLabel.setPadding(new Insets(2, 6, 2, 6));
-        bedsLabel.getStyleClass().add("roomsetup-beds-badge");
+        bedsLabel.getStyleClass().add(roomsetup_beds_badge);
         applyDynamicBackgroundAndTextFill(bedsLabel, "#a8a29e", "#ffffff");
 
         chip.getChildren().addAll(idLabel, bedsLabel);
@@ -875,7 +870,7 @@ final class SummaryTabView {
 
         if (assignedRooms.isEmpty()) {
             Label emptyLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.NoRoomsMatchSearch);
-            emptyLabel.getStyleClass().add("roomsetup-pool-count");
+            emptyLabel.getStyleClass().add(roomsetup_pool_count);
             emptyLabel.setPadding(new Insets(20));
             roomsListSection.getChildren().add(emptyLabel);
             return;
@@ -983,7 +978,7 @@ final class SummaryTabView {
      */
     private VBox createGroupCardForPool(Pool pool, List<PoolAllocation> allocations, int bedCount) {
         VBox card = new VBox();
-        card.getStyleClass().add("roomsetup-pool-card");
+        card.getStyleClass().add(roomsetup_pool_card);
 
         String groupName = pool.getName() != null ? pool.getName() : "Unknown";
         String color = pool.getWebColor() != null ? pool.getWebColor() : "#0096D6";
@@ -992,18 +987,18 @@ final class SummaryTabView {
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(14, 20, 14, 20));
-        header.getStyleClass().add("roomsetup-pool-header");
+        header.getStyleClass().add(roomsetup_pool_header);
 
         // Pool icon
         Node iconNode = createPoolIcon(pool.getGraphic(), color, 28);
 
         Label nameLabel = new Label(groupName);
-        nameLabel.getStyleClass().add("roomsetup-pool-title");
+        nameLabel.getStyleClass().add(roomsetup_pool_title);
 
         Label statsLabel = new Label(allocations.size() + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + bedCount + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
-        statsLabel.getStyleClass().add("roomsetup-pool-count");
+        statsLabel.getStyleClass().add(roomsetup_pool_count);
 
         header.getChildren().addAll(iconNode, nameLabel, statsLabel);
 
@@ -1030,13 +1025,13 @@ final class SummaryTabView {
      */
     private VBox createGroupCard(String groupName, List<Resource> rooms, int bedCount, Pool pool) {
         VBox card = new VBox();
-        card.getStyleClass().add("roomsetup-pool-card");
+        card.getStyleClass().add(roomsetup_pool_card);
 
         // Header
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(14, 20, 14, 20));
-        header.getStyleClass().add("roomsetup-pool-header");
+        header.getStyleClass().add(roomsetup_pool_header);
 
         // Create icon based on groupBy mode
         Node iconNode;
@@ -1046,12 +1041,12 @@ final class SummaryTabView {
         iconNode = iconLabel;
 
         Label nameLabel = new Label(groupName);
-        nameLabel.getStyleClass().add("roomsetup-pool-title");
+        nameLabel.getStyleClass().add(roomsetup_pool_title);
 
         Label statsLabel = new Label(rooms.size() + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + bedCount + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
-        statsLabel.getStyleClass().add("roomsetup-pool-count");
+        statsLabel.getStyleClass().add(roomsetup_pool_count);
 
         header.getChildren().addAll(iconNode, nameLabel, statsLabel);
 
@@ -1080,7 +1075,7 @@ final class SummaryTabView {
         HBox chip = new HBox(6);
         chip.setPadding(new Insets(10, 14, 10, 14));
         chip.setAlignment(Pos.CENTER_LEFT);
-        chip.getStyleClass().add("roomsetup-room-chip");
+        chip.getStyleClass().add(roomsetup_room_chip);
 
         String splitColor = "#7c3aed"; // Purple for split rooms
 
@@ -1088,30 +1083,30 @@ final class SummaryTabView {
             // Use cross-platform helper for dynamic styling
             applyDynamicBackgroundAndBorder(chip, "#faf5ff", splitColor, 2, new CornerRadii(8));
         } else if (hasOverride) {
-            chip.getStyleClass().add("roomsetup-room-chip-override");
+            chip.getStyleClass().add(roomsetup_room_chip_override);
         }
 
         // Split indicator (lightning bolt emoji)
         if (isSplit) {
             Label splitIcon = new Label("⚡");
-            splitIcon.getStyleClass().add("roomsetup-modified-indicator");
+            splitIcon.getStyleClass().add(roomsetup_modified_indicator);
             chip.getChildren().add(splitIcon);
         }
 
         // Room ID
         Label idLabel = new Label(room.getName() != null ? room.getName() : "Room");
-        idLabel.getStyleClass().add("roomsetup-room-id");
+        idLabel.getStyleClass().add(roomsetup_room_id);
 
         // Bed count (total for non-category views)
         int beds = getBedCount(room);
         Label bedsLabel = new Label(String.valueOf(beds));
         bedsLabel.setPadding(new Insets(2, 6, 2, 6));
-        bedsLabel.getStyleClass().add("roomsetup-beds-badge");
+        bedsLabel.getStyleClass().add(roomsetup_beds_badge);
         if (isSplit) {
             // Use cross-platform helper for dynamic styling
             applyDynamicBackgroundAndTextFill(bedsLabel, splitColor, "#ffffff");
         } else if (hasOverride) {
-            bedsLabel.getStyleClass().add("roomsetup-beds-badge-override");
+            bedsLabel.getStyleClass().add(roomsetup_beds_badge_override);
         }
 
         chip.getChildren().addAll(idLabel, bedsLabel);
@@ -1145,7 +1140,7 @@ final class SummaryTabView {
         HBox chip = new HBox(6);
         chip.setPadding(new Insets(10, 14, 10, 14));
         chip.setAlignment(Pos.CENTER_LEFT);
-        chip.getStyleClass().add("roomsetup-room-chip");
+        chip.getStyleClass().add(roomsetup_room_chip);
 
         String splitColor = "#7c3aed"; // Purple for split rooms
 
@@ -1153,30 +1148,30 @@ final class SummaryTabView {
             // Use cross-platform helper for dynamic styling
             applyDynamicBackgroundAndBorder(chip, "#faf5ff", splitColor, 2, new CornerRadii(8));
         } else if (hasOverride) {
-            chip.getStyleClass().add("roomsetup-room-chip-override");
+            chip.getStyleClass().add(roomsetup_room_chip_override);
         }
 
         // Split indicator (lightning bolt emoji)
         if (isSplit) {
             Label splitIcon = new Label("⚡");
-            splitIcon.getStyleClass().add("roomsetup-modified-indicator");
+            splitIcon.getStyleClass().add(roomsetup_modified_indicator);
             chip.getChildren().add(splitIcon);
         }
 
         // Room ID
         Label idLabel = new Label(room.getName() != null ? room.getName() : "Room");
-        idLabel.getStyleClass().add("roomsetup-room-id");
+        idLabel.getStyleClass().add(roomsetup_room_id);
 
         // For split rooms, show beds allocated to THIS pool; otherwise show total
         String bedText = isSplit ? String.valueOf(bedsInPool) : String.valueOf(totalBeds);
         Label bedsLabel = new Label(bedText);
         bedsLabel.setPadding(new Insets(2, 6, 2, 6));
-        bedsLabel.getStyleClass().add("roomsetup-beds-badge");
+        bedsLabel.getStyleClass().add(roomsetup_beds_badge);
         if (isSplit) {
             // Use cross-platform helper for dynamic styling
             applyDynamicBackgroundAndTextFill(bedsLabel, splitColor, "#ffffff");
         } else if (hasOverride) {
-            bedsLabel.getStyleClass().add("roomsetup-beds-badge-override");
+            bedsLabel.getStyleClass().add(roomsetup_beds_badge_override);
         }
 
         chip.getChildren().addAll(idLabel, bedsLabel);
@@ -1184,7 +1179,7 @@ final class SummaryTabView {
         // For split rooms, show fraction indicator (e.g., "/10")
         if (isSplit) {
             Label fractionLabel = new Label("/" + totalBeds);
-            fractionLabel.getStyleClass().add("roomsetup-modified-indicator");
+            fractionLabel.getStyleClass().add(roomsetup_modified_indicator);
             // Use cross-platform helper for dynamic styling
             applyDynamicTextFill(fractionLabel, splitColor);
             chip.getChildren().add(fractionLabel);

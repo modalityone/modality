@@ -13,12 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
@@ -28,6 +23,7 @@ import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
@@ -41,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the transport section combining Parking and Shuttle options.
@@ -210,10 +208,10 @@ public class DefaultTransportSection implements HasTransportSection {
         StackPane cardWrapper = new StackPane();
 
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         if (allSoldOut) {
-            card.getStyleClass().add("soldout");
+            card.getStyleClass().add(soldout);
         }
 
         // Main checkbox row
@@ -232,17 +230,17 @@ public class DefaultTransportSection implements HasTransportSection {
         // Update card style based on parking enabled state
         parkingEnabledProperty.addListener((obs, old, enabled) -> {
             if (enabled && !allSoldOut) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
         });
 
         // Initial state
         if (parkingEnabledProperty.get() && !allSoldOut) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         cardWrapper.getChildren().add(card);
@@ -274,7 +272,7 @@ public class DefaultTransportSection implements HasTransportSection {
         // Checkbox indicator - bound to parkingEnabled
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(parkingEnabledProperty, colorScheme);
         if (allSoldOut) {
-            checkbox.getStyleClass().add("disabled");
+            checkbox.getStyleClass().add(disabled);
             checkbox.setOpacity(0.5);
         }
 
@@ -285,32 +283,32 @@ public class DefaultTransportSection implements HasTransportSection {
 
         Label title = new Label();
         title.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.RegisterForParkingPass));
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium);
         title.setWrapText(true);
         if (allSoldOut) {
-            title.getStyleClass().add("bookingpage-text-muted");
+            title.getStyleClass().add(bookingpage_text_muted);
         } else {
-            title.getStyleClass().add("bookingpage-text-dark");
+            title.getStyleClass().add(bookingpage_text_dark);
         }
 
         Label subtitle = new Label();
         subtitle.setWrapText(true);
         if (allSoldOut) {
             subtitle.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.ParkingSoldOutMessage));
-            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            subtitle.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
         } else {
             subtitle.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.LimitedParkingAvailable));
-            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            subtitle.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
         }
         textContent.getChildren().addAll(title, subtitle);
 
         // Price label - show price from first option (they typically have same price)
         Label priceLabel = new Label(formatUnifiedParkingPrice());
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold);
         if (allSoldOut) {
-            priceLabel.getStyleClass().addAll("bookingpage-text-muted", "bookingpage-strikethrough");
+            priceLabel.getStyleClass().addAll(bookingpage_text_muted, bookingpage_strikethrough);
         } else {
-            priceLabel.getStyleClass().add("bookingpage-text-dark");
+            priceLabel.getStyleClass().add(bookingpage_text_dark);
         }
 
         mainRow.getChildren().addAll(checkbox, textContent, priceLabel);
@@ -330,13 +328,13 @@ public class DefaultTransportSection implements HasTransportSection {
      */
     protected VBox createParkingTypeSubsection() {
         VBox subsection = new VBox(10);
-        subsection.getStyleClass().add("bookingpage-parking-subsection");
+        subsection.getStyleClass().add(bookingpage_parking_subsection);
         subsection.setPadding(new Insets(12, 16, 16, 48)); // Left padding to align under checkbox
 
         // "Select parking type:" label
         Label typeLabel = new Label();
         typeLabel.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.SelectParkingType));
-        typeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium", "bookingpage-text-muted");
+        typeLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_font_medium, bookingpage_text_muted);
 
         // Radio pill container
         FlowPane pillsContainer = new FlowPane();
@@ -362,10 +360,10 @@ public class DefaultTransportSection implements HasTransportSection {
         HBox pill = new HBox(6);
         pill.setAlignment(Pos.CENTER_LEFT);
         pill.setPadding(new Insets(8, 16, 8, 16));
-        pill.getStyleClass().add("bookingpage-radio-pill");
+        pill.getStyleClass().add(bookingpage_radio_pill);
 
         if (soldOut) {
-            pill.getStyleClass().add("disabled");
+            pill.getStyleClass().add(disabled);
             pill.setCursor(Cursor.DEFAULT);
         } else {
             pill.setCursor(Cursor.HAND);
@@ -377,11 +375,11 @@ public class DefaultTransportSection implements HasTransportSection {
 
         // Label
         Label text = new Label(option.getName());
-        text.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        text.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium);
         if (soldOut) {
-            text.getStyleClass().addAll("bookingpage-text-muted", "bookingpage-strikethrough");
+            text.getStyleClass().addAll(bookingpage_text_muted, bookingpage_strikethrough);
         } else {
-            text.getStyleClass().add("bookingpage-text-dark");
+            text.getStyleClass().add(bookingpage_text_dark);
         }
         pill.getChildren().add(text);
 
@@ -396,11 +394,11 @@ public class DefaultTransportSection implements HasTransportSection {
             ParkingOption selected = selectedParkingTypeProperty.get();
             boolean isSelected = (selected == option);
             if (isSelected && !soldOut) {
-                if (!pill.getStyleClass().contains("selected")) {
-                    pill.getStyleClass().add("selected");
+                if (!pill.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                    pill.getStyleClass().add(BookingPageCssSelectors.selected);
                 }
             } else {
-                pill.getStyleClass().remove("selected");
+                pill.getStyleClass().remove(BookingPageCssSelectors.selected);
             }
         };
 
@@ -427,15 +425,15 @@ public class DefaultTransportSection implements HasTransportSection {
 
         // Outer circle
         Circle outer = new Circle(size / 2);
-        outer.getStyleClass().add("bookingpage-radio-pill-outer");
+        outer.getStyleClass().add(bookingpage_radio_pill_outer);
         if (soldOut) {
-            outer.getStyleClass().add("disabled");
+            outer.getStyleClass().add(disabled);
         }
 
         // Inner dot
         Circle inner = new Circle(dotSize / 2);
         inner.setVisible(false);
-        inner.getStyleClass().add("bookingpage-radio-pill-inner");
+        inner.getStyleClass().add(bookingpage_radio_pill_inner);
 
         StackPane container = new StackPane(outer, inner);
         container.setMinSize(size, size);
@@ -447,13 +445,13 @@ public class DefaultTransportSection implements HasTransportSection {
             ParkingOption selected = selectedParkingTypeProperty.get();
             boolean isSelected = (selected == option);
             if (isSelected && !soldOut) {
-                outer.getStyleClass().add("selected");
+                outer.getStyleClass().add(BookingPageCssSelectors.selected);
                 inner.setVisible(true);
-                inner.getStyleClass().add("selected");
+                inner.getStyleClass().add(BookingPageCssSelectors.selected);
             } else {
-                outer.getStyleClass().remove("selected");
+                outer.getStyleClass().remove(BookingPageCssSelectors.selected);
                 inner.setVisible(false);
-                inner.getStyleClass().remove("selected");
+                inner.getStyleClass().remove(BookingPageCssSelectors.selected);
             }
         };
 
@@ -468,7 +466,7 @@ public class DefaultTransportSection implements HasTransportSection {
      */
     protected Label createInlineSoldOutBadge() {
         Label badge = I18nControls.newLabel(BookingPageI18nKeys.SoldOut);
-        badge.getStyleClass().add("bookingpage-soldout-badge-inline");
+        badge.getStyleClass().add(bookingpage_soldout_badge_inline);
         badge.setPadding(new Insets(2, 6, 2, 6));
         return badge;
     }
@@ -508,7 +506,7 @@ public class DefaultTransportSection implements HasTransportSection {
      */
     protected VBox buildShuttleGroupContainer() {
         VBox groupContainer = new VBox(0);
-        groupContainer.getStyleClass().add("bookingpage-shuttle-container");
+        groupContainer.getStyleClass().add(bookingpage_shuttle_container);
         groupContainer.setPadding(new Insets(0));
 
         // Header with icon, title, description, and price
@@ -545,17 +543,17 @@ public class DefaultTransportSection implements HasTransportSection {
 
         Label title = new Label();
         title.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.AirportShuttle));
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label description = new Label();
         description.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.SelectYourJourney, getFormattedSingleTripPrice()));
-        description.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        description.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         textContent.getChildren().addAll(title, description);
 
         // Price label (only visible when any shuttle selected)
         shuttleTotalPriceLabel = new Label();
-        shuttleTotalPriceLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+        shuttleTotalPriceLabel.getStyleClass().addAll(bookingpage_price_medium, bookingpage_text_primary);
         updateShuttleTotalPriceLabel();
 
         shuttleHeaderPriceBox = new HBox(shuttleTotalPriceLabel);
@@ -575,7 +573,7 @@ public class DefaultTransportSection implements HasTransportSection {
         StackPane iconContainer = new StackPane();
         iconContainer.setMinSize(36, 36);
         iconContainer.setMaxSize(36, 36);
-        iconContainer.getStyleClass().add("bookingpage-shuttle-icon-container");
+        iconContainer.getStyleClass().add(bookingpage_shuttle_icon_container);
 
         SVGPath icon = new SVGPath();
         icon.setContent(BookingPageUIBuilder.ICON_PLANE);
@@ -583,7 +581,7 @@ public class DefaultTransportSection implements HasTransportSection {
         icon.setScaleY(0.7);
         icon.setStrokeWidth(2);
         icon.setFill(Color.TRANSPARENT);
-        icon.getStyleClass().add("bookingpage-shuttle-icon");
+        icon.getStyleClass().add(bookingpage_shuttle_icon);
 
         iconContainer.getChildren().add(icon);
         iconContainer.setAlignment(Pos.CENTER);
@@ -628,7 +626,7 @@ public class DefaultTransportSection implements HasTransportSection {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(12, 14, 12, 14));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-shuttle-trip");
+        card.getStyleClass().add(bookingpage_shuttle_trip);
 
         // Checkbox indicator
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(option.selectedProperty(), colorScheme);
@@ -639,16 +637,16 @@ public class DefaultTransportSection implements HasTransportSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = new Label(option.getName());
-        title.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        title.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium);
 
         Label dateTime = new Label(formatTripDateTime(option));
-        dateTime.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        dateTime.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         textContent.getChildren().addAll(title, dateTime);
 
         // Price label
         Label priceLabel = new Label(formatShuttlePrice(option.getPrice()));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold);
 
         card.getChildren().addAll(checkbox, textContent, priceLabel);
 
@@ -686,11 +684,11 @@ public class DefaultTransportSection implements HasTransportSection {
      */
     protected void updateShuttleTripCardStyle(HBox card, ShuttleOption option) {
         if (option.isSelected()) {
-            if (!card.getStyleClass().contains("selected")) {
-                card.getStyleClass().add("selected");
+            if (!card.getStyleClass().contains(selected)) {
+                card.getStyleClass().add(selected);
             }
         } else {
-            card.getStyleClass().remove("selected");
+            card.getStyleClass().remove(selected);
         }
     }
 
@@ -699,12 +697,12 @@ public class DefaultTransportSection implements HasTransportSection {
      */
     protected void updateShuttleTripCardAvailability(HBox card, ShuttleOption option) {
         if (option.isAvailable()) {
-            card.getStyleClass().remove("disabled");
+            card.getStyleClass().remove(disabled);
             card.setCursor(Cursor.HAND);
             card.setOpacity(1.0);
         } else {
-            if (!card.getStyleClass().contains("disabled")) {
-                card.getStyleClass().add("disabled");
+            if (!card.getStyleClass().contains(disabled)) {
+                card.getStyleClass().add(disabled);
             }
             card.setCursor(Cursor.DEFAULT);
             card.setOpacity(0.5);
@@ -721,13 +719,13 @@ public class DefaultTransportSection implements HasTransportSection {
     protected void updateShuttleContainerStyle() {
         boolean hasSelection = shuttleOptions.stream().anyMatch(ShuttleOption::isSelected);
         if (hasSelection) {
-            if (!shuttleGroupContainer.getStyleClass().contains("has-selection")) {
-                shuttleGroupContainer.getStyleClass().add("has-selection");
+            if (!shuttleGroupContainer.getStyleClass().contains(has_selection)) {
+                shuttleGroupContainer.getStyleClass().add(has_selection);
             }
             shuttleHeaderPriceBox.setVisible(true);
             shuttleHeaderPriceBox.setManaged(true);
         } else {
-            shuttleGroupContainer.getStyleClass().remove("has-selection");
+            shuttleGroupContainer.getStyleClass().remove(has_selection);
             shuttleHeaderPriceBox.setVisible(false);
             shuttleHeaderPriceBox.setManaged(false);
         }

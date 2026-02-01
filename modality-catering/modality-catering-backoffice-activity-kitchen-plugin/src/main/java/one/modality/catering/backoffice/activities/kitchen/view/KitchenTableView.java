@@ -20,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.catering.backoffice.activities.kitchen.KitchenCssSelectors.*;
+
 /**
  * Table view for Kitchen Activity.
  * Displays meals and dietary options in a grid for a range of dates.
@@ -46,7 +48,7 @@ public class KitchenTableView {
         gridPane = new GridPane();
         gridPane.setHgap(0);
         gridPane.setVgap(0);
-        gridPane.getStyleClass().add("kitchen-grid");
+        gridPane.getStyleClass().add(kitchen_grid);
 
         scrollPane = Controls.createScrollPane(gridPane);
         scrollPane.setFitToWidth(false);  // Don't force width - let it size to content
@@ -119,7 +121,7 @@ public class KitchenTableView {
             topLeft.setAlignment(Pos.CENTER_LEFT);
             topLeft.setPadding(new Insets(8, 10, 8, 10));
         }
-        topLeft.getStyleClass().addAll("kitchen-date-header", "kitchen-cell");
+        topLeft.getStyleClass().addAll(kitchen_date_header, kitchen_cell);
         gridPane.add(topLeft, 0, 0);
 
         int colIndex = 1;
@@ -131,7 +133,7 @@ public class KitchenTableView {
         Label totalHeader = I18nControls.newLabel(KitchenI18nKeys.Total);
         StackPane totalHeaderPane = new StackPane(totalHeader);
         totalHeaderPane.setPadding(new Insets(8, 6, 8, 6));
-        totalHeaderPane.getStyleClass().addAll("kitchen-total-header", "kitchen-cell");
+        totalHeaderPane.getStyleClass().addAll(kitchen_total_header, kitchen_cell);
         gridPane.add(totalHeaderPane, colIndex, 0);
 
         // --- Data Rows ---
@@ -176,12 +178,12 @@ public class KitchenTableView {
 
                 StackPane cell = new StackPane(countLabel);
                 cell.setPadding(new Insets(8, 6, 8, 6));
-                cell.getStyleClass().addAll("kitchen-meal-count-cell", "kitchen-cell");
+                cell.getStyleClass().addAll(kitchen_meal_count_cell, kitchen_cell);
 
                 // Make cell clickable if count > 0 and handler is set
                 if (count > 0 && cellClickHandler != null) {
                     cell.setCursor(Cursor.HAND);
-                    cell.getStyleClass().add("kitchen-cell-clickable");
+                    cell.getStyleClass().add(kitchen_cell_clickable);
                     final LocalDate clickedDate = date;
                     final String clickedMeal = meal;
                     final int clickedCount = count;
@@ -200,7 +202,7 @@ public class KitchenTableView {
 
             StackPane mealTotalCell = new StackPane(mealTotalLabel);
             mealTotalCell.setPadding(new Insets(8, 6, 8, 6));
-            mealTotalCell.getStyleClass().add("kitchen-meal-total-cell");
+            mealTotalCell.getStyleClass().add(kitchen_meal_total_cell);
 
             gridPane.add(mealTotalCell, dateCol, rowIndex);
 
@@ -234,7 +236,7 @@ public class KitchenTableView {
                 HBox dietHeaderPane = new HBox(dietLabel);
                 dietHeaderPane.setAlignment(Pos.CENTER_LEFT);
                 dietHeaderPane.setPadding(new Insets(8, 6, 8, 12));
-                dietHeaderPane.getStyleClass().addAll("kitchen-diet-label-cell", "kitchen-cell");
+                dietHeaderPane.getStyleClass().addAll(kitchen_diet_label_cell, kitchen_cell);
 
                 gridPane.add(dietHeaderPane, 0, rowIndex);
 
@@ -250,16 +252,16 @@ public class KitchenTableView {
 
                     StackPane cell = new StackPane(countLabel);
                     cell.setPadding(new Insets(8, 6, 8, 6));
-                    cell.getStyleClass().add("kitchen-diet-value-cell");
+                    cell.getStyleClass().add(kitchen_diet_value_cell);
                     if (isStriped) {
-                        cell.getStyleClass().add("striped");
+                        cell.getStyleClass().add(striped);
                     }
-                    cell.getStyleClass().add("kitchen-cell");
+                    cell.getStyleClass().add(kitchen_cell);
 
                     // Make cell clickable if count > 0
                     if (count > 0 && cellClickHandler != null) {
                         cell.setCursor(Cursor.HAND);
-                        cell.getStyleClass().add("kitchen-diet-cell-clickable");
+                        cell.getStyleClass().add(kitchen_diet_cell_clickable);
                         final LocalDate clickedDate = date;
                         final String clickedMeal = meal;
                         final String clickedDietCode = dietCode;
@@ -276,7 +278,7 @@ public class KitchenTableView {
 
                 StackPane dietTotalCell = new StackPane(dietTotalLabel);
                 dietTotalCell.setPadding(new Insets(8, 6, 8, 6));
-                dietTotalCell.getStyleClass().add("kitchen-diet-total-cell");
+                dietTotalCell.getStyleClass().add(kitchen_diet_total_cell);
 
                 gridPane.add(dietTotalCell, dateCol, rowIndex);
 
@@ -288,15 +290,15 @@ public class KitchenTableView {
 
     private VBox createDateHeader(LocalDate date) {
         Label dayLabel = new Label(date.format(DAY_FORMATTER).toUpperCase());
-        dayLabel.getStyleClass().add("kitchen-day-label");
+        dayLabel.getStyleClass().add(kitchen_day_label);
 
         Label dateLabel = new Label(date.format(DATE_FORMATTER));
-        dateLabel.getStyleClass().add("kitchen-date-label");
+        dateLabel.getStyleClass().add(kitchen_date_label);
 
         VBox vbox = new VBox(1, dayLabel, dateLabel);
         vbox.setAlignment(Pos.CENTER);
         vbox.setPadding(new Insets(6));
-        vbox.getStyleClass().addAll("kitchen-date-header", "kitchen-cell");
+        vbox.getStyleClass().addAll(kitchen_date_header, kitchen_cell);
         return vbox;
     }
 
@@ -306,7 +308,7 @@ public class KitchenTableView {
         HBox hbox = new HBox(label);
         hbox.setAlignment(Pos.CENTER_LEFT);
         hbox.setPadding(new Insets(8, 6, 8, 12));
-        hbox.getStyleClass().addAll("kitchen-meal-header", "kitchen-cell");
+        hbox.getStyleClass().addAll(kitchen_meal_header, kitchen_cell);
         return hbox;
     }
 }

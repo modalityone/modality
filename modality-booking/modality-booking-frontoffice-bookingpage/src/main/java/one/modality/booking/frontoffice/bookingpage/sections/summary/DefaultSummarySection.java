@@ -8,7 +8,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
@@ -25,6 +28,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
 
 /**
@@ -188,7 +192,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region divider = new Region();
         divider.setMinHeight(1);
         divider.setMaxHeight(1);
-        divider.getStyleClass().add("bookingpage-bg-lighter");
+        divider.getStyleClass().add(bookingpage_bg_lighter);
         VBox.setMargin(divider, new Insets(16, 0, 16, 0));
 
         // Event row
@@ -212,10 +216,10 @@ public class DefaultSummarySection implements HasSummarySection {
         VBox content = new VBox(2);
 
         attendeeNameLabel = new Label(attendeeNameProperty.get());
-        attendeeNameLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        attendeeNameLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         attendeeEmailLabel = new Label(attendeeEmailProperty.get());
-        attendeeEmailLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        attendeeEmailLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         content.getChildren().addAll(attendeeNameLabel, attendeeEmailLabel);
         row.getChildren().addAll(icon, content);
@@ -234,10 +238,10 @@ public class DefaultSummarySection implements HasSummarySection {
         VBox content = new VBox(2);
 
         eventNameLabel = new Label(eventNameProperty.get());
-        eventNameLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        eventNameLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         eventDetailsLabel = new Label(buildEventDetailsText());
-        eventDetailsLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        eventDetailsLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         content.getChildren().addAll(eventNameLabel, eventDetailsLabel);
         row.getChildren().addAll(icon, content);
@@ -290,7 +294,7 @@ public class DefaultSummarySection implements HasSummarySection {
         Region divider = new Region();
         divider.setMinHeight(2);
         divider.setMaxHeight(2);
-        divider.getStyleClass().add("bookingpage-bg-gray");
+        divider.getStyleClass().add(bookingpage_bg_gray);
         VBox.setMargin(divider, new Insets(12, 0, 0, 0));
 
         // Total row
@@ -299,13 +303,13 @@ public class DefaultSummarySection implements HasSummarySection {
         totalRow.setPadding(new Insets(16, 0, 0, 0));
 
         Label totalTextLabel = I18nControls.newLabel(BookingPageI18nKeys.TotalCost);
-        totalTextLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+        totalTextLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_bold, bookingpage_text_dark);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         totalAmountLabel = new Label(unifiedPriceDisplay != null ? unifiedPriceDisplay.formatPrice(0) : "£0");
-        totalAmountLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold", "bookingpage-text-primary");
+        totalAmountLabel.getStyleClass().addAll(bookingpage_price_medium, bookingpage_font_bold, bookingpage_text_primary);
 
         totalRow.getChildren().addAll(totalTextLabel, spacer, totalAmountLabel);
 
@@ -328,7 +332,7 @@ public class DefaultSummarySection implements HasSummarySection {
         HBox box = new HBox(12);
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(14, 16, 14, 16));
-        box.getStyleClass().add("bookingpage-info-box-info");
+        box.getStyleClass().add(bookingpage_info_box_info);
 
         // Price tag icon - uses themed primary color
         SVGPath icon = createThemedIcon(ICON_TAG, 0.65);
@@ -346,10 +350,10 @@ public class DefaultSummarySection implements HasSummarySection {
                 : "";
 
         rateTypeInfoLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.RateApplied, capitalizedRate));
-        rateTypeInfoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        rateTypeInfoLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         rateTypeDescLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricesReflectRate, rateType != null ? rateType.toLowerCase() : ""));
-        rateTypeDescLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        rateTypeDescLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
         rateTypeDescLabel.setWrapText(true);
 
         content.getChildren().addAll(rateTypeInfoLabel, rateTypeDescLabel);
@@ -367,7 +371,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
         // Content box
         VBox contentBox = new VBox(0);
-        contentBox.getStyleClass().addAll("bookingpage-card", "bookingpage-rounded-lg");
+        contentBox.getStyleClass().addAll(bookingpage_card, bookingpage_rounded_lg);
         contentBox.setPadding(new Insets(16, 20, 16, 20));
 
         // Options list container
@@ -395,7 +399,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
             // Add bottom border unless last item
             if (i < additionalOptions.size() - 1) {
-                optionRow.getStyleClass().add("bookingpage-divider-thin-bottom");
+                optionRow.getStyleClass().add(bookingpage_divider_thin_bottom);
             }
 
             additionalOptionsContent.getChildren().add(optionRow);
@@ -414,11 +418,11 @@ public class DefaultSummarySection implements HasSummarySection {
         VBox content = new VBox(2);
 
         Label nameLabel = new Label(option.getName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label descLabel = new Label(option.getDescription());
-            descLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            descLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             descLabel.setWrapText(true);
             content.getChildren().addAll(nameLabel, descLabel);
         } else {
@@ -485,13 +489,13 @@ public class DefaultSummarySection implements HasSummarySection {
         String displayName = familyName != null ? familyName + " - " + itemName : itemName;
 
         Label nameLabel = new Label(displayName);
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
 
         if (line.getDates() != null && !line.getDates().isEmpty()) {
             Label descLabel = new Label(line.getDates());
-            descLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            descLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             descLabel.setWrapText(true);
             labelBox.getChildren().addAll(nameLabel, descLabel);
         } else {
@@ -500,7 +504,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
         // Amount label (right-aligned, doesn't wrap)
         Label amountLabel = new Label(one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(line.getAmount(), event));
-        amountLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        amountLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
         amountLabel.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(labelBox, amountLabel);
@@ -525,7 +529,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected Label createPageTitle() {
         Label label = I18nControls.newLabel(BookingPageI18nKeys.ReviewYourBooking);
-        label.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold");
+        label.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_bold);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setMaxWidth(Double.MAX_VALUE);
@@ -535,7 +539,7 @@ public class DefaultSummarySection implements HasSummarySection {
 
     protected Label createPageSubtitle(String text) {
         Label label = new Label(text);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setMaxWidth(Double.MAX_VALUE);

@@ -1,30 +1,23 @@
 package one.modality.event.backoffice.activities.medias;
 
+import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
-import dev.webfx.extras.visual.*;
+import dev.webfx.extras.visual.VisualColumnBuilder;
+import dev.webfx.extras.visual.VisualResultBuilder;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
-import dev.webfx.platform.console.Console;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityList;
 import dev.webfx.stack.orm.entity.EntityStore;
-import dev.webfx.stack.orm.entity.EntityStoreQuery;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
-import dev.webfx.stack.orm.reactive.entities.entities_to_grid.EntityColumn;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.EntitiesToVisualResultMapper;
-import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.VisualEntityColumnFactory;
-import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -32,31 +25,31 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.shared.entities.Attendance;
-import one.modality.base.shared.entities.Document;
-import one.modality.base.shared.entities.DocumentLine;
-import one.modality.base.shared.entities.Event;
-import one.modality.base.shared.entities.MediaConsumption;
-import one.modality.base.shared.entities.Person;
-import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.markers.EntityHasLocalDate;
+import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.knownitems.KnownItem;
 import one.modality.base.shared.knownitems.KnownItemFamily;
-import one.modality.event.client.event.fx.FXEvent;
 import one.modality.event.backoffice.activities.medias.MediaDashboardPresentationModel.ConsumptionTypeFilter;
+import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static one.modality.event.backoffice.activities.medias.MediasCssSelectors.*;
 
 /**
  * Media Dashboard tab view for monitoring video streaming consumption in backoffice.
@@ -166,17 +159,17 @@ final class MediaDashboardTabView {
         HBox titleBox = new HBox();
         titleBox.setSpacing(10);
         titleBox.setAlignment(Pos.CENTER_LEFT);
-        titleBox.getStyleClass().add("section-title");
+        titleBox.getStyleClass().add(section_title);
 
         StackPane iconContainer = new StackPane();
         iconContainer.setMinSize(20, 20);
         iconContainer.setPrefSize(20, 20);
         iconContainer.setMaxSize(20, 20);
-        icon.getStyleClass().add("section-title-icon");
+        icon.getStyleClass().add(section_title_icon);
         iconContainer.getChildren().add(icon);
 
         Label titleLabel = I18nControls.newLabel(i18nKey);
-        titleLabel.getStyleClass().add("section-title-text");
+        titleLabel.getStyleClass().add(section_title_text);
 
         titleBox.getChildren().addAll(iconContainer, titleLabel);
         return titleBox;
@@ -219,7 +212,7 @@ final class MediaDashboardTabView {
         filterBox.setPadding(new Insets(0, 0, 0, 10));
 
         Label filterLabel = I18nControls.newLabel(MediasI18nKeys.Type);
-        filterLabel.getStyleClass().add("filter-label");
+        filterLabel.getStyleClass().add(filter_label);
 
         // Create toggle buttons for each filter type
         Button allButton = createFilterButton(MediasI18nKeys.All, ConsumptionTypeFilter.ALL);
@@ -236,7 +229,7 @@ final class MediaDashboardTabView {
 
     private Button createFilterButton(Object i18nKey, ConsumptionTypeFilter filterType) {
         Button button = I18nControls.newButton(i18nKey);
-        button.getStyleClass().addAll("filter-button");
+        button.getStyleClass().addAll(filter_button);
         button.setMinWidth(75);
         button.setPadding(new Insets(5, 10, 5, 10));
 
@@ -259,11 +252,11 @@ final class MediaDashboardTabView {
 
     private void updateFilterButtonStyle(Button button, boolean isActive) {
         if (isActive) {
-            button.getStyleClass().removeAll("filter-button-inactive");
-            button.getStyleClass().add("filter-button-active");
+            button.getStyleClass().removeAll(filter_button_inactive);
+            button.getStyleClass().add(filter_button_active);
         } else {
-            button.getStyleClass().removeAll("filter-button-active");
-            button.getStyleClass().add("filter-button-inactive");
+            button.getStyleClass().removeAll(filter_button_active);
+            button.getStyleClass().add(filter_button_inactive);
         }
     }
 
@@ -271,7 +264,7 @@ final class MediaDashboardTabView {
         VBox section = new VBox();
         section.setSpacing(20);
         section.setPadding(new Insets(20));
-        section.getStyleClass().add("session-details-section");
+        section.getStyleClass().add(session_details_section);
         section.setMinHeight(350);
 
         // Section Title with event name
@@ -281,7 +274,7 @@ final class MediaDashboardTabView {
 
         // Event name - more discrete
         eventTitleLabel = new Label();
-        eventTitleLabel.getStyleClass().add("event-subtitle");
+        eventTitleLabel.getStyleClass().add(event_subtitle);
 
         // Bind to event property
         FXProperties.runNowAndOnPropertyChange(event -> {
@@ -332,7 +325,7 @@ final class MediaDashboardTabView {
         sessionSelectorRow.setAlignment(Pos.CENTER_LEFT);
 
         Label sessionLabel = I18nControls.newLabel(MediasI18nKeys.SelectSession);
-        sessionLabel.getStyleClass().add("session-selector-label");
+        sessionLabel.getStyleClass().add(session_selector_label);
 
         // Create placeholder button (will be replaced when event loads)
         sessionButton = new Button();
@@ -372,22 +365,22 @@ final class MediaDashboardTabView {
         box.setSpacing(6);
         box.setPadding(new Insets(15));
         box.setAlignment(Pos.CENTER);
-        box.getStyleClass().add("stat-box");
+        box.getStyleClass().add(stat_box);
         // Add color-specific class based on the color parameter
         if (color.equals("#9b59b6")) {
-            box.getStyleClass().add("stat-box-purple");
+            box.getStyleClass().add(stat_box_purple);
         } else if (color.equals("#e74c3c")) {
-            box.getStyleClass().add("stat-box-red");
+            box.getStyleClass().add(stat_box_red);
         } else if (color.equals("#2ecc71")) {
-            box.getStyleClass().add("stat-box-green");
+            box.getStyleClass().add(stat_box_green);
         }
         box.setMinHeight(90);
         HBox.setHgrow(box, Priority.ALWAYS);
 
         Label statLabel = I18nControls.newLabel(i18nKey);
-        statLabel.getStyleClass().add("stat-box-label");
+        statLabel.getStyleClass().add(stat_box_label);
 
-        valueLabel.getStyleClass().add("stat-box-value");
+        valueLabel.getStyleClass().add(stat_box_value);
 
         box.getChildren().addAll(statLabel, valueLabel);
         return box;

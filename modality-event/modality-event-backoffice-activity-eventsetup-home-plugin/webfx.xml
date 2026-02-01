@@ -15,6 +15,8 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.eventsetup.home.EventSetupHomeRouting$RouteToEventSetupHomeRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.event.backoffice.activities.eventsetup.home.EventSetupHomeI18nKeys"/>
+    <java-ui-api package="one.modality.event.backoffice.activities.eventsetup.home" prefix="EventSetupHome">
+        <i18n/>
+    </java-ui-api>
 
 </project>

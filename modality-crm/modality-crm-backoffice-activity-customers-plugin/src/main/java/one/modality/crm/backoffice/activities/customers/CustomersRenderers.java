@@ -11,6 +11,7 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 
+import static one.modality.crm.backoffice.activities.customers.CustomersCssSelectors.*;
 import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
 /**
@@ -33,7 +34,7 @@ final class CustomersRenderers {
         ValueRendererRegistry.registerValueRenderer("customerId", (value, context) -> {
             Person person = (Person) value;
             Label idLabel = new Label(person.getId().getPrimaryKey().toString());
-            idLabel.getStyleClass().add("customer-id");
+            idLabel.getStyleClass().add(customer_id);
             return idLabel;
         });
 
@@ -123,10 +124,10 @@ final class CustomersRenderers {
                 int membersCount = view != null ? view.getMembersCount(person) : 0;
                 if(membersCount>0) {
                     Text icon = new Text("🔗");
-                    icon.getStyleClass().add("role-icon");
+                    icon.getStyleClass().add(role_icon);
                     Label linkInfo = new Label();
                     linkInfo.setText(I18n.getI18nText(MembersCountText, membersCount));
-                    linkInfo.getStyleClass().add("role-link-text");
+                    linkInfo.getStyleClass().add(role_link_text);
                     container.getChildren().addAll(icon, linkInfo);
                 }
             } else if (account != null) {
@@ -134,12 +135,12 @@ final class CustomersRenderers {
                 Person owner = view != null ? view.getOwnerForFrontendAccount(account.getPrimaryKey()) : null;
                 if (owner != null) {
                     Text icon = new Text("✓");
-                    icon.getStyleClass().add("role-icon-success");
+                    icon.getStyleClass().add(role_icon_success);
                     String ownerName = owner.getFullName();
                     Object id = owner.getPrimaryKey();
                     Label linkInfo = new Label();
                     linkInfo.setText(I18n.getI18nText(LinkedToOwnerText, id, ownerName));
-                    linkInfo.getStyleClass().add("role-link-text");
+                    linkInfo.getStyleClass().add(role_link_text);
                     container.getChildren().addAll(icon, linkInfo);
                 }
             }

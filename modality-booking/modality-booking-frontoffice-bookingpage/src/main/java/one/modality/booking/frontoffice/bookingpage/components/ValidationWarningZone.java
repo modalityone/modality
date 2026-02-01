@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * A reusable component that displays validation warning messages.
  * Positioned above navigation buttons to show why the form cannot proceed.
@@ -146,7 +148,7 @@ public class ValidationWarningZone extends VBox {
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(12, 16, 12, 16));
         // Use CSS classes for styling
-        box.getStyleClass().addAll("bookingpage-info-box", "bookingpage-info-box-warning");
+        box.getStyleClass().addAll(bookingpage_info_box, bookingpage_info_box_warning);
 
         // Warning icon
         SVGPath icon = new SVGPath();
@@ -163,7 +165,7 @@ public class ValidationWarningZone extends VBox {
 
         for (String message : messages) {
             Label messageLabel = new Label(message);
-            messageLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning");
+            messageLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_warning);
             messageLabel.setWrapText(true);
             textContainer.getChildren().add(messageLabel);
         }

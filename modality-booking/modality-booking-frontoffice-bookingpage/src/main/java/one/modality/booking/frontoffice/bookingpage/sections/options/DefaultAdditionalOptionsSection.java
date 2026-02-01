@@ -1,12 +1,18 @@
 package one.modality.booking.frontoffice.bookingpage.sections.options;
 
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Item;
@@ -21,14 +27,14 @@ import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHead
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the additional options section.
@@ -145,7 +151,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
      */
     protected VBox createOptionCard(AdditionalOption option) {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         HBox mainRow = new HBox(12);
         mainRow.setAlignment(Pos.CENTER_LEFT);
@@ -179,11 +185,11 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = new Label(option.getName());
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
 
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label subtitle = new Label(option.getDescription());
-            subtitle.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            subtitle.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             textContent.getChildren().addAll(title, subtitle);
         } else {
             textContent.getChildren().add(title);
@@ -191,7 +197,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
         // Price label
         Label priceLabel = new Label(formatPrice(option));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         // Assemble the row
         if (iconNode != null) {
@@ -204,17 +210,17 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
         // Initial selection state
         if (option.isSelected()) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Selection handling - CSS handles styling via .selected class
         option.selectedProperty().addListener((obs, old, newVal) -> {
             if (newVal) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
             // Sync with legacy properties for backward compatibility
             syncLegacyPropertiesFromOption(option);
@@ -253,7 +259,7 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
      */
     protected VBox createCeremonyOptionCard(CeremonyOption ceremony) {
         VBox card = new VBox(0);
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         HBox mainRow = new HBox(12);
         mainRow.setAlignment(Pos.CENTER_LEFT);
@@ -271,18 +277,18 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
         // Title (ceremony name from Item)
         Label title = new Label(ceremony.getName());
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
 
         // Date/time subtitle
         Label dateTime = new Label(formatCeremonyDateTime(ceremony));
-        dateTime.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        dateTime.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         textContent.getChildren().addAll(title, dateTime);
 
         // Comment (if present)
         if (ceremony.getComment() != null && !ceremony.getComment().isEmpty()) {
             Label comment = new Label(ceremony.getComment());
-            comment.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            comment.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             comment.setWrapText(true);
             textContent.getChildren().add(comment);
         }
@@ -293,17 +299,17 @@ public class DefaultAdditionalOptionsSection implements HasAdditionalOptionsSect
 
         // Initial selection state
         if (ceremony.isSelected()) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Selection handling
         ceremony.selectedProperty().addListener((obs, old, newVal) -> {
             if (newVal) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
             // Notify callback if registered
             if (onSelectionChangedCallback != null) {

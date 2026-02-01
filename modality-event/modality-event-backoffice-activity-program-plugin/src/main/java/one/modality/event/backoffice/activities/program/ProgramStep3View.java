@@ -39,6 +39,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
+
 /**
  * UI component for Step 3 of the program setup: Program Validation & Finalization.
  * This step displays when the program has been generated (validated) and shows:
@@ -144,14 +146,14 @@ final class ProgramStep3View {
 
         // Step 1 Circle (completed - green check)
         Label step1CheckCompleteStep3 = new Label("✓");
-        step1CheckCompleteStep3.getStyleClass().add("program-step-check-completed");
+        step1CheckCompleteStep3.getStyleClass().add(program_step_check_completed);
         StackPane step1CircleCompleteStep3 = new StackPane(step1CheckCompleteStep3);
-        step1CircleCompleteStep3.getStyleClass().add("program-step-circle-completed");
+        step1CircleCompleteStep3.getStyleClass().add(program_step_circle_completed);
         step1CircleCompleteStep3.setMinSize(40, 40);
         step1CircleCompleteStep3.setMaxSize(40, 40);
 
         Label step1LabelCompleteStep3 = I18nControls.newLabel(ProgramI18nKeys.GeneratePreliminaryBookableSI);
-        step1LabelCompleteStep3.getStyleClass().add("program-step-label-completed");
+        step1LabelCompleteStep3.getStyleClass().add(program_step_label_completed);
         step1LabelCompleteStep3.setWrapText(true);
         step1LabelCompleteStep3.setMaxWidth(150);
         step1LabelCompleteStep3.setAlignment(Pos.CENTER);
@@ -162,7 +164,7 @@ final class ProgramStep3View {
 
         // Connector line (green - completed)
         Region connector3 = new Region();
-        connector3.getStyleClass().add("program-step-connector-completed");
+        connector3.getStyleClass().add(program_step_connector_completed);
         connector3.setPrefHeight(2);
         connector3.setMaxHeight(2);
         connector3.setMinWidth(80);
@@ -171,14 +173,14 @@ final class ProgramStep3View {
 
         // Step 2 Circle (completed - green check)
         Label step2CheckComplete = new Label("✓");
-        step2CheckComplete.getStyleClass().add("program-step-check-completed");
+        step2CheckComplete.getStyleClass().add(program_step_check_completed);
         StackPane step2CircleComplete = new StackPane(step2CheckComplete);
-        step2CircleComplete.getStyleClass().add("program-step-circle-completed");
+        step2CircleComplete.getStyleClass().add(program_step_circle_completed);
         step2CircleComplete.setMinSize(40, 40);
         step2CircleComplete.setMaxSize(40, 40);
 
         Label step2LabelComplete = I18nControls.newLabel(ProgramI18nKeys.GenerateProgramSchedule);
-        step2LabelComplete.getStyleClass().add("program-step-label-completed");
+        step2LabelComplete.getStyleClass().add(program_step_label_completed);
         step2LabelComplete.setWrapText(true);
         step2LabelComplete.setMaxWidth(150);
         step2LabelComplete.setAlignment(Pos.CENTER);
@@ -189,7 +191,7 @@ final class ProgramStep3View {
 
         // Connector line (green - completed)
         Region connector3b = new Region();
-        connector3b.getStyleClass().add("program-step-connector-completed");
+        connector3b.getStyleClass().add(program_step_connector_completed);
         connector3b.setPrefHeight(2);
         connector3b.setMaxHeight(2);
         connector3b.setMinWidth(80);
@@ -198,14 +200,14 @@ final class ProgramStep3View {
 
         // Step 3 Circle (active)
         Label step3NumberActive = new Label("3");
-        step3NumberActive.getStyleClass().add("program-step-number-active");
+        step3NumberActive.getStyleClass().add(program_step_number_active);
         StackPane step3CircleActive = new StackPane(step3NumberActive);
-        step3CircleActive.getStyleClass().add("program-step-circle-active");
+        step3CircleActive.getStyleClass().add(program_step_circle_active);
         step3CircleActive.setMinSize(40, 40);
         step3CircleActive.setMaxSize(40, 40);
 
         Label step3LabelActive = I18nControls.newLabel(ProgramI18nKeys.ValidateProgram);
-        step3LabelActive.getStyleClass().add("program-step-label-active");
+        step3LabelActive.getStyleClass().add(program_step_label_active);
         step3LabelActive.setWrapText(true);
         step3LabelActive.setMaxWidth(150);
         step3LabelActive.setAlignment(Pos.CENTER);
@@ -274,14 +276,14 @@ final class ProgramStep3View {
 
         // Title
         Label warningTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.EventShortDescriptionRequired));
-        warningTitle.getStyleClass().add("program-warning-title-yellow");
+        warningTitle.getStyleClass().add(program_warning_title_yellow);
 
         VBox warningTitleBox = new VBox(warningTitle);
 
         // Content
         Label warningMessage = I18nControls.newLabel(ProgramI18nKeys.EventShortDescriptionRequiredMessage);
         warningMessage.setWrapText(true);
-        warningMessage.getStyleClass().add("program-warning-message-yellow");
+        warningMessage.getStyleClass().add(program_warning_message_yellow);
 
         VBox warningContent = new VBox(8, warningTitleBox, warningMessage);
 
@@ -289,7 +291,7 @@ final class ProgramStep3View {
         warningHeader.setAlignment(Pos.TOP_LEFT);
 
         VBox warningBox = new VBox(warningHeader);
-        warningBox.getStyleClass().add("program-warning-box-yellow");
+        warningBox.getStyleClass().add(program_warning_box_yellow);
         warningBox.setPadding(new Insets(20));
         warningBox.setMaxWidth(MAX_WIDTH);
 
@@ -328,7 +330,7 @@ final class ProgramStep3View {
         VBox uploadSection = new VBox(16);
         uploadSection.setAlignment(Pos.CENTER);
         uploadSection.setMaxWidth(MAX_WIDTH);
-        uploadSection.getStyleClass().add("event-image-upload-section");
+        uploadSection.getStyleClass().add(event_image_upload_section);
         uploadSection.setPadding(new Insets(24));
 
         // Header with gradient icon and title
@@ -340,7 +342,7 @@ final class ProgramStep3View {
         iconContainer.setPrefSize(40, 40);
         iconContainer.setMinSize(40, 40);
         iconContainer.setMaxSize(40, 40);
-        iconContainer.getStyleClass().add("image-upload-icon-container");
+        iconContainer.getStyleClass().add(image_upload_icon_container);
 
         // Image icon (white stroke)
         SVGPath imageIcon = new SVGPath();
@@ -354,7 +356,7 @@ final class ProgramStep3View {
 
         // Title
         Label title = I18nControls.newLabel(ProgramI18nKeys.EventImage);
-        title.getStyleClass().add("image-upload-title");
+        title.getStyleClass().add(image_upload_title);
 
         header.getChildren().addAll(iconContainer, title);
         uploadSection.getChildren().add(header);
@@ -404,7 +406,7 @@ final class ProgramStep3View {
         eventImageContainer.setPrefSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
         eventImageContainer.setMinSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
         eventImageContainer.setMaxSize(EVENT_IMAGE_SIZE, EVENT_IMAGE_SIZE);
-        eventImageContainer.getStyleClass().add("image-preview-container");
+        eventImageContainer.getStyleClass().add(image_preview_container);
 
         // Create placeholder content
         VBox placeholder = createImagePlaceholder();
@@ -412,7 +414,7 @@ final class ProgramStep3View {
 
         // Overlay with circular action buttons (view, replace, delete)
         imageOverlay.setAlignment(Pos.CENTER);
-        imageOverlay.getStyleClass().add("image-overlay");
+        imageOverlay.getStyleClass().add(image_overlay);
         imageOverlay.setVisible(false);
         imageOverlay.setOpacity(0);
         imageOverlay.setStyle(
@@ -511,10 +513,10 @@ final class ProgramStep3View {
         imageIcon.setScaleY(2.0);
 
         Label noImageLabel = I18nControls.newLabel(ProgramI18nKeys.NoImageSelected);
-        noImageLabel.getStyleClass().add("image-placeholder-label");
+        noImageLabel.getStyleClass().add(image_placeholder_label);
 
         Label formatHintLabel = I18nControls.newLabel(ProgramI18nKeys.ImageFormatHint);
-        formatHintLabel.getStyleClass().add("image-placeholder-hint");
+        formatHintLabel.getStyleClass().add(image_placeholder_hint);
 
         placeholder.getChildren().addAll(imageIcon, noImageLabel, formatHintLabel);
         return placeholder;
@@ -526,7 +528,7 @@ final class ProgramStep3View {
     private Button createOverlayButton(SVGPath icon, Runnable action) {
         Button btn = new Button();
         btn.setGraphic(icon);
-        btn.getStyleClass().add("image-overlay-btn");
+        btn.getStyleClass().add(image_overlay_btn);
         btn.setPrefSize(40, 40);
         btn.setMinSize(40, 40);
         btn.setMaxSize(40, 40);
@@ -545,7 +547,7 @@ final class ProgramStep3View {
 
         // Info card with light blue background
         VBox infoCard = new VBox(8);
-        infoCard.getStyleClass().add("image-info-card");
+        infoCard.getStyleClass().add(image_info_card);
         infoCard.setPadding(new Insets(16));
 
         // Info card header with icon
@@ -561,13 +563,13 @@ final class ProgramStep3View {
         infoIcon.setScaleY(0.6);
 
         Label infoTitle = I18nControls.newLabel(ProgramI18nKeys.EventImageUsage);
-        infoTitle.getStyleClass().add("image-info-card-title");
+        infoTitle.getStyleClass().add(image_info_card_title);
 
         infoCardHeader.getChildren().addAll(infoIcon, infoTitle);
 
         Label infoText = I18nControls.newLabel(ProgramI18nKeys.EventImageUsageText);
         infoText.setWrapText(true);
-        infoText.getStyleClass().add("image-info-card-text");
+        infoText.getStyleClass().add(image_info_card_text);
 
         infoCard.getChildren().addAll(infoCardHeader, infoText);
 
@@ -597,7 +599,7 @@ final class ProgramStep3View {
         uploadIcon.setScaleY(0.7);
 
         uploadButton.setGraphic(uploadIcon);
-        uploadButton.getStyleClass().add("btn-upload-primary");
+        uploadButton.getStyleClass().add(btn_upload_primary);
         uploadButton.setPadding(new Insets(10, 20, 10, 20));
         uploadButton.setMinWidth(200);
         uploadButton.setGraphicTextGap(8);
@@ -622,7 +624,7 @@ final class ProgramStep3View {
         deleteIcon.setScaleY(0.7);
 
         deleteButton.setGraphic(deleteIcon);
-        deleteButton.getStyleClass().add("btn-upload-secondary");
+        deleteButton.getStyleClass().add(btn_upload_secondary);
         deleteButton.setPadding(new Insets(10, 20, 10, 20));
         deleteButton.setGraphicTextGap(8);
 
@@ -668,8 +670,8 @@ final class ProgramStep3View {
                 imageUploadSpinner.setVisible(false);
                 if (ar.succeeded()) {
                     // Switch to has-image styling (solid border)
-                    eventImageContainer.getStyleClass().remove("image-preview-container");
-                    eventImageContainer.getStyleClass().add("image-preview-has-image");
+                    eventImageContainer.getStyleClass().remove(image_preview_container);
+                    eventImageContainer.getStyleClass().add(image_preview_has_image);
                 } else {
                     // Keep placeholder styling
                     eventImageContainer.setContent(createImagePlaceholder());
@@ -773,8 +775,8 @@ final class ProgramStep3View {
                     // Reset to placeholder
                     eventImageContainer.setContent(createImagePlaceholder());
                     // Switch back to placeholder styling (dashed border)
-                    eventImageContainer.getStyleClass().remove("image-preview-has-image");
-                    eventImageContainer.getStyleClass().add("image-preview-container");
+                    eventImageContainer.getStyleClass().remove(image_preview_has_image);
+                    eventImageContainer.getStyleClass().add(image_preview_container);
                     imageUploadSpinner.setVisible(false);
                 })
                 .onFailure(error -> {
@@ -867,7 +869,7 @@ final class ProgramStep3View {
 
         if (scheduledItems.isEmpty()) {
             Label noDataLabel = I18nControls.newLabel(ProgramI18nKeys.NoScheduledItemsFound);
-            noDataLabel.getStyleClass().add("no-data-message");
+            noDataLabel.getStyleClass().add(no_data_message);
             noDataLabel.setPadding(new Insets(50));
             VBox noDataBox = new VBox(noDataLabel);
             noDataBox.setAlignment(Pos.CENTER);
@@ -898,7 +900,7 @@ final class ProgramStep3View {
      */
     private VBox createDaySection(LocalDate date, List<ScheduledItem> scheduledItems) {
         VBox daySection = new VBox(24);
-        daySection.getStyleClass().add("day-section");
+        daySection.getStyleClass().add(day_section);
         daySection.setPadding(new Insets(24));
         daySection.setMaxWidth(MAX_WIDTH);
 
@@ -920,7 +922,7 @@ final class ProgramStep3View {
             SvgIcons.createPlusIconPath()
         );
         addSessionButton.setOnAction(e -> handleAddSession(date));
-        addSessionButton.getStyleClass().add("add-session-btn");
+        addSessionButton.getStyleClass().add(add_session_btn);
         daySection.getChildren().add(addSessionButton);
 
         return daySection;
@@ -937,7 +939,7 @@ final class ProgramStep3View {
         // Day icon
         StackPane dayIcon = new StackPane();
         dayIcon.setPrefSize(48, 48);
-        dayIcon.getStyleClass().add("day-icon");
+        dayIcon.getStyleClass().add(day_icon);
         SVGPath calendarIcon = SvgIcons.createCalendarPath();
         calendarIcon.setFill(javafx.scene.paint.Color.WHITE);
         calendarIcon.setScaleX(1.5);
@@ -952,7 +954,7 @@ final class ProgramStep3View {
         Bootstrap.strong(dayLabel);
 
         Label dateLabel = new Label(DATE_FORMATTER.format(date));
-        dateLabel.getStyleClass().add("day-status-label");
+        dateLabel.getStyleClass().add(day_status_label);
 
         dayDetails.getChildren().addAll(dayLabel, dateLabel);
 
@@ -979,7 +981,7 @@ final class ProgramStep3View {
         HBox sessionCard = new HBox(16);
         sessionCard.setAlignment(Pos.CENTER_LEFT);
         sessionCard.setPadding(new Insets(17));
-        sessionCard.getStyleClass().add("session-card");
+        sessionCard.getStyleClass().add(session_card);
 
         // Time range
         HBox timeRange = createTimeRange(scheduledItem);
@@ -998,9 +1000,9 @@ final class ProgramStep3View {
         // Strike through title if session is cancelled
         boolean isCancelled = Boolean.TRUE.equals(scheduledItem.isCancelled());
         if (isCancelled) {
-            sessionTitle.getStyleClass().add("session-title-cancelled");
+            sessionTitle.getStyleClass().add(session_title_cancelled);
         } else {
-            sessionTitle.getStyleClass().add("session-title");
+            sessionTitle.getStyleClass().add(session_title);
         }
 
         // Cancelled badge
@@ -1077,14 +1079,14 @@ final class ProgramStep3View {
         }
 
         Label startLabel = new Label(startTime);
-        startLabel.getStyleClass().add("time-slot");
+        startLabel.getStyleClass().add(time_slot);
         startLabel.setPadding(new Insets(10, 13, 10, 13));
 
         Label separator = new Label("-");
-        separator.getStyleClass().add("time-separator");
+        separator.getStyleClass().add(time_separator);
 
         Label endLabel = new Label(endTime);
-        endLabel.getStyleClass().add("time-slot");
+        endLabel.getStyleClass().add(time_slot);
         endLabel.setPadding(new Insets(10, 13, 10, 13));
 
         timeRange.getChildren().addAll(startLabel, separator, endLabel);
@@ -1105,7 +1107,7 @@ final class ProgramStep3View {
         icon.setScaleY(0.8);
 
         Label countLabel = new Label(String.valueOf(count));
-        countLabel.getStyleClass().add("participant-count");
+        countLabel.getStyleClass().add(participant_count);
 
         participants.getChildren().addAll(icon, countLabel);
         return participants;
@@ -1130,7 +1132,7 @@ final class ProgramStep3View {
         if (isOffered) {
             icon.setFill(javafx.scene.paint.Color.web("#059669"));
             Label countLabel = new Label(String.valueOf(count));
-            countLabel.getStyleClass().add("media-count-available");
+            countLabel.getStyleClass().add(media_count_available);
             countLabel.setMinWidth(12); // Compact width for single digit
             countLabel.setAlignment(Pos.CENTER_RIGHT);
             audioMedia.getChildren().addAll(icon, countLabel);
@@ -1173,7 +1175,7 @@ final class ProgramStep3View {
         if (isOffered) {
             icon.setFill(javafx.scene.paint.Color.web("#059669"));
             Label countLabel = new Label(String.valueOf(count));
-            countLabel.getStyleClass().add("media-count-available");
+            countLabel.getStyleClass().add(media_count_available);
             countLabel.setMinWidth(12); // Compact width for single digit
             countLabel.setAlignment(Pos.CENTER_RIGHT);
             videoMedia.getChildren().addAll(icon, countLabel);

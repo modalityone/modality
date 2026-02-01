@@ -46,6 +46,8 @@ import one.modality.event.client.event.fx.FXEvent;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static one.modality.event.backoffice.activities.roomsetup.EventRoomSetupCssSelectors.*;
+
 /**
  * Tab 2: Customize - Event-specific room overrides.
  *
@@ -87,12 +89,12 @@ final class CustomizeTabView {
 
         // Create loading overlay
         loadingOverlay = new StackPane();
-        loadingOverlay.getStyleClass().add("roomsetup-modal-overlay");
+        loadingOverlay.getStyleClass().add(roomsetup_modal_overlay);
         Region spinner = Controls.createPageSizeSpinner();
         VBox loadingBox = new VBox(10);
         loadingBox.setAlignment(Pos.CENTER);
         Label loadingLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.LoadingData);
-        loadingLabel.getStyleClass().add("roomsetup-stat-label");
+        loadingLabel.getStyleClass().add(roomsetup_stat_label);
         loadingBox.getChildren().addAll(spinner, loadingLabel);
         loadingOverlay.getChildren().add(loadingBox);
 
@@ -111,7 +113,7 @@ final class CustomizeTabView {
      */
     private StackPane createNoEventSelectedOverlay() {
         StackPane overlay = new StackPane();
-        overlay.getStyleClass().add("roomsetup-modal-overlay");
+        overlay.getStyleClass().add(roomsetup_modal_overlay);
 
         // Create message container
         VBox messageBox = new VBox(16);
@@ -277,7 +279,7 @@ final class CustomizeTabView {
      */
     private HBox createHelpTip() {
         HBox helpTip = new HBox(12);
-        helpTip.getStyleClass().add("roomsetup-help-tip-info");
+        helpTip.getStyleClass().add(roomsetup_help_tip_info);
         helpTip.setPadding(new Insets(14, 18, 14, 18));
         helpTip.setAlignment(Pos.CENTER_LEFT);
 
@@ -285,12 +287,12 @@ final class CustomizeTabView {
 
         VBox textBox = new VBox(2);
         Label adjustmentLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.AdjustmentsEventSpecific);
-        adjustmentLabel.getStyleClass().add("roomsetup-pool-title");
+        adjustmentLabel.getStyleClass().add(roomsetup_pool_title);
         adjustmentLabel.setStyle("-fx-text-fill: #0096D6;"); // Dynamic color override
 
         Label description = I18nControls.newLabel(EventRoomSetupI18nKeys.ChangesOnlyAffectThisEvent);
         description.setWrapText(true);
-        description.getStyleClass().add("roomsetup-help-tip-text");
+        description.getStyleClass().add(roomsetup_help_tip_text);
 
         textBox.getChildren().addAll(adjustmentLabel, description);
         HBox.setHgrow(textBox, Priority.ALWAYS);
@@ -361,7 +363,7 @@ final class CustomizeTabView {
      */
     private VBox createStatCard(String value, Object labelKey, String color, String icon) {
         VBox card = new VBox(4);
-        card.getStyleClass().add("roomsetup-stat-card");
+        card.getStyleClass().add(roomsetup_stat_card);
         card.setPadding(new Insets(16, 20, 16, 20));
         card.setAlignment(Pos.CENTER_LEFT);
         HBox.setHgrow(card, Priority.ALWAYS);
@@ -373,7 +375,7 @@ final class CustomizeTabView {
         StackPane iconContainer = new StackPane();
         iconContainer.setMinSize(44, 44);
         iconContainer.setMaxSize(44, 44);
-        iconContainer.getStyleClass().add("roomsetup-icon-container");
+        iconContainer.getStyleClass().add(roomsetup_icon_container);
         // Dynamic color from parameter - use cross-platform helper for alpha background
         applyDynamicBackground(iconContainer, color + "15", new CornerRadii(8));
         Label iconLabel = new Label(icon);
@@ -382,12 +384,12 @@ final class CustomizeTabView {
         // Text container
         VBox textContainer = new VBox(2);
         Label valueLabel = new Label(value);
-        valueLabel.getStyleClass().add("roomsetup-stat-value-medium");
+        valueLabel.getStyleClass().add(roomsetup_stat_value_medium);
         // Dynamic color from parameter - use cross-platform helper
         applyDynamicTextFill(valueLabel, color);
 
         Label descLabel = I18nControls.newLabel(labelKey);
-        descLabel.getStyleClass().add("roomsetup-stat-label");
+        descLabel.getStyleClass().add(roomsetup_stat_label);
 
         textContainer.getChildren().addAll(valueLabel, descLabel);
 
@@ -410,16 +412,16 @@ final class CustomizeTabView {
             VBox emptyState = new VBox(16);
             emptyState.setAlignment(Pos.CENTER);
             emptyState.setPadding(new Insets(48));
-            emptyState.getStyleClass().add("roomsetup-empty-state");
+            emptyState.getStyleClass().add(roomsetup_empty_state);
 
             Label emptyIcon = new Label("📦");
-            emptyIcon.getStyleClass().add("roomsetup-empty-icon");
+            emptyIcon.getStyleClass().add(roomsetup_empty_icon);
 
             Label emptyTitle = I18nControls.newLabel(EventRoomSetupI18nKeys.NoRoomsAssignedYet);
-            emptyTitle.getStyleClass().add("roomsetup-empty-title");
+            emptyTitle.getStyleClass().add(roomsetup_empty_title);
 
             Label emptyDesc = I18nControls.newLabel(EventRoomSetupI18nKeys.AssignRoomsFirst);
-            emptyDesc.getStyleClass().add("roomsetup-pool-count");
+            emptyDesc.getStyleClass().add(roomsetup_pool_count);
             emptyDesc.setWrapText(true);
 
             emptyState.getChildren().addAll(emptyIcon, emptyTitle, emptyDesc);
@@ -449,24 +451,24 @@ final class CustomizeTabView {
      */
     private VBox createRoomTypeCard(String typeName, List<Resource> rooms, int bedCount, long modifiedCount) {
         VBox card = new VBox();
-        card.getStyleClass().add("roomsetup-pool-card");
+        card.getStyleClass().add(roomsetup_pool_card);
 
         // Header
         HBox header = new HBox(12);
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(14, 20, 14, 20));
-        header.getStyleClass().add("roomsetup-pool-header");
+        header.getStyleClass().add(roomsetup_pool_header);
 
         Label typeIcon = new Label("🛏️");
 
         VBox typeInfo = new VBox(2);
         Label typeLabel = new Label(typeName);
-        typeLabel.getStyleClass().add("roomsetup-pool-title");
+        typeLabel.getStyleClass().add(roomsetup_pool_title);
 
         Label typeStats = new Label(rooms.size() + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Rooms).getText() + " • " + bedCount + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText());
-        typeStats.getStyleClass().add("roomsetup-pool-count");
+        typeStats.getStyleClass().add(roomsetup_pool_count);
 
         typeInfo.getChildren().addAll(typeLabel, typeStats);
 
@@ -479,7 +481,7 @@ final class CustomizeTabView {
             Label modifiedBadge = new Label(modifiedCount + " " +
                 I18nControls.newLabel(EventRoomSetupI18nKeys.Modified).getText().toLowerCase());
             modifiedBadge.setPadding(new Insets(4, 10, 4, 10));
-            modifiedBadge.getStyleClass().add("roomsetup-badge-info");
+            modifiedBadge.getStyleClass().add(roomsetup_badge_info);
             header.getChildren().add(modifiedBadge);
         }
 
@@ -511,13 +513,13 @@ final class CustomizeTabView {
         HBox chip = new HBox(10);
         chip.setPadding(new Insets(12, 16, 12, 16));
         chip.setAlignment(Pos.CENTER_LEFT);
-        chip.getStyleClass().add("roomsetup-room-chip");
+        chip.getStyleClass().add(roomsetup_room_chip);
 
         // Apply state-specific styling via CSS classes
         if (isExternal) {
-            chip.getStyleClass().add("roomsetup-room-chip-external");
+            chip.getStyleClass().add(roomsetup_room_chip_external);
         } else if (hasOverride) {
-            chip.getStyleClass().add("roomsetup-room-chip-override");
+            chip.getStyleClass().add(roomsetup_room_chip_override);
         }
 
         // External room indicator
@@ -528,9 +530,9 @@ final class CustomizeTabView {
 
         // Room ID
         Label idLabel = new Label(room.getName() != null ? room.getName() : "Room");
-        idLabel.getStyleClass().add("roomsetup-room-id");
+        idLabel.getStyleClass().add(roomsetup_room_id);
         if (isExternal) {
-            idLabel.getStyleClass().add("roomsetup-room-id-external");
+            idLabel.getStyleClass().add(roomsetup_room_id_external);
         }
         chip.getChildren().add(idLabel);
 
@@ -552,11 +554,11 @@ final class CustomizeTabView {
         int beds = getBedCount(room);
         Label bedsLabel = new Label(String.valueOf(beds));
         bedsLabel.setPadding(new Insets(4, 10, 4, 10));
-        bedsLabel.getStyleClass().add("roomsetup-beds-badge");
+        bedsLabel.getStyleClass().add(roomsetup_beds_badge);
         if (isExternal) {
-            bedsLabel.getStyleClass().add("roomsetup-beds-badge-external");
+            bedsLabel.getStyleClass().add(roomsetup_beds_badge_external);
         } else if (hasOverride) {
-            bedsLabel.getStyleClass().add("roomsetup-beds-badge-override");
+            bedsLabel.getStyleClass().add(roomsetup_beds_badge_override);
         }
         chip.getChildren().add(bedsLabel);
 
@@ -645,7 +647,7 @@ final class CustomizeTabView {
         String eventName = currentEvent != null ? currentEvent.getName() :
             I18nControls.newLabel(EventRoomSetupI18nKeys.ThisEvent).getText();
         Label eventLabel = new Label(I18nControls.newLabel(EventRoomSetupI18nKeys.OverrideSettingsFor).getText() + " " + eventName);
-        eventLabel.getStyleClass().add("roomsetup-stat-label");
+        eventLabel.getStyleClass().add(roomsetup_stat_label);
         headerText.getChildren().addAll(roomName, eventLabel);
         header.getChildren().addAll(headerIcon, headerText);
 
@@ -653,10 +655,10 @@ final class CustomizeTabView {
         HBox infoBanner = new HBox(10);
         infoBanner.setPadding(new Insets(12, 16, 12, 16));
         infoBanner.setAlignment(Pos.CENTER_LEFT);
-        infoBanner.getStyleClass().add("roomsetup-help-tip-info");
+        infoBanner.getStyleClass().add(roomsetup_help_tip_info);
         Label infoIcon = new Label("💡");
         Label infoText = I18nControls.newLabel(EventRoomSetupI18nKeys.ChangesOnlyApplyToThisEvent);
-        infoText.getStyleClass().add("roomsetup-help-tip-text");
+        infoText.getStyleClass().add(roomsetup_help_tip_text);
         infoText.setStyle("-fx-text-fill: #0096D6;"); // Override text color
         infoText.setWrapText(true);
         infoBanner.getChildren().addAll(infoIcon, infoText);
@@ -669,7 +671,7 @@ final class CustomizeTabView {
         HBox capacityHeader = new HBox(8);
         capacityHeader.setAlignment(Pos.CENTER_LEFT);
         Label capacityLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.CapacityForThisEvent);
-        capacityLabel.getStyleClass().add("roomsetup-section-label");
+        capacityLabel.getStyleClass().add(roomsetup_section_label);
         capacityHeader.getChildren().addAll(capacityLabel, bedsModified);
 
         HBox capacityControls = new HBox(12);
@@ -678,14 +680,14 @@ final class CustomizeTabView {
         Button minusBtn = new Button("−");
         minusBtn.setMinSize(44, 44);
         minusBtn.setMaxSize(44, 44);
-        minusBtn.getStyleClass().add("roomsetup-stepper-button");
+        minusBtn.getStyleClass().add(roomsetup_stepper_button);
 
         // Larger value display matching JSX mockup (2rem = ~32px)
         Label bedsValue = new Label(String.valueOf(currentBeds[0]));
         bedsValue.setStyle("-fx-font-size: 32px; -fx-font-weight: 700;" +
             (currentBeds[0] != baseBeds ? " -fx-text-fill: #0096D6;" : ""));
         Label bedsUnit = I18nControls.newLabel(EventRoomSetupI18nKeys.Beds);
-        bedsUnit.getStyleClass().add("roomsetup-stat-label");
+        bedsUnit.getStyleClass().add(roomsetup_stat_label);
         VBox bedsDisplay = new VBox(2);
         bedsDisplay.setAlignment(Pos.CENTER);
         HBox bedsValueRow = new HBox(6, bedsValue, bedsUnit);
@@ -696,7 +698,7 @@ final class CustomizeTabView {
         Button plusBtn = new Button("+");
         plusBtn.setMinSize(44, 44);
         plusBtn.setMaxSize(44, 44);
-        plusBtn.getStyleClass().add("roomsetup-stepper-button");
+        plusBtn.getStyleClass().add(roomsetup_stepper_button);
 
         minusBtn.setOnAction(e -> {
             if (currentBeds[0] > 0) {
@@ -721,7 +723,7 @@ final class CustomizeTabView {
 
         Label baseInfo = new Label(I18nControls.newLabel(EventRoomSetupI18nKeys.Base).getText() + ": " + baseBeds + " " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Beds).getText().toLowerCase());
-        baseInfo.getStyleClass().add("roomsetup-stat-label");
+        baseInfo.getStyleClass().add(roomsetup_stat_label);
         HBox baseInfoBox = new HBox(baseInfo);
         baseInfoBox.setAlignment(Pos.CENTER);
 
@@ -731,10 +733,10 @@ final class CustomizeTabView {
         VBox typeSection = new VBox(8);
         Label typeModified = new Label(!Objects.equals(currentItem[0], baseItem) ? " • " +
             I18nControls.newLabel(EventRoomSetupI18nKeys.Modified).getText() : "");
-        typeModified.getStyleClass().add("roomsetup-modified-indicator");
+        typeModified.getStyleClass().add(roomsetup_modified_indicator);
         HBox typeHeader = new HBox(4);
         Label typeLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.RoomType);
-        typeLabel.getStyleClass().add("roomsetup-section-label");
+        typeLabel.getStyleClass().add(roomsetup_section_label);
         typeHeader.getChildren().addAll(typeLabel, typeModified);
 
         // Create EntityButtonSelector for room types, filtered by organization
@@ -769,7 +771,7 @@ final class CustomizeTabView {
         // Gender section with toggle buttons (matching JSX mockup symbols)
         VBox genderSection = new VBox(8);
         Label genderLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.GenderRestriction);
-        genderLabel.getStyleClass().add("roomsetup-section-label");
+        genderLabel.getStyleClass().add(roomsetup_section_label);
 
         HBox genderButtons = new HBox(8);
         // Add symbols before text like in JSX mockup: ◐ Mixed, ♀ Female, ♂ Male
@@ -806,14 +808,14 @@ final class CustomizeTabView {
         // Notes section
         VBox notesSection = new VBox(8);
         Label notesLabel = I18nControls.newLabel(EventRoomSetupI18nKeys.EventNotes);
-        notesLabel.getStyleClass().add("roomsetup-section-label");
+        notesLabel.getStyleClass().add(roomsetup_section_label);
 
         TextArea notesField = new TextArea();
         notesField.setPromptText(I18nControls.newLabel(EventRoomSetupI18nKeys.EventNotesPlaceholder).getText());
         notesField.setText(currentComment != null ? currentComment : "");
         notesField.setPrefRowCount(2);
         notesField.setWrapText(true);
-        notesField.getStyleClass().add("roomsetup-form-input");
+        notesField.getStyleClass().add(roomsetup_form_input);
 
         notesSection.getChildren().addAll(notesLabel, notesField);
 

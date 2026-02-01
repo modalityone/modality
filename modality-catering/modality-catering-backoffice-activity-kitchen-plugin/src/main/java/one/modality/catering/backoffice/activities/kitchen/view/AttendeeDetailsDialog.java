@@ -10,8 +10,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
@@ -20,6 +22,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+
+import static one.modality.catering.backoffice.activities.kitchen.KitchenCssSelectors.*;
 
 /**
  * Dialog showing attendee details for a specific meal and dietary option.
@@ -88,7 +92,7 @@ public final class AttendeeDetailsDialog {
         // Header with icon
         SVGPath userIcon = new SVGPath();
         userIcon.setContent("M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z");
-        userIcon.getStyleClass().add("attendee-dialog-icon");
+        userIcon.getStyleClass().add(attendee_dialog_icon);
         userIcon.setScaleX(1.5);
         userIcon.setScaleY(1.5);
 
@@ -128,7 +132,7 @@ public final class AttendeeDetailsDialog {
         // Scroll pane for attendee list - grows to fill available vertical space
         ScrollPane scrollPane = Controls.createScrollPane(attendeeList);
         scrollPane.setFitToWidth(true);
-        scrollPane.getStyleClass().add("attendee-dialog-scroll");
+        scrollPane.getStyleClass().add(attendee_dialog_scroll);
         // Let scroll pane grow to use all available vertical space
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
@@ -154,7 +158,7 @@ public final class AttendeeDetailsDialog {
     private static VBox createAttendeeRow(AttendeeInfo attendee, int index) {
         // Person name (bold)
         Label nameLabel = new Label(attendee.personName());
-        nameLabel.getStyleClass().add("attendee-name-label");
+        nameLabel.getStyleClass().add(attendee_name_label);
         nameLabel.setMinWidth(200);
 
         // Event badge - use modulo on event ID to get different colors
@@ -174,16 +178,16 @@ public final class AttendeeDetailsDialog {
         VBox attendeeBox = new VBox(rowContent);
         attendeeBox.setPadding(new Insets(10, 15, 10, 15));
         attendeeBox.setMinHeight(45);
-        attendeeBox.getStyleClass().add("attendee-row");
+        attendeeBox.getStyleClass().add(attendee_row);
 
         // Zebra striping
         if (index % 2 == 1) {
-            attendeeBox.getStyleClass().add("striped");
+            attendeeBox.getStyleClass().add(striped);
         }
 
         // Separator line between rows
         if (index > 0) {
-            attendeeBox.getStyleClass().add("with-separator");
+            attendeeBox.getStyleClass().add(with_separator);
         }
 
         return attendeeBox;
@@ -263,13 +267,13 @@ public final class AttendeeDetailsDialog {
         // Header with icon
         SVGPath userIcon = new SVGPath();
         userIcon.setContent("M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z");
-        userIcon.getStyleClass().add("attendee-dialog-icon-total");
+        userIcon.getStyleClass().add(attendee_dialog_icon_total);
         userIcon.setScaleX(1.5);
         userIcon.setScaleY(1.5);
 
         // Title
         Label titleLabel = new Label(mealName + " - All Attendees");
-        titleLabel.getStyleClass().add("attendee-dialog-title");
+        titleLabel.getStyleClass().add(attendee_dialog_title);
 
         // Subtitle with date and total count
         String subtitle = date.format(DATE_FORMATTER) + " • " + totalCount + " people total";
@@ -300,7 +304,7 @@ public final class AttendeeDetailsDialog {
         // Scroll pane for sections - grows to fill available vertical space
         ScrollPane scrollPane = Controls.createScrollPane(sectionsContainer);
         scrollPane.setFitToWidth(true);
-        scrollPane.getStyleClass().add("attendee-dialog-scroll");
+        scrollPane.getStyleClass().add(attendee_dialog_scroll);
         // Let scroll pane grow to use all available vertical space
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
 
@@ -329,7 +333,7 @@ public final class AttendeeDetailsDialog {
     private static VBox createDietarySection(String dietName, List<AttendeeInfo> attendees) {
         // Section header with dietary option name and count
         Label sectionTitle = new Label(dietName);
-        sectionTitle.getStyleClass().add("dietary-section-title");
+        sectionTitle.getStyleClass().add(dietary_section_title);
 
         Label countBadge = new Label(String.valueOf(attendees.size()));
         one.modality.base.client.bootstrap.ModalityStyle.badgeLightInfo(countBadge);
@@ -337,7 +341,7 @@ public final class AttendeeDetailsDialog {
         HBox sectionHeader = new HBox(10, sectionTitle, countBadge);
         sectionHeader.setAlignment(Pos.CENTER_LEFT);
         sectionHeader.setPadding(new Insets(10, 15, 10, 15));
-        sectionHeader.getStyleClass().add("dietary-section-header");
+        sectionHeader.getStyleClass().add(dietary_section_header);
 
         // Attendee list for this dietary type
         VBox attendeeList = new VBox();
@@ -350,7 +354,7 @@ public final class AttendeeDetailsDialog {
         }
 
         VBox section = new VBox(sectionHeader, attendeeList);
-        section.getStyleClass().add("dietary-section");
+        section.getStyleClass().add(dietary_section);
 
         return section;
     }
@@ -361,7 +365,7 @@ public final class AttendeeDetailsDialog {
     private static HBox createCompactAttendeeRow(AttendeeInfo attendee, int index) {
         // Person name
         Label nameLabel = new Label(attendee.personName());
-        nameLabel.getStyleClass().add("compact-attendee-name");
+        nameLabel.getStyleClass().add(compact_attendee_name);
         nameLabel.setMinWidth(250);
 
         // Event badge
@@ -377,16 +381,16 @@ public final class AttendeeDetailsDialog {
         HBox row = new HBox(15, nameLabel, eventBadge, dateLabel);
         row.setAlignment(Pos.CENTER_LEFT);
         row.setPadding(new Insets(8, 15, 8, 15));
-        row.getStyleClass().add("compact-attendee-row");
+        row.getStyleClass().add(compact_attendee_row);
 
         // Zebra striping
         if (index % 2 == 1) {
-            row.getStyleClass().add("striped");
+            row.getStyleClass().add(striped);
         }
 
         // Separator line
         if (index > 0) {
-            row.getStyleClass().add("with-separator");
+            row.getStyleClass().add(with_separator);
         }
 
         return row;

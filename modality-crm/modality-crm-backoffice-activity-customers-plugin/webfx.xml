@@ -29,6 +29,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.customers.CustomersRouting$RouteToCustomersRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.backoffice.activities.customers.CustomersI18nKeys"/>
+    <java-ui-api package="one.modality.crm.backoffice.activities.customers" prefix="Customers">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

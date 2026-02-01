@@ -27,6 +27,8 @@
 
     </providers>
 
-    <i18n javaKeysClass="one.modality.base.frontoffice.activities.account.AccountI18nKeys"/>
+    <java-ui-api package="one.modality.base.frontoffice.activities.account" prefix="Account">
+        <i18n/>
+    </java-ui-api>
 
 </project>

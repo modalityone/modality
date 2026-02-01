@@ -1,4 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections.generalprogram;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -38,6 +39,8 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of a class date selection section for General Program booking forms.
@@ -102,7 +105,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
 
         // Price summary
         priceSummaryBox.setPadding(new Insets(24));
-        priceSummaryBox.getStyleClass().addAll("bookingpage-card-static", "gpclass-price-summary");
+        priceSummaryBox.getStyleClass().addAll(bookingpage_card_static, "gpclass-price-summary");
         priceSummaryBox.setVisible(false);
         priceSummaryBox.setManaged(false);
 
@@ -114,12 +117,12 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
     private void buildSelectAllBar() {
         selectAllBar.setAlignment(Pos.CENTER_LEFT);
         selectAllBar.setPadding(new Insets(12, 16, 12, 16));
-        selectAllBar.getStyleClass().add("bookingpage-select-all-bar");
+        selectAllBar.getStyleClass().add(bookingpage_select_all_bar);
         HBox.setHgrow(selectAllBar, Priority.ALWAYS);
 
         // Message label (stored as field for updates after data loads)
         selectAllMessageLabel = new Label();
-        selectAllMessageLabel.getStyleClass().add("bookingpage-select-all-message");
+        selectAllMessageLabel.getStyleClass().add(bookingpage_select_all_message);
 
         // Spacer to push button to the right
         Region spacer = new Region();
@@ -129,7 +132,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         selectAllActionButton = new Button();
         selectAllActionButton.setCursor(Cursor.HAND);
         // Initial button style (primary - "Select All")
-        selectAllActionButton.getStyleClass().add("bookingpage-btn-small-primary");
+        selectAllActionButton.getStyleClass().add(bookingpage_btn_small_primary);
 
         // Update message and button based on selection changes
         selectedItems.addListener((ListChangeListener<ScheduledItem>) change -> {
@@ -168,8 +171,8 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
 
         if (allSelected) {
             // All selected state - green message, outline button
-            if (!selectAllMessageLabel.getStyleClass().contains("all-selected")) {
-                selectAllMessageLabel.getStyleClass().add("all-selected");
+            if (!selectAllMessageLabel.getStyleClass().contains(all_selected)) {
+                selectAllMessageLabel.getStyleClass().add(all_selected);
             }
             // Only show "Save" text if there's actually a discount
             String messageText = "✓ " + I18n.getI18nText(BookingPageI18nKeys.ClassSelectionAllSelected, availableItems.size());
@@ -179,13 +182,13 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
             selectAllMessageLabel.setText(messageText);
             selectAllActionButton.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionClearAll));
             // Switch to outline button style
-            selectAllActionButton.getStyleClass().remove("bookingpage-btn-small-primary");
-            if (!selectAllActionButton.getStyleClass().contains("bookingpage-btn-small-outline")) {
-                selectAllActionButton.getStyleClass().add("bookingpage-btn-small-outline");
+            selectAllActionButton.getStyleClass().remove(bookingpage_btn_small_primary);
+            if (!selectAllActionButton.getStyleClass().contains(bookingpage_btn_small_outline)) {
+                selectAllActionButton.getStyleClass().add(bookingpage_btn_small_outline);
             }
         } else {
             // Not all selected state - muted message, primary button
-            selectAllMessageLabel.getStyleClass().remove("all-selected");
+            selectAllMessageLabel.getStyleClass().remove(all_selected);
             // Only show discount info if there's actually a discount
             if (allClassesDiscount > 0) {
                 selectAllMessageLabel.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionSaveBySelectingAll,
@@ -196,9 +199,9 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
             }
             selectAllActionButton.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionSelectAll));
             // Switch to primary button style
-            selectAllActionButton.getStyleClass().remove("bookingpage-btn-small-outline");
-            if (!selectAllActionButton.getStyleClass().contains("bookingpage-btn-small-primary")) {
-                selectAllActionButton.getStyleClass().add("bookingpage-btn-small-primary");
+            selectAllActionButton.getStyleClass().remove(bookingpage_btn_small_outline);
+            if (!selectAllActionButton.getStyleClass().contains(bookingpage_btn_small_primary)) {
+                selectAllActionButton.getStyleClass().add(bookingpage_btn_small_primary);
             }
         }
     }
@@ -299,14 +302,14 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         card.setMinWidth(180);
         card.setPrefWidth(180);
         card.setMaxWidth(200);
-        card.getStyleClass().addAll("bookingpage-card", "gpclass-date-card");
+        card.getStyleClass().addAll(bookingpage_card, gpclass_date_card);
 
         // Apply past date styling using CSS helper (grayed out, not clickable)
         BookingPageUIBuilder.applyPastDateStyle(card, isPastDate);
 
         // Apply locked styling for already booked items
         if (isLocked) {
-            card.getStyleClass().addAll("selected", "locked");
+            card.getStyleClass().addAll(selected, locked);
         }
 
         // Only set hand cursor for selectable (future, non-locked) dates
@@ -336,16 +339,16 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
                 emptyCircle.setVisible(!selected && !isPastDate);
                 checkmark.setVisible(selected);
                 if (selected) {
-                    if (!card.getStyleClass().contains("selected")) {
-                        card.getStyleClass().add("selected");
+                    if (!card.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                        card.getStyleClass().add(BookingPageCssSelectors.selected);
                     }
                 } else {
-                    card.getStyleClass().remove("selected");
+                    card.getStyleClass().remove(BookingPageCssSelectors.selected);
                 }
             });
             // Apply initial selected state
             if (isSelected.get()) {
-                card.getStyleClass().add("selected");
+                card.getStyleClass().add(selected);
             }
         }
 
@@ -359,13 +362,13 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         dateBox.setMinSize(44, 44);
         dateBox.setMaxSize(44, 44);
         dateBox.setAlignment(Pos.CENTER);
-        dateBox.getStyleClass().add("gpclass-date-box");
+        dateBox.getStyleClass().add(gpclass_date_box);
 
         Label dayLabel = new Label(String.valueOf(date.getDayOfMonth()));
-        dayLabel.getStyleClass().add("gpclass-date-day");
+        dayLabel.getStyleClass().add(gpclass_date_day);
 
         Label monthLabel = new Label(date.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase());
-        monthLabel.getStyleClass().add("gpclass-date-month");
+        monthLabel.getStyleClass().add(gpclass_date_month);
 
         dateBox.getChildren().addAll(dayLabel, monthLabel);
 
@@ -374,13 +377,13 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         dayTimeBox.setAlignment(Pos.CENTER_LEFT);
 
         Label dayNameLabel = new Label(date.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH));
-        dayNameLabel.getStyleClass().add("gpclass-date-dayname");
+        dayNameLabel.getStyleClass().add(gpclass_date_dayname);
 
         // Get time from ScheduledItem if available
         String timeText = item.getStartTime() != null ?
                 item.getStartTime().format(DateTimeFormatter.ofPattern("HH:mm")) : "";
         Label timeLabel = new Label(timeText);
-        timeLabel.getStyleClass().add("gpclass-date-time");
+        timeLabel.getStyleClass().add(gpclass_date_time);
 
         dayTimeBox.getChildren().addAll(dayNameLabel, timeLabel);
 
@@ -404,7 +407,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         // Add "BOOKED" badge at bottom for locked (already booked) items
         if (isLocked) {
             Label bookedBadge = I18nControls.newLabel(BookingPageI18nKeys.ClassSelectionBooked);
-            bookedBadge.getStyleClass().add("gpclass-booked-badge");
+            bookedBadge.getStyleClass().add(gpclass_booked_badge);
             bookedBadge.setPadding(new Insets(2, 6, 2, 6));
             HBox badgeContainer = new HBox(bookedBadge);
             badgeContainer.setAlignment(Pos.CENTER);
@@ -425,11 +428,11 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
             // Hover effects via CSS class (same visual as selected)
             card.setOnMouseEntered(e -> {
                 if (!isSelected.get()) {
-                    card.getStyleClass().add("hovered");
+                    card.getStyleClass().add(hovered);
                 }
             });
             card.setOnMouseExited(e -> {
-                card.getStyleClass().remove("hovered");
+                card.getStyleClass().remove(hovered);
             });
         }
 
@@ -470,7 +473,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
 
         // Title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.ClassSelectionYourSelection);
-        titleLabel.getStyleClass().add("gpclass-price-summary-title");
+        titleLabel.getStyleClass().add(gpclass_price_summary_title);
         VBox.setMargin(titleLabel, new Insets(0, 0, 4, 0)); // 4px extra to achieve 16px total (12px VBox spacing + 4px)
 
         boolean allSelected = selectedItems.size() == availableItems.size();
@@ -501,13 +504,13 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         } else {
             subtotalLabel.setText(I18n.getI18nText(BookingPageI18nKeys.ClassSelectionSingleClassPrice, selectedItems.size(), formatPrice(pricePerClass)));
         }
-        subtotalLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        subtotalLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
 
         Region subtotalSpacer = new Region();
         HBox.setHgrow(subtotalSpacer, Priority.ALWAYS);
 
         Label subtotalValue = new Label(formatPrice(subtotal));
-        subtotalValue.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        subtotalValue.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
 
         subtotalRow.getChildren().addAll(subtotalLabel, subtotalSpacer, subtotalValue);
 
@@ -517,16 +520,16 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         if (discount > 0) {
             HBox discountRow = new HBox();
             discountRow.setAlignment(Pos.CENTER_LEFT);
-            discountRow.getStyleClass().add("bookingpage-discount-row");
+            discountRow.getStyleClass().add(bookingpage_discount_row);
 
             Label discountLabel = I18nControls.newLabel(BookingPageI18nKeys.ClassSelectionFullTermDiscount);
-            discountLabel.getStyleClass().add("bookingpage-discount-label");
+            discountLabel.getStyleClass().add(bookingpage_discount_label);
 
             Region discountSpacer = new Region();
             HBox.setHgrow(discountSpacer, Priority.ALWAYS);
 
             Label discountValue = new Label("-" + formatPrice(discount));
-            discountValue.getStyleClass().add("bookingpage-discount-value");
+            discountValue.getStyleClass().add(bookingpage_discount_value);
 
             discountRow.getChildren().addAll(discountLabel, discountSpacer, discountValue);
             priceSummaryBox.getChildren().add(discountRow);
@@ -536,7 +539,7 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         Region divider = new Region();
         divider.setMinHeight(1);
         divider.setMaxHeight(1);
-        divider.getStyleClass().add("gpclass-price-summary-divider");
+        divider.getStyleClass().add(gpclass_price_summary_divider);
         VBox.setMargin(divider, new Insets(4, 0, 4, 0));
 
         // Total row
@@ -545,13 +548,13 @@ public class DefaultClassDateSelectionSection implements BookingFormSection, Res
         totalRow.setPadding(new Insets(0, 12, 0, 12)); // Match subtotal row padding for value alignment
 
         Label totalLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.Total));
-        totalLabel.getStyleClass().add("gpclass-price-summary-total-label");
+        totalLabel.getStyleClass().add(gpclass_price_summary_total_label);
 
         Region totalSpacer = new Region();
         HBox.setHgrow(totalSpacer, Priority.ALWAYS);
 
         Label totalValue = new Label(formatPrice(total));
-        totalValue.getStyleClass().addAll("gpclass-price-summary-total-value", "bookingpage-text-primary");
+        totalValue.getStyleClass().addAll(gpclass_price_summary_total_value, bookingpage_text_primary);
 
         totalRow.getChildren().addAll(totalLabel, totalSpacer, totalValue);
 

@@ -12,6 +12,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.entities.filters.FilterButtonSelectorFactoryMixin;
 
+import static one.modality.crm.backoffice.activities.customers.CustomersCssSelectors.*;
 import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
 /**
@@ -33,7 +34,7 @@ final class CustomersActivity extends ViewDomainActivityBase implements FilterBu
     public Node buildUi() {
         // Create main container
         BorderPane container = new BorderPane();
-        container.setId("customers");
+        container.setId(customers);
 
         // Create header with FilterSearchBar
         VBox header = createHeader();

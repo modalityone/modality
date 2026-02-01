@@ -30,6 +30,8 @@
         </callback-class>
     </java-callbacks>
 
-    <i18n javaKeysClass="one.modality.event.frontoffice.activities.booking.BookingI18nKeys"/>
+    <java-ui-api package="one.modality.event.frontoffice.activities.booking" prefix="Booking">
+        <i18n/>
+    </java-ui-api>
 
 </project>

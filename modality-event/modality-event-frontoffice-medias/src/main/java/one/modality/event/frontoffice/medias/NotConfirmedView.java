@@ -12,6 +12,8 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
 
+import static one.modality.event.frontoffice.medias.MediasCssSelectors.*;
+
 /**
  * View displayed when registration is not yet confirmed.
  * Reusable for both video streaming and audio library.
@@ -37,11 +39,11 @@ public class NotConfirmedView {
         noticeIcon.setMinSize(80, 80);
         noticeIcon.setPrefSize(80, 80);
         noticeIcon.setMaxSize(80, 80);
-        noticeIcon.getStyleClass().add("notice-icon");
+        noticeIcon.getStyleClass().add(notice_icon);
 
         SVGPath warningPath = SvgIcons.createWarningPath();
         warningPath.setFill(Color.WHITE);
-        warningPath.getStyleClass().add("notice-label");
+        warningPath.getStyleClass().add(notice_label);
 
         noticeIcon.setContent(warningPath);
         noticeIcon.setAlignment(Pos.CENTER);

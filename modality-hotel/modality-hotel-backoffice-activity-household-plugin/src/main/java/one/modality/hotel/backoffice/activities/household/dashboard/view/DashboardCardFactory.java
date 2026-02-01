@@ -1,4 +1,5 @@
 package one.modality.hotel.backoffice.activities.household.dashboard.view;
+import one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -27,6 +28,8 @@ import one.modality.hotel.backoffice.activities.household.dashboard.presenter.Da
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.*;
+
 /**
  * Factory for creating dashboard card UI components.
  * Centralizes all card creation logic to eliminate duplication.
@@ -41,34 +44,34 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
      */
     public Node createRoomCard(RoomCardData card) {
         VBox cardNode = new VBox(8);
-        cardNode.getStyleClass().addAll("room-item");
+        cardNode.getStyleClass().addAll(room_item);
         cardNode.setPrefWidth(200);
         cardNode.setPadding(new Insets(12));
 
         // Add status-specific class
         if (card.status() == RoomCardStatus.TO_CLEAN) {
-            cardNode.getStyleClass().add("to-clean-item");
+            cardNode.getStyleClass().add(to_clean_item);
         } else {
             cardNode.getStyleClass().add("to-inspect-item");
         }
 
         // Add urgency classes
         if (card.sameDayNextCheckin()) {
-            cardNode.getStyleClass().addAll("danger", "has-danger");
+            cardNode.getStyleClass().addAll(danger, has_danger);
         } else if (card.tomorrowNextCheckin()) {
-            cardNode.getStyleClass().addAll("urgent", "has-urgency");
+            cardNode.getStyleClass().addAll(urgent, has_urgency);
         }
 
         // Room header container with 2 lines
         VBox roomHeaderContainer = new VBox(4);
-        roomHeaderContainer.getStyleClass().add("room-header-container");
+        roomHeaderContainer.getStyleClass().add(room_header_container);
 
         HBox roomHeader = new HBox(8);
-        roomHeader.getStyleClass().add("room-header");
+        roomHeader.getStyleClass().add(room_header);
         roomHeader.setAlignment(Pos.CENTER_LEFT);
 
         Label roomNumber = new Label(card.roomName());
-        roomNumber.getStyleClass().add("room-number");
+        roomNumber.getStyleClass().add(room_number);
         roomNumber.setWrapText(true);
 
         Region headerSpacer = new Region();
@@ -76,7 +79,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
         // Action menu button
         Label actionButton = new Label("⋮");
-        actionButton.getStyleClass().add("action-menu-button");
+        actionButton.getStyleClass().add(action_menu_button);
         actionButton.setCursor(Cursor.HAND);
         actionButton.setOnMouseClicked(e -> {
             showRoomActionMenu(actionButton, card);
@@ -96,13 +99,13 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
                         card.status() == RoomCardStatus.TO_CLEAN ? HouseholdI18nKeys.ToClean :
                                 HouseholdI18nKeys.Ready
         );
-        statusBadge.getStyleClass().add("status-badge");
+        statusBadge.getStyleClass().add(status_badge);
         if (!card.checkoutComplete()) {
-            statusBadge.getStyleClass().add("checkout-pending");
+            statusBadge.getStyleClass().add(checkout_pending);
         } else if (card.status() == RoomCardStatus.TO_CLEAN) {
-            statusBadge.getStyleClass().add("to-clean");
+            statusBadge.getStyleClass().add(to_clean);
         } else {
-            statusBadge.getStyleClass().add("to-inspect");
+            statusBadge.getStyleClass().add(to_inspect);
         }
 
         // Next check-in info
@@ -217,21 +220,21 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         cardNode.setMaxHeight(Region.USE_PREF_SIZE);
 
         if (card.hasSameDayArrival()) {
-            cardNode.getStyleClass().addAll("checkout-card", "expandable-card");
+            cardNode.getStyleClass().addAll(checkout_card, "expandable-card");
         } else {
-            cardNode.getStyleClass().addAll("checkout-card-normal", "expandable-card");
+            cardNode.getStyleClass().addAll(checkout_card_normal, "expandable-card");
         }
 
         // Room header container
         VBox roomHeaderContainer = new VBox(4);
-        roomHeaderContainer.getStyleClass().add("room-header-container");
+        roomHeaderContainer.getStyleClass().add(room_header_container);
 
         HBox roomHeader = new HBox(8);
-        roomHeader.getStyleClass().add("room-header");
+        roomHeader.getStyleClass().add(room_header);
         roomHeader.setAlignment(Pos.CENTER_LEFT);
 
         Label roomNumber = new Label(card.getRoomName());
-        roomNumber.getStyleClass().add("room-number");
+        roomNumber.getStyleClass().add(room_number);
         roomNumber.setWrapText(true);
         roomHeader.getChildren().add(roomNumber);
 
@@ -240,12 +243,12 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         secondLine.setAlignment(Pos.CENTER_LEFT);
 
         Label roomTypeLabel = new Label(card.getBuildingName());
-        roomTypeLabel.getStyleClass().add("room-type-text");
+        roomTypeLabel.getStyleClass().add(room_type_text);
 
         int guestCount = card.isGrouped() ? card.getDocumentLines().size() : 1;
 
         Label expandIcon = new Label("☰"); // ☰
-        expandIcon.getStyleClass().add("expand-icon");
+        expandIcon.getStyleClass().add(expand_icon);
         String guestLabel = guestCount + " " + I18n.getI18nText(guestCount > 1 ? HouseholdI18nKeys.Guests : HouseholdI18nKeys.Guest);
         expandIcon.setTooltip(new Tooltip(guestLabel));
 
@@ -270,7 +273,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
         if (card.hasSameDayArrival()) {
             Label urgentWarning = I18nControls.newLabel(HouseholdI18nKeys.SameDayCheckIn);
-            urgentWarning.getStyleClass().add("urgent-warning");
+            urgentWarning.getStyleClass().add(urgent_warning);
             cardNode.getChildren().add(urgentWarning);
         }
 
@@ -293,28 +296,28 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         // Check for special needs
         boolean hasSpecialNeeds = card.hasSpecialRequests();
 
-        cardNode.getStyleClass().add("arrival-card");
+        cardNode.getStyleClass().add(arrival_card);
         if (hasSpecialNeeds) {
-            cardNode.getStyleClass().addAll("urgent", "has-urgency");
+            cardNode.getStyleClass().addAll(urgent, has_urgency);
         }
 
         // Room header container
         VBox roomHeaderContainer = new VBox(4);
-        roomHeaderContainer.getStyleClass().add("room-header-container");
+        roomHeaderContainer.getStyleClass().add(room_header_container);
 
         HBox roomHeader = new HBox(8);
-        roomHeader.getStyleClass().add("arrival-room-header");
+        roomHeader.getStyleClass().add(arrival_room_header);
         roomHeader.setAlignment(Pos.CENTER_LEFT);
 
         Label roomNumber = new Label(card.getRoomName());
-        roomNumber.getStyleClass().add("room-number");
+        roomNumber.getStyleClass().add(room_number);
         roomNumber.setWrapText(true);
         roomHeader.getChildren().add(roomNumber);
 
         // Add Special Needs badge on first line (near room name) if applicable
         if (hasSpecialNeeds) {
             Label specialBadge = I18nControls.newLabel(HouseholdI18nKeys.SpecialNeeds);
-            specialBadge.getStyleClass().add("special-request-badge");
+            specialBadge.getStyleClass().add(special_request_badge);
             specialBadge.setPadding(new Insets(1, 6, 1, 6));
             roomHeader.getChildren().add(specialBadge);
         }
@@ -324,13 +327,13 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         secondLine.setAlignment(Pos.CENTER_LEFT);
 
         Label roomTypeLabel = new Label(card.getBuildingName());
-        roomTypeLabel.getStyleClass().add("room-type-text");
+        roomTypeLabel.getStyleClass().add(room_type_text);
         secondLine.getChildren().add(roomTypeLabel);
 
         int guestCount = card.isGrouped() ? card.getDocumentLines().size() : 1;
 
         Label expandIcon = new Label("☰"); // ☰
-        expandIcon.getStyleClass().add("expand-icon");
+        expandIcon.getStyleClass().add(expand_icon);
         String guestLabel = guestCount + " " + I18n.getI18nText(guestCount > 1 ? HouseholdI18nKeys.Guests : HouseholdI18nKeys.Guest);
         expandIcon.setTooltip(new Tooltip(guestLabel));
 
@@ -364,7 +367,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
      */
     public Node createPartialCheckoutCard(PartialCheckoutCardData card) {
         VBox cardNode = new VBox(6);
-        cardNode.getStyleClass().addAll("partial-checkout-card", "expandable-card");
+        cardNode.getStyleClass().addAll(partial_checkout_card, "expandable-card");
         cardNode.setPrefWidth(200);
         cardNode.setPadding(new Insets(12));
         // Prevent FlowPane from stretching this card to match row height
@@ -372,14 +375,14 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
         // Room header container
         VBox roomHeaderContainer = new VBox(4);
-        roomHeaderContainer.getStyleClass().add("room-header-container");
+        roomHeaderContainer.getStyleClass().add(room_header_container);
 
         HBox roomHeader = new HBox(8);
-        roomHeader.getStyleClass().add("room-header");
+        roomHeader.getStyleClass().add(room_header);
         roomHeader.setAlignment(Pos.CENTER_LEFT);
 
         Label roomNumber = new Label(card.getRoomName());
-        roomNumber.getStyleClass().add("room-number");
+        roomNumber.getStyleClass().add(room_number);
         roomNumber.setWrapText(true);
         roomHeader.getChildren().add(roomNumber);
 
@@ -388,12 +391,12 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         secondLine.setAlignment(Pos.CENTER_LEFT);
 
         Label roomTypeLabel = new Label(card.getBuildingName());
-        roomTypeLabel.getStyleClass().add("room-type-text");
+        roomTypeLabel.getStyleClass().add(room_type_text);
 
         int guestCount = card.getCheckingOutCount();
 
         Label expandIcon = new Label("☰");
-        expandIcon.getStyleClass().add("expand-icon");
+        expandIcon.getStyleClass().add(expand_icon);
         String guestLabel = guestCount + " " + I18n.getI18nText(guestCount > 1 ? HouseholdI18nKeys.Guests : HouseholdI18nKeys.Guest);
         expandIcon.setTooltip(new Tooltip(guestLabel));
 
@@ -409,10 +412,10 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         summaryLine.setAlignment(Pos.CENTER_LEFT);
 
         Label summaryText = new Label(guestLabel + " ");
-        summaryText.getStyleClass().add("partial-checkout-summary-text");
+        summaryText.getStyleClass().add(partial_checkout_summary_text);
 
         Label checkingOutText = I18nControls.newLabel(HouseholdI18nKeys.CheckingOut);
-        checkingOutText.getStyleClass().add("partial-checkout-summary-text");
+        checkingOutText.getStyleClass().add(partial_checkout_summary_text);
 
         summaryLine.getChildren().addAll(summaryText, checkingOutText);
 
@@ -423,7 +426,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         }
 
         Label remainingGuests = new Label(card.getRemaining());
-        remainingGuests.getStyleClass().add("remaining-guests");
+        remainingGuests.getStyleClass().add(remaining_guests);
 
         cardNode.getChildren().addAll(summaryLine, guestDetailsContainer, remainingGuests);
 
@@ -437,7 +440,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
     private VBox createExpandableContainer() {
         VBox container = new VBox(4);
-        container.getStyleClass().add("guest-details-container");
+        container.getStyleClass().add(guest_details_container);
         container.setVisible(false);
         container.setManaged(false);
         return container;
@@ -467,7 +470,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         Boolean isMale = dl.getDocument().isMale();
         String iconSymbol = (isMale != null && isMale) ? "♂" : "♀"; // ♂ : ♀
         Label personIcon = new Label(iconSymbol);
-        personIcon.getStyleClass().addAll("person-icon", "inline-icon");
+        personIcon.getStyleClass().addAll(person_icon, inline_icon);
 
         personIcon.setOnMouseClicked(e -> {
             showDocumentInfoPopup(personIcon, dl);
@@ -475,7 +478,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         });
 
         Label nameLabel = new Label(dl.getDocument().getFullName());
-        nameLabel.getStyleClass().add("checkout-guest");
+        nameLabel.getStyleClass().add(checkout_guest);
         nameLabel.setWrapText(true);
 
         guestRow.getChildren().addAll(personIcon, nameLabel);
@@ -484,7 +487,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         String specialRequest = dl.getDocument().getRequest();
         if (specialRequest != null && !specialRequest.trim().isEmpty()) {
             Label specialIndicator = new Label("•");
-            specialIndicator.getStyleClass().add("special-needs-indicator");
+            specialIndicator.getStyleClass().add(special_needs_indicator);
             specialIndicator.setCursor(Cursor.HAND);
             specialIndicator.setOnMouseClicked(e -> {
                 showSpecialNeedsPopup(specialIndicator, specialRequest);
@@ -508,7 +511,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         Boolean isMale = dl.getDocument().isMale();
         String iconSymbol = (isMale != null && isMale) ? "♂" : "♀"; // ♂ : ♀
         Label personIcon = new Label(iconSymbol);
-        personIcon.getStyleClass().addAll("person-icon", "inline-icon");
+        personIcon.getStyleClass().addAll(person_icon, inline_icon);
 
         personIcon.setOnMouseClicked(e -> {
             showDocumentInfoPopup(personIcon, dl);
@@ -516,7 +519,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         });
 
         Label nameLabel = new Label(dl.getDocument().getFullName());
-        nameLabel.getStyleClass().add("arrival-guest");
+        nameLabel.getStyleClass().add(arrival_guest);
         nameLabel.setWrapText(true);
 
         guestRow.getChildren().addAll(personIcon, nameLabel);
@@ -525,7 +528,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
         String specialRequest = dl.getDocument().getRequest();
         if (specialRequest != null && !specialRequest.trim().isEmpty()) {
             Label specialIndicator = new Label("•");
-            specialIndicator.getStyleClass().add("special-needs-indicator");
+            specialIndicator.getStyleClass().add(special_needs_indicator);
             specialIndicator.setCursor(Cursor.HAND);
             specialIndicator.setOnMouseClicked(e -> {
                 showSpecialNeedsPopup(specialIndicator, specialRequest);
@@ -540,7 +543,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
     private Label createRoomTypeBadge(String roomType) {
         Label badge = new Label(roomType);
         String colorClass = getRoomTypeBadgeColor(roomType);
-        badge.getStyleClass().addAll("badge", colorClass, "room-type-badge");
+        badge.getStyleClass().addAll(HouseholdCssSelectors.badge, colorClass, room_type_badge);
         badge.setPadding(new Insets(2, 6, 2, 6));
         return badge;
     }
@@ -557,7 +560,7 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
 
     private Label createNextCheckinLabel(RoomCardData card) {
         Label nextCheckin = new Label();
-        nextCheckin.getStyleClass().add("next-checkin");
+        nextCheckin.getStyleClass().add(next_checkin);
 
         String nextText = I18n.getI18nText(HouseholdI18nKeys.Next);
         if (card.nextCheckinDate() != null) {
@@ -565,14 +568,14 @@ public record DashboardCardFactory(DashboardPresenter presenter, Pane containerP
             if (card.sameDayNextCheckin()) {
                 String todayText = I18n.getI18nText(HouseholdI18nKeys.TodayUrgent);
                 nextCheckin.setText(nextText + ": \uD83D\uDD34 " + dateStr + " (" + todayText + ")");
-                nextCheckin.getStyleClass().add("next-checkin-urgent");
+                nextCheckin.getStyleClass().add(next_checkin_urgent);
             } else if (card.tomorrowNextCheckin()) {
                 String tomorrowText = I18n.getI18nText(HouseholdI18nKeys.Tomorrow);
                 nextCheckin.setText(nextText + ": " + dateStr + " (" + tomorrowText + ")");
-                nextCheckin.getStyleClass().add("next-checkin-tomorrow");
+                nextCheckin.getStyleClass().add(next_checkin_tomorrow);
             } else {
                 nextCheckin.setText(nextText + ": " + dateStr);
-                nextCheckin.getStyleClass().add("next-checkin-date");
+                nextCheckin.getStyleClass().add(next_checkin_date);
             }
         } else {
             String moreThan7Days = I18n.getI18nText(HouseholdI18nKeys.MoreThan7Days);

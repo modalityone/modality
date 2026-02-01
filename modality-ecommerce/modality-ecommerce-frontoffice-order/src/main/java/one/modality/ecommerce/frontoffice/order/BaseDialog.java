@@ -18,6 +18,8 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import one.modality.base.client.icons.SvgIcons;
 
+import static one.modality.ecommerce.frontoffice.order.OrderCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -102,7 +104,7 @@ abstract class BaseDialog {
             Label messageLabel = I18nControls.newLabel(messageKey);
             messageLabel.setWrapText(true);
             messageLabel.setTextAlignment(TextAlignment.CENTER);
-            messageLabel.getStyleClass().add("thank-you-message");
+            messageLabel.getStyleClass().add(thank_you_message);
 
             successPane.getChildren().addAll(iconLabel, titleLabel, messageLabel);
 

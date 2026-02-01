@@ -29,6 +29,8 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 
 import java.util.Set;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Abstract base class for booking modification forms.
  *
@@ -251,7 +253,7 @@ public abstract class AbstractOnlineEventModificationForm {
         // Loading overlay
         MonoPane loadingOverlay = new MonoPane();
         loadingOverlay.setAlignment(Pos.CENTER);
-        loadingOverlay.getStyleClass().addAll("booking-form-loading-overlay", "bookingpage-loading-overlay");
+        loadingOverlay.getStyleClass().addAll("booking-form-loading-overlay", bookingpage_loading_overlay);
 
         ProgressIndicator spinner = new ProgressIndicator();
         spinner.setMaxSize(48, 48);
@@ -306,14 +308,14 @@ public abstract class AbstractOnlineEventModificationForm {
     protected VBox createStepProgress() {
         VBox wrapper = new VBox(0);
         wrapper.setPadding(new Insets(0, 0, 25, 0));
-        wrapper.getStyleClass().add("booking-form-step-progress-wrapper");
+        wrapper.getStyleClass().add(booking_form_step_progress_wrapper);
 
         String[] stepNames = {"Options", "Payment", "Confirmation"};
         int current = currentStep.get();
 
         StackPane container = new StackPane();
         container.setPadding(new Insets(25, 0, 25, 0));
-        container.getStyleClass().add("booking-form-step-progress");
+        container.getStyleClass().add(booking_form_step_progress);
 
         // Progress line
         Line progressLine = new Line();
@@ -345,7 +347,7 @@ public abstract class AbstractOnlineEventModificationForm {
         dividerLine.setMinHeight(1);
         dividerLine.setPrefHeight(1);
         dividerLine.setMaxHeight(1);
-        dividerLine.getStyleClass().add("bookingpage-divider-light");
+        dividerLine.getStyleClass().add(bookingpage_divider_light);
 
         wrapper.getChildren().addAll(container, dividerLine);
         return wrapper;
@@ -354,16 +356,16 @@ public abstract class AbstractOnlineEventModificationForm {
     protected VBox createStepIndicator(int stepNum, String label, boolean isActive, boolean isCompleted) {
         VBox box = new VBox(8);
         box.setAlignment(Pos.CENTER);
-        box.getStyleClass().add("step-progress-item");
+        box.getStyleClass().add(step_progress_item);
 
         if (isCompleted) {
-            box.getStyleClass().add("completed");
+            box.getStyleClass().add(completed);
         } else if (isActive) {
-            box.getStyleClass().add("active");
+            box.getStyleClass().add(active);
         }
 
         StackPane circle = new StackPane();
-        circle.getStyleClass().add("step-bubble");
+        circle.getStyleClass().add(step_bubble);
 
         Label numLabel;
         if (isCompleted) {
@@ -375,7 +377,7 @@ public abstract class AbstractOnlineEventModificationForm {
         circle.getChildren().add(numLabel);
 
         Label labelNode = new Label(label);
-        labelNode.getStyleClass().add("step-progress-label");
+        labelNode.getStyleClass().add(step_progress_label);
 
         box.getChildren().addAll(circle, labelNode);
         return box;
@@ -449,7 +451,7 @@ public abstract class AbstractOnlineEventModificationForm {
         payBtn.textProperty().bind(paymentSection.payButtonTextProperty());
         payBtn.disableProperty().bind(paymentSection.payButtonDisabledProperty());
         payBtn.setCursor(javafx.scene.Cursor.HAND);
-        payBtn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
+        payBtn.getStyleClass().addAll(booking_form_primary_btn, booking_form_primary_btn_text);
         payBtn.setOnAction(e -> paymentSection.submitPaymentAsync());
         payBtn.setGraphicTextGap(16);
 
@@ -521,7 +523,7 @@ public abstract class AbstractOnlineEventModificationForm {
         // Action button
         Button viewBookingsBtn = I18nControls.newButton(BookingPageI18nKeys.ViewMyBookings);
         viewBookingsBtn.setCursor(javafx.scene.Cursor.HAND);
-        viewBookingsBtn.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
+        viewBookingsBtn.getStyleClass().addAll(booking_form_primary_btn, booking_form_primary_btn_text);
         viewBookingsBtn.setOnAction(e -> {
             if (onComplete != null) {
                 onComplete.run();

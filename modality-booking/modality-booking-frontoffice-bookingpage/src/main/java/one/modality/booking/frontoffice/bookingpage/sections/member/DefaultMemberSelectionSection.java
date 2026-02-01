@@ -5,7 +5,10 @@ import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import javafx.beans.property.*;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableBooleanValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -31,6 +34,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the member selection section.
@@ -196,7 +201,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
             if (oldMember != null) {
                 VBox oldCard = memberCardMap.get(oldMember);
                 if (oldCard != null) {
-                    oldCard.getStyleClass().remove("selected");
+                    oldCard.getStyleClass().remove(selected);
                 }
                 StackPane oldCheckmark = checkmarkBadgeMap.get(oldMember);
                 if (oldCheckmark != null) {
@@ -206,7 +211,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
             if (newMember != null) {
                 VBox newCard = memberCardMap.get(newMember);
                 if (newCard != null) {
-                    newCard.getStyleClass().add("selected");
+                    newCard.getStyleClass().add(selected);
                 }
                 StackPane newCheckmark = checkmarkBadgeMap.get(newMember);
                 if (newCheckmark != null) {
@@ -232,13 +237,13 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         HBox errorRow = new HBox(8);
         errorRow.setAlignment(Pos.CENTER_LEFT);
         errorRow.setPadding(new Insets(12, 16, 12, 16));
-        errorRow.getStyleClass().add("bookingpage-error-box");
+        errorRow.getStyleClass().add(bookingpage_error_box);
 
         Label warningIcon = new Label("⚠"); // ⚠ warning
-        warningIcon.getStyleClass().add("bookingpage-text-base");
+        warningIcon.getStyleClass().add(bookingpage_text_base);
 
         errorLabel = new Label();
-        errorLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-danger");
+        errorLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_danger);
         errorLabel.setWrapText(true);
 
         errorRow.getChildren().addAll(warningIcon, errorLabel);
@@ -257,7 +262,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         HBox box = new HBox(10);
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(12, 16, 12, 16));
-        box.getStyleClass().add("bookingpage-warning-box");
+        box.getStyleClass().add(bookingpage_warning_box);
 
         // Warning/info icon
         SVGPath icon = new SVGPath();
@@ -270,7 +275,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
         // Info text with HTML link support
         HtmlText infoText = new HtmlText();
-        infoText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning");
+        infoText.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_warning);
         // Update text when language changes
         FXProperties.runNowAndOnPropertiesChange(() -> {
             infoText.setText(I18n.getI18nText(BookingPageI18nKeys.MemberSelectionInfoText));
@@ -317,14 +322,14 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
         card.setMaxWidth(350);
         card.setPadding(new Insets(20));
         card.setCursor(isBookable ? Cursor.HAND : Cursor.DEFAULT);
-        card.getStyleClass().add("bookingpage-selectable-card"); // Use selectable card class for proper theming
+        card.getStyleClass().add(bookingpage_selectable_card); // Use selectable card class for proper theming
 
         // Apply state classes
         if (!isBookable) {
-            card.getStyleClass().add("disabled");
+            card.getStyleClass().add(disabled);
         }
         if (isSelected && isBookable) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Content container (for StackPane wrapper with checkmark)
@@ -332,12 +337,12 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
         // Name - styled via CSS
         Label nameLabel = new Label(member.getName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_dark);
         VBox.setMargin(nameLabel, new Insets(0, 0, 8, 0));
 
         // Email - styled via CSS
         Label emailLabel = new Label(member.getEmail());
-        emailLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        emailLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         contentBox.getChildren().addAll(nameLabel, emailLabel);
 
@@ -388,11 +393,11 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
         Label iconLabel = new Label(icon);
         iconLabel.setTextFill(Color.web(iconColor));
-        iconLabel.getStyleClass().add("bookingpage-text-xs");
+        iconLabel.getStyleClass().add(bookingpage_text_xs);
 
         Label textLabel = I18nControls.newLabel(textKey);
         textLabel.setTextFill(Color.web(textColor));
-        textLabel.getStyleClass().addAll("bookingpage-font-medium", "bookingpage-text-xs");
+        textLabel.getStyleClass().addAll(bookingpage_font_medium, bookingpage_text_xs);
         textLabel.setWrapText(true);
 
         row.getChildren().addAll(iconLabel, textLabel);
@@ -444,7 +449,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
     protected Label createPageTitle() {
         Label label = I18nControls.newLabel(BookingPageI18nKeys.WhoIsThisBookingFor);
-        label.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_bold, bookingpage_text_dark);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setMaxWidth(Double.MAX_VALUE);
@@ -454,7 +459,7 @@ public class DefaultMemberSelectionSection implements HasMemberSelectionSection 
 
     protected Label createPageSubtitle() {
         Label label = I18nControls.newLabel(BookingPageI18nKeys.SelectPersonOrAddNew);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         label.setWrapText(true);
         label.setAlignment(Pos.CENTER);
         label.setMaxWidth(Double.MAX_VALUE);

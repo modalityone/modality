@@ -17,6 +17,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToMembersRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.frontoffice.activities.members.MembersI18nKeys"/>
+    <java-ui-api package="one.modality.crm.frontoffice.activities.members" prefix="Members">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

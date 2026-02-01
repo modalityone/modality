@@ -41,6 +41,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static one.modality.event.frontoffice.bookingform.recurringevent.RecurringEventCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -239,7 +241,7 @@ final class RecurringSummaryPage implements BookingFormPage {
         ColumnsPane totalPane = new ColumnsPane(col1Label, col2Label, col3Label);
         totalPane.setMaxWidth(Double.MAX_VALUE);
         totalPane.setPadding(new Insets(7));
-        totalPane.getStyleClass().add("line-total");
+        totalPane.getStyleClass().add(line_total);
         GridPane.setMargin(totalPane, new Insets(15, 0, 0, 0));
         int rowIndex = summaryGridPane.getRowCount();
         summaryGridPane.add(totalPane, 0, rowIndex, 3, 1);

@@ -28,6 +28,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import static one.modality.base.client.i18n.BaseCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -123,7 +125,7 @@ public class LabelTextField {
         HBox.setHgrow(mainTextField, Priority.ALWAYS);
 
         translationButton = new Button(I18n.getI18nText(BaseI18nKeys.TranslateIcon));
-        translationButton.getStyleClass().add("translation-button");
+        translationButton.getStyleClass().add(translation_button);
         translationButton.setOnAction(e -> toggleTranslationPane());
         translationButton.setAlignment(Pos.CENTER);
 
@@ -153,7 +155,7 @@ public class LabelTextField {
     private void createTranslationPane() {
         translationPane = new VBox(8);
         translationPane.setPadding(new Insets(10));
-        translationPane.getStyleClass().add("translation-pane");
+        translationPane.getStyleClass().add(translation_pane);
         translationPane.setVisible(false);
         translationPane.setManaged(false);
 
@@ -479,16 +481,16 @@ public class LabelTextField {
 
     private void createErrorMessageBox() {
         errorMessageLabel = new Label();
-        errorMessageLabel.getStyleClass().addAll("error-message-text", "text-danger");
+        errorMessageLabel.getStyleClass().addAll(error_message_text, "text-danger");
         errorMessageLabel.setWrapText(true);
         errorMessageLabel.setMaxWidth(Double.MAX_VALUE);
 
         // Create error icon (you can replace with your preferred icon)
         Label errorIcon = new Label("⚠️");
-        errorIcon.getStyleClass().add("error-icon");
+        errorIcon.getStyleClass().add(error_icon);
 
         errorMessageBox = new HBox(8, errorIcon, errorMessageLabel);
-        errorMessageBox.getStyleClass().add("error-message-box");
+        errorMessageBox.getStyleClass().add(error_message_box);
         errorMessageBox.setAlignment(Pos.CENTER_LEFT);
         errorMessageBox.setPadding(new Insets(10, 15, 10, 15));
         errorMessageBox.setMaxWidth(Double.MAX_VALUE);

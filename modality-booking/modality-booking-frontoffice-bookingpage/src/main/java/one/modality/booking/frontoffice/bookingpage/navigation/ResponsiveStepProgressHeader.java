@@ -37,6 +37,8 @@ import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Responsive step progress header with three layouts:
  * - Mobile (< 600px): Dots with current step info below
@@ -91,17 +93,17 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         // Mobile layout - VBox with header row (step info + badge), progress bar, and dots
         mobileLayout.setAlignment(Pos.CENTER);
         mobileLayout.setPadding(new Insets(16, 20, 16, 20));
-        mobileLayout.getStyleClass().add("booking-form-step-progress-mobile");
+        mobileLayout.getStyleClass().add(booking_form_step_progress_mobile);
 
         // Tablet layout - HBox with steps + badge on same row
         tabletLayout.setAlignment(Pos.TOP_CENTER);
         tabletLayout.setPadding(new Insets(12, 16, 12, 16));
-        tabletLayout.getStyleClass().add("booking-form-step-progress-tablet");
+        tabletLayout.getStyleClass().add(booking_form_step_progress_tablet);
 
         // Desktop layout - HBox with steps + badge on same row
         desktopLayout.setAlignment(Pos.TOP_CENTER);
         desktopLayout.setPadding(new Insets(0, 20, 24, 20));
-        desktopLayout.getStyleClass().add("booking-form-step-progress-desktop");
+        desktopLayout.getStyleClass().add(booking_form_step_progress_desktop);
 
         // Progress line for desktop
         desktopProgressLine.setStroke(Color.web("#e0e0e0"));
@@ -110,19 +112,19 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         // Stack all layouts - visibility controlled by responsive design
         container.getChildren().addAll(mobileLayout, tabletLayout, desktopLayout);
-        container.getStyleClass().add("booking-form-step-progress");
+        container.getStyleClass().add(booking_form_step_progress);
         container.setPadding(new Insets(0, 0, 12, 0)); // 12px space between steps and divider line
 
         // Divider line (1px) - separate element so we can control spacing above and below
         dividerLine.setMinHeight(1);
         dividerLine.setPrefHeight(1);
         dividerLine.setMaxHeight(1);
-        dividerLine.getStyleClass().add("bookingpage-progress-track");
+        dividerLine.getStyleClass().add(bookingpage_progress_track);
 
         // Wrapper contains: [step indicators with badge] + [divider line] + [bottom spacing]
         wrapper.getChildren().addAll(container, dividerLine);
         wrapper.setPadding(new Insets(0, 0, 48, 0)); // 48px space below divider line
-        wrapper.getStyleClass().add("booking-form-step-progress-wrapper");
+        wrapper.getStyleClass().add(booking_form_step_progress_wrapper);
     }
 
     /**
@@ -231,8 +233,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         // Update badge styling - uses CSS class with theme variables
         // Note: CSS class "booking-form-user-badge-content" uses -booking-form-selected-bg and -booking-form-primary
-        if (!userBadgeContent.getStyleClass().contains("booking-form-user-badge-content")) {
-            userBadgeContent.getStyleClass().add("booking-form-user-badge-content");
+        if (!userBadgeContent.getStyleClass().contains(booking_form_user_badge_content)) {
+            userBadgeContent.getStyleClass().add(booking_form_user_badge_content);
         }
     }
 
@@ -270,13 +272,13 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         // Build dropdown content - uses CSS class for styling
         VBox dropdownContent = new VBox();
-        dropdownContent.getStyleClass().add("booking-form-user-dropdown");
+        dropdownContent.getStyleClass().add(booking_form_user_dropdown);
         dropdownContent.setMinWidth(220);
 
         // User info header - uses CSS class for styling
         VBox userInfo = new VBox(4);
         userInfo.setPadding(new Insets(16));
-        userInfo.getStyleClass().add("booking-form-user-dropdown-header");
+        userInfo.getStyleClass().add(booking_form_user_dropdown_header);
 
         String fullName = ((person.getFirstName() != null ? person.getFirstName() : "") + " " +
                           (person.getLastName() != null ? person.getLastName() : "")).trim();
@@ -296,7 +298,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         logoutButton.setMaxWidth(Double.MAX_VALUE);
         logoutButton.setPadding(new Insets(14, 16, 14, 16));
         logoutButton.setFont(Font.font(null, FontWeight.MEDIUM, 14));
-        logoutButton.getStyleClass().add("booking-form-logout-btn");
+        logoutButton.getStyleClass().add(booking_form_logout_btn);
         logoutButton.setCursor(Cursor.HAND);
         logoutButton.setGraphic(createLogoutIcon());
         logoutButton.setGraphicTextGap(10);
@@ -590,17 +592,17 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
         progressBarContainer.setAlignment(Pos.CENTER_LEFT);
         progressBarContainer.setMinHeight(4);
         progressBarContainer.setMaxHeight(4);
-        progressBarContainer.getStyleClass().add("booking-form-mobile-progress-bar");
+        progressBarContainer.getStyleClass().add(booking_form_mobile_progress_bar);
 
         Region progressTrack = new Region();
         progressTrack.setMinHeight(4);
         progressTrack.setMaxHeight(4);
-        progressTrack.getStyleClass().add("bookingpage-progress-track");
+        progressTrack.getStyleClass().add(bookingpage_progress_track);
 
         Region progressFill = new Region();
         progressFill.setMinHeight(4);
         progressFill.setMaxHeight(4);
-        progressFill.getStyleClass().add("booking-form-mobile-progress-fill");
+        progressFill.getStyleClass().add(booking_form_mobile_progress_fill);
 
         progressBarContainer.getChildren().addAll(progressTrack, progressFill);
 
@@ -610,7 +612,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
         for (int i = 0; i < steps.size(); i++) {
             Region dot = new Region();
-            dot.getStyleClass().add("booking-form-step-dot");
+            dot.getStyleClass().add(booking_form_step_dot);
             dot.setUserData(i);
             // Active dot is wider (24px), others are 10px
             dot.setMinHeight(10);
@@ -659,17 +661,17 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             circle.setMinSize(32, 32);
             circle.setMaxSize(32, 32);
             circle.setAlignment(Pos.CENTER);
-            circle.getStyleClass().add("booking-form-step-bubble-tablet");
+            circle.getStyleClass().add(booking_form_step_bubble_tablet);
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
-            numberLabel.getStyleClass().add("booking-form-step-number");
+            numberLabel.getStyleClass().add(booking_form_step_number);
             numberLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 12)); // Per JSX mockup
             circle.getChildren().addAll(circleShape, numberLabel); // Circle first, label on top
 
             // Short label (abbreviated)
             Label label = new Label();
             I18nControls.bindI18nProperties(label, step.titleKey);
-            label.getStyleClass().add("booking-form-step-label-tablet");
+            label.getStyleClass().add(booking_form_step_label_tablet);
             label.setFont(Font.font(null, FontWeight.NORMAL, 11)); // Per JSX: 11px, weight changes with state
             label.setWrapText(true);
             label.setMaxWidth(60);
@@ -711,7 +713,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             VBox stepItem = new VBox(8);
             stepItem.setAlignment(Pos.TOP_CENTER);
             stepItem.setUserData(i);
-            stepItem.getStyleClass().add("booking-form-step-item");
+            stepItem.getStyleClass().add(booking_form_step_item);
             stepItem.setMinWidth(80);
             stepItem.setPrefWidth(90);
             stepItem.setMaxWidth(100);
@@ -726,16 +728,16 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             bubble.setMinSize(40, 40);
             bubble.setMaxSize(40, 40);
             bubble.setAlignment(Pos.CENTER);
-            bubble.getStyleClass().add("booking-form-step-bubble");
+            bubble.getStyleClass().add(booking_form_step_bubble);
 
             Label numberLabel = new Label(String.valueOf(step.stepNumber));
-            numberLabel.getStyleClass().add("booking-form-step-number");
+            numberLabel.getStyleClass().add(booking_form_step_number);
             numberLabel.setFont(Font.font(null, FontWeight.SEMI_BOLD, 13));
             bubble.getChildren().addAll(circleShape, numberLabel);
 
             // Full label - centered under bubble
             Label label = I18nControls.newLabel(step.titleKey);
-            label.getStyleClass().add("booking-form-step-label");
+            label.getStyleClass().add(booking_form_step_label);
             label.setWrapText(true);
             label.setAlignment(Pos.TOP_CENTER);
             label.setTextAlignment(TextAlignment.CENTER);
@@ -762,7 +764,7 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
                 lineSegment.setMaxHeight(1);
                 lineSegment.setMinWidth(20);
                 HBox.setHgrow(lineSegment, Priority.ALWAYS);
-                lineSegment.getStyleClass().add("booking-form-step-line");
+                lineSegment.getStyleClass().add(booking_form_step_line);
                 lineSegment.setUserData("line-" + i);
                 HBox.setMargin(lineSegment, new Insets(20, -20, 0, -20));
 
@@ -880,8 +882,8 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
 
             // Use percentage width binding
             progressFill.prefWidthProperty().bind(progressBarContainer.widthProperty().multiply(progress));
-            progressFill.getStyleClass().removeAll("bookingpage-progress-fill");
-            progressFill.getStyleClass().add("bookingpage-progress-fill");
+            progressFill.getStyleClass().removeAll(bookingpage_progress_fill);
+            progressFill.getStyleClass().add(bookingpage_progress_fill);
         }
 
         // Update dots - uses CSS classes for theming
@@ -897,11 +899,11 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
             dot.setMaxWidth(isActive ? 24 : 10);
 
             // Toggle CSS classes for background color (uses theme CSS variables)
-            dot.getStyleClass().removeAll("booking-form-step-dot-active", "booking-form-step-dot-completed");
+            dot.getStyleClass().removeAll(booking_form_step_dot_active, booking_form_step_dot_completed);
             if (isActive) {
-                dot.getStyleClass().add("booking-form-step-dot-active");
+                dot.getStyleClass().add(booking_form_step_dot_active);
             } else if (isCompleted) {
-                dot.getStyleClass().add("booking-form-step-dot-completed");
+                dot.getStyleClass().add(booking_form_step_dot_completed);
             }
             // Base class "booking-form-step-dot" provides inactive styling
 
@@ -975,11 +977,11 @@ public class ResponsiveStepProgressHeader implements BookingFormHeader {
                 stepItem.setCursor(navigationClickable ? Cursor.HAND : Cursor.DEFAULT);
 
                 // Update styleclass for CSS targeting
-                stepItem.getStyleClass().removeAll("active", "completed");
+                stepItem.getStyleClass().removeAll(active, completed);
                 if (isActive) {
-                    stepItem.getStyleClass().add("active");
+                    stepItem.getStyleClass().add(active);
                 } else if (isCompleted) {
-                    stepItem.getStyleClass().add("completed");
+                    stepItem.getStyleClass().add(completed);
                 }
 
                 stepIndex++;

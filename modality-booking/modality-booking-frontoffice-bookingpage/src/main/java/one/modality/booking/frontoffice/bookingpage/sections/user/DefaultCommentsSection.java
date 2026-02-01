@@ -1,6 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections.user;
 
-import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -15,6 +14,9 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.bookingpage_input_bordered;
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.bookingpage_text_base;
 
 /**
  * Default implementation of the "Comments and Special Requests" section.
@@ -79,7 +81,7 @@ public class DefaultCommentsSection implements HasCommentsSection {
         commentTextArea.setMaxWidth(Double.MAX_VALUE);
         commentTextArea.setPadding(new Insets(14, 16, 14, 16));
         // Add light gray border + text styling
-        commentTextArea.getStyleClass().addAll("bookingpage-input-bordered", "bookingpage-text-base");
+        commentTextArea.getStyleClass().addAll(bookingpage_input_bordered, bookingpage_text_base);
         // Bind text property
         commentTextArea.textProperty().bindBidirectional(commentTextProperty);
         VBox.setMargin(commentTextArea, new Insets(8, 0, 0, 0));

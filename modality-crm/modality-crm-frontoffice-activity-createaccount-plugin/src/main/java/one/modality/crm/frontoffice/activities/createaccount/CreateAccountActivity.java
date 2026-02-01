@@ -21,6 +21,8 @@ import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.activities.magiclink.MagicLinkI18nKeys;
 
+import static one.modality.crm.frontoffice.activities.createaccount.CreateAccountCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -59,7 +61,7 @@ final class CreateAccountActivity extends ViewDomainActivityBase implements Moda
         }, tokenProperty);
 
         container.getStyleClass().add("login");
-        container.getStyleClass().add("user-account");
+        container.getStyleClass().add(user_account);
         container.setAlignment(Pos.CENTER);
         container.setMaxWidth(Double.MAX_VALUE);
 

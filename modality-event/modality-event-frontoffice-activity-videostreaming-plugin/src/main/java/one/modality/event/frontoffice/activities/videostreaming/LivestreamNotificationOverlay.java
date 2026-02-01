@@ -27,6 +27,8 @@ import one.modality.base.shared.entities.Event;
 
 import java.util.function.Consumer;
 
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
 /**
  * A class that can display a notification message pushed by the server on the livestream video overlay. The message is
  * displayed as a text that scrolls in a loop from right to left in a notification bar. The user can close the
@@ -108,16 +110,16 @@ final class LivestreamNotificationOverlay {
 
     // Method to show the notification message
     private void showNotification(Node notificationText) {
-        notificationContainer.getStyleClass().setAll("notification-bar");
+        notificationContainer.getStyleClass().setAll(notification_bar);
 
         // Icon
         Text iconText = new Text("⚠️");
-        iconText.getStyleClass().add("notification-icon");
+        iconText.getStyleClass().add(notification_icon);
 
         // Text box with the message inside, but clipped if it's too long
         MonoClipPane notificationTextBox = new MonoClipPane(notificationText); // We clip the text (works for both web and JavaFX)
         notificationTextBox.setAlignment(Pos.TOP_LEFT); // The web CSS animation will reset any layoutX/Y anyway
-        notificationTextBox.getStyleClass().add("notification-text-box");
+        notificationTextBox.getStyleClass().add(notification_text_box);
         // Important to tell that it can be smaller than the text (for long texts)
         notificationTextBox.setMinWidth(0);
         // Important to tell that it should always fit the whole width of the notification bar (for short texts)
@@ -126,7 +128,7 @@ final class LivestreamNotificationOverlay {
 
         // Close button
         Button closeButton = new Button("✕");
-        closeButton.getStyleClass().add("notification-close");
+        closeButton.getStyleClass().add(notification_close);
         closeButton.setOnAction(e -> hideNotification());
 
         notificationContainer.getChildren().setAll(iconText, notificationTextBox, closeButton);

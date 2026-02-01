@@ -40,6 +40,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameOverlayArea;
 import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import one.modality.crm.shared.services.authn.fx.FXUserName;
 
+import static one.modality.base.frontoffice.activities.mainframe.MainFrameCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -86,7 +88,7 @@ public final class MenuBarFactory {
         buttonBar.getStyleClass().setAll("button-bar"); // to make menuItemButtons square in CSS (remove round corners)
         CollapsePane collapsePane = new CollapsePane(buttonBar);
         Aria.setAriaRole(collapsePane, AriaRole.NAVIGATION);
-        collapsePane.getStyleClass().setAll("menu-bar", userMenu ? "user-menu-bar" : "main-menu-bar", menuBarLayout == MenuBarLayout.MOBILE_BOTTOM ? "mobile" : "non-mobile");
+        collapsePane.getStyleClass().setAll(menu_bar, userMenu ? user_menu_bar : main_menu_bar, menuBarLayout == MenuBarLayout.MOBILE_BOTTOM ? "mobile" : non_mobile);
         collapsePane.setMaxWidth(Double.MAX_VALUE); // necessary to make the (CSS) border fill the whole page width
         collapsePane.setMinWidth(0); // Temporarily allowing menu shrinking on mobiles to prevent stopping page content shrinking (which is even worse as this crops the content on left and right)
         if (menuBarLayout == MenuBarLayout.MOBILE_BOTTOM) {
@@ -256,7 +258,7 @@ public final class MenuBarFactory {
     private static Label createBrandLabel(boolean shortVersion, double graphicTextGap) {
         Label brandLabel = I18nControls.newLabel(shortVersion ? BrandI18nKeys.frontOfficeBrandNameAndLogoShort : BrandI18nKeys.frontOfficeBrandNameAndLogo);
         brandLabel.setGraphicTextGap(graphicTextGap);
-        brandLabel.getStyleClass().setAll("brand");
+        brandLabel.getStyleClass().setAll(brand);
         return brandLabel;
     }
 

@@ -22,8 +22,10 @@ import one.modality.base.client.bootstrap.ModalityStyle;
 import one.modality.base.shared.entities.Invitation;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.members.MembersI18nKeys;
-import one.modality.crm.frontoffice.activities.members.model.MemberItem;
 import one.modality.crm.frontoffice.activities.members.model.ManagerItem;
+import one.modality.crm.frontoffice.activities.members.model.MemberItem;
+
+import static one.modality.crm.frontoffice.activities.members.MembersCssSelectors.*;
 
 /**
  * Factory class for creating UI elements for the Members activity.
@@ -184,7 +186,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox itemBox = new HBox(20);
         itemBox.setAlignment(Pos.CENTER_LEFT);
         itemBox.setPadding(new Insets(16, 0, 16, 0));
-        itemBox.getStyleClass().add("member-item-box");
+        itemBox.getStyleClass().add(member_item_box);
 
         // Member info
         VBox infoBox = new VBox(8);
@@ -244,20 +246,20 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             // Linked account - show name with badge and linked account status
             Label linkedAccountLabel = Bootstrap.small(Bootstrap.textSecondary(
                 I18nControls.newLabel(MembersI18nKeys.LinkedToTheirKBSAccount)));
-            linkedAccountLabel.getStyleClass().add("text-italic");
+            linkedAccountLabel.getStyleClass().add(text_italic);
             infoBox.getChildren().addAll(nameWithBadge, linkedAccountLabel);
         } else {
             // For all other cases, show email
             String email = person != null && person.getEmail() != null ? person.getEmail() : "";
             Label emailLabel = Bootstrap.textSecondary(new Label(email));
-            emailLabel.getStyleClass().add("text-size-13");
+            emailLabel.getStyleClass().add(text_size_13);
             infoBox.getChildren().addAll(nameWithBadge, emailLabel);
 
             // Status messages for pending invitations
             if (type == MemberItem.MemberItemType.PENDING_OUTGOING_INVITATION) {
                 Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                     I18nControls.newLabel(MembersI18nKeys.WaitingForAcceptance)));
-                statusLabel.getStyleClass().add("text-italic");
+                statusLabel.getStyleClass().add(text_italic);
                 infoBox.getChildren().add(statusLabel);
             } else if (type == MemberItem.MemberItemType.PENDING_INCOMING_INVITATION) {
                 // Get the inviter's name (the person who wants to add you as a member)
@@ -278,14 +280,14 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
                 Button approveButton = Bootstrap.successButton(
                     I18nControls.newButton(MembersI18nKeys.ApproveAction));
                 approveButton.setPadding(new Insets(6, 16, 6, 16));
-                approveButton.getStyleClass().add("action-button");
+                approveButton.getStyleClass().add(action_button);
                 approveButton.setCursor(Cursor.HAND);
                 approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveMemberInvitation(invitation));
 
                 Button declineButton = Bootstrap.dangerButton(
                     I18nControls.newButton(MembersI18nKeys.DeclineAction));
                 declineButton.setPadding(new Insets(6, 16, 6, 16));
-                declineButton.getStyleClass().add("action-button");
+                declineButton.getStyleClass().add(action_button);
                 declineButton.setCursor(Cursor.HAND);
                 declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineMemberInvitation(invitation));
 
@@ -386,7 +388,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         HBox itemBox = new HBox(20);
         itemBox.setAlignment(Pos.CENTER_LEFT);
         itemBox.setPadding(new Insets(16, 0, 16, 0));
-        itemBox.getStyleClass().add("member-item-box");
+        itemBox.getStyleClass().add(member_item_box);
 
         // Manager info
         VBox infoBox = new VBox(8);
@@ -423,7 +425,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         String email = managerItem.getManagerEmail();
         if (email != null) {
             Label emailLabel = Bootstrap.textSecondary(new Label(email));
-            emailLabel.getStyleClass().add("text-size-13");
+            emailLabel.getStyleClass().add(text_size_13);
             infoBox.getChildren().addAll(nameWithBadge, emailLabel);
         } else {
             infoBox.getChildren().add(nameWithBadge);
@@ -433,7 +435,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
         if (type == ManagerItem.ManagerItemType.PENDING_OUTGOING_INVITATION) {
             Label statusLabel = Bootstrap.small(Bootstrap.textSecondary(
                 I18nControls.newLabel(MembersI18nKeys.WaitingForAcceptance)));
-            statusLabel.getStyleClass().add("text-italic");
+            statusLabel.getStyleClass().add(text_italic);
             infoBox.getChildren().add(statusLabel);
         } else if (type == ManagerItem.ManagerItemType.PENDING_INCOMING_INVITATION) {
             // Get the inviter's name (the person who wants to manage my bookings)
@@ -454,14 +456,14 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
             Button approveButton = Bootstrap.successButton(
                 I18nControls.newButton(MembersI18nKeys.ApproveAction));
             approveButton.setPadding(new Insets(6, 16, 6, 16));
-            approveButton.getStyleClass().add("action-button");
+            approveButton.getStyleClass().add(action_button);
             approveButton.setCursor(Cursor.HAND);
             approveButton.setOnAction(e -> pendingRequestActionHandler.onApproveManagingAuthorizationRequest(invitation));
 
             Button declineButton = Bootstrap.dangerButton(
                 I18nControls.newButton(MembersI18nKeys.DeclineAction));
             declineButton.setPadding(new Insets(6, 16, 6, 16));
-            declineButton.getStyleClass().add("action-button");
+            declineButton.getStyleClass().add(action_button);
             declineButton.setCursor(Cursor.HAND);
             declineButton.setOnAction(e -> pendingRequestActionHandler.onDeclineManagingAuthorizationRequest(invitation));
 
@@ -549,13 +551,13 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
 
         // Title - Poppins 600, 20px, #4a4748
         Label titleLabel = I18nControls.newLabel(titleKey);
-        titleLabel.getStyleClass().addAll("empty-state-title");
+        titleLabel.getStyleClass().addAll(empty_state_title);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
         // Description - Poppins 400, 14px, #838788, line-height 1.6
         Label descLabel = I18nControls.newLabel(descriptionKey);
-        descLabel.getStyleClass().add("empty-state-description");
+        descLabel.getStyleClass().add(empty_state_description);
         descLabel.setWrapText(true);
         descLabel.setTextAlignment(TextAlignment.CENTER);
         descLabel.setMaxWidth(500);
@@ -570,7 +572,7 @@ public record MembersItemRendererFactory(MemberActionHandler memberActionHandler
      */
     public Node createSectionDivider() {
         Region divider = new Region();
-        divider.getStyleClass().add("section-divider");
+        divider.getStyleClass().add(section_divider);
         divider.setPrefHeight(1);
         divider.setMaxWidth(600);
         VBox.setMargin(divider, new Insets(48, 0, 48, 0));

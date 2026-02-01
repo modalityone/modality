@@ -1,4 +1,5 @@
 package one.modality.hotel.backoffice.activities.household.dashboard.view;
+import one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -28,6 +29,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.*;
 
 /**
  * Dashboard view for the Household module.
@@ -142,7 +145,7 @@ public final class HouseholdDashboardView {
         Region spinner = Controls.createPageSizeSpinner();
 
         Label loadingMessage = I18nControls.newLabel(HouseholdI18nKeys.LoadingData);
-        loadingMessage.getStyleClass().add("loading-message");
+        loadingMessage.getStyleClass().add(loading_message);
 
         loadingIndicator.getChildren().addAll(spinner, loadingMessage);
     }
@@ -151,7 +154,7 @@ public final class HouseholdDashboardView {
 
     private VBox createHeader() {
         VBox header = new VBox();
-        header.getStyleClass().add("header");
+        header.getStyleClass().add(HouseholdCssSelectors.header);
         header.setPadding(new Insets(25));
 
         // Title Section
@@ -159,10 +162,10 @@ public final class HouseholdDashboardView {
         headerTitleSection.getStyleClass().add("header-title-section");
 
         Label title = I18nControls.newLabel(HouseholdI18nKeys.HouseholdDashboard);
-        title.getStyleClass().add("h1");
+        title.getStyleClass().add(h1);
 
         HBox dateInfo = new HBox(12);
-        dateInfo.getStyleClass().add("date-info");
+        dateInfo.getStyleClass().add(date_info);
         dateInfo.setAlignment(Pos.CENTER_LEFT);
 
         Label dateRangeLabel = new Label();
@@ -179,19 +182,19 @@ public final class HouseholdDashboardView {
 
         // View range control
         HBox viewRangeControl = new HBox(10);
-        viewRangeControl.getStyleClass().add("view-range-control");
+        viewRangeControl.getStyleClass().add(view_range_control);
         viewRangeControl.setAlignment(Pos.CENTER_LEFT);
         viewRangeControl.setPadding(new Insets(0, 12, 0, 12));
 
         Label viewRangeLabel = I18nControls.newLabel(HouseholdI18nKeys.ViewNext);
-        viewRangeLabel.getStyleClass().add("view-range-label");
+        viewRangeLabel.getStyleClass().add(view_range_label);
 
         HBox daysInputWrapper = new HBox(6);
         daysInputWrapper.getStyleClass().add("days-input-wrapper");
         daysInputWrapper.setAlignment(Pos.CENTER_LEFT);
 
         TextField daysInput = new TextField();
-        daysInput.getStyleClass().add("days-input");
+        daysInput.getStyleClass().add(days_input);
         daysInput.setPrefWidth(50);
         daysInput.textProperty().bindBidirectional(presenter.daysToDisplayProperty(), new javafx.util.StringConverter<>() {
             @Override
@@ -210,7 +213,7 @@ public final class HouseholdDashboardView {
         });
 
         Label daysUnit = I18nControls.newLabel(HouseholdI18nKeys.Days);
-        daysUnit.getStyleClass().add("days-unit");
+        daysUnit.getStyleClass().add(days_unit);
 
         daysInputWrapper.getChildren().addAll(daysInput, daysUnit);
         viewRangeControl.getChildren().addAll(viewRangeLabel, daysInputWrapper);
@@ -289,19 +292,19 @@ public final class HouseholdDashboardView {
 
     private Button createQuickViewBtn(Object i18nKey, int days) {
         Button btn = I18nControls.newButton(i18nKey);
-        btn.getStyleClass().add("quick-view-btn");
+        btn.getStyleClass().add(quick_view_btn);
         btn.setOnAction(e -> presenter.daysToDisplayProperty().set(days));
 
         presenter.daysToDisplayProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.intValue() == days) {
-                btn.getStyleClass().add("active");
+                btn.getStyleClass().add(active);
             } else {
-                btn.getStyleClass().remove("active");
+                btn.getStyleClass().remove(active);
             }
         });
 
         if (presenter.daysToDisplayProperty().get() == days) {
-            btn.getStyleClass().add("active");
+            btn.getStyleClass().add(active);
         }
 
         return btn;
@@ -333,13 +336,13 @@ public final class HouseholdDashboardView {
         }
 
         VBox daySection = new VBox(20);
-        daySection.getStyleClass().add("day-section");
+        daySection.getStyleClass().add(day_section);
         daySection.setPadding(new Insets(24, 32, 24, 32));
-        if (isToday) daySection.getStyleClass().add("today");
+        if (isToday) daySection.getStyleClass().add(today);
 
         // Header
         HBox dayHeader = new HBox(16);
-        dayHeader.getStyleClass().add("day-header");
+        dayHeader.getStyleClass().add(day_header);
         dayHeader.setAlignment(Pos.CENTER_LEFT);
 
         HBox dayTitle = new HBox(16);
@@ -347,15 +350,15 @@ public final class HouseholdDashboardView {
         dayTitle.setAlignment(Pos.CENTER_LEFT);
 
         Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("d")));
-        dateLabel.getStyleClass().add("day-date");
+        dateLabel.getStyleClass().add(day_date);
 
         Label dayNameLabel = new Label(date.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
-        dayNameLabel.getStyleClass().add("day-name");
+        dayNameLabel.getStyleClass().add(day_name);
 
         dayTitle.getChildren().addAll(dateLabel, dayNameLabel);
         if (isToday) {
             Label todayBadge = I18nControls.newLabel(HouseholdI18nKeys.Today);
-            todayBadge.getStyleClass().add("today-badge");
+            todayBadge.getStyleClass().add(today_badge);
             todayBadge.setPadding(new Insets(4, 12, 4, 12));
             dayTitle.getChildren().add(todayBadge);
         }
@@ -403,7 +406,7 @@ public final class HouseholdDashboardView {
 
         Label titleLabel = I18nControls.newLabel(HouseholdI18nKeys.RoomsToClean);
         Label countLabel = new Label(String.valueOf(cards.size()));
-        countLabel.getStyleClass().add("section-count");
+        countLabel.getStyleClass().add(section_count);
 
         titleLeft.getChildren().addAll(titleLabel, countLabel);
 
@@ -423,7 +426,7 @@ public final class HouseholdDashboardView {
 
         // Section header container
         StackPane sectionHeader = new StackPane(desktopHeader, mobileHeader);
-        sectionHeader.getStyleClass().add("section-title");
+        sectionHeader.getStyleClass().add(section_title);
         sectionHeader.setPadding(new Insets(8, 0, 8, 0));
 
         // Setup responsive design
@@ -482,7 +485,7 @@ public final class HouseholdDashboardView {
 
         Label titleLabel = I18nControls.newLabel(HouseholdI18nKeys.RoomsToInspect);
         Label countLabel = new Label(String.valueOf(cards.size()));
-        countLabel.getStyleClass().add("section-count");
+        countLabel.getStyleClass().add(section_count);
 
         titleLeft.getChildren().addAll(titleLabel, countLabel);
 
@@ -502,7 +505,7 @@ public final class HouseholdDashboardView {
 
         // Section header container
         StackPane sectionHeader = new StackPane(desktopHeader, mobileHeader);
-        sectionHeader.getStyleClass().add("section-title");
+        sectionHeader.getStyleClass().add(section_title);
         sectionHeader.setPadding(new Insets(8, 0, 8, 0));
 
         // Setup responsive design
@@ -560,7 +563,7 @@ public final class HouseholdDashboardView {
 
         Label titleLabel = I18nControls.newLabel(HouseholdI18nKeys.Checkouts);
         Label countLabel = new Label(String.valueOf(cards.size()));
-        countLabel.getStyleClass().add("section-count");
+        countLabel.getStyleClass().add(section_count);
 
         titleBox.getChildren().addAll(titleLabel, countLabel);
 
@@ -585,7 +588,7 @@ public final class HouseholdDashboardView {
 
         Label titleLabel = I18nControls.newLabel(HouseholdI18nKeys.PartialCheckouts);
         Label countLabel = new Label(String.valueOf(cards.size()));
-        countLabel.getStyleClass().add("section-count");
+        countLabel.getStyleClass().add(section_count);
 
         titleBox.getChildren().addAll(titleLabel, countLabel);
 
@@ -610,7 +613,7 @@ public final class HouseholdDashboardView {
 
         Label titleLabel = new Label(sectionTitle);
         Label countLabel = new Label(String.valueOf(cards.size()));
-        countLabel.getStyleClass().add("section-count");
+        countLabel.getStyleClass().add(section_count);
 
         titleBox.getChildren().addAll(titleLabel, countLabel);
 
@@ -682,7 +685,7 @@ public final class HouseholdDashboardView {
         List<Button> filterButtons = new ArrayList<>();
         for (String option : options) {
             Button btn = new Button(option);
-            btn.getStyleClass().add("filter-toggle-btn");
+            btn.getStyleClass().add(filter_toggle_btn);
             btn.setMinWidth(50);
             btn.setPadding(new Insets(4, 8, 4, 8));
 
@@ -713,21 +716,21 @@ public final class HouseholdDashboardView {
 
     private void updateFilterToggleStyle(Button btn, boolean isActive) {
         if (isActive) {
-            btn.getStyleClass().removeAll("filter-toggle-inactive");
-            if (!btn.getStyleClass().contains("filter-toggle-active")) {
-                btn.getStyleClass().add("filter-toggle-active");
+            btn.getStyleClass().removeAll(filter_toggle_inactive);
+            if (!btn.getStyleClass().contains(filter_toggle_active)) {
+                btn.getStyleClass().add(filter_toggle_active);
             }
         } else {
-            btn.getStyleClass().removeAll("filter-toggle-active");
-            if (!btn.getStyleClass().contains("filter-toggle-inactive")) {
-                btn.getStyleClass().add("filter-toggle-inactive");
+            btn.getStyleClass().removeAll(filter_toggle_active);
+            if (!btn.getStyleClass().contains(filter_toggle_inactive)) {
+                btn.getStyleClass().add(filter_toggle_inactive);
             }
         }
     }
 
     private Node createEmptyState() {
         VBox emptyState = new VBox(8);
-        emptyState.getStyleClass().add("empty-state");
+        emptyState.getStyleClass().add(empty_state);
         emptyState.setAlignment(Pos.CENTER);
         emptyState.setPadding(new Insets(20));
 
@@ -735,7 +738,7 @@ public final class HouseholdDashboardView {
         icon.getStyleClass().add("empty-state-icon");
 
         Label message = I18nControls.newLabel(HouseholdI18nKeys.QuietMoment);
-        message.getStyleClass().add("empty-state-message");
+        message.getStyleClass().add(empty_state_message);
 
         emptyState.getChildren().addAll(icon, message);
         return emptyState;
@@ -743,17 +746,17 @@ public final class HouseholdDashboardView {
 
     private Node createEmptyDayState(LocalDate date) {
         VBox daySection = new VBox(12);
-        daySection.getStyleClass().addAll("day-section", "empty-day");
+        daySection.getStyleClass().addAll(day_section, "empty-day");
         daySection.setPadding(new Insets(16, 32, 16, 32));
 
         HBox dayHeader = new HBox(16);
         dayHeader.setAlignment(Pos.CENTER_LEFT);
 
         Label dateLabel = new Label(date.format(DateTimeFormatter.ofPattern("d")));
-        dateLabel.getStyleClass().add("day-date");
+        dateLabel.getStyleClass().add(day_date);
 
         Label dayNameLabel = new Label(date.format(DateTimeFormatter.ofPattern("EEEE, MMM d")));
-        dayNameLabel.getStyleClass().add("day-name");
+        dayNameLabel.getStyleClass().add(day_name);
 
         Label noActivityLabel = I18nControls.newLabel(HouseholdI18nKeys.NothingScheduled);
         noActivityLabel.getStyleClass().add("no-activity");

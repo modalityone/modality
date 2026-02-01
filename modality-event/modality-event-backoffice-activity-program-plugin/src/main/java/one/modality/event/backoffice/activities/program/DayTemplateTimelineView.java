@@ -27,6 +27,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static one.modality.event.backoffice.activities.program.DatesToStringConversion.isLocalTimeTextValid;
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
 
 /**
  * View component for a single timeline entry within a day template.
@@ -274,30 +275,30 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         StackPane container = new StackPane(icon, strikeLine);
         container.setMinSize(36, 36);
         container.setMaxSize(36, 36);
-        container.getStyleClass().add("timeline-container-default");
+        container.getStyleClass().add(timeline_container_default);
         container.setCursor(Cursor.HAND);
 
         // Update styling based on state
         Runnable updateStyling = () -> {
             boolean isActive = Booleans.isTrue(stateGetter.get());
             // Clear all style classes first
-            container.getStyleClass().removeAll("timeline-container-default", "timeline-container-available", "timeline-container-partial");
+            container.getStyleClass().removeAll(timeline_container_default, timeline_container_available, timeline_container_partial);
 
             if (isActive) {
                 if (isAudio) {
                     // Audio active: green
                     icon.setFill(Color.web("#10b981"));
-                    container.getStyleClass().add("timeline-container-available");
+                    container.getStyleClass().add(timeline_container_available);
                 } else {
                     // Video active: amber/orange
                     icon.setFill(Color.web("#f59e0b"));
-                    container.getStyleClass().add("timeline-container-partial");
+                    container.getStyleClass().add(timeline_container_partial);
                 }
                 strikeLine.setVisible(false);
             } else {
                 // Inactive: grey with red strike
                 icon.setFill(Color.web("#94a3b8"));
-                container.getStyleClass().add("timeline-container-default");
+                container.getStyleClass().add(timeline_container_default);
                 strikeLine.setVisible(true);
             }
         };
@@ -344,23 +345,23 @@ final class DayTemplateTimelineView implements ButtonFactoryMixin {
         javafx.scene.shape.Line strikeLine = (javafx.scene.shape.Line) button.getChildren().get(1);
 
         // Clear all style classes first
-        button.getStyleClass().removeAll("timeline-container-default", "timeline-container-available", "timeline-container-partial");
+        button.getStyleClass().removeAll(timeline_container_default, timeline_container_available, timeline_container_partial);
 
         if (Booleans.isTrue(isActive)) {
             if (isAudio) {
                 // Audio active: green
                 icon.setFill(Color.web("#10b981"));
-                button.getStyleClass().add("timeline-container-available");
+                button.getStyleClass().add(timeline_container_available);
             } else {
                 // Video active: amber/orange
                 icon.setFill(Color.web("#f59e0b"));
-                button.getStyleClass().add("timeline-container-partial");
+                button.getStyleClass().add(timeline_container_partial);
             }
             strikeLine.setVisible(false);
         } else {
             // Inactive: grey with red strike
             icon.setFill(Color.web("#94a3b8"));
-            button.getStyleClass().add("timeline-container-default");
+            button.getStyleClass().add(timeline_container_default);
             strikeLine.setVisible(true);
         }
     }

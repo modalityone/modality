@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Default summary section for General Program Class booking forms.
  * Shows selected class dates and pricing with full term discount.
@@ -91,7 +93,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
 
         // Selected dates list
         datesLabel = new Label();
-        datesLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        datesLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         datesLabel.setWrapText(true);
         content.getChildren().add(datesLabel);
 
@@ -99,7 +101,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         Region divider = new Region();
         divider.setMinHeight(1);
         divider.setMaxHeight(1);
-        divider.getStyleClass().add("bookingpage-bg-gray");
+        divider.getStyleClass().add(bookingpage_bg_gray);
         VBox.setMargin(divider, new Insets(4, 0, 4, 0));
         content.getChildren().add(divider);
 
@@ -109,13 +111,13 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         subtotalRow.setPadding(new Insets(8, 0, 8, 0));
 
         subtotalLabel = new Label();
-        subtotalLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        subtotalLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
 
         Region subtotalSpacer = new Region();
         HBox.setHgrow(subtotalSpacer, Priority.ALWAYS);
 
         subtotalValue = new Label();
-        subtotalValue.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        subtotalValue.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         subtotalRow.getChildren().addAll(subtotalLabel, subtotalSpacer, subtotalValue);
         content.getChildren().add(subtotalRow);
@@ -128,13 +130,13 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         discountRow.setManaged(false);
 
         Label discountLabel = I18nControls.newLabel(BookingPageI18nKeys.ClassSelectionFullTermDiscount);
-        discountLabel.getStyleClass().add("bookingpage-discount-label");
+        discountLabel.getStyleClass().add(bookingpage_discount_label);
 
         Region discountSpacer = new Region();
         HBox.setHgrow(discountSpacer, Priority.ALWAYS);
 
         discountValue = new Label();
-        discountValue.getStyleClass().add("bookingpage-discount-value");
+        discountValue.getStyleClass().add(bookingpage_discount_value);
 
         discountRow.getChildren().addAll(discountLabel, discountSpacer, discountValue);
         content.getChildren().add(discountRow);
@@ -147,13 +149,13 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         alreadyPaidRow.setManaged(false);
 
         Label alreadyPaidLabel = I18nControls.newLabel(BookingPageI18nKeys.AlreadyPaid);
-        alreadyPaidLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-label-caption");
+        alreadyPaidLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_label_caption);
 
         Region alreadyPaidSpacer = new Region();
         HBox.setHgrow(alreadyPaidSpacer, Priority.ALWAYS);
 
         alreadyPaidValue = new Label();
-        alreadyPaidValue.getStyleClass().addAll("bookingpage-text-base", "bookingpage-label-caption");
+        alreadyPaidValue.getStyleClass().addAll(bookingpage_text_base, bookingpage_label_caption);
 
         alreadyPaidRow.getChildren().addAll(alreadyPaidLabel, alreadyPaidSpacer, alreadyPaidValue);
         content.getChildren().add(alreadyPaidRow);
@@ -162,7 +164,7 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         Region totalDivider = new Region();
         totalDivider.setMinHeight(2);
         totalDivider.setMaxHeight(2);
-        totalDivider.getStyleClass().add("bookingpage-bg-gray");
+        totalDivider.getStyleClass().add(bookingpage_bg_gray);
         VBox.setMargin(totalDivider, new Insets(4, 0, 0, 0));
         content.getChildren().add(totalDivider);
 
@@ -172,13 +174,13 @@ public class DefaultGeneralProgramSummarySection extends DefaultSummarySection {
         totalRow.setPadding(new Insets(16, 0, 0, 0));
 
         totalLabel = I18nControls.newLabel(BookingPageI18nKeys.Total);
-        totalLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+        totalLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_bold, bookingpage_text_dark);
 
         Region totalSpacer = new Region();
         HBox.setHgrow(totalSpacer, Priority.ALWAYS);
 
         totalValue = new Label();
-        totalValue.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold", "bookingpage-text-primary");
+        totalValue.getStyleClass().addAll(bookingpage_price_medium, bookingpage_font_bold, bookingpage_text_primary);
 
         totalRow.getChildren().addAll(totalLabel, totalSpacer, totalValue);
         content.getChildren().add(totalRow);

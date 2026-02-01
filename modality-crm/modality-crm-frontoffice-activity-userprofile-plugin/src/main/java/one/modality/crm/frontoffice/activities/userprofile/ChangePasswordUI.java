@@ -31,6 +31,8 @@ import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+import static one.modality.crm.frontoffice.activities.userprofile.UserProfileCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -160,7 +162,7 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
     public static void setupModalVBox(VBox vBox) {
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.TOP_CENTER);
-        vBox.getStyleClass().add("user-profile-modal-window");
+        vBox.getStyleClass().add(user_profile_modal_window);
         vBox.setPadding(new Insets(60));
         vBox.setMinWidth(300);
     }

@@ -27,6 +27,8 @@ import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Item;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
+
 /**
  * UI component for Step 1 of the program setup: Preliminary Bookable Items Configuration.
  *
@@ -79,14 +81,14 @@ final class ProgramStep1View {
         // ========== Step Indicator ==========
         // Step 1 Circle (active)
         Label step1Number = new Label("1");
-        step1Number.getStyleClass().add("program-step-number-active");
+        step1Number.getStyleClass().add(program_step_number_active);
         StackPane step1Circle = new StackPane(step1Number);
-        step1Circle.getStyleClass().add("program-step-circle-active");
+        step1Circle.getStyleClass().add(program_step_circle_active);
         step1Circle.setMinSize(40, 40);
         step1Circle.setMaxSize(40, 40);
 
         Label step1Label = I18nControls.newLabel(ProgramI18nKeys.GeneratePreliminaryBookableSI);
-        step1Label.getStyleClass().add("program-step-label-active");
+        step1Label.getStyleClass().add(program_step_label_active);
         step1Label.setWrapText(true);
         step1Label.setMaxWidth(150);
         step1Label.setAlignment(Pos.CENTER);
@@ -97,7 +99,7 @@ final class ProgramStep1View {
 
         // Connector line
         Region connector1 = new Region();
-        connector1.getStyleClass().add("program-step-connector-inactive");
+        connector1.getStyleClass().add(program_step_connector_inactive);
         connector1.setPrefHeight(2);
         connector1.setMaxHeight(2);
         connector1.setMinWidth(80);
@@ -106,14 +108,14 @@ final class ProgramStep1View {
 
         // Step 2 Circle (inactive)
         Label step2NumberInactive = new Label("2");
-        step2NumberInactive.getStyleClass().add("program-step-number-inactive");
+        step2NumberInactive.getStyleClass().add(program_step_number_inactive);
         StackPane step2CircleInactive = new StackPane(step2NumberInactive);
-        step2CircleInactive.getStyleClass().add("program-step-circle-inactive");
+        step2CircleInactive.getStyleClass().add(program_step_circle_inactive);
         step2CircleInactive.setMinSize(40, 40);
         step2CircleInactive.setMaxSize(40, 40);
 
         Label step2LabelInactive = I18nControls.newLabel(ProgramI18nKeys.GenerateProgramSchedule);
-        step2LabelInactive.getStyleClass().add("program-step-label-inactive");
+        step2LabelInactive.getStyleClass().add(program_step_label_inactive);
         step2LabelInactive.setWrapText(true);
         step2LabelInactive.setMaxWidth(150);
         step2LabelInactive.setAlignment(Pos.CENTER);
@@ -124,7 +126,7 @@ final class ProgramStep1View {
 
         // Connector line 1b
         Region connector1b = new Region();
-        connector1b.getStyleClass().add("program-step-connector-inactive");
+        connector1b.getStyleClass().add(program_step_connector_inactive);
         connector1b.setPrefHeight(2);
         connector1b.setMaxHeight(2);
         connector1b.setMinWidth(80);
@@ -133,14 +135,14 @@ final class ProgramStep1View {
 
         // Step 3 Circle (inactive)
         Label step3NumberInactive = new Label("3");
-        step3NumberInactive.getStyleClass().add("program-step-number-inactive");
+        step3NumberInactive.getStyleClass().add(program_step_number_inactive);
         StackPane step3CircleInactive = new StackPane(step3NumberInactive);
-        step3CircleInactive.getStyleClass().add("program-step-circle-inactive");
+        step3CircleInactive.getStyleClass().add(program_step_circle_inactive);
         step3CircleInactive.setMinSize(40, 40);
         step3CircleInactive.setMaxSize(40, 40);
 
         Label step3LabelInactive = I18nControls.newLabel(ProgramI18nKeys.ValidateProgram);
-        step3LabelInactive.getStyleClass().add("program-step-label-inactive");
+        step3LabelInactive.getStyleClass().add(program_step_label_inactive);
         step3LabelInactive.setWrapText(true);
         step3LabelInactive.setMaxWidth(150);
         step3LabelInactive.setAlignment(Pos.CENTER);
@@ -161,26 +163,26 @@ final class ProgramStep1View {
 
         // ========== Warning Alert Box ==========
         Label warningTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.PreliminariesNotGenerated));
-        warningTitle.getStyleClass().add("program-warning-title-amber");
+        warningTitle.getStyleClass().add(program_warning_title_amber);
 
         Label warningMessage = I18nControls.newLabel(ProgramI18nKeys.PreliminariesNotGeneratedMessage);
         warningMessage.setWrapText(true);
-        warningMessage.getStyleClass().add("program-warning-message-amber");
+        warningMessage.getStyleClass().add(program_warning_message_amber);
 
         VBox warningContent = new VBox(4, warningTitle, warningMessage);
         HBox warningBox = new HBox(12, warningContent);
         warningBox.setAlignment(Pos.TOP_LEFT);
-        warningBox.getStyleClass().add("program-warning-box-amber");
+        warningBox.getStyleClass().add(program_warning_box_amber);
         warningBox.setPadding(new Insets(16, 20, 16, 20));
         warningBox.setMaxWidth(MAX_WIDTH);
 
         // ========== Step Content Box ==========
         Label stepTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.Step1ConfigureBookableTeachingItems));
-        stepTitle.getStyleClass().add("program-step-title");
+        stepTitle.getStyleClass().add(program_step_title);
 
         // Form Group
         Label formLabel = I18nControls.newLabel(ProgramI18nKeys.SelectItemTypeForBookableTeachingSessions);
-        formLabel.getStyleClass().add("program-form-label");
+        formLabel.getStyleClass().add(program_form_label);
 
         // Item selector
         itemSelector = new EntityButtonSelector<Item>( // language=JSON5
@@ -190,31 +192,31 @@ final class ProgramStep1View {
         Button itemSelectorButton = itemSelector.getButton();
         itemSelectorButton.setMinWidth(250);
         itemSelectorButton.setPadding(new Insets(12, 16, 12, 16));
-        itemSelectorButton.getStyleClass().add("program-selector-button");
+        itemSelectorButton.getStyleClass().add(program_selector_button);
 
         Label formHelp = I18nControls.newLabel(ProgramI18nKeys.ItemTypeWillBeUsedForBookableSchedule);
         formHelp.setWrapText(true);
-        formHelp.getStyleClass().add("program-form-help");
+        formHelp.getStyleClass().add(program_form_help);
 
         VBox formGroup = new VBox(8, formLabel, itemSelectorButton, formHelp);
         formGroup.setPadding(new Insets(0, 0, 20, 0));
 
         // Info Box
         Label infoTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.WhatHappensNext));
-        infoTitle.getStyleClass().add("program-info-title-blue");
+        infoTitle.getStyleClass().add(program_info_title_blue);
 
         Label infoContent = I18nControls.newLabel(ProgramI18nKeys.WhatHappensNextMessage);
         infoContent.setWrapText(true);
-        infoContent.getStyleClass().add("program-info-content-blue");
+        infoContent.getStyleClass().add(program_info_content_blue);
 
         VBox infoBox = new VBox(6, infoTitle, infoContent);
-        infoBox.getStyleClass().add("program-info-box-blue");
+        infoBox.getStyleClass().add(program_info_box_blue);
         infoBox.setPadding(new Insets(16));
 
         // Generate Button
         UpdateStore updateStore = programModel.getUpdateStore();
         Button generatePreliminaryBookableSIButton = Bootstrap.largePrimaryButton(I18nControls.newButton(ProgramI18nKeys.GeneratePreliminaryBookableSI));
-        generatePreliminaryBookableSIButton.getStyleClass().add("program-generate-button");
+        generatePreliminaryBookableSIButton.getStyleClass().add(program_generate_button);
         generatePreliminaryBookableSIButton.setOnAction(e -> {
             if(itemSelector.getSelectedItem()==null) {
                 DialogContent dialogContent = new DialogContent().setContentText(I18n.getI18nText(ProgramI18nKeys.PleaseSelectAnItem)).setOk();
@@ -240,7 +242,7 @@ final class ProgramStep1View {
         buttonBox.setPadding(new Insets(24, 0, 0, 0));
 
         VBox stepContent = new VBox(16, stepTitle, formGroup, infoBox, buttonBox);
-        stepContent.getStyleClass().add("program-step-content");
+        stepContent.getStyleClass().add(program_step_content);
         stepContent.setPadding(new Insets(24));
 
         // Step Indicator Container

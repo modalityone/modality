@@ -21,6 +21,9 @@
         <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.base.client.i18n.BaseI18nKeys"/>
+    <java-ui-api package="one.modality.base.client.i18n" prefix="Base">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

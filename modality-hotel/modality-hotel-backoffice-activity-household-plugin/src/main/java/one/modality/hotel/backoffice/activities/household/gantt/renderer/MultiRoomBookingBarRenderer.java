@@ -11,6 +11,8 @@ import one.modality.hotel.backoffice.activities.household.gantt.model.BookingBar
 import one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition;
 import one.modality.hotel.backoffice.activities.household.gantt.view.SvgIconFactory;
 
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.gantt_bar_label;
+
 /**
  * Renders booking bars for multi-bed rooms (double rooms, dormitories).
  * Pattern B: Gantt flow with seamless bars using negative margins.
@@ -125,7 +127,7 @@ public class MultiRoomBookingBarRenderer implements BookingBarRenderer {
     private Label createOccupancyLabel(BookingBar bar) {
         Label label = new Label(bar.occupancy() + "/" + bar.totalCapacity());
         label.setTextFill(Color.WHITE);
-        label.getStyleClass().add("gantt-bar-label");
+        label.getStyleClass().add(gantt_bar_label);
         label.setPadding(new Insets(0, 3, 0, 0));
         StackPane.setAlignment(label, Pos.CENTER_RIGHT);
         return label;

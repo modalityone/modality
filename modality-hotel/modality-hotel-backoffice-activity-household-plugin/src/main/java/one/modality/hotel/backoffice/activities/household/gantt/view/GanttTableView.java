@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.gantt_title;
+
 /**
  * Main view component for the Gantt table.
  * Handles UI construction and layout without business logic.
@@ -135,7 +137,7 @@ public class GanttTableView {
         // Title
         Label title = new Label("Housekeeping Calendar");
         title.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        title.getStyleClass().add("gantt-title");
+        title.getStyleClass().add(gantt_title);
 
         // Spacer
         Region spacer = new Region();

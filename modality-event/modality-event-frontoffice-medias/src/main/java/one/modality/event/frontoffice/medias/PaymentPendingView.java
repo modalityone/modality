@@ -20,6 +20,8 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
 import one.modality.ecommerce.frontoffice.order.OrderActions;
 
+import static one.modality.event.frontoffice.medias.MediasCssSelectors.*;
+
 /**
  * View displayed when payment is pending for the event registration.
  * Reusable for both video streaming and audio library.
@@ -55,11 +57,11 @@ public class PaymentPendingView {
         noticeIcon.setMinSize(80, 80);
         noticeIcon.setPrefSize(80, 80);
         noticeIcon.setMaxSize(80, 80);
-        noticeIcon.getStyleClass().add("notice-icon");
+        noticeIcon.getStyleClass().add(notice_icon);
 
         SVGPath warningPath = SvgIcons.createWarningPath();
         warningPath.setFill(Color.WHITE);
-        warningPath.getStyleClass().add("notice-label");
+        warningPath.getStyleClass().add(notice_label);
 
         noticeIcon.setContent(warningPath);
         noticeIcon.setAlignment(Pos.CENTER);
@@ -85,7 +87,7 @@ public class PaymentPendingView {
     private VBox createBalanceBox(int balance, Event event) {
         VBox balanceBox = new VBox(8);
         balanceBox.setAlignment(Pos.CENTER);
-        balanceBox.getStyleClass().add("balance-box");
+        balanceBox.getStyleClass().add(balance_box);
         balanceBox.setPadding(new Insets(20));
         balanceBox.setMinWidth(250);
 

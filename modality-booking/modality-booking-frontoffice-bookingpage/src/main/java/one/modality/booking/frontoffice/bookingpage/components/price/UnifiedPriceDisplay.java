@@ -18,6 +18,8 @@ import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuil
 
 import java.time.LocalDate;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Unified utility for creating consistent price display components across the booking flow.
  * <p>
@@ -174,7 +176,7 @@ public class UnifiedPriceDisplay {
 
         // Primary: formatted name (wraps for mobile)
         Label nameLabel = new Label(formatLineItemName(familyName, itemName));
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
         labelBox.getChildren().add(nameLabel);
@@ -182,14 +184,14 @@ public class UnifiedPriceDisplay {
         // Secondary: dates (if provided)
         if (dates != null && !dates.isEmpty()) {
             Label datesLabel = new Label(dates);
-            datesLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            datesLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             datesLabel.setWrapText(true);
             labelBox.getChildren().add(datesLabel);
         }
 
         // Price (right-aligned, doesn't shrink)
         Label priceLabel = new Label(formatPrice(amount));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
         priceLabel.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(labelBox, priceLabel);
@@ -228,21 +230,21 @@ public class UnifiedPriceDisplay {
         HBox.setHgrow(labelBox, Priority.ALWAYS);
 
         Label nameLabel = new Label(formatLineItemName(familyName, itemName));
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
         nameLabel.setWrapText(true);
         nameLabel.setMaxWidth(Double.MAX_VALUE);
         labelBox.getChildren().add(nameLabel);
 
         if (dates != null && !dates.isEmpty()) {
             Label datesLabel = new Label(dates);
-            datesLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            datesLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             datesLabel.setWrapText(true);
             labelBox.getChildren().add(datesLabel);
         }
 
         // "Included" label instead of price
         Label includedLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
-        includedLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-muted");
+        includedLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_muted);
         includedLabel.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(labelBox, includedLabel);
@@ -262,14 +264,14 @@ public class UnifiedPriceDisplay {
         row.setPadding(new Insets(8, 0, 8, 0));
 
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
         label.setWrapText(true);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label value = new Label(formatPrice(amount));
-        value.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        value.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
         value.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(label, spacer, value);
@@ -289,14 +291,14 @@ public class UnifiedPriceDisplay {
         row.setPadding(new Insets(8, 0, 8, 0));
 
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_muted);
         label.setWrapText(true);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label value = new Label(formatPrice(amount));
-        value.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-muted");
+        value.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_muted);
         value.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(label, spacer, value);
@@ -316,14 +318,14 @@ public class UnifiedPriceDisplay {
         row.setPadding(new Insets(8, 0, 8, 0));
 
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_muted);
         label.setWrapText(true);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label value = new Label(formatPrice(amount));
-        value.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-success");
+        value.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_success);
         value.setMinWidth(Region.USE_PREF_SIZE);
 
         row.getChildren().addAll(label, spacer, value);
@@ -343,13 +345,13 @@ public class UnifiedPriceDisplay {
         row.setPadding(new Insets(16, 0, 0, 0));
 
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_bold, bookingpage_text_dark);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label value = new Label(formatPrice(amount));
-        value.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-font-bold", "bookingpage-text-primary");
+        value.getStyleClass().addAll(bookingpage_price_medium, bookingpage_font_bold, bookingpage_text_primary);
 
         row.getChildren().addAll(label, spacer, value);
         return row;
@@ -368,13 +370,13 @@ public class UnifiedPriceDisplay {
         row.setPadding(new Insets(16, 0, 0, 0));
 
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_bold, bookingpage_text_dark);
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label value = new Label(formatPrice(amount));
-        value.getStyleClass().addAll("bookingpage-price-large", "bookingpage-text-primary");
+        value.getStyleClass().addAll(bookingpage_price_large, bookingpage_text_primary);
 
         row.getChildren().addAll(label, spacer, value);
         return row;
@@ -391,29 +393,29 @@ public class UnifiedPriceDisplay {
     public VBox createPaymentSummaryCard(int total, int paid, int balance) {
         VBox card = new VBox(0);
         card.setPadding(new Insets(32));
-        card.getStyleClass().addAll("bookingpage-bg-white", "bookingpage-rounded-lg");
+        card.getStyleClass().addAll(bookingpage_bg_white, bookingpage_rounded_lg);
         card.setEffect(BookingPageUIBuilder.SHADOW_CARD);
 
         // Title
         Label title = I18nControls.newLabel(BookingPageI18nKeys.PaymentSummary);
-        title.getStyleClass().addAll("bookingpage-text-xl", "bookingpage-font-bold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_xl, bookingpage_font_bold, bookingpage_text_dark);
         VBox.setMargin(title, new Insets(0, 0, 20, 0));
 
         // Total cost row
         HBox totalCostRow = createPriceRow(BookingPageI18nKeys.TotalCost, total);
-        totalCostRow.getStyleClass().add("bookingpage-divider-thin-bottom");
+        totalCostRow.getStyleClass().add(bookingpage_divider_thin_bottom);
         totalCostRow.setPadding(new Insets(12, 0, 12, 0));
 
         // Already paid row (green if > 0, muted if 0)
         HBox paidRow = paid > 0
                 ? createSuccessPriceRow(BookingPageI18nKeys.AlreadyPaid, paid)
                 : createMutedPriceRow(BookingPageI18nKeys.AlreadyPaid, paid);
-        paidRow.getStyleClass().add("bookingpage-divider-thin-bottom");
+        paidRow.getStyleClass().add(bookingpage_divider_thin_bottom);
         paidRow.setPadding(new Insets(12, 0, 12, 0));
 
         // Balance due row (emphasized)
         HBox balanceRow = createTotalRow(BookingPageI18nKeys.BalanceDue, balance);
-        balanceRow.getStyleClass().add("bookingpage-divider-top-primary");
+        balanceRow.getStyleClass().add(bookingpage_divider_top_primary);
         VBox.setMargin(balanceRow, new Insets(16, 0, 0, 0));
 
         card.getChildren().addAll(title, totalCostRow, paidRow, balanceRow);

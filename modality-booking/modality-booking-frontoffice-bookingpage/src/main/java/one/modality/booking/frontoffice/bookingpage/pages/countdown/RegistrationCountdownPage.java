@@ -35,6 +35,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * A page that displays a countdown timer before registration opens.
  *
@@ -162,7 +164,7 @@ public class RegistrationCountdownPage implements BookingFormPage {
         VBox container = new VBox(0);
         container.setAlignment(Pos.TOP_CENTER);
         container.setPadding(new Insets(40, 20, 40, 20));
-        container.getStyleClass().add("registration-countdown-page");
+        container.getStyleClass().add(registration_countdown_page);
 
         // Event header (name + location)
         VBox eventHeader = buildEventHeader(event);
@@ -174,12 +176,12 @@ public class RegistrationCountdownPage implements BookingFormPage {
 
         // "Registration Opens Soon" title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationOpensSoon);
-        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_dark);
         VBox.setMargin(titleLabel, new Insets(0, 0, 8, 0));
 
         // Formatted opening date/time (uses i18n key for hardcoded display)
         Label dateLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationOpeningDateTime);
-        dateLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        dateLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
         VBox.setMargin(dateLabel, new Insets(0, 0, 32, 0));
 
         // Countdown timer boxes
@@ -220,7 +222,7 @@ public class RegistrationCountdownPage implements BookingFormPage {
         // Organization name (center)
         if (event != null && event.getOrganization() != null) {
             Label orgLabel = new Label(event.getOrganization().getName());
-            orgLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+            orgLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
             orgLabel.setWrapText(true);
             orgLabel.setMaxWidth(600);
             orgLabel.setAlignment(Pos.CENTER);
@@ -303,7 +305,7 @@ public class RegistrationCountdownPage implements BookingFormPage {
     private HBox buildTimeUnit(String value, Object labelI18nKey) {
         // Value label - uses CSS class for themed text color
         Label valueLabel = new Label(value);
-        valueLabel.getStyleClass().add("registration-countdown-timer-value");
+        valueLabel.getStyleClass().add(registration_countdown_timer_value);
         valueLabel.setMinWidth(60);
         valueLabel.setAlignment(Pos.CENTER);
 
@@ -312,11 +314,11 @@ public class RegistrationCountdownPage implements BookingFormPage {
         valueBox.setAlignment(Pos.CENTER);
         valueBox.setPadding(new Insets(16, 24, 16, 24));
         valueBox.setMinWidth(80);
-        valueBox.getStyleClass().add("registration-countdown-timer-box");
+        valueBox.getStyleClass().add(registration_countdown_timer_box);
 
         // Label below
         Label label = I18nControls.newLabel(labelI18nKey);
-        label.getStyleClass().add("registration-countdown-timer-label");
+        label.getStyleClass().add(registration_countdown_timer_label);
 
         VBox unitContainer = new VBox(8);
         unitContainer.setAlignment(Pos.CENTER);
@@ -332,7 +334,7 @@ public class RegistrationCountdownPage implements BookingFormPage {
         infoBox.setAlignment(Pos.TOP_LEFT);
         infoBox.setPadding(new Insets(28));
         infoBox.setMaxWidth(600);
-        infoBox.getStyleClass().addAll("bookingpage-info-card", "registration-countdown-info-card");
+        infoBox.getStyleClass().addAll("bookingpage-info-card", registration_countdown_info_card);
 
         // Header with info icon
         HBox header = new HBox(12);
@@ -343,13 +345,13 @@ public class RegistrationCountdownPage implements BookingFormPage {
         infoIcon.getChildren().add(infoPath);
 
         Label headerLabel = I18nControls.newLabel(BookingPageI18nKeys.NoNeedToRush);
-        headerLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        headerLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         header.getChildren().addAll(infoIcon, headerLabel);
 
         // Explanation text
         Label explanation = I18nControls.newLabel(BookingPageI18nKeys.FairAccessExplanation);
-        explanation.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        explanation.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         explanation.setWrapText(true);
 
         // Steps
@@ -364,11 +366,11 @@ public class RegistrationCountdownPage implements BookingFormPage {
         HBox reassurance = new HBox(10);
         reassurance.setAlignment(Pos.CENTER_LEFT);
         reassurance.setPadding(new Insets(12, 16, 12, 16));
-        reassurance.getStyleClass().add("registration-countdown-reassurance-box");
+        reassurance.getStyleClass().add(registration_countdown_reassurance_box);
 
         SVGPath checkIcon = BookingPageUIBuilder.createThemedIcon("M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z", 0.75);
         Label reassuranceLabel = I18nControls.newLabel(BookingPageI18nKeys.TakeYourTime);
-        reassuranceLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-countdown-reassurance-text");
+        reassuranceLabel.getStyleClass().addAll(bookingpage_text_sm, registration_countdown_reassurance_text);
         reassuranceLabel.setWrapText(true);
 
         reassurance.getChildren().addAll(checkIcon, reassuranceLabel);
@@ -385,20 +387,20 @@ public class RegistrationCountdownPage implements BookingFormPage {
         StackPane numberCircle = new StackPane();
         numberCircle.setMinSize(28, 28);
         numberCircle.setMaxSize(28, 28);
-        numberCircle.getStyleClass().add("registration-countdown-step-number");
+        numberCircle.getStyleClass().add(registration_countdown_step_number);
         Label numberLabel = new Label(String.valueOf(number));
-        numberLabel.getStyleClass().add("registration-countdown-step-number-text");
+        numberLabel.getStyleClass().add(registration_countdown_step_number_text);
         numberCircle.getChildren().add(numberLabel);
 
         // Text content with {0} placeholder replaced by windowMinutes
         VBox textContent = new VBox(4);
         String titleText = dev.webfx.extras.i18n.I18n.getI18nText(titleI18nKey, windowMinutes);
         Label titleLabel = new Label(titleText);
-        titleLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         String descText = dev.webfx.extras.i18n.I18n.getI18nText(descI18nKey, windowMinutes);
         Label descLabel = new Label(descText);
-        descLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        descLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         descLabel.setWrapText(true);
 
         textContent.getChildren().addAll(titleLabel, descLabel);

@@ -2,8 +2,10 @@ package one.modality.booking.frontoffice.bookingpage.sections.meals;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
-import javafx.beans.property.*;
-import javafx.beans.value.ObservableBooleanValue;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -12,25 +14,21 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.ItemPolicy;
-import one.modality.base.shared.entities.Period;
-import one.modality.base.shared.entities.Rate;
-import one.modality.base.shared.entities.ScheduledItem;
-import one.modality.base.shared.entities.SiteItem;
+import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.ecommerce.shared.pricecalculator.AttendanceBill;
-import one.modality.ecommerce.shared.pricecalculator.DocumentBill;
-import one.modality.ecommerce.shared.pricecalculator.SiteItemBill;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
 import one.modality.booking.frontoffice.bookingpage.sections.dates.HasFestivalDaySelectionSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 import one.modality.ecommerce.policy.service.PolicyAggregate;
+import one.modality.ecommerce.shared.pricecalculator.AttendanceBill;
+import one.modality.ecommerce.shared.pricecalculator.DocumentBill;
+import one.modality.ecommerce.shared.pricecalculator.SiteItemBill;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -40,6 +38,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the meals selection section.
@@ -212,16 +212,16 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     protected VBox createCombinedInfoBox() {
         VBox box = new VBox(4);
         box.setPadding(new Insets(12, 16, 12, 16));
-        box.getStyleClass().addAll("bookingpage-info-box", "bookingpage-info-box-neutral");
+        box.getStyleClass().addAll(bookingpage_info_box, bookingpage_info_box_neutral);
 
         // Main info text - vegetarian info
         infoLabel = I18nControls.newLabel(BookingPageI18nKeys.AllMealsVegetarian);
-        infoLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        infoLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
         infoLabel.setWrapText(true);
 
         // Extended stay label (hidden by default) - shows pricing info
         extendedStayLabel = new Label();
-        extendedStayLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-primary");
+        extendedStayLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_primary);
         extendedStayLabel.setWrapText(true);
         extendedStayLabel.setVisible(false);
         extendedStayLabel.setManaged(false);
@@ -280,7 +280,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         VBox box = new VBox(6);
         box.setPadding(new Insets(12, 16, 12, 16));
         // Neutral style matching other info boxes - using CSS class
-        box.getStyleClass().addAll("bookingpage-info-box", "bookingpage-info-box-neutral");
+        box.getStyleClass().addAll(bookingpage_info_box, bookingpage_info_box_neutral);
         return box;
     }
 
@@ -313,7 +313,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // Title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.YourMeals);
-        titleLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
         summaryBox.getChildren().add(titleLabel);
 
         // Calculate and display meal counts
@@ -324,7 +324,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             if (count > 0) {
                 String text = formatMealSummaryLine("Breakfast", count, getBreakfastDateRange(), dayMonthFormat);
                 Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
                 summaryBox.getChildren().add(label);
             }
         }
@@ -399,7 +399,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             int totalPrice = totalCount * regularPrice;
             String text = formatMealSummaryLineWithPrice(mealName, totalCount, dateRange, regularPrice, totalPrice, formatter);
             Label label = new Label(text);
-            label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+            label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
             summaryBox.getChildren().add(label);
         } else {
             // Complex case: show breakdown by price period
@@ -410,7 +410,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                 LocalDate[] range = new LocalDate[] { breakdown.earlyStart, breakdown.earlyEnd };
                 String text = formatMealSummaryLineWithPrice(mealName + " (Early)", breakdown.earlyCount, range, price, totalPrice, formatter);
                 Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
                 summaryBox.getChildren().add(label);
             }
 
@@ -420,7 +420,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                 LocalDate[] range = new LocalDate[] { breakdown.regularStart, breakdown.regularEnd };
                 String text = formatMealSummaryLineWithPrice(mealName, breakdown.regularCount, range, regularPrice, totalPrice, formatter);
                 Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
                 summaryBox.getChildren().add(label);
             }
 
@@ -431,7 +431,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
                 LocalDate[] range = new LocalDate[] { breakdown.lateStart, breakdown.lateEnd };
                 String text = formatMealSummaryLineWithPrice(mealName + " (Late)", breakdown.lateCount, range, price, totalPrice, formatter);
                 Label label = new Label(text);
-                label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+                label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
                 summaryBox.getChildren().add(label);
             }
         }
@@ -490,7 +490,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         sb.append(" = ").append(formatPrice(totalPrice));
 
         Label label = new Label(sb.toString());
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
         summaryBox.getChildren().add(label);
     }
 
@@ -914,7 +914,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         // Apply border styling in Java per project conventions
         BookingFormColorScheme scheme = colorScheme.get();
@@ -923,7 +923,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // Initial selection state - CSS handles styling via .selected class
         if (selectedProperty.get()) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Checkbox indicator
@@ -953,10 +953,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel(titleKey);
-        title.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label subtitle = I18nControls.newLabel(subtitleKey);
-        subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        subtitle.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         subtitle.setWrapText(true);
 
         textContent.getChildren().addAll(title, subtitle);
@@ -970,11 +970,11 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Selection handling - CSS handles visual styling via .selected class
         selectedProperty.addListener((obs, old, newVal) -> {
             if (newVal) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
         });
 
@@ -1004,7 +1004,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
 
         // Main price label - this is the event price, shown prominently
         Label mainPrice = new Label(formatPrice(pricePerDay) + "/meal");
-        mainPrice.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        mainPrice.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
         priceBox.getChildren().add(mainPrice);
 
         // Determine which early/late prices to show based on meal type
@@ -1036,18 +1036,18 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
             // If early and late prices are the same, show single line "Outside event: $X/meal"
             if (showEarly && showLate && earlyPrice == latePrice) {
                 Label outsideLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.OutsideEventMealPrice, formatPrice(earlyPrice)));
-                outsideLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                outsideLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
                 priceBox.getChildren().add(outsideLabel);
             } else {
                 // Show separate lines for early and late if different
                 if (showEarly) {
                     Label earlyLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.EarlyArrivalMealPrice, formatPrice(earlyPrice)));
-                    earlyLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                    earlyLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
                     priceBox.getChildren().add(earlyLabel);
                 }
                 if (showLate) {
                     Label lateLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.LateDepartureMealPrice, formatPrice(latePrice)));
-                    lateLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+                    lateLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
                     priceBox.getChildren().add(lateLabel);
                 }
             }
@@ -1064,7 +1064,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         HBox card = new HBox(12);
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(16));
-        card.getStyleClass().add("bookingpage-checkbox-card");
+        card.getStyleClass().add(bookingpage_checkbox_card);
 
         // Apply border styling in Java per project conventions
         BookingFormColorScheme scheme = colorScheme.get();
@@ -1074,7 +1074,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         // Always selected style when accommodation is selected (breakfast is auto-included)
         // CSS handles styling via .selected class
         if (wantsBreakfast.get()) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Checkbox indicator (always checked when has accommodation)
@@ -1096,17 +1096,17 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = I18nControls.newLabel(BookingPageI18nKeys.Breakfast);
-        title.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.IncludedWithAccommodation);
-        subtitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        subtitle.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         subtitle.setWrapText(true);
 
         textContent.getChildren().addAll(title, subtitle);
 
         // Price/status label
         Label priceLabel = I18nControls.newLabel(BookingPageI18nKeys.Included);
-        priceLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        priceLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
         priceLabel.setMinWidth(Region.USE_PREF_SIZE);  // Prevent compression on narrow screens
 
         card.getChildren().addAll(checkbox, coffeeIcon, textContent, priceLabel);
@@ -1135,7 +1135,7 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         section.setPadding(new Insets(16, 0, 0, 0));
 
         Label label = I18nControls.newLabel(BookingPageI18nKeys.DietaryPreference);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         section.getChildren().add(label);
 
@@ -1163,12 +1163,12 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         option.setAlignment(Pos.CENTER_LEFT);
         option.setPadding(new Insets(8, 16, 8, 16));
         option.setCursor(Cursor.HAND);
-        option.getStyleClass().add("bookingpage-pill-option");
+        option.getStyleClass().add(bookingpage_pill_option);
 
         // Use the item name for the label
         String itemName = dietItem.getName() != null ? dietItem.getName() : "Unknown";
         Label label = new Label(itemName);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
 
         option.getChildren().add(label);
 
@@ -1191,11 +1191,11 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
      */
     protected void updateDietaryOptionStyle(HBox option, boolean selected) {
         if (selected) {
-            if (!option.getStyleClass().contains("selected")) {
-                option.getStyleClass().add("selected");
+            if (!option.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                option.getStyleClass().add(BookingPageCssSelectors.selected);
             }
         } else {
-            option.getStyleClass().remove("selected");
+            option.getStyleClass().remove(BookingPageCssSelectors.selected);
         }
     }
 
@@ -1205,10 +1205,10 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
         option.setAlignment(Pos.CENTER_LEFT);
         option.setPadding(new Insets(8, 16, 8, 16));
         option.setCursor(Cursor.HAND);
-        option.getStyleClass().add("bookingpage-pill-option");
+        option.getStyleClass().add(bookingpage_pill_option);
 
         Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-medium", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_medium, bookingpage_text_dark);
 
         option.getChildren().add(label);
 
@@ -1229,11 +1229,11 @@ public class DefaultMealsSelectionSection implements HasMealsSelectionSection {
     private void updateDietaryOptionStyleLegacy(HBox option, boolean selected) {
         // CSS handles visual styling via .selected class
         if (selected) {
-            if (!option.getStyleClass().contains("selected")) {
-                option.getStyleClass().add("selected");
+            if (!option.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                option.getStyleClass().add(BookingPageCssSelectors.selected);
             }
         } else {
-            option.getStyleClass().remove("selected");
+            option.getStyleClass().remove(BookingPageCssSelectors.selected);
         }
     }
 

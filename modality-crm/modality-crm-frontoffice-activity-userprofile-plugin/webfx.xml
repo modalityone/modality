@@ -15,6 +15,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.userprofile.UserProfileRouting$RouteToUserProfileRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.frontoffice.activities.userprofile.UserProfileI18nKeys"/>
+    <java-ui-api package="one.modality.crm.frontoffice.activities.userprofile" prefix="UserProfile">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

@@ -56,6 +56,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.roomsetup.RoomSetupRouting$RouteToRoomSetupRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.hotel.backoffice.activities.roomsetup.RoomSetupI18nKeys"/>
+    <java-ui-api package="one.modality.hotel.backoffice.activities.roomsetup" prefix="RoomSetup">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

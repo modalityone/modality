@@ -25,6 +25,8 @@ import one.modality.event.client.event.fx.FXEvent;
 
 import java.util.stream.Collectors;
 
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
+
 /**
  * UI component for Step 2 of the program setup: Day Template Management.
  * This step allows the user to:
@@ -67,14 +69,14 @@ final class ProgramStep2View {
     private HBox createStep2Indicator() {
         // Step 1 Circle (completed - green check)
         Label step1CheckComplete = new Label("✓");
-        step1CheckComplete.getStyleClass().add("program-step-check-completed");
+        step1CheckComplete.getStyleClass().add(program_step_check_completed);
         StackPane step1CircleComplete = new StackPane(step1CheckComplete);
-        step1CircleComplete.getStyleClass().add("program-step-circle-completed");
+        step1CircleComplete.getStyleClass().add(program_step_circle_completed);
         step1CircleComplete.setMinSize(40, 40);
         step1CircleComplete.setMaxSize(40, 40);
 
         Label step1LabelComplete = I18nControls.newLabel(ProgramI18nKeys.GeneratePreliminaryBookableSI);
-        step1LabelComplete.getStyleClass().add("program-step-label-completed");
+        step1LabelComplete.getStyleClass().add(program_step_label_completed);
         step1LabelComplete.setWrapText(true);
         step1LabelComplete.setMaxWidth(150);
         step1LabelComplete.setAlignment(Pos.CENTER);
@@ -85,7 +87,7 @@ final class ProgramStep2View {
 
         // Connector line (green - completed)
         Region connector2 = new Region();
-        connector2.getStyleClass().add("program-step-connector-completed");
+        connector2.getStyleClass().add(program_step_connector_completed);
         connector2.setPrefHeight(2);
         connector2.setMaxHeight(2);
         connector2.setMinWidth(80);
@@ -94,14 +96,14 @@ final class ProgramStep2View {
 
         // Step 2 Circle (active)
         Label step2NumberActive = new Label("2");
-        step2NumberActive.getStyleClass().add("program-step-number-active");
+        step2NumberActive.getStyleClass().add(program_step_number_active);
         StackPane step2CircleActive = new StackPane(step2NumberActive);
-        step2CircleActive.getStyleClass().add("program-step-circle-active");
+        step2CircleActive.getStyleClass().add(program_step_circle_active);
         step2CircleActive.setMinSize(40, 40);
         step2CircleActive.setMaxSize(40, 40);
 
         Label step2LabelActive = I18nControls.newLabel(ProgramI18nKeys.GenerateProgramSchedule);
-        step2LabelActive.getStyleClass().add("program-step-label-active");
+        step2LabelActive.getStyleClass().add(program_step_label_active);
         step2LabelActive.setWrapText(true);
         step2LabelActive.setMaxWidth(150);
         step2LabelActive.setAlignment(Pos.CENTER);
@@ -112,7 +114,7 @@ final class ProgramStep2View {
 
         // Connector line 2b (gray - not yet complete)
         Region connector2b = new Region();
-        connector2b.getStyleClass().add("program-step-connector-inactive");
+        connector2b.getStyleClass().add(program_step_connector_inactive);
         connector2b.setPrefHeight(2);
         connector2b.setMaxHeight(2);
         connector2b.setMinWidth(80);
@@ -121,14 +123,14 @@ final class ProgramStep2View {
 
         // Step 3 Circle (inactive for Step 2 view)
         Label step3NumberInactiveStep2 = new Label("3");
-        step3NumberInactiveStep2.getStyleClass().add("program-step-number-inactive");
+        step3NumberInactiveStep2.getStyleClass().add(program_step_number_inactive);
         StackPane step3CircleInactiveStep2 = new StackPane(step3NumberInactiveStep2);
-        step3CircleInactiveStep2.getStyleClass().add("program-step-circle-inactive");
+        step3CircleInactiveStep2.getStyleClass().add(program_step_circle_inactive);
         step3CircleInactiveStep2.setMinSize(40, 40);
         step3CircleInactiveStep2.setMaxSize(40, 40);
 
         Label step3LabelInactiveStep2 = I18nControls.newLabel(ProgramI18nKeys.ValidateProgram);
-        step3LabelInactiveStep2.getStyleClass().add("program-step-label-inactive");
+        step3LabelInactiveStep2.getStyleClass().add(program_step_label_inactive);
         step3LabelInactiveStep2.setWrapText(true);
         step3LabelInactiveStep2.setMaxWidth(150);
         step3LabelInactiveStep2.setAlignment(Pos.CENTER);
@@ -160,7 +162,7 @@ final class ProgramStep2View {
 
         // Title
         Label introTitle = I18nControls.newLabel(ProgramI18nKeys.AboutDayTemplates);
-        introTitle.getStyleClass().add("program-info-title");
+        introTitle.getStyleClass().add(program_info_title);
 
         HBox introTitleBox = new HBox(10, infoIcon, introTitle);
         introTitleBox.setAlignment(Pos.CENTER_LEFT);
@@ -168,11 +170,11 @@ final class ProgramStep2View {
         // Content
         Label introContent = I18nControls.newLabel(ProgramI18nKeys.AboutDayTemplatesMessage);
         introContent.setWrapText(true);
-        introContent.getStyleClass().add("program-info-content");
+        introContent.getStyleClass().add(program_info_content);
 
         // Separator
         Region separator = new Region();
-        separator.getStyleClass().add("program-info-separator");
+        separator.getStyleClass().add(program_info_separator);
         separator.setPrefHeight(1);
         separator.setMaxHeight(1);
         separator.setPadding(new Insets(8, 0, 8, 0));
@@ -185,7 +187,7 @@ final class ProgramStep2View {
         audioIcon.setScaleY(0.9);
 
         Label audioTitle = I18nControls.newLabel(ProgramI18nKeys.AvailableAudioTranslations);
-        audioTitle.getStyleClass().add("program-info-subtitle");
+        audioTitle.getStyleClass().add(program_info_subtitle);
 
         HBox audioTitleBox = new HBox(8, audioIcon, audioTitle);
         audioTitleBox.setAlignment(Pos.CENTER_LEFT);
@@ -193,7 +195,7 @@ final class ProgramStep2View {
         // Audio content - dynamically loaded
         Label audioContent = new Label();
         audioContent.setWrapText(true);
-        audioContent.getStyleClass().add("program-info-text");
+        audioContent.getStyleClass().add(program_info_text);
 
         // Languages list
         HBox languagesList = new HBox(8);
@@ -206,7 +208,7 @@ final class ProgramStep2View {
 
         // Combine all sections
         VBox introBox = new VBox(12, introTitleBox, introContent, separator, audioSection);
-        introBox.getStyleClass().add("program-info-box");
+        introBox.getStyleClass().add(program_info_box);
         introBox.setPadding(new Insets(24));
         introBox.setMaxWidth(MAX_WIDTH);
 
@@ -231,7 +233,7 @@ final class ProgramStep2View {
                                 .forEach(langName -> {
                                     Label langLabel = new Label(langName);
                                     langLabel.setPadding(new Insets(4, 10, 4, 10));
-                                    langLabel.getStyleClass().add("program-language-badge");
+                                    langLabel.getStyleClass().add(program_language_badge);
                                     languagesList.getChildren().add(langLabel);
                                 });
                         }
@@ -256,14 +258,14 @@ final class ProgramStep2View {
 
         // Title
         Label warningTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.ImportantValidatingProgram));
-        warningTitle.getStyleClass().add("program-warning-title-yellow");
+        warningTitle.getStyleClass().add(program_warning_title_yellow);
 
         VBox warningTitleBox = new VBox(warningTitle);
 
         // Content
         Label warningMessage = I18nControls.newLabel(ProgramI18nKeys.ValidatingProgramWarning);
         warningMessage.setWrapText(true);
-        warningMessage.getStyleClass().add("program-warning-message-yellow");
+        warningMessage.getStyleClass().add(program_warning_message_yellow);
 
         VBox warningContent = new VBox(8, warningTitleBox, warningMessage);
 
@@ -271,7 +273,7 @@ final class ProgramStep2View {
         warningHeader.setAlignment(Pos.TOP_LEFT);
 
         VBox warningBox = new VBox(warningHeader);
-        warningBox.getStyleClass().add("program-warning-box-yellow");
+        warningBox.getStyleClass().add(program_warning_box_yellow);
         warningBox.setPadding(new Insets(20));
         warningBox.setMaxWidth(MAX_WIDTH);
 
@@ -406,7 +408,7 @@ final class ProgramStep2View {
 
         // Heading
         Label heading = Bootstrap.h2(I18nControls.newLabel(ProgramI18nKeys.NoDayTemplatesYet));
-        heading.getStyleClass().add("program-empty-heading");
+        heading.getStyleClass().add(program_empty_heading);
 
         // Description
         Label description = I18nControls.newLabel(ProgramI18nKeys.NoDayTemplatesDescription);
@@ -414,7 +416,7 @@ final class ProgramStep2View {
         description.setMaxWidth(500);
         description.setAlignment(Pos.CENTER);
         description.setTextAlignment(javafx.scene.text.TextAlignment.CENTER);
-        description.getStyleClass().add("program-empty-description");
+        description.getStyleClass().add(program_empty_description);
 
         // CTA Button
         Button createButton = ModalityStyle.largeOutlinePrimaryAddButton(I18nControls.newButton(ProgramI18nKeys.CreateDayTemplate));

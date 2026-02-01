@@ -32,6 +32,7 @@ import java.util.Set;
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import static one.modality.base.backoffice.claude.FormFieldHelper.addSearchFilter;
 import static one.modality.base.backoffice.claude.FormFieldHelper.createTextField;
+import static one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesCssSelectors.*;
 import static one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesI18nKeys.*;
 
 /**
@@ -113,11 +114,11 @@ public class OperationGroupDialog {
         selectedItemsContainer.setMaxWidth(Double.MAX_VALUE);
 
         Label selectedItemsTitle = I18nControls.newLabel(SelectedOperations);
-        selectedItemsTitle.getStyleClass().add("role-dialog-permissions-title");
+        selectedItemsTitle.getStyleClass().add(role_dialog_permissions_title);
 
         // Selected operations header with count
         Label selectedCountLabel = new Label();
-        selectedCountLabel.getStyleClass().add("operation-selection-count-label");
+        selectedCountLabel.getStyleClass().add(operation_selection_count_label);
 
         // Selected Operations Display Panel
         FlowPane selectedChipsPane = new FlowPane();
@@ -126,23 +127,23 @@ public class OperationGroupDialog {
         selectedChipsPane.setPadding(new Insets(12));
         selectedChipsPane.setMinHeight(80);
         selectedChipsPane.setMaxWidth(Double.MAX_VALUE);
-        selectedChipsPane.getStyleClass().add("operation-selection-panel");
+        selectedChipsPane.getStyleClass().add(operation_selection_panel);
 
         // Initial empty message
         Label emptyMessage = I18nControls.newLabel(NoOperationsSelectedYet);
-        emptyMessage.getStyleClass().add("operation-selection-empty-message");
+        emptyMessage.getStyleClass().add(operation_selection_empty_message);
         selectedChipsPane.getChildren().add(emptyMessage);
 
         selectedItemsContainer.getChildren().addAll(selectedItemsTitle, selectedCountLabel, selectedChipsPane);
 
         // === INFO BANNER ===
         VBox infoBanner = new VBox(6);
-        infoBanner.getStyleClass().add("admin-info-banner");
+        infoBanner.getStyleClass().add(admin_info_banner);
         infoBanner.setPadding(new Insets(12));
         infoBanner.setMaxWidth(Double.MAX_VALUE);
 
         Label infoText = I18nControls.newLabel(BackofficeOperationsOnly);
-        infoText.getStyleClass().add("admin-info-banner-text");
+        infoText.getStyleClass().add(admin_info_banner_text);
         infoText.setWrapText(true);
         infoText.setMaxWidth(Double.MAX_VALUE);
 
@@ -241,7 +242,7 @@ public class OperationGroupDialog {
 
             if (selectedCount == 0) {
                 Label empty = I18nControls.newLabel(NoOperationsSelectedYet);
-                empty.getStyleClass().add("operation-selection-empty-message");
+                empty.getStyleClass().add(operation_selection_empty_message);
                 selectedChipsPane.getChildren().add(empty);
             } else {
                 for (CheckBox cb : operationCheckboxes) {
@@ -250,15 +251,15 @@ public class OperationGroupDialog {
                         HBox chipContainer = new HBox(4);
                         chipContainer.setAlignment(Pos.CENTER);
                         chipContainer.setPadding(new Insets(6, 8, 6, 12));
-                        chipContainer.getStyleClass().add("operation-selection-chip");
+                        chipContainer.getStyleClass().add(operation_selection_chip);
 
                         // Operation name label
                         Label nameLabel = new Label(cb.getText());
-                        nameLabel.getStyleClass().add("operation-selection-chip-label");
+                        nameLabel.getStyleClass().add(operation_selection_chip_label);
 
                         // Remove button (×)
                         Label removeBtn = new Label("×");
-                        removeBtn.getStyleClass().add("operation-selection-chip-remove");
+                        removeBtn.getStyleClass().add(operation_selection_chip_remove);
                         removeBtn.setOnMouseClicked(e -> {
                             // Uncheck the corresponding checkbox
                             cb.setSelected(false);

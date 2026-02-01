@@ -11,9 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
@@ -24,7 +26,7 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 
 import java.time.LocalDate;
 
-import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the Failed Payment section.
@@ -233,13 +235,13 @@ public class DefaultFailedPaymentSection implements HasFailedPaymentSection {
 
         // Label
         Label label = I18nControls.newLabel(labelKey);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         label.setMinWidth(80);
 
         // Value
         Label value = new Label();
         value.textProperty().bind(valueProperty);
-        value.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        value.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         row.getChildren().addAll(icon, label, value);
         return row;
@@ -254,12 +256,12 @@ public class DefaultFailedPaymentSection implements HasFailedPaymentSection {
 
         // Label
         Label label = I18nControls.newLabel(BookingPageI18nKeys.AmountDue);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         label.setMinWidth(80);
 
         // Value
         Label value = new Label();
-        value.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        value.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         // Update value when amount changes
         Runnable updateAmount = () -> {
@@ -385,7 +387,7 @@ public class DefaultFailedPaymentSection implements HasFailedPaymentSection {
         item.setAlignment(Pos.TOP_LEFT);
 
         Label bullet = new Label("•");
-        bullet.getStyleClass().addAll("bookingpage-suggestion-item", "bookingpage-text-muted");
+        bullet.getStyleClass().addAll("bookingpage-suggestion-item", bookingpage_text_muted);
 
         Label text = I18nControls.newLabel(i18nKey);
         text.getStyleClass().add("bookingpage-suggestion-item");

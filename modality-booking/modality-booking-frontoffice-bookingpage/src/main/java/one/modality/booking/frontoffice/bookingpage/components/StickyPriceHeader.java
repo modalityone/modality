@@ -10,6 +10,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * A sticky header that displays the current booking summary at the top of the page.
  * Shows: Room name, number of days, and total price.
@@ -43,7 +45,7 @@ public class StickyPriceHeader extends HBox {
 
         // Add CSS class for sticky positioning and styling (works in browser via GWT)
         // Styling defined in modality-booking-frontoffice-bookingpage-fxweb@main.css
-        getStyleClass().add("sticky-price-header");
+        getStyleClass().add(sticky_price_header);
 
         // Inner container with max width
         HBox innerContainer = new HBox(16);
@@ -68,16 +70,16 @@ public class StickyPriceHeader extends HBox {
         textRow.setAlignment(Pos.CENTER_LEFT);
 
         roomNameLabel = new Label("Room");  // Default text to ensure proper rendering
-        roomNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        roomNameLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium);
         roomNameLabel.setTextFill(Color.web("#495057"));  // Secondary text color
         roomNameLabel.setMinWidth(50);  // Ensure minimum width for proper layout
 
         Label separator = new Label("·");
-        separator.getStyleClass().add("sticky-price-header-separator");
+        separator.getStyleClass().add(sticky_price_header_separator);
         separator.setTextFill(Color.web("#9CA3AF"));  // Muted separator
 
         daysLabel = new Label("0 days");  // Default text
-        daysLabel.getStyleClass().addAll("bookingpage-text-sm");
+        daysLabel.getStyleClass().addAll(bookingpage_text_sm);
         daysLabel.setTextFill(Color.web("#6c757d"));  // Muted text color
         daysLabel.setMinWidth(50);  // Ensure minimum width for proper layout
 
@@ -91,11 +93,11 @@ public class StickyPriceHeader extends HBox {
         rightSide.setAlignment(Pos.CENTER_RIGHT);
 
         Label totalLabel = new Label("TOTAL");  // TODO: i18n
-        totalLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium");
+        totalLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_font_medium);
         totalLabel.setTextFill(Color.web("#6c757d"));  // Muted text color
 
         priceLabel = new Label("$0");  // Default text to ensure proper rendering
-        priceLabel.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold");
+        priceLabel.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_bold);
         priceLabel.setMinWidth(60);  // Ensure minimum width for price display
 
         rightSide.getChildren().addAll(totalLabel, priceLabel);
@@ -120,14 +122,14 @@ public class StickyPriceHeader extends HBox {
         container.setMaxSize(32, 32);
 
         // Use CSS class for styling - theme colors applied via CSS variables
-        container.getStyleClass().add("sticky-price-header-icon-container");
+        container.getStyleClass().add(sticky_price_header_icon_container);
 
         // Calendar icon using SVG path
         SVGPath calendarIcon = new SVGPath();
         calendarIcon.setContent("M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z");
         calendarIcon.setScaleX(0.6);
         calendarIcon.setScaleY(0.6);
-        calendarIcon.getStyleClass().add("bookingpage-icon-primary");
+        calendarIcon.getStyleClass().add(bookingpage_icon_primary);
 
         container.getChildren().add(calendarIcon);
 

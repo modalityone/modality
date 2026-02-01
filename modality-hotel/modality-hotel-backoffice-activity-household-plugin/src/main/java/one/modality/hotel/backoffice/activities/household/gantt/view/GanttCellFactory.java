@@ -7,13 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import one.modality.hotel.backoffice.activities.household.gantt.model.BookingBar;
-import one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition;
-import one.modality.hotel.backoffice.activities.household.gantt.model.DateColumn;
-import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBedData;
-import one.modality.hotel.backoffice.activities.household.gantt.model.GanttBookingData;
-import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
-import one.modality.hotel.backoffice.activities.household.gantt.model.RoomType;
+import one.modality.hotel.backoffice.activities.household.gantt.model.*;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.BookingBarRenderer;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
@@ -23,6 +17,8 @@ import one.modality.hotel.backoffice.activities.household.gantt.renderer.SingleR
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
+
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.*;
 
 /**
  * Factory for creating Gantt table cells with consistent styling.
@@ -104,21 +100,21 @@ public class GanttCellFactory {
                 .getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase();
         Label dayLabel = new Label(dayOfWeek);
         dayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        dayLabel.getStyleClass().add("gantt-day-label");
+        dayLabel.getStyleClass().add(gantt_day_label);
 
         // Day of month (GWT-compatible padding instead of String.format)
         int day = dateCol.date().getDayOfMonth();
         String dayOfMonth = (day < 10 ? "0" : "") + day;
         Label dateLabel = new Label(dayOfMonth);
         dateLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        dateLabel.getStyleClass().add("gantt-date-label");
+        dateLabel.getStyleClass().add(gantt_date_label);
 
         dateHeader.getChildren().addAll(dayLabel, dateLabel);
 
         if (dateCol.isToday()) {
             Label todayLabel = new Label("(Today)");
             todayLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-            todayLabel.getStyleClass().add("gantt-today-label");
+            todayLabel.getStyleClass().add(gantt_today_label);
             dateHeader.getChildren().add(todayLabel);
         }
 
@@ -132,7 +128,7 @@ public class GanttCellFactory {
     public StackPane createCategoryCell(String categoryName) {
         Label categoryLabel = new Label(categoryName);
         categoryLabel.setTextFill(GanttColorScheme.COLOR_ACCENT);
-        categoryLabel.getStyleClass().add("gantt-category-label");
+        categoryLabel.getStyleClass().add(gantt_category_label);
 
         StackPane categoryCell = new StackPane(categoryLabel);
         categoryCell.setAlignment(Pos.CENTER_LEFT);
@@ -170,7 +166,7 @@ public class GanttCellFactory {
         if (!room.getBeds().isEmpty()) {
             boolean isExpanded = presenter.isRoomExpanded(room.getId());
             Label arrow = new Label(isExpanded ? "∨" : "›"); // Down arrow when expanded, right arrow when collapsed
-            arrow.getStyleClass().add("gantt-expand-arrow");
+            arrow.getStyleClass().add(gantt_expand_arrow);
             arrow.setCursor(javafx.scene.Cursor.HAND);
 
             // Click handler to expand/collapse individual bed rows
@@ -193,7 +189,7 @@ public class GanttCellFactory {
         // Room name
         Label roomName = new Label(room.getName());
         roomName.setTextFill(GanttColorScheme.COLOR_TEXT_GREY);
-        roomName.getStyleClass().add("gantt-room-name");
+        roomName.getStyleClass().add(gantt_room_name);
 
         content.getChildren().addAll(statusDot, roomName);
 
@@ -201,7 +197,7 @@ public class GanttCellFactory {
         if (room.getRoomComments() != null && !room.getRoomComments().isEmpty()) {
             Label commentLabel = new Label(truncateText(room.getRoomComments()));
             commentLabel.setTextFill(Color.web("#666666"));
-            commentLabel.getStyleClass().add("gantt-room-comment");
+            commentLabel.getStyleClass().add(gantt_room_comment);
             content.getChildren().add(commentLabel);
         }
 
@@ -329,9 +325,9 @@ public class GanttCellFactory {
         Label bedName = new Label(bed.getName());
         // Use white text for overbooking beds (on red background), grey for normal beds
         bedName.setTextFill(bed.isOverbooking() ? Color.WHITE : Color.web("#666666"));
-        bedName.getStyleClass().add("gantt-bed-name");
+        bedName.getStyleClass().add(gantt_bed_name);
         if (bed.isOverbooking()) {
-            bedName.getStyleClass().add("gantt-bed-name-overbooking");
+            bedName.getStyleClass().add(gantt_bed_name_overbooking);
         }
 
         content.getChildren().addAll(statusDot, bedName);

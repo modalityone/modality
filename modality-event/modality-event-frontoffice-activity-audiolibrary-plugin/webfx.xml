@@ -16,6 +16,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.audiolibrary.EventAudioLibraryRouting$EventAudioLibraryUiRoute</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryI18nKeys"/>
+    <java-ui-api package="one.modality.event.frontoffice.activities.audiolibrary" prefix="AudioLibrary">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

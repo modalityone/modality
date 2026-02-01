@@ -38,6 +38,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  * @author David Hello
@@ -75,14 +77,14 @@ final class TimetableFormattersAndRenderers {
             nameLabel.setPadding(LABEL_PADDING);
             if (VideoState.isVideoCancelled(video)) {
                 I18nControls.bindI18nProperties(nameLabel, MediasI18nKeys.SessionCancelled);
-                nameLabel.getStyleClass().add("session-cancelled");
+                nameLabel.getStyleClass().add(session_cancelled);
             } else {
                 // Note: normally we should first try to translate `video` and then `programScheduledItem`, but the
                 // `video` has the name repeated for some reason (but no label), while what we want is the label
                 // defined on the program in this case, so for now we just use the `programScheduledItem` directly
                 ScheduledItem namedVideo = video.getName() != null || video.getLabel() != null ? video : video.getProgramScheduledItem();
                 I18nEntities.bindTranslatedEntityToTextProperty(nameLabel, namedVideo);
-                nameLabel.getStyleClass().add("name");
+                nameLabel.getStyleClass().add(name);
             }
             return Controls.setupTextWrapping(nameLabel, true, true);
         });

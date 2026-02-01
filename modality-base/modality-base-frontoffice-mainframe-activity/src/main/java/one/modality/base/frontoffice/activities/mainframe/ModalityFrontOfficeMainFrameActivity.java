@@ -49,6 +49,8 @@ import one.modality.base.frontoffice.utility.page.FOPageUtil;
 import java.util.List;
 import java.util.Objects;
 
+import static one.modality.base.frontoffice.activities.mainframe.MainFrameCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -237,10 +239,10 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
                 FXProperties.toggleProperty(mobileLayoutProperty);
         });
 
-        mainFrameContainer.getStyleClass().add("main-frame");
+        mainFrameContainer.getStyleClass().add(main_frame);
         FXProperties.runNowAndOnPropertyChange(keyboardNavigationDetected -> {
-            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), keyboardNavigationDetected, "keyboard-navigation-on");
-            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), !keyboardNavigationDetected, "keyboard-navigation-off");
+            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), keyboardNavigationDetected, keyboard_navigation_on);
+            Collections.addIfNotContainsOrRemove(mainFrameContainer.getStyleClass(), !keyboardNavigationDetected, keyboard_navigation_off);
         }, FXKeyboardNavigationDetected.keyboardNavigationDetectedProperty());
 
         return mainFrameContainer;
@@ -258,7 +260,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             mobileMenus.getChildren().add(UserMenu.createUserMenuIcon(languageMenuBar, this));
         mobileMenus.setAlignment(Pos.CENTER);
         mobileMenus.setPadding(new Insets(10, 0, 10, 0));
-        mobileMenus.getStyleClass().addAll("menu-bar", "non-mobile"); //
+        mobileMenus.getStyleClass().addAll(menu_bar, non_mobile); //
         FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftRightPadding(mobileMenus);  // to fit like the mount node
         return mobileMenus;
     }
@@ -291,7 +293,7 @@ public final class ModalityFrontOfficeMainFrameActivity extends ModalityClientMa
             dialogArea = (Pane) properties.get(arbitraryKey);
             if (dialogArea == null) {
                 properties.put(arbitraryKey, dialogArea = new Pane());
-                dialogArea.getStyleClass().add("modality-dialog-area");
+                dialogArea.getStyleClass().add(modality_dialog_area);
                 // We request focus on mouse clicked. This is to allow the dropdown dialog in ButtonSelector to automatically
                 // close when the user clicks outside (focus change triggers this auto-close mechanism).
                 dialogArea.setOnMouseClicked(e -> dialogArea.requestFocus());

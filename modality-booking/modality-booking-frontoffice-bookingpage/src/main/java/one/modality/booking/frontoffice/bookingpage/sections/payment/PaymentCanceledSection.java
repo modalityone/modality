@@ -14,7 +14,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
@@ -23,6 +24,8 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.function.Supplier;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Section displayed when user cancels an embedded payment.
@@ -80,7 +83,7 @@ public class PaymentCanceledSection implements BookingFormSection {
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(80, 80);
         iconCircle.setMaxSize(80, 80);
-        iconCircle.getStyleClass().add("bookingpage-warning-icon-circle");
+        iconCircle.getStyleClass().add(bookingpage_warning_icon_circle);
 
         // Back arrow icon (indicating user went back/canceled)
         SVGPath icon = new SVGPath();
@@ -95,13 +98,13 @@ public class PaymentCanceledSection implements BookingFormSection {
 
         // Title: "Payment Canceled"
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentCanceledTitle);
-        titleLabel.getStyleClass().add("bookingpage-warning-title");
+        titleLabel.getStyleClass().add(bookingpage_warning_title);
         VBox.setMargin(titleLabel, new Insets(0, 0, 8, 0));
 
         // Subtitle with Orders link: "Your booking is saved. Complete your payment anytime from the {0} menu."
         // Use HtmlText for WebFX compatibility (TextFlow with Hyperlink doesn't work in WebFX)
         HtmlText subtitleHtml = new HtmlText();
-        subtitleHtml.getStyleClass().add("bookingpage-warning-subtitle-text");
+        subtitleHtml.getStyleClass().add(bookingpage_warning_subtitle_text);
         FXProperties.runNowAndOnPropertiesChange(() -> {
             String template = I18n.getI18nText(BookingPageI18nKeys.PaymentCanceledSubtitle, "###LINK###").toString();
             String linkText = I18n.getI18nText(BookingPageI18nKeys.Orders);
@@ -120,7 +123,7 @@ public class PaymentCanceledSection implements BookingFormSection {
         VBox.setMargin(section, new Insets(0, 0, 24, 0));
 
         Button tryAgainButton = I18nControls.newButton(BookingPageI18nKeys.TryAgain);
-        tryAgainButton.getStyleClass().addAll("booking-form-primary-btn", "booking-form-primary-btn-text");
+        tryAgainButton.getStyleClass().addAll(booking_form_primary_btn, booking_form_primary_btn_text);
         tryAgainButton.setPadding(new Insets(16, 24, 16, 24));
         tryAgainButton.setCursor(Cursor.HAND);
         tryAgainButton.setMaxWidth(Double.MAX_VALUE);

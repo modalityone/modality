@@ -9,6 +9,8 @@ import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.EventState;
 
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -54,7 +56,7 @@ final class RecurringEventRenderers {
         ValueRendererRegistry.registerValueRenderer("confirmRenderer", (value, context) -> {
             Document document = (Document) value;
             Text confirmText = I18n.newText(document.isConfirmed() ? "BookingConfirmed" : "BookingUnconfirmed");
-            confirmText.getStyleClass().add(document.isConfirmed() ? "booking-status-confirmed" : "booking-status-unconfirmed");
+            confirmText.getStyleClass().add(document.isConfirmed() ? booking_status_confirmed : booking_status_unconfirmed);
             return confirmText;
         });
 

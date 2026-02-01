@@ -29,6 +29,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.catering.backoffice.activities.kitchen.KitchenCssSelectors.*;
+
 /**
  * Main view component for Kitchen activity.
  * Pure JavaFX UI construction without business logic.
@@ -66,10 +68,10 @@ public final class KitchenViewUI {
 
         // Create Top Panel (Filter Bar)
         dateRangeDisplay = new Label();
-        dateRangeDisplay.getStyleClass().add("kitchen-date-range-display");
+        dateRangeDisplay.getStyleClass().add(kitchen_date_range_display);
 
         Label filterLabel = I18nControls.newLabel(KitchenI18nKeys.Filter);
-        filterLabel.getStyleClass().add("kitchen-filter-label");
+        filterLabel.getStyleClass().add(kitchen_filter_label);
 
         // Create WebFX DateFields (text field with calendar icon) - compact width
         startDateField = new DateField(overlayPane);
@@ -77,7 +79,7 @@ public final class KitchenViewUI {
         styleCalendarPicker(startDateField);
 
         Label arrowLabel = new Label("→");
-        arrowLabel.getStyleClass().add("kitchen-filter-label");
+        arrowLabel.getStyleClass().add(kitchen_filter_label);
 
         endDateField = new DateField(overlayPane);
         styleCalendarIcon(endDateField);
@@ -92,7 +94,7 @@ public final class KitchenViewUI {
         // Create kitchen icon (chef hat / restaurant icon) - smaller size
         SVGPath kitchenIcon = new SVGPath();
         kitchenIcon.setContent("M18.06 22.99h1.66c.84 0 1.53-.64 1.63-1.46L23 5.05h-5V1h-1v4h-1V1h-1v4h-1V1H13v4H8l1.65 16.48c.1.82.79 1.46 1.63 1.46h1.66v-6.03c0-.77.62-1.39 1.39-1.39h1.34c.77 0 1.39.62 1.39 1.39v6.03zM7 2H2v2h5V2z");
-        kitchenIcon.getStyleClass().add("kitchen-icon");
+        kitchenIcon.getStyleClass().add(kitchen_icon);
         kitchenIcon.setScaleX(0.75);
         kitchenIcon.setScaleY(0.75);
 
@@ -104,7 +106,7 @@ public final class KitchenViewUI {
 
         // Create organization label - will be placed in table's top-left cell
         organizationLabel = new Label();
-        organizationLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL, "kitchen-organization-label");
+        organizationLabel.getStyleClass().addAll(Bootstrap.TEXT_SECONDARY, Bootstrap.SMALL, kitchen_organization_label);
         organizationLabel.setWrapText(true);
         organizationLabel.setMaxWidth(200);
 
@@ -113,7 +115,7 @@ public final class KitchenViewUI {
         separator.setPrefWidth(1);
         separator.setMinHeight(20);
         separator.setMaxHeight(20);
-        separator.getStyleClass().add("kitchen-separator");
+        separator.getStyleClass().add(kitchen_separator);
 
         // Compact date range display with "Showing" label
         Label showingLabel = I18nControls.newLabel(KitchenI18nKeys.Showing);
@@ -130,7 +132,7 @@ public final class KitchenViewUI {
                 applyButton, nextWeekButton);
         filterBox.setAlignment(Pos.CENTER_LEFT);
         filterBox.setPadding(new Insets(3, 8, 3, 8));
-        filterBox.getStyleClass().add("kitchen-filter-box");
+        filterBox.getStyleClass().add(kitchen_filter_box);
 
         // Group showing and filter together
         HBox showingAndFilters = new HBox(12, dateDisplayBox, filterBox);
@@ -140,7 +142,7 @@ public final class KitchenViewUI {
         headerContent = new HBox(15, titleLabel, separator, showingAndFilters);
         headerContent.setAlignment(Pos.CENTER_LEFT);
         headerContent.setPadding(new Insets(10, 15, 8, 15));
-        headerContent.getStyleClass().add("kitchen-top-header");
+        headerContent.getStyleClass().add(kitchen_top_header);
         headerContent.setMaxWidth(Region.USE_PREF_SIZE); // Fit to content width
 
         // Create loading spinner
@@ -181,7 +183,7 @@ public final class KitchenViewUI {
 
         // Create "Copied!" feedback label
         copiedFeedbackLabel = I18nControls.newLabel(KitchenI18nKeys.Copied);
-        copiedFeedbackLabel.getStyleClass().add("copied-feedback");
+        copiedFeedbackLabel.getStyleClass().add(copied_feedback);
         copiedFeedbackLabel.setOpacity(0);
         copiedFeedbackLabel.setVisible(false);
 
@@ -406,7 +408,7 @@ public final class KitchenViewUI {
      */
     private void styleSVGPath(Node node) {
         if (node instanceof SVGPath) {
-            node.getStyleClass().add("kitchen-calendar-icon");
+            node.getStyleClass().add(kitchen_calendar_icon);
         } else if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
                 styleSVGPath(child);
@@ -446,7 +448,7 @@ public final class KitchenViewUI {
         });
 
         // Apply CSS class for styling
-        datePickerView.getStyleClass().add("kitchen-calendar-picker");
+        datePickerView.getStyleClass().add(kitchen_calendar_picker);
 
         // Apply styling to all children recursively
         styleCalendarChildren(datePickerView);
@@ -457,7 +459,7 @@ public final class KitchenViewUI {
      */
     private void styleCalendarChildren(Node node) {
         if (node instanceof Region) {
-            node.getStyleClass().add("kitchen-calendar-picker");
+            node.getStyleClass().add(kitchen_calendar_picker);
         }
         if (node instanceof javafx.scene.Parent) {
             for (Node child : ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {

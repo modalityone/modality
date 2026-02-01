@@ -14,6 +14,8 @@ import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
 
+import static one.modality.crm.backoffice.activities.organizations.OrganizationsCssSelectors.*;
+
 /**
  * Custom renderers for the Organizations view.
  *
@@ -30,7 +32,7 @@ final class OrganizationsRenderers {
             Organization organization = (Organization) value;
             Object primaryKey = organization.getPrimaryKey();
             Label idLabel = new Label(primaryKey != null ? primaryKey.toString() : "-");
-            idLabel.getStyleClass().add("organization-id-label");
+            idLabel.getStyleClass().add(organization_id_label);
             return idLabel;
         });
 
@@ -43,7 +45,7 @@ final class OrganizationsRenderers {
 
             // Short name (main name displayed in blue)
             Label nameLabel = new Label(organization.getName());
-            nameLabel.getStyleClass().add("organization-name-primary");
+            nameLabel.getStyleClass().add(organization_name_primary);
 
             nameBox.getChildren().add(nameLabel);
 
@@ -52,7 +54,7 @@ final class OrganizationsRenderers {
                 String typeName = organization.getType().getName();
                 if (typeName != null && !typeName.isEmpty()) {
                     Label typeLabel = new Label(typeName);
-                    typeLabel.getStyleClass().add("organization-name-secondary");
+                    typeLabel.getStyleClass().add(organization_name_secondary);
                     nameBox.getChildren().add(typeLabel);
                 }
             }
@@ -85,14 +87,14 @@ final class OrganizationsRenderers {
 
             if (locationText.length() > 0) {
                 Label mainLocation = new Label(locationText.toString());
-                mainLocation.getStyleClass().add("organization-location-main");
+                mainLocation.getStyleClass().add(organization_location_main);
                 locationBox.getChildren().add(mainLocation);
             }
 
             // Street address (secondary)
             if (street != null && !street.isEmpty()) {
                 Label streetLabel = new Label(street);
-                streetLabel.getStyleClass().add("organization-location-secondary");
+                streetLabel.getStyleClass().add(organization_location_secondary);
                 locationBox.getChildren().add(streetLabel);
             }
 
@@ -120,9 +122,9 @@ final class OrganizationsRenderers {
                 HBox emailRow = new HBox(4);
                 emailRow.setAlignment(Pos.CENTER_LEFT);
                 Label emailIcon = new Label("\u2709");
-                emailIcon.getStyleClass().add("organization-contact-icon");
+                emailIcon.getStyleClass().add(organization_contact_icon);
                 Label emailLabel = new Label(email);
-                emailLabel.getStyleClass().add("organization-contact-email");
+                emailLabel.getStyleClass().add(organization_contact_email);
                 emailRow.getChildren().addAll(emailIcon, emailLabel);
                 contactBox.getChildren().add(emailRow);
             }
@@ -132,9 +134,9 @@ final class OrganizationsRenderers {
                 HBox phoneRow = new HBox(4);
                 phoneRow.setAlignment(Pos.CENTER_LEFT);
                 Label phoneIcon = new Label("\u260E");
-                phoneIcon.getStyleClass().add("organization-contact-icon");
+                phoneIcon.getStyleClass().add(organization_contact_icon);
                 Label phoneLabel = new Label(phone);
-                phoneLabel.getStyleClass().add("organization-contact-phone");
+                phoneLabel.getStyleClass().add(organization_contact_phone);
                 phoneRow.getChildren().addAll(phoneIcon, phoneLabel);
                 contactBox.getChildren().add(phoneRow);
             }
@@ -156,13 +158,13 @@ final class OrganizationsRenderers {
 
             Label statusLabel = new Label(isClosed ? "Closed" : "Active");
             statusLabel.setPadding(new Insets(4, 8, 4, 8));
-            statusLabel.getStyleClass().add(isClosed ? "organization-status-closed" : "organization-status-active");
+            statusLabel.getStyleClass().add(isClosed ? organization_status_closed : organization_status_active);
 
             // Make clickable to toggle status
             statusLabel.setOnMouseClicked(e -> {
                 OrganizationsDialogs.toggleClosedStatus(organization, getActivity(context));
             });
-            statusLabel.getStyleClass().add("organization-status-clickable");
+            statusLabel.getStyleClass().add(organization_status_clickable);
 
             return statusLabel;
         });

@@ -17,6 +17,8 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.orders.OrdersRouting$RouteToOrdersRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.frontoffice.activities.orders.OrdersI18nKeys"/>
+    <java-ui-api package="one.modality.crm.frontoffice.activities.orders" prefix="Orders">
+        <i18n/>
+    </java-ui-api>
 
 </project>

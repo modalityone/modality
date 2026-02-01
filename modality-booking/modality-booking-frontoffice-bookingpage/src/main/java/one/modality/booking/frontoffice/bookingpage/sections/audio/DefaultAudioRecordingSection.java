@@ -1,4 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections.audio;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 
 import dev.webfx.extras.i18n.controls.I18nControls;
 import javafx.beans.property.ObjectProperty;
@@ -36,6 +37,8 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the audio recording section.
@@ -93,10 +96,10 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
         // Cards container
         cardsPane.setPadding(new Insets(0));
         cardsPane.setFillWidth(false);
-        cardsPane.getStyleClass().add("booking-form-audio-recording-cards");
+        cardsPane.getStyleClass().add(booking_form_audio_recording_cards);
 
         container.getChildren().addAll(header, infoBox, cardsPane);
-        container.getStyleClass().add("booking-form-audio-recording-section");
+        container.getStyleClass().add(booking_form_audio_recording_section);
         container.setMinWidth(0); // Allow shrinking for responsive design
     }
 
@@ -474,12 +477,12 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
             VBox titleContainer = new VBox(2);
             titleContainer.setAlignment(Pos.CENTER_LEFT);
             titleLabel = new Label();
-            titleLabel.getStyleClass().addAll("bookingpage-font-semibold", "bookingpage-text-base", "bookingpage-text-dark");
+            titleLabel.getStyleClass().addAll(bookingpage_font_semibold, bookingpage_text_base, bookingpage_text_dark);
 
             if (locked) {
                 // Add "PURCHASED" badge for locked items
                 Label purchasedBadge = I18nControls.newLabel(BookingPageI18nKeys.Purchased);
-                purchasedBadge.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-badge-purchased");
+                purchasedBadge.getStyleClass().addAll(bookingpage_text_xs, bookingpage_badge_purchased);
                 titleContainer.getChildren().addAll(titleLabel, purchasedBadge);
             } else {
                 titleContainer.getChildren().add(titleLabel);
@@ -488,29 +491,29 @@ public class DefaultAudioRecordingSection implements HasAudioRecordingSection {
 
             // Price - styled via CSS
             Label priceLabel = new Label(EventPriceFormatter.formatWithCurrency(price, event));
-            priceLabel.getStyleClass().addAll("bookingpage-font-bold", "bookingpage-text-base", "bookingpage-text-dark");
+            priceLabel.getStyleClass().addAll(bookingpage_font_bold, bookingpage_text_base, bookingpage_text_dark);
 
             // Layout
             setAlignment(Pos.CENTER_LEFT);
             setSpacing(12);
             setPadding(new Insets(16, 20, 16, 16));
             getChildren().addAll(checkboxIndicator, titleContainer, priceLabel);
-            getStyleClass().add("bookingpage-checkbox-card");
+            getStyleClass().add(bookingpage_checkbox_card);
 
             // Locked items are not clickable - use default cursor
             setCursor(locked ? Cursor.DEFAULT : Cursor.HAND);
 
             // Add locked CSS class
             if (locked) {
-                getStyleClass().add("locked");
+                getStyleClass().add(BookingPageCssSelectors.locked);
             }
 
             // React to selection changes - toggle CSS class for card styling
             selected.addListener((obs, oldVal, newVal) -> {
                 if (newVal) {
-                    getStyleClass().add("selected");
+                    getStyleClass().add(BookingPageCssSelectors.selected);
                 } else {
-                    getStyleClass().remove("selected");
+                    getStyleClass().remove(BookingPageCssSelectors.selected);
                 }
             });
 

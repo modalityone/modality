@@ -42,6 +42,8 @@ import one.modality.event.frontoffice.medias.NotConfirmedView;
 import one.modality.event.frontoffice.medias.PaymentPendingView;
 import one.modality.event.frontoffice.medias.TimeZoneSwitch;
 
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
 
 /**
  * This is the activity for video streaming where people can watch the livestream and videos on demand.
@@ -277,7 +279,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
         pageContainer.setContent(loadedContentVBox);
         // and ensure the program is displayed in the appropriate mode (Ex: Festival or STTP)
         timetable.updateProgramDisplayMode();
-        pageContainer.getStyleClass().add("livestream");
+        pageContainer.getStyleClass().add(livestream);
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }
 

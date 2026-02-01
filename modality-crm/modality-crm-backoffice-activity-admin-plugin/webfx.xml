@@ -31,6 +31,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.admin.AdminRouting$RouteToAdminRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.backoffice.activities.admin.Admin18nKeys"/>
+    <java-ui-api package="one.modality.crm.backoffice.activities.admin" prefix="Admin">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

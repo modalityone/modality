@@ -48,6 +48,8 @@ import one.modality.ecommerce.shared.pricecalculator.PriceCalculator;
 import java.util.*;
 import java.util.function.Consumer;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Default section for handling existing booking choice flow.
  * Displays existing bookings for modification or allows creating new bookings for other members.
@@ -238,7 +240,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         HBox box = new HBox(12);
         box.setAlignment(Pos.TOP_LEFT);
         box.setPadding(new Insets(16));
-        box.getStyleClass().add("bookingpage-info-box-info");
+        box.getStyleClass().add(bookingpage_info_box_info);
 
         // Info icon
         SVGPath icon = new SVGPath();
@@ -253,10 +255,10 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         VBox textContent = new VBox(4);
 
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.ExistingBookingsFound);
-        titleLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label descLabel = I18nControls.newLabel(BookingPageI18nKeys.ExistingBookingsInfoText);
-        descLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        descLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         descLabel.setWrapText(true);
 
         textContent.getChildren().addAll(titleLabel, descLabel);
@@ -270,15 +272,15 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         HBox box = new HBox(8);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setPadding(new Insets(12, 16, 12, 16));
-        box.getStyleClass().add("bookingpage-warning-box");
+        box.getStyleClass().add(bookingpage_warning_box);
         box.setVisible(true);
         box.setManaged(true);
 
         Label warningIcon = new Label("⚠");
-        warningIcon.getStyleClass().add("bookingpage-text-base");
+        warningIcon.getStyleClass().add(bookingpage_text_base);
 
         Label messageLabel = I18nControls.newLabel(BookingPageI18nKeys.PleaseSelectOption);
-        messageLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning");
+        messageLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_warning);
         messageLabel.setWrapText(true);
 
         box.getChildren().addAll(warningIcon, messageLabel);
@@ -295,7 +297,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
 
         // Continue button with dynamic text
         continueButton = new Button();
-        continueButton.getStyleClass().addAll("booking-form-primary-btn", "btn-primary");
+        continueButton.getStyleClass().addAll(booking_form_primary_btn, btn_primary);
         continueButton.setPadding(new Insets(12, 24, 12, 24));
         continueButton.setDisable(true);
 
@@ -369,11 +371,11 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
             boolean isSelected = action != null && action.equals("modify-" + personId);
 
             if (isSelected) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
 
             StackPane checkmark = checkmarkBadgeMap.get("booking-" + personId);
@@ -389,11 +391,11 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
             boolean isSelected = action != null && action.equals("new-" + personId);
 
             if (isSelected) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(selected)) {
+                    card.getStyleClass().add(selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(selected);
             }
 
             StackPane checkmark = checkmarkBadgeMap.get("member-" + personId);
@@ -410,7 +412,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         card.setMaxWidth(Double.MAX_VALUE);
         card.setPadding(new Insets(20));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-selectable-card");
+        card.getStyleClass().add(bookingpage_selectable_card);
 
         // === Member info row ===
         HBox memberRow = new HBox(12);
@@ -425,20 +427,20 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         nameRow.setAlignment(Pos.CENTER_LEFT);
 
         Label nameLabel = new Label(info.getPersonName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         nameRow.getChildren().add(nameLabel);
 
         // Add "You" badge if primary
         if (info.isPrimary()) {
             Label youBadge = I18nControls.newLabel(BookingPageI18nKeys.YouBadge);
-            youBadge.getStyleClass().addAll("bookingpage-badge-info", "bookingpage-text-xs");
+            youBadge.getStyleClass().addAll(bookingpage_badge_info, bookingpage_text_xs);
             youBadge.setPadding(new Insets(2, 8, 2, 8));
             nameRow.getChildren().add(youBadge);
         }
 
         Label emailLabel = new Label(info.getPersonEmail() != null ? info.getPersonEmail() : "");
-        emailLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        emailLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         nameEmailBox.getChildren().addAll(nameRow, emailLabel);
         HBox.setHgrow(nameEmailBox, Priority.ALWAYS);
@@ -485,7 +487,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         editIcon.setScaleY(0.6);
 
         Label hintLabel = I18nControls.newLabel(BookingPageI18nKeys.SelectToModify);
-        hintLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        hintLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         actionHint.getChildren().addAll(editIcon, hintLabel);
 
@@ -528,11 +530,11 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         card.setMaxWidth(350);
         card.setPadding(new Insets(20));
         card.setCursor(isBookable ? Cursor.HAND : Cursor.DEFAULT);  // Conditional cursor
-        card.getStyleClass().add("bookingpage-selectable-card");
+        card.getStyleClass().add(bookingpage_selectable_card);
 
         // Apply disabled state for non-bookable members
         if (!isBookable) {
-            card.getStyleClass().add("disabled");
+            card.getStyleClass().add(disabled);
             card.setOpacity(0.7);
         }
 
@@ -547,10 +549,10 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         VBox nameEmailBox = new VBox(2);
 
         Label nameLabel = new Label(member.getName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label emailLabel = new Label(member.getEmail() != null ? member.getEmail() : "");
-        emailLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        emailLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         nameEmailBox.getChildren().addAll(nameLabel, emailLabel);
         HBox.setHgrow(nameEmailBox, Priority.ALWAYS);
@@ -576,14 +578,14 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
             plusIcon.setScaleY(0.5);
 
             Label noBadgeLabel = I18nControls.newLabel(BookingPageI18nKeys.NoBookingYet);
-            noBadgeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            noBadgeLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
             noBadge.getChildren().addAll(plusIcon, noBadgeLabel);
             contentBox.getChildren().add(noBadge);
 
             // Action hint
             Label hintLabel = I18nControls.newLabel(BookingPageI18nKeys.SelectToCreate);
-            hintLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            hintLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             contentBox.getChildren().add(hintLabel);
         } else if (status == MemberStatus.PENDING_INVITATION) {
             // Pending invitation badge
@@ -628,7 +630,7 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         Circle circle = new Circle(size / 2);
 
         if (themed) {
-            circle.getStyleClass().add("booking-form-checkmark-circle");  // Uses theme primary color
+            circle.getStyleClass().add(booking_form_checkmark_circle);  // Uses theme primary color
         } else {
             circle.setFill(Color.web("#F3F4F6"));
             circle.setStroke(Color.web("#D1D5DB"));
@@ -638,11 +640,11 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         // Get initials
         String initials = getInitials(name);
         Label initialsLabel = new Label(initials);
-        initialsLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold");
+        initialsLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold);
         if (themed) {
             initialsLabel.setTextFill(Color.WHITE);
         } else {
-            initialsLabel.getStyleClass().add("bookingpage-text-muted");
+            initialsLabel.getStyleClass().add(bookingpage_text_muted);
         }
 
         StackPane avatar = new StackPane(circle, initialsLabel);
@@ -667,13 +669,13 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         badge.setPadding(new Insets(4, 10, 4, 10));
 
         if (isSuccess) {
-            badge.getStyleClass().add("bookingpage-badge-success");
+            badge.getStyleClass().add(bookingpage_badge_success);
         } else {
-            badge.getStyleClass().add("bookingpage-badge-warning");
+            badge.getStyleClass().add(bookingpage_badge_warning);
         }
 
         Label label = I18nControls.newLabel(textKey);
-        label.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-font-medium");
+        label.getStyleClass().addAll(bookingpage_text_xs, bookingpage_font_medium);
 
         badge.getChildren().add(label);
         return badge;
@@ -683,10 +685,10 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
         VBox box = new VBox(2);
 
         Label labelText = I18nControls.newLabel(labelKey);
-        labelText.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        labelText.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         Label valueText = new Label(value);
-        valueText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-dark");
+        valueText.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium, bookingpage_text_dark);
 
         box.getChildren().addAll(labelText, valueText);
         return box;
@@ -1186,11 +1188,11 @@ public class DefaultExistingBookingSection implements BookingFormSection, HasExi
 
         Label iconLabel = new Label(icon);
         iconLabel.setTextFill(Color.web(iconColor));
-        iconLabel.getStyleClass().add("bookingpage-text-xs");
+        iconLabel.getStyleClass().add(bookingpage_text_xs);
 
         Label textLabel = I18nControls.newLabel(textKey);
         textLabel.setTextFill(Color.web(textColor));
-        textLabel.getStyleClass().addAll("bookingpage-font-medium", "bookingpage-text-xs");
+        textLabel.getStyleClass().addAll(bookingpage_font_medium, bookingpage_text_xs);
         textLabel.setWrapText(true);
 
         row.getChildren().addAll(iconLabel, textLabel);

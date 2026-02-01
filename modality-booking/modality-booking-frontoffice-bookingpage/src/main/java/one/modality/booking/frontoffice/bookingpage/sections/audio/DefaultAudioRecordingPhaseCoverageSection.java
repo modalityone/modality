@@ -15,8 +15,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.client.time.ModalityDates;
-import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.EventPhaseCoverage;
+import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.util.ScheduledItems;
 import one.modality.booking.client.workingbooking.WorkingBooking;
@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the audio recording phase coverage selection section.
@@ -140,28 +142,28 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
 
         // Title (phase name)
         Label title = new Label(option.getName());
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
         textContent.getChildren().add(title);
 
         // Date range subtitle (if available)
         if (option.hasDateRange()) {
             String dateRange = formatDateRange(option.getStartDate(), option.getEndDate());
             Label dateLabel = new Label(dateRange);
-            dateLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+            dateLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
             textContent.getChildren().add(dateLabel);
         }
 
         // Unavailable message (shown when option is disabled)
         Label unavailableLabel = new Label();
         unavailableLabel.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.AudioRecordingUnavailable));
-        unavailableLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-error");
+        unavailableLabel.getStyleClass().addAll(bookingpage_text_xs, "bookingpage-text-error");
         unavailableLabel.setVisible(false);
         unavailableLabel.setManaged(false);
         textContent.getChildren().add(unavailableLabel);
 
         // Price label
         Label priceLabel = new Label(formatPrice(option.getPrice()));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-bold", "bookingpage-text-dark");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_bold, bookingpage_text_dark);
 
         // Content row: text + price
         HBox content = new HBox(12);
@@ -194,13 +196,13 @@ public class DefaultAudioRecordingPhaseCoverageSection implements HasAudioRecord
         boolean available = option.isAvailable();
 
         if (available) {
-            card.getStyleClass().remove("disabled");
+            card.getStyleClass().remove(disabled);
             card.setOpacity(1.0);
             unavailableLabel.setVisible(false);
             unavailableLabel.setManaged(false);
         } else {
-            if (!card.getStyleClass().contains("disabled")) {
-                card.getStyleClass().add("disabled");
+            if (!card.getStyleClass().contains(disabled)) {
+                card.getStyleClass().add(disabled);
             }
             card.setOpacity(0.5);
             unavailableLabel.setVisible(true);

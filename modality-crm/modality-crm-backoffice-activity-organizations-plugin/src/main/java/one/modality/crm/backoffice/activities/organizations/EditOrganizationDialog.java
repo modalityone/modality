@@ -25,6 +25,7 @@ import one.modality.base.shared.entities.Organization;
 import one.modality.base.shared.entities.OrganizationType;
 
 import static one.modality.base.backoffice.claude.FormFieldHelper.createTextField;
+import static one.modality.crm.backoffice.activities.organizations.OrganizationsCssSelectors.*;
 import static one.modality.crm.backoffice.activities.organizations.OrganizationsI18nKeys.*;
 import static one.modality.base.client.i18n.BaseI18nKeys.*;
 
@@ -63,7 +64,7 @@ final class EditOrganizationDialog {
 
         Object subtitleKey = isEdit ? EditOrganizationSubtitle : CreateOrganizationSubtitle;
         Label subtitleLabel = I18nControls.newLabel(subtitleKey);
-        subtitleLabel.getStyleClass().add("modal-subtitle");
+        subtitleLabel.getStyleClass().add(modal_subtitle);
 
         VBox headerBox = new VBox(4);
         headerBox.getChildren().addAll(titleLabel, subtitleLabel);
@@ -300,7 +301,7 @@ final class EditOrganizationDialog {
         // Closed toggle
         VBox closedField = new VBox(8);
         closedField.setPadding(new Insets(12));
-        closedField.getStyleClass().add("organization-closed-field");
+        closedField.getStyleClass().add(organization_closed_field);
         closedField.setMaxWidth(Double.MAX_VALUE);
 
         HBox closedRow = new HBox(12);
@@ -311,10 +312,10 @@ final class EditOrganizationDialog {
         HBox.setHgrow(closedTextBox, Priority.ALWAYS);
 
         Label closedLabel = I18nControls.newLabel(OrganizationClosedLabel);
-        closedLabel.getStyleClass().add("organization-closed-title");
+        closedLabel.getStyleClass().add(organization_closed_title);
 
         Label closedHelp = I18nControls.newLabel(OrganizationClosedHelp);
-        closedHelp.getStyleClass().add("organization-closed-help");
+        closedHelp.getStyleClass().add(organization_closed_help);
         closedHelp.setWrapText(true);
 
         closedTextBox.getChildren().addAll(closedLabel, closedHelp);
@@ -436,15 +437,15 @@ final class EditOrganizationDialog {
         sectionBox.setMaxWidth(Double.MAX_VALUE);
 
         Region leftLine = new Region();
-        leftLine.getStyleClass().add("section-divider-line");
+        leftLine.getStyleClass().add(section_divider_line);
         HBox.setHgrow(leftLine, Priority.ALWAYS);
 
         Label sectionLabel = I18nControls.newLabel(i18nKey);
-        sectionLabel.getStyleClass().add("section-divider-label");
+        sectionLabel.getStyleClass().add(section_divider_label);
         sectionLabel.setPadding(new Insets(0, 12, 0, 12));
 
         Region rightLine = new Region();
-        rightLine.getStyleClass().add("section-divider-line");
+        rightLine.getStyleClass().add(section_divider_line);
         HBox.setHgrow(rightLine, Priority.ALWAYS);
 
         sectionBox.getChildren().addAll(leftLine, sectionLabel, rightLine);

@@ -10,7 +10,6 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.EntityStore;
 import javafx.beans.binding.BooleanExpression;
@@ -31,6 +30,8 @@ import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.crm.shared.services.authn.fx.FXModalityUserPrincipal;
 import one.modality.event.frontoffice.medias.EventThumbnail;
+
+import static one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryCssSelectors.audio_library;
 
 /**
  * @author David Hello
@@ -143,7 +144,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
             noContentVBox,
             columnsPane
         );
-        pageContainer.getStyleClass().addAll("audio-library");
+        pageContainer.getStyleClass().addAll(audio_library);
 
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }

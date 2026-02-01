@@ -89,6 +89,7 @@ import java.util.stream.Collectors;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 import static one.modality.base.client.time.BackOfficeTimeFormats.*;
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
 
 /**
  * @author David Hello
@@ -581,7 +582,7 @@ final class ManageRecurringEventView {
      */
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
-        mainFrame.getStyleClass().add("recurring-event");
+        mainFrame.getStyleClass().add(recurring_event);
         //Displaying The title of the frame
         Label title = I18nControls.newLabel(RecurringEventsI18nKeys.EventTitle);
         title.setPadding(new Insets(30));

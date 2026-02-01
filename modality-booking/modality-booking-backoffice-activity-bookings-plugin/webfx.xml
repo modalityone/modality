@@ -18,6 +18,9 @@
         </used-by-source-modules>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.booking.backoffice.activities.bookings.BookingsI18nKeys"/>
+    <java-ui-api package="one.modality.booking.backoffice.activities.bookings" prefix="Bookings">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

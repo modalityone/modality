@@ -37,6 +37,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.event.frontoffice.bookingform.recurringevent.RecurringEventCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -60,7 +62,7 @@ final class RecurringSchedulePage implements BookingFormPage {
         activity.bindI18nEventExpression(eventDescription, "description");
         VBox.setMargin(eventDescription, new Insets(20, 0, 0, 0));
         eventDescription.fontProperty().bind(activity.mediumFontProperty());
-        eventDescription.getStyleClass().add("event-description-text");
+        eventDescription.getStyleClass().add(event_description_text);
         eventDescription.setMinWidth(0);
 
         Button personToBookButton = BookingElements.createPersonToBookButton(true);
@@ -88,7 +90,7 @@ final class RecurringSchedulePage implements BookingFormPage {
 
         WorkingBooking workingBooking = activity.getWorkingBooking();
         Text priceText = new Text(I18n.getI18nText(RecurringEventI18nKeys.PricePerClass0, EventPriceFormatter.formatWithCurrency(workingBooking.getDailyRatePrice(), event)));
-        priceText.getStyleClass().add("subtitle-grey");
+        priceText.getStyleClass().add(subtitle_grey);
         VBox.setMargin(priceText, new Insets(20, 0, 0, 0));
 
         checkoutButton.setMinWidth(300);
@@ -120,12 +122,12 @@ final class RecurringSchedulePage implements BookingFormPage {
         int allClassesNoDiscountPrice = workingBooking.getWholeEventNoDiscountPrice();
         if (allClassesPrice < allClassesNoDiscountPrice) {
             Text allClassesText = new Text(I18n.getI18nText(RecurringEventI18nKeys.AllClasses + ":"));
-            allClassesText.getStyleClass().add("subtitle-grey");
+            allClassesText.getStyleClass().add(subtitle_grey);
             Text noDiscountPriceText = new Text(EventPriceFormatter.formatWithCurrency(allClassesNoDiscountPrice, event));
             noDiscountPriceText.setStrikethrough(true);
-            noDiscountPriceText.getStyleClass().add("subtitle-grey");
+            noDiscountPriceText.getStyleClass().add(subtitle_grey);
             Text discountPriceText = new Text(EventPriceFormatter.formatWithCurrency(allClassesPrice, event));
-            discountPriceText.getStyleClass().add("subtitle-grey");
+            discountPriceText.getStyleClass().add(subtitle_grey);
             HBox hBox = new HBox(5, allClassesText, noDiscountPriceText, discountPriceText);
             hBox.setAlignment(Pos.CENTER);
             VBox.setMargin(hBox, new Insets(5, 0, 0, 0));

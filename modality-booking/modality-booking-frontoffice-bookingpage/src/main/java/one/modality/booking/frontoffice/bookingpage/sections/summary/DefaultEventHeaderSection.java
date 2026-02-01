@@ -24,6 +24,8 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Default implementation of the event header section.
  * Displays event name, dates, location, description, and optional cover image.
@@ -203,14 +205,14 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         // Title - styled via CSS
         titleLabel.setWrapText(true);
         titleLabel.setMinWidth(0); // Allow shrinking for text wrap
-        titleLabel.getStyleClass().add("booking-form-event-header-title");
+        titleLabel.getStyleClass().add(booking_form_event_header_title);
 
         // Dates (no wrapping container, directly managed by hPane)
         datesLabel.setWrapText(true);
         datesLabel.setGraphic(createCalendarIcon());
         datesLabel.setGraphicTextGap(8);
         datesLabel.setMinWidth(0); // Allow shrinking for text wrap
-        datesLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
+        datesLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_text_muted);
 
         // Location (no wrapping container, directly managed by hPane)
         locationLabel.setWrapText(true);
@@ -218,16 +220,16 @@ public class DefaultEventHeaderSection implements HasEventHeaderSection {
         locationLabel.setGraphicTextGap(8);
         locationLabel.setMinWidth(0); // Allow shrinking for text wrap
         locationLabel.setMaxWidth(Double.MAX_VALUE); // Required for text wrap in WebFX
-        locationLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
+        locationLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_text_muted);
 
         // Description - using HtmlText for HTML content support
         descriptionHtmlText.setMinWidth(0); // Allow shrinking for text wrap
-        descriptionHtmlText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-secondary");
+        descriptionHtmlText.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_secondary);
         descriptionHtmlText.managedProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
         descriptionHtmlText.visibleProperty().bind(descriptionHtmlText.textProperty().isNotEmpty());
 
         // Styling the container
-        container.getStyleClass().add("booking-form-event-header");
+        container.getStyleClass().add(booking_form_event_header);
     }
 
     // === Data Loading ===

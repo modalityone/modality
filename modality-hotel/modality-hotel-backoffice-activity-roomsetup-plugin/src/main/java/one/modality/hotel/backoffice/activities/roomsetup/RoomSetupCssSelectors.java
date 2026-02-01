@@ -1,0 +1,74 @@
+// File managed by WebFX (DO NOT EDIT MANUALLY)
+package one.modality.hotel.backoffice.activities.roomsetup;
+
+public interface RoomSetupCssSelectors {
+
+    String roomsetup_action_button = "roomsetup-action-button";
+    String roomsetup_allocation_pool_tag = "roomsetup-allocation-pool-tag";
+    String roomsetup_allocation_room = "roomsetup-allocation-room";
+    String roomsetup_allocation_unassigned = "roomsetup-allocation-unassigned";
+    String roomsetup_badge_info = "roomsetup-badge-info";
+    String roomsetup_badge_split = "roomsetup-badge-split";
+    String roomsetup_badge_success = "roomsetup-badge-success";
+    String roomsetup_badge_warning = "roomsetup-badge-warning";
+    String roomsetup_body = "roomsetup-body";
+    String roomsetup_body_bold = "roomsetup-body-bold";
+    String roomsetup_building_header = "roomsetup-building-header";
+    String roomsetup_building_name = "roomsetup-building-name";
+    String roomsetup_caption = "roomsetup-caption";
+    String roomsetup_card = "roomsetup-card";
+    String roomsetup_card_header = "roomsetup-card-header";
+    String roomsetup_cell = "roomsetup-cell";
+    String roomsetup_clickable = "roomsetup-clickable";
+    String roomsetup_comparison_column_both = "roomsetup-comparison-column-both";
+    String roomsetup_comparison_column_event = "roomsetup-comparison-column-event";
+    String roomsetup_comparison_column_global = "roomsetup-comparison-column-global";
+    String roomsetup_comparison_header_both = "roomsetup-comparison-header-both";
+    String roomsetup_comparison_header_event = "roomsetup-comparison-header-event";
+    String roomsetup_comparison_header_global = "roomsetup-comparison-header-global";
+    String roomsetup_comparison_link_badge = "roomsetup-comparison-link-badge";
+    String roomsetup_comparison_resource_linked = "roomsetup-comparison-resource-linked";
+    String roomsetup_comparison_resource_selected = "roomsetup-comparison-resource-selected";
+    String roomsetup_comparison_text_both = "roomsetup-comparison-text-both";
+    String roomsetup_comparison_text_event = "roomsetup-comparison-text-event";
+    String roomsetup_comparison_text_global = "roomsetup-comparison-text-global";
+    String roomsetup_comparison_unlink_btn = "roomsetup-comparison-unlink-btn";
+    String roomsetup_comparison_warning = "roomsetup-comparison-warning";
+    String roomsetup_comparison_warning_icon = "roomsetup-comparison-warning-icon";
+    String roomsetup_comparison_warning_text = "roomsetup-comparison-warning-text";
+    String roomsetup_dialog_container = "roomsetup-dialog-container";
+    String roomsetup_dialog_header = "roomsetup-dialog-header";
+    String roomsetup_empty_state = "roomsetup-empty-state";
+    String roomsetup_empty_state_text = "roomsetup-empty-state-text";
+    String roomsetup_expand_arrow = "roomsetup-expand-arrow";
+    String roomsetup_expand_arrow_expanded = "roomsetup-expand-arrow-expanded";
+    String roomsetup_field_label = "roomsetup-field-label";
+    String roomsetup_filter_chip = "roomsetup-filter-chip";
+    String roomsetup_filter_chip_active = "roomsetup-filter-chip-active";
+    String roomsetup_group_count = "roomsetup-group-count";
+    String roomsetup_group_header = "roomsetup-group-header";
+    String roomsetup_group_title = "roomsetup-group-title";
+    String roomsetup_hint = "roomsetup-hint";
+    String roomsetup_info_bar = "roomsetup-info-bar";
+    String roomsetup_info_bar_link = "roomsetup-info-bar-link";
+    String roomsetup_info_bar_text = "roomsetup-info-bar-text";
+    String roomsetup_pool_badge_category = "roomsetup-pool-badge-category";
+    String roomsetup_pool_badge_source = "roomsetup-pool-badge-source";
+    String roomsetup_pool_card = "roomsetup-pool-card";
+    String roomsetup_pool_name = "roomsetup-pool-name";
+    String roomsetup_room_capacity = "roomsetup-room-capacity";
+    String roomsetup_room_name = "roomsetup-room-name";
+    String roomsetup_room_row = "roomsetup-room-row";
+    String roomsetup_room_type = "roomsetup-room-type";
+    String roomsetup_small = "roomsetup-small";
+    String roomsetup_subtitle = "roomsetup-subtitle";
+    String roomsetup_text_area = "roomsetup-text-area";
+    String roomsetup_text_field = "roomsetup-text-field";
+    String roomsetup_title = "roomsetup-title";
+    String roomsetup_toolbar = "roomsetup-toolbar";
+    String roomsetup_warning_bar = "roomsetup-warning-bar";
+    String roomsetup_warning_bar_text = "roomsetup-warning-bar-text";
+    String roomsetup_zone_name = "roomsetup-zone-name";
+    String roomsetup_zone_row = "roomsetup-zone-row";
+
+}

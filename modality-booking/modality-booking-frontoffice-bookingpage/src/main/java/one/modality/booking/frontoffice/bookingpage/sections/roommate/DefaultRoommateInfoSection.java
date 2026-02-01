@@ -17,14 +17,16 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
-import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
+import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.bookingpage_form_label;
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.bookingpage_text_input;
 import static one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys.*;
 
 /**
@@ -192,7 +194,7 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         // Text field
         TextField textField = new TextField();
         textField.setPromptText(I18n.getI18nText(RoommateNamePlaceholder));
-        textField.getStyleClass().add("bookingpage-text-input");
+        textField.getStyleClass().add(bookingpage_text_input);
         textField.textProperty().bindBidirectional(nameProperty);
         textField.setPadding(new Insets(12, 14, 12, 14));
         textField.setMaxWidth(Double.MAX_VALUE);
@@ -230,7 +232,7 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
             ? I18n.getI18nText(RoommateNumbered, roommateNumber)
             : I18n.getI18nText(Roommate);
         Label label = new Label(labelText);
-        label.getStyleClass().add("bookingpage-form-label");
+        label.getStyleClass().add(bookingpage_form_label);
 
         Text asterisk = new Text(" *");
         asterisk.setFill(Color.web("#dc3545")); // Danger red
@@ -253,7 +255,7 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
             : I18n.getI18nText(Roommate);
         String optionalSuffix = " " + I18n.getI18nText(RoommateOptionalSuffix);
         Label label = new Label(labelText);
-        label.getStyleClass().add("bookingpage-form-label");
+        label.getStyleClass().add(bookingpage_form_label);
 
         Text optional = new Text(optionalSuffix);
         optional.setFill(Color.web("#6c757d")); // Muted gray
@@ -278,7 +280,7 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
         // Text field - single combined field
         nameField = new TextField();
         I18n.bindI18nPromptProperty(nameField.promptTextProperty(), RoommateNameAndReferencePlaceholder);
-        nameField.getStyleClass().add("bookingpage-text-input");
+        nameField.getStyleClass().add(bookingpage_text_input);
         nameField.textProperty().bindBidirectional(roommateNameProperty);
         nameField.setPadding(new Insets(12, 14, 12, 14));
         nameField.setMaxWidth(Double.MAX_VALUE);
@@ -300,7 +302,7 @@ public class DefaultRoommateInfoSection implements HasRoommateInfoSection {
      */
     protected HBox createRequiredFieldLabel(Object i18nKey) {
         Label label = I18nControls.newLabel(i18nKey);
-        label.getStyleClass().add("bookingpage-form-label");
+        label.getStyleClass().add(bookingpage_form_label);
 
         Text asterisk = new Text(" *");
         asterisk.setFill(Color.web("#dc3545")); // Danger red

@@ -23,6 +23,8 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.booking.backoffice.activities.registration.RegistrationRouting$RouteToRegistrationRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.booking.backoffice.activities.registration.RegistrationI18nKeys"/>
+    <java-ui-api package="one.modality.booking.backoffice.activities.registration" prefix="Registration">
+        <i18n/>
+    </java-ui-api>
 
 </project>

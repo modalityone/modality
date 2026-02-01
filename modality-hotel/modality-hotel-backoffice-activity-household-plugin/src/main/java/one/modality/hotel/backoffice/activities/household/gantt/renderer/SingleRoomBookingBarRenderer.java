@@ -3,17 +3,14 @@ package one.modality.hotel.backoffice.activities.household.gantt.renderer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.hotel.backoffice.activities.household.gantt.model.BookingBar;
 import one.modality.hotel.backoffice.activities.household.gantt.model.BookingPosition;
 import one.modality.hotel.backoffice.activities.household.gantt.view.SvgIconFactory;
+
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.*;
 
 /**
  * Renders booking bars for single rooms.
@@ -49,7 +46,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         barRegion.setBackground(new Background(new BackgroundFill(barColor, radii, Insets.EMPTY)));
         if (bar.hasConflict()) {
             // Add red border for conflicts using CSS class
-            barRegion.getStyleClass().add("gantt-bar-conflict");
+            barRegion.getStyleClass().add(gantt_bar_conflict);
         }
 
         // Position based on booking position (Gantt flow - continuous bars)
@@ -104,7 +101,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
             SVGPath personIcon = bar.hasLateArrival()
                 ? SvgIconFactory.createPersonIconRed()
                 : SvgIconFactory.createPersonIcon();
-            personIcon.getStyleClass().add("gantt-clickable-icon");
+            personIcon.getStyleClass().add(gantt_clickable_icon);
             personIcon.setPickOnBounds(true);  // Enable mouse event handling
             personIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
@@ -130,7 +127,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         // Message icon if has comments (on second cell - MIDDLE position)
         if (bar.hasComments() && bar.position() == BookingPosition.MIDDLE) {
             SVGPath messageIcon = SvgIconFactory.createMessageIcon();
-            messageIcon.getStyleClass().add("gantt-clickable-icon");
+            messageIcon.getStyleClass().add(gantt_clickable_icon);
             messageIcon.setPickOnBounds(true);  // Enable mouse event handling
             messageIcon.setMouseTransparent(false);  // Make sure icon can receive mouse events
 
@@ -221,7 +218,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         content.append("\nCheck-out: ").append(booking.getEndDate());
 
         tooltip.setText(content.toString());
-        tooltip.getStyleClass().add("gantt-tooltip");
+        tooltip.getStyleClass().add(gantt_tooltip);
 
         // Show tooltip at mouse position
         javafx.scene.Node source = (javafx.scene.Node) event.getSource();
@@ -253,7 +250,7 @@ public class SingleRoomBookingBarRenderer implements BookingBarRenderer {
         }
 
         tooltip.setText(content.toString());
-        tooltip.getStyleClass().add("gantt-tooltip");
+        tooltip.getStyleClass().add(gantt_tooltip);
 
         // Show tooltip at mouse position
         javafx.scene.Node source = (javafx.scene.Node) event.getSource();

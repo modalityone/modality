@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static one.modality.crm.backoffice.activities.organizations.OrganizationsCssSelectors.*;
 import static one.modality.crm.backoffice.activities.organizations.OrganizationsI18nKeys.*;
 
 
@@ -67,7 +68,7 @@ final class OrganizationsActivity extends ViewDomainActivityBase {
         organizationsGrid.setMinWidth(0);
         organizationsGrid.setPrefWidth(Double.MAX_VALUE);
         organizationsGrid.setMaxWidth(Double.MAX_VALUE);
-        organizationsGrid.getStyleClass().add("organizations-grid");
+        organizationsGrid.getStyleClass().add(organizations_grid);
         organizationsGrid.setAppContext(this); // So that renderers can access this activity back
 
         // Info box - outside card

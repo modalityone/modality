@@ -31,6 +31,7 @@ import java.util.Set;
 
 import static javafx.scene.layout.Region.USE_COMPUTED_SIZE;
 import static one.modality.base.backoffice.claude.FormFieldHelper.*;
+import static one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesCssSelectors.*;
 import static one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesI18nKeys.*;
 
 /**
@@ -161,7 +162,7 @@ public class RolesDialog {
 
         Label selectedItemsTitle = new Label();
         I18n.bindI18nTextProperty(selectedItemsTitle.textProperty(), OperationsAndRolesI18nKeys.Permissions);
-        selectedItemsTitle.getStyleClass().add("role-dialog-permissions-title");
+        selectedItemsTitle.getStyleClass().add(role_dialog_permissions_title);
 
         // Combined display for both operations and groups
         FlowPane selectedItemsPane = new FlowPane();
@@ -169,21 +170,21 @@ public class RolesDialog {
         selectedItemsPane.setVgap(6);
         selectedItemsPane.setPadding(new Insets(12));
         selectedItemsPane.setMinHeight(80);
-        selectedItemsPane.getStyleClass().add("role-dialog-permissions-pane");
+        selectedItemsPane.getStyleClass().add(role_dialog_permissions_pane);
 
         Label selectedCountLabel = new Label();
-        selectedCountLabel.getStyleClass().add("role-dialog-permissions-count");
+        selectedCountLabel.getStyleClass().add(role_dialog_permissions_count);
 
         selectedItemsContainer.getChildren().addAll(selectedItemsTitle, selectedCountLabel, selectedItemsPane);
 
         // === INFO BANNER ===
         VBox infoBanner = new VBox(6);
-        infoBanner.getStyleClass().add("admin-info-banner");
+        infoBanner.getStyleClass().add(admin_info_banner);
         infoBanner.setPadding(new Insets(12));
         infoBanner.setMaxWidth(Double.MAX_VALUE);
 
         Label infoText = I18nControls.newLabel(BackofficeOperationsOnly);
-        infoText.getStyleClass().add("admin-info-banner-text");
+        infoText.getStyleClass().add(admin_info_banner_text);
         infoText.setWrapText(true);
         infoText.setMaxWidth(Double.MAX_VALUE);
 
@@ -373,7 +374,7 @@ public class RolesDialog {
             selectedItemsPane.getChildren().clear();
             if (totalCount == 0) {
                 Label empty = I18nControls.newLabel(NoPermissionsSelected);
-                empty.getStyleClass().add("role-dialog-empty-message");
+                empty.getStyleClass().add(role_dialog_empty_message);
                 selectedItemsPane.getChildren().add(empty);
             } else {
                 // Add selected operations (blue chips)

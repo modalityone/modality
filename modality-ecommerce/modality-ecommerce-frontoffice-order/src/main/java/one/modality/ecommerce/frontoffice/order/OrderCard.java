@@ -41,6 +41,8 @@ import one.modality.event.client.lifecycle.EventLifeCycle;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static one.modality.ecommerce.frontoffice.order.OrderCssSelectors.*;
+
 /**
  * @author David Hello
  * @author Bruno Salmon
@@ -175,16 +177,16 @@ public final class OrderCard {
 
         // Order Meta (Booker Name, Order ID, Price)
         Label bookerNameLabel = Bootstrap.textPrimary(new Label(orderDocument.getFullName()));
-        bookerNameLabel.getStyleClass().add("booker-name");
+        bookerNameLabel.getStyleClass().add(booker_name);
         Label orderIdLabel = I18nControls.newLabel(OrderI18nKeys.OrderNb, "#" + event.getPrimaryKey() + "-" + orderDocument.getRef());
-        orderIdLabel.getStyleClass().add("order-id");
+        orderIdLabel.getStyleClass().add(order_id);
         VBox orderInfo = new VBox(8,
             bookerNameLabel,
             orderIdLabel
         );
         HBox orderMeta = new HBox(orderInfo, Layouts.createHGrowable(), orderPriceLabel);
 
-        orderPriceLabel.getStyleClass().add("order-price");
+        orderPriceLabel.getStyleClass().add(order_price);
 
         // Order Dates
         DateTimeFormatter dayMonthFormatter = LocalizedTime.dateFormatter("MMM d");
@@ -197,11 +199,11 @@ public final class OrderCard {
             eventDates = eventStartDate.format(dayMonthYearFormatter) + " - " + event.getEndDate().format(dayMonthYearFormatter);
         }
         Label orderDatesLabel = new Label(eventDates);
-        orderDatesLabel.getStyleClass().add("order-dates");
+        orderDatesLabel.getStyleClass().add(order_dates);
         HBox dateHBox = new HBox(orderDatesLabel);
         dateHBox.setAlignment(Pos.CENTER);
 
-        viewHideDetailsLabel.getStyleClass().add("semi-bold");
+        viewHideDetailsLabel.getStyleClass().add(semi_bold);
         viewHideDetailsLabel.setPadding(new Insets(30, 0, 0, 0));
         // We embed the label in a stretchable mono pane so it appears horizontally centered
         MonoPane viewHideDetailsPane = new MonoPane(viewHideDetailsLabel);
@@ -246,10 +248,10 @@ public final class OrderCard {
             detailsCollapsePane
         );
         orderHeader.setPadding(new Insets(16));
-        orderHeader.getStyleClass().add("order-header");
+        orderHeader.getStyleClass().add(order_header);
 
         MonoPane orderCard = new MonoPane(orderHeader);
-        orderCard.getStyleClass().add("order-card");
+        orderCard.getStyleClass().add(order_card);
         return orderCard;
     }
 
@@ -288,16 +290,16 @@ public final class OrderCard {
     private Node createPaymentSummary() {
         // Total row
         HBox totalRow = new HBox(totalLabel, Layouts.createHGrowable(), totalValue);
-        totalRow.getStyleClass().add("payment-row");
+        totalRow.getStyleClass().add(payment_row);
 
         // Paid row
         HBox paidRow = new HBox(paidLabel, Layouts.createHGrowable(), paidValue);
-        paidRow.getStyleClass().add("payment-row");
+        paidRow.getStyleClass().add(payment_row);
 
         // Remaining row
         HBox remainingRow = new HBox(remainingLabel, Layouts.createHGrowable(), remainingValue);
         remainingRow.setPadding(new Insets(15, 0, 0, 0));
-        remainingRow.getStyleClass().add("payment-remaining");
+        remainingRow.getStyleClass().add(payment_remaining);
 
         VBox paymentSummary = new VBox(15,
             totalRow,

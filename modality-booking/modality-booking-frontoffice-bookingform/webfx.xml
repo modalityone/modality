@@ -13,6 +13,8 @@
         </used-by-source-modules>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys"/>
+    <java-ui-api package="one.modality.booking.frontoffice.bookingform" prefix="BookingForm">
+        <i18n/>
+    </java-ui-api>
 
 </project>

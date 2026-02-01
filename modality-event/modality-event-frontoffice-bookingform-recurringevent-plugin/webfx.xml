@@ -11,6 +11,9 @@
     </dependencies>
 
 
-    <i18n javaKeysClass="one.modality.event.frontoffice.bookingform.recurringevent.RecurringEventI18nKeys"/>
+    <java-ui-api package="one.modality.event.frontoffice.bookingform.recurringevent" prefix="RecurringEvent">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

@@ -20,6 +20,8 @@ import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.util.function.Consumer;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.bookingpage_passive_card;
+
 /**
  * Default implementation of the rate type/pricing section.
  * Displays programme info and standard rate in a styled card.
@@ -71,7 +73,7 @@ public class DefaultRateTypeSection implements HasRateTypeSection {
         card = new VBox(12);
         card.setPadding(new Insets(20, 24, 20, 24));
         card.setAlignment(Pos.CENTER_LEFT);
-        card.getStyleClass().add("bookingpage-passive-card");
+        card.getStyleClass().add(bookingpage_passive_card);
 
         // Rate badge - styled via CSS
         rateBadge = I18nControls.newLabel(BookingPageI18nKeys.StandardRate);

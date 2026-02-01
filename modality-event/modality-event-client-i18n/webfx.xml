@@ -10,6 +10,8 @@
         <used-by-source-modules/>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.event.client.i18n.EventI18nKeys"/>
+    <java-ui-api package="one.modality.event.client.i18n" prefix="Event">
+        <i18n/>
+    </java-ui-api>
 
 </project>

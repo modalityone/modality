@@ -29,6 +29,8 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
 /**
  * @author David Hello
  * @author Bruno Salmon
@@ -96,7 +98,7 @@ public class DaySwitcher {
         daySelectorPane.setLeft(backArrowPane);
         daySelectorPane.setCenter(mobileDateLabel);
         daySelectorPane.setRight(forwardArrowPane);
-        daySelectorPane.getStyleClass().add("program-box");
+        daySelectorPane.getStyleClass().add(program_box);
         daySelectorPane.setPadding(new Insets(10));
         Insets arrowMargin = new Insets(0, 5, 0, 5);
         BorderPane.setMargin(backArrowPane, arrowMargin);

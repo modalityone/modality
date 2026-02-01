@@ -20,6 +20,8 @@ import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Default implementation of the Terms and Conditions section.
  * Displays a checkbox with terms acceptance text and a link to the terms page.
@@ -69,7 +71,7 @@ public class DefaultTermsSection implements HasTermsSection {
 
         // Error message (hidden by default)
         errorLabel = I18nControls.newLabel(BookingPageI18nKeys.TermsRequired);
-        errorLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-danger");
+        errorLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_danger);
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
 
@@ -93,17 +95,17 @@ public class DefaultTermsSection implements HasTermsSection {
     protected HBox createTermsCheckboxRow() {
         HBox row = new HBox(12);
         row.setAlignment(Pos.TOP_LEFT);
-        row.getStyleClass().addAll("booking-form-terms-checkbox", "bookingpage-checkbox-card");
+        row.getStyleClass().addAll("booking-form-terms-checkbox", bookingpage_checkbox_card);
         row.setPadding(new Insets(16, 20, 16, 16));
 
         // Toggle 'selected' class based on terms accepted state
         Runnable updateSelectedClass = () -> {
             if (termsAcceptedProperty.get()) {
-                if (!row.getStyleClass().contains("selected")) {
-                    row.getStyleClass().add("selected");
+                if (!row.getStyleClass().contains(selected)) {
+                    row.getStyleClass().add(selected);
                 }
             } else {
-                row.getStyleClass().remove("selected");
+                row.getStyleClass().remove(selected);
             }
         };
         // Set initial state
@@ -135,7 +137,7 @@ public class DefaultTermsSection implements HasTermsSection {
 
     protected HtmlText createTermsHtmlText() {
         HtmlText htmlText = new HtmlText();
-        htmlText.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-dark");
+        htmlText.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_dark);
 
         // Build HTML with link that opens in new window, updating when language, URL, or custom text changes
         FXProperties.runNowAndOnPropertiesChange(() -> {

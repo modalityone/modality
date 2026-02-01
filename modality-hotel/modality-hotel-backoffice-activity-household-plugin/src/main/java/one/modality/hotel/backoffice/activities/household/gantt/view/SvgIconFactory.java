@@ -3,6 +3,9 @@ package one.modality.hotel.backoffice.activities.household.gantt.view;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.gantt_turnover_bg;
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.gantt_turnover_indicator;
+
 /**
  * Factory for creating SVG icons used in the Gantt calendar.
  * Provides reusable icon components.
@@ -140,7 +143,7 @@ public class SvgIconFactory {
         background.setPrefSize(20, 20);
         background.setMinSize(20, 20);
         background.setMaxSize(20, 20);
-        background.getStyleClass().add("gantt-turnover-bg");
+        background.getStyleClass().add(gantt_turnover_bg);
 
         // Create white triangle icon
         SVGPath triangle = createWarningTriangleIcon();
@@ -150,7 +153,7 @@ public class SvgIconFactory {
         // Combine in StackPane
         javafx.scene.layout.StackPane indicator = new javafx.scene.layout.StackPane(background, triangle);
         indicator.setAlignment(javafx.geometry.Pos.CENTER);
-        indicator.getStyleClass().add("gantt-turnover-indicator");
+        indicator.getStyleClass().add(gantt_turnover_indicator);
 
         return indicator;
     }

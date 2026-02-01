@@ -24,6 +24,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Default implementation of prerequisite/confirmation section.
  * Provides a configurable base that can be extended for organization-specific requirements.
@@ -133,16 +135,16 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
     protected VBox createImportantInfoBox() {
         VBox box = new VBox(12);
         box.setPadding(new Insets(20));
-        box.getStyleClass().add("bookingpage-warning-box");
+        box.getStyleClass().add(bookingpage_warning_box);
         box.setMinWidth(0);
 
         // Warning icon and title
         HBox titleRow = new HBox(10);
         titleRow.setAlignment(Pos.CENTER_LEFT);
         Label warningIcon = new Label("\u26A0");
-        warningIcon.getStyleClass().add("bookingpage-text-lg");
+        warningIcon.getStyleClass().add(bookingpage_text_lg);
         Label titleLabel = I18nControls.newLabel(importantInfoTitleKey);
-        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-warning");
+        titleLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_warning);
         titleRow.getChildren().addAll(warningIcon, titleLabel);
 
         box.getChildren().add(titleRow);
@@ -150,7 +152,7 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
         // Add bullet points
         for (Object bulletKey : warningBulletKeys) {
             Label bulletLabel = I18nControls.newLabel(bulletKey);
-            bulletLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-warning");
+            bulletLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_warning);
             bulletLabel.setWrapText(true);
             box.getChildren().add(bulletLabel);
         }
@@ -161,7 +163,7 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
     protected VBox createConfirmationBox() {
         VBox box = new VBox(16);
         box.setPadding(new Insets(20));
-        box.getStyleClass().add("bookingpage-card");
+        box.getStyleClass().add(bookingpage_card);
         box.setMinWidth(0);
 
         // Checkbox row
@@ -173,7 +175,7 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
 
         // Confirmation text
         Label confirmText = I18nControls.newLabel(confirmationTextKey);
-        confirmText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-dark");
+        confirmText.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_dark);
         confirmText.setWrapText(true);
 
         checkboxRow.getChildren().addAll(checkboxIndicator, confirmText);
@@ -188,9 +190,9 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
         // Update CSS class when confirmed
         confirmedProperty.addListener((obs, oldVal, newVal) -> {
             if (newVal) {
-                box.getStyleClass().add("selected");
+                box.getStyleClass().add(selected);
             } else {
-                box.getStyleClass().remove("selected");
+                box.getStyleClass().remove(selected);
             }
         });
 
@@ -204,7 +206,7 @@ public class DefaultPrerequisiteSection implements HasPrerequisiteSection {
     protected HtmlText createHtmlBulletPoint(String htmlContent) {
         HtmlText htmlText = new HtmlText();
         htmlText.setText("\u2022 " + htmlContent);
-        htmlText.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-warning");
+        htmlText.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_warning);
         return htmlText;
     }
 

@@ -39,6 +39,8 @@ import one.modality.event.frontoffice.medias.MediasI18nKeys;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import static one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -54,10 +56,10 @@ final class AudioColumnsRenderers {
             Label nameLabel = new Label();
             if (audioScheduledItem.getProgramScheduledItem().isCancelled()) {
                 I18nControls.bindI18nProperties(nameLabel, MediasI18nKeys.SessionCancelled);
-                nameLabel.getStyleClass().add("session-cancelled");
+                nameLabel.getStyleClass().add(session_cancelled);
             } else {
                 nameLabel.setText(getAudioName(audioScheduledItem));
-                nameLabel.getStyleClass().add("name");
+                nameLabel.getStyleClass().add(name);
             }
             Controls.setupTextWrapping(nameLabel, true, false);
             LocalDate date = audioScheduledItem.getDate();
@@ -76,7 +78,7 @@ final class AudioColumnsRenderers {
             ScheduledItem audio = (ScheduledItem) value; // value = 'this' = audio ScheduledItem
             if (audio.getProgramScheduledItem().isCancelled()) {
                 Label cancelledLabel = I18nControls.newLabel(I18nKeys.upperCase(AudioLibraryI18nKeys.AudioCancelled));
-                cancelledLabel.getStyleClass().add("cancelled");
+                cancelledLabel.getStyleClass().add(cancelled);
                 return cancelledLabel;
             }
             EventAudioLibraryActivity activity = context.getAppContext();

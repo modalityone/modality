@@ -28,6 +28,8 @@ import one.modality.base.shared.entities.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
+
 /**
  * View component for managing a single day template.
  * This view provides the complete user interface for creating and editing a day template,
@@ -379,7 +381,7 @@ final class DayTemplateView {
         mainContainer.setBorder(new Border(new BorderStroke(Color.LIGHTGRAY,
             BorderStrokeStyle.SOLID, new CornerRadii(10), BorderWidths.DEFAULT)));
         mainContainer.setPadding(new Insets(10, 10, 10, 10));
-        mainContainer.getStyleClass().add("day-template-panel");
+        mainContainer.getStyleClass().add(day_template_panel);
         // Set all width constraints to match ColumnsPane column width (550px)
         mainContainer.setMinWidth(550);
         mainContainer.setPrefWidth(550);

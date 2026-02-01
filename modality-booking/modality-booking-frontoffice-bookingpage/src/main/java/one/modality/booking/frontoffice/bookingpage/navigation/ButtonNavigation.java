@@ -14,11 +14,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.*;
 import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
 import one.modality.booking.frontoffice.bookingpage.BookingFormNavigation;
@@ -27,6 +23,8 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Navigation buttons for the booking form.
@@ -78,7 +76,7 @@ public class ButtonNavigation implements BookingFormNavigation {
         wrapper.getChildren().add(hboxContainer);
 
         // Apply primary button CSS class - all styling handled by CSS
-        continueButton.getStyleClass().add("booking-form-btn-primary");
+        continueButton.getStyleClass().add(booking_form_btn_primary);
         // Padding set in Java per project conventions (CSS handles colors only)
         continueButton.setPadding(new Insets(14, 32, 14, 32));
         continueButton.setGraphicTextGap(16);
@@ -170,14 +168,14 @@ public class ButtonNavigation implements BookingFormNavigation {
             Button button = new Button();
             // Use graphic for arrow prefix (can't modify bound text property)
             Label arrowLabel = new Label("\u2190 "); // ← arrow
-            arrowLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-text-secondary");
+            arrowLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_text_secondary);
             button.setGraphic(arrowLabel);
             button.setContentDisplay(ContentDisplay.LEFT);
             // Bind text to i18n
             I18nControls.bindI18nProperties(button, buttonDef.getTextI18nKey());
 
             // Apply CSS class - all styling handled by CSS
-            button.getStyleClass().add("booking-form-btn-back");
+            button.getStyleClass().add(booking_form_btn_back);
             // Padding set in Java per project conventions
             button.setPadding(new Insets(14, 32, 14, 32));
 
@@ -206,9 +204,9 @@ public class ButtonNavigation implements BookingFormNavigation {
             // Apply CSS class based on style - all styling handled by CSS
             String styleClass = buttonDef.getStyleClass();
             if (styleClass != null && styleClass.contains("btn-primary")) {
-                button.getStyleClass().add("booking-form-btn-primary");
+                button.getStyleClass().add(booking_form_btn_primary);
             } else if (styleClass != null && styleClass.contains("btn-secondary")) {
-                button.getStyleClass().add("booking-form-btn-secondary");
+                button.getStyleClass().add(booking_form_btn_secondary);
             }
             // Padding set in Java per project conventions
             button.setPadding(new Insets(14, 32, 14, 32));
@@ -259,7 +257,7 @@ public class ButtonNavigation implements BookingFormNavigation {
         // Find where back buttons end and other buttons start
         int backButtonCount = 0;
         for (Node node : currentButtons) {
-            if (node instanceof Button button && button.getStyleClass().contains("booking-form-btn-back")) {
+            if (node instanceof Button button && button.getStyleClass().contains(booking_form_btn_back)) {
                 backButtonCount++;
             } else {
                 break;

@@ -22,6 +22,7 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 
 import java.time.LocalDate;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
 
 /**
@@ -111,7 +112,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         // Checkmark circle - uses CSS for themed background and border
         StackPane checkCircle = BookingPageUIBuilder.createThemedIconCircle(80);
-        checkCircle.getStyleClass().add("bookingpage-confirmation-check-circle");
+        checkCircle.getStyleClass().add(bookingpage_confirmation_check_circle);
         SVGPath checkmark = createThemedIcon("M20 6L9 17l-5-5", 1.2);
         checkmark.setStrokeWidth(3);
         checkCircle.getChildren().add(checkmark);
@@ -126,7 +127,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             // Payment made - show "Payment Confirmed"
             titleLabel = I18nControls.newLabel(BookingPageI18nKeys.PaymentConfirmed);
         }
-        titleLabel.getStyleClass().addAll("bookingpage-text-3xl", "bookingpage-font-bold", "bookingpage-text-primary");
+        titleLabel.getStyleClass().addAll(bookingpage_text_3xl, bookingpage_font_bold, bookingpage_text_primary);
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
         // Subtitle - dynamic based on payment status and entry point
@@ -148,7 +149,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
                     : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(paidAmount, event);
             I18nControls.bindI18nProperties(subtitleLabel, BookingPageI18nKeys.PaymentConfirmedMessage, formattedAmount, email);
         }
-        subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
+        subtitleLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_text_muted);
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);
         subtitleLabel.setMaxWidth(600);
@@ -169,7 +170,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         bookingReferencesContent = new VBox(0);
         bookingReferencesContent.setPadding(new Insets(16));
-        bookingReferencesContent.getStyleClass().add("bookingpage-card-static");
+        bookingReferencesContent.getStyleClass().add(bookingpage_card_static);
 
         section.getChildren().addAll(header, bookingReferencesContent);
         VBox.setMargin(header, new Insets(0, 0, 16, 0));
@@ -198,22 +199,22 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         if (showBorder) {
             row.setPadding(new Insets(0, 0, 12, 0));
-            row.getStyleClass().add("bookingpage-divider-thin-bottom");
+            row.getStyleClass().add(bookingpage_divider_thin_bottom);
             VBox.setMargin(row, new Insets(0, 0, 12, 0));
         }
 
         VBox nameBox = new VBox(0);
         Label nameLabel = new Label(booking.getName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        nameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label emailLabel = new Label(booking.getEmail());
-        emailLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        emailLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         nameBox.getChildren().addAll(nameLabel, emailLabel);
         HBox.setHgrow(nameBox, Priority.ALWAYS);
 
         Label refLabel = new Label(booking.getReference());
-        refLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark", "bookingpage-font-mono");
+        refLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark, bookingpage_font_mono);
 
         row.getChildren().addAll(nameBox, refLabel);
         return row;
@@ -228,16 +229,16 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(12);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card-static");
+        content.getStyleClass().add(bookingpage_card_static);
 
         // Event
         VBox eventBox = new VBox(4);
         Label eventTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Event);
-        eventTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        eventTitleLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         Label eventValueLabel = new Label();
         eventValueLabel.textProperty().bind(eventNameProperty);
-        eventValueLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        eventValueLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         eventBox.getChildren().addAll(eventTitleLabel, eventValueLabel);
 
@@ -247,10 +248,10 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Dates
         VBox datesBox = new VBox(4);
         Label datesTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Dates);
-        datesTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        datesTitleLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         Label datesValueLabel = new Label(formatDateRange());
-        datesValueLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        datesValueLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         datesBox.getChildren().addAll(datesTitleLabel, datesValueLabel);
         HBox.setHgrow(datesBox, Priority.ALWAYS);
@@ -258,12 +259,12 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Attendees
         VBox attendeesBox = new VBox(4);
         Label attendeesTitleLabel = I18nControls.newLabel(BookingPageI18nKeys.Attendees);
-        attendeesTitleLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        attendeesTitleLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         int count = confirmedBookings.size();
         Object countKey = count == 1 ? BookingPageI18nKeys.PersonCount : BookingPageI18nKeys.PeopleCount;
         Label attendeesValueLabel = new Label(I18n.getI18nText(countKey, count));
-        attendeesValueLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        attendeesValueLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         attendeesBox.getChildren().addAll(attendeesTitleLabel, attendeesValueLabel);
         HBox.setHgrow(attendeesBox, Priority.ALWAYS);
@@ -304,7 +305,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(12);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card-static");
+        content.getStyleClass().add(bookingpage_card_static);
 
         // Total Amount row
         String formattedTotal = unifiedPriceDisplay != null
@@ -337,7 +338,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             Region divider = new Region();
             divider.setMinHeight(1);
             divider.setMaxHeight(1);
-            divider.getStyleClass().add("bookingpage-bg-light");
+            divider.getStyleClass().add(bookingpage_bg_light);
 
             // Balance row
             String formattedBalance = unifiedPriceDisplay != null
@@ -348,7 +349,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
             // Info note
             VBox infoNote = new VBox();
             infoNote.setPadding(new Insets(12, 16, 12, 16));
-            infoNote.getStyleClass().addAll("bookingpage-bg-light", "bookingpage-rounded");
+            infoNote.getStyleClass().addAll(bookingpage_bg_light, bookingpage_rounded);
             VBox.setMargin(infoNote, new Insets(12, 0, 0, 0));
 
             String formattedBalanceNote = unifiedPriceDisplay != null
@@ -356,7 +357,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
                     : one.modality.base.shared.entities.formatters.EventPriceFormatter.formatWithCurrency(balanceDue, event);
             Label noteLabel = new Label();
             I18nControls.bindI18nProperties(noteLabel, BookingPageI18nKeys.BalanceRemainingNote, formattedBalanceNote);
-            noteLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+            noteLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
             noteLabel.setWrapText(true);
 
             infoNote.getChildren().add(noteLabel);
@@ -376,9 +377,9 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         Label labelNode = I18nControls.newLabel(labelKey);
         if (isTotal) {
-            labelNode.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-secondary");
+            labelNode.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_secondary);
         } else {
-            labelNode.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-secondary");
+            labelNode.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_secondary);
         }
 
         // Add spacer to push value to the right
@@ -387,9 +388,9 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
 
         Label valueNode = new Label(value);
         if (isTotal) {
-            valueNode.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-bold", "bookingpage-text-dark");
+            valueNode.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_bold, bookingpage_text_dark);
         } else {
-            valueNode.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+            valueNode.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
         }
 
         row.getChildren().addAll(labelNode, spacer, valueNode);
@@ -405,7 +406,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         // Content
         VBox content = new VBox(16);
         content.setPadding(new Insets(20));
-        content.getStyleClass().add("bookingpage-card-static");
+        content.getStyleClass().add(bookingpage_card_static);
 
         // Check Your Email
         String email = confirmedBookings.isEmpty() ? "" : confirmedBookings.get(0).getEmail();
@@ -460,7 +461,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         VBox textBox = new VBox(4);
 
         Label titleLabel = I18nControls.newLabel(titleKey);
-        titleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label descLabel = new Label();
         if (param != null) {
@@ -468,7 +469,7 @@ public class DefaultConfirmationSection implements HasConfirmationSection {
         } else {
             I18nControls.bindI18nProperties(descLabel, descKey);
         }
-        descLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        descLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         descLabel.setWrapText(true);
 
         textBox.getChildren().addAll(titleLabel, descLabel);

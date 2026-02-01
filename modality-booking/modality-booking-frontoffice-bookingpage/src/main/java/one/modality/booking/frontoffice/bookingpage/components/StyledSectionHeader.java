@@ -12,6 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.booking_form_section_header;
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.booking_form_section_header_title;
+
 /**
  * A styled section header with icon, title, and themed background.
  * Uses pure CSS for theming - colors come from CSS variables that can be
@@ -76,13 +79,13 @@ public class StyledSectionHeader extends HBox {
 
         // Title - use I18nControls.newLabel for proper translation
         titleLabel = I18nControls.newLabel(titleI18nKey);
-        titleLabel.getStyleClass().add("booking-form-section-header-title");
+        titleLabel.getStyleClass().add(booking_form_section_header_title);
 
         // Layout
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(10);
         getChildren().addAll(iconWrapper, titleLabel);
-        getStyleClass().add("booking-form-section-header");
+        getStyleClass().add(booking_form_section_header);
 
         // Sizing in Java (per project conventions - CSS handles colors only)
         setPadding(new Insets(14, 18, 14, 16));
@@ -110,13 +113,13 @@ public class StyledSectionHeader extends HBox {
 
         // Title
         titleLabel = new Label(title);
-        titleLabel.getStyleClass().add("booking-form-section-header-title");
+        titleLabel.getStyleClass().add(booking_form_section_header_title);
 
         // Layout
         setAlignment(Pos.CENTER_LEFT);
         setSpacing(10);
         getChildren().addAll(iconWrapper, titleLabel);
-        getStyleClass().add("booking-form-section-header");
+        getStyleClass().add(booking_form_section_header);
 
         // Sizing in Java (per project conventions - CSS handles colors only)
         setPadding(new Insets(14, 18, 14, 16));

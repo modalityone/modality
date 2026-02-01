@@ -32,6 +32,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesRouting$RouteToSuperAdminRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesI18nKeys"/>
+    <java-ui-api package="one.modality.crm.backoffice.activities.operationsandroles" prefix="OperationsAndRoles">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

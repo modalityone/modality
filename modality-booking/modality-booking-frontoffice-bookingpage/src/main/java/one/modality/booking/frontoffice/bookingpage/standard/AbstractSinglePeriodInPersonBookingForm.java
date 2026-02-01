@@ -23,7 +23,10 @@ import one.modality.booking.client.workingbooking.HasWorkingBookingProperties;
 import one.modality.booking.client.workingbooking.WorkingBooking;
 import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingform.BookingFormEntryPoint;
-import one.modality.booking.frontoffice.bookingpage.*;
+import one.modality.booking.frontoffice.bookingpage.BookingFormButton;
+import one.modality.booking.frontoffice.bookingpage.BookingFormSection;
+import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
+import one.modality.booking.frontoffice.bookingpage.CompositeBookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StickyPriceHeader;
 import one.modality.booking.frontoffice.bookingpage.components.ValidationWarningZone;
@@ -55,6 +58,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Abstract base class for single-period in-person booking forms.
@@ -455,18 +460,18 @@ public abstract class AbstractSinglePeriodInPersonBookingForm implements Standar
         contentBox.setManaged(false);
 
         StackPane iconCircle = BookingPageUIBuilder.createThemedIconCircle(80);
-        iconCircle.getStyleClass().add("bookingpage-confirmation-check-circle");
+        iconCircle.getStyleClass().add(bookingpage_confirmation_check_circle);
         SVGPath infoCircle = BookingPageUIBuilder.createThemedIcon(BookingPageUIBuilder.ICON_INFO_CIRCLE, 1.2);
         SVGPath infoI = BookingPageUIBuilder.createThemedIcon(BookingPageUIBuilder.ICON_INFO_I, 1.2);
         StackPane infoIcon = new StackPane(infoCircle, infoI);
         iconCircle.getChildren().add(infoIcon);
 
         Label titleLabel = I18nControls.newLabel(getModifyNotSupportedTitleKey());
-        titleLabel.getStyleClass().addAll("bookingpage-text-3xl", "bookingpage-font-bold", "bookingpage-text-primary");
+        titleLabel.getStyleClass().addAll(bookingpage_text_3xl, bookingpage_font_bold, bookingpage_text_primary);
         VBox.setMargin(titleLabel, new Insets(12, 0, 0, 0));
 
         Label subtitleLabel = I18nControls.newLabel(getModifyNotSupportedMessageKey());
-        subtitleLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-muted");
+        subtitleLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_text_muted);
         subtitleLabel.setWrapText(true);
         subtitleLabel.setAlignment(Pos.CENTER);
         subtitleLabel.setMaxWidth(500);

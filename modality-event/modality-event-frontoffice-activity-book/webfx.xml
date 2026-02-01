@@ -14,6 +14,8 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.book.event.BookEventRouting$BookEventUiRoute</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.event.frontoffice.activities.book.BookI18nKeys"/>
+    <java-ui-api package="one.modality.event.frontoffice.activities.book" prefix="Book">
+        <i18n/>
+    </java-ui-api>
 
 </project>

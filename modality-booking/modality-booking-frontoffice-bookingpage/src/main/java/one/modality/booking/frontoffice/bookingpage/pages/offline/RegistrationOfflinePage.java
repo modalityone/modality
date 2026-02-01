@@ -9,7 +9,10 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
@@ -22,6 +25,8 @@ import one.modality.booking.frontoffice.bookingpage.BookingFormPage;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * A page that displays when the booking form is temporarily unavailable (offline).
@@ -135,7 +140,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         VBox container = new VBox(0);
         container.setAlignment(Pos.TOP_CENTER);
         container.setPadding(new Insets(40, 20, 40, 20));
-        container.getStyleClass().add("registration-offline-page");
+        container.getStyleClass().add(registration_offline_page);
 
         // Event header (name + location)
         VBox eventHeader = buildEventHeader();
@@ -147,7 +152,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
 
         // "Registration Temporarily Unavailable" title
         Label titleLabel = I18nControls.newLabel(BookingPageI18nKeys.RegistrationTemporarilyUnavailable);
-        titleLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_dark);
         VBox.setMargin(titleLabel, new Insets(0, 0, 12, 0));
 
         // Explanation message
@@ -182,7 +187,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         // Organization name with proper wrapping
         if (event != null && event.getOrganization() != null) {
             Label orgLabel = new Label(event.getOrganization().getName());
-            orgLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+            orgLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
             orgLabel.setWrapText(true);
             orgLabel.setMaxWidth(600);
             orgLabel.setAlignment(Pos.CENTER);
@@ -225,12 +230,12 @@ public class RegistrationOfflinePage implements BookingFormPage {
         box.setMaxWidth(500);
 
         Label line1 = I18nControls.newLabel(BookingPageI18nKeys.MakingImprovements);
-        line1.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        line1.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
         line1.setWrapText(true);
         line1.setMaxWidth(500);
 
         Label line2 = I18nControls.newLabel(BookingPageI18nKeys.CheckBackShortly);
-        line2.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        line2.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
         line2.setWrapText(true);
         line2.setMaxWidth(500);
 
@@ -243,7 +248,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         card.setAlignment(Pos.TOP_LEFT);
         card.setPadding(new Insets(28));
         card.setMaxWidth(500);
-        card.getStyleClass().add("registration-offline-info-card");
+        card.getStyleClass().add(registration_offline_info_card);
 
         // Header: "In the meantime"
         HBox header = new HBox(10);
@@ -252,7 +257,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane lightbulbIcon = new StackPane();
         lightbulbIcon.setMinSize(32, 32);
         lightbulbIcon.setMaxSize(32, 32);
-        lightbulbIcon.getStyleClass().add("registration-offline-lightbulb-icon");
+        lightbulbIcon.getStyleClass().add(registration_offline_lightbulb_icon);
 
         SVGPath bulb = new SVGPath();
         bulb.setContent("M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z");
@@ -264,7 +269,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         lightbulbIcon.getChildren().add(bulb);
 
         Label headerLabel = I18nControls.newLabel(BookingPageI18nKeys.InTheMeantime);
-        headerLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        headerLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         header.getChildren().addAll(lightbulbIcon, headerLabel);
 
@@ -307,7 +312,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(24, 24);
         iconCircle.setMaxSize(24, 24);
-        iconCircle.getStyleClass().add("registration-offline-suggestion-icon");
+        iconCircle.getStyleClass().add(registration_offline_suggestion_icon);
 
         SVGPath icon = new SVGPath();
         icon.setContent(iconPath);
@@ -328,7 +333,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         } else {
             textLabel = I18nControls.newLabel(textI18nKey);
         }
-        textLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-offline-text-gray");
+        textLabel.getStyleClass().addAll(bookingpage_text_sm, registration_offline_text_gray);
         textLabel.setWrapText(true);
 
         row.getChildren().addAll(iconCircle, textLabel);
@@ -344,7 +349,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(24, 24);
         iconCircle.setMaxSize(24, 24);
-        iconCircle.getStyleClass().add("registration-offline-suggestion-icon");
+        iconCircle.getStyleClass().add(registration_offline_suggestion_icon);
 
         SVGPath icon = new SVGPath();
         icon.setContent("M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z");
@@ -360,10 +365,10 @@ public class RegistrationOfflinePage implements BookingFormPage {
         textContainer.setAlignment(Pos.CENTER_LEFT);
 
         Label questionLabel = I18nControls.newLabel(BookingPageI18nKeys.QuestionsContactUs);
-        questionLabel.getStyleClass().addAll("bookingpage-text-sm", "registration-offline-text-gray");
+        questionLabel.getStyleClass().addAll(bookingpage_text_sm, registration_offline_text_gray);
 
         Hyperlink emailLink = new Hyperlink("kbs@kadampa.net");
-        emailLink.getStyleClass().add("registration-offline-email-link");
+        emailLink.getStyleClass().add(registration_offline_email_link);
         emailLink.setOnAction(e -> {
             // In a real app, this would open the email client
             // For now, just log it
@@ -389,7 +394,7 @@ public class RegistrationOfflinePage implements BookingFormPage {
         infoIcon.setScaleY(0.67);
 
         Label apologyLabel = I18nControls.newLabel(BookingPageI18nKeys.ApologizeForInconvenience);
-        apologyLabel.getStyleClass().addAll("bookingpage-text-xs", "registration-offline-text-light-gray");
+        apologyLabel.getStyleClass().addAll(bookingpage_text_xs, registration_offline_text_light_gray);
         apologyLabel.setWrapText(true);
         apologyLabel.setMaxWidth(400);
 

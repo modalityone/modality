@@ -12,6 +12,8 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import static one.modality.crm.frontoffice.activities.userprofile.UserProfileCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -33,7 +35,7 @@ final class UserProfileMessageUI {
         VBox.setMargin(closeButton, new Insets(0, 0, 50, 0));
         container.getChildren().setAll(title, infoMessage, closeButton);
         container.setAlignment(Pos.TOP_CENTER);
-        container.getStyleClass().add("user-profile-modal-window");
+        container.getStyleClass().add(user_profile_modal_window);
         //container.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         container.setSpacing(20);
         container.setOnMouseClicked(Event::consume);

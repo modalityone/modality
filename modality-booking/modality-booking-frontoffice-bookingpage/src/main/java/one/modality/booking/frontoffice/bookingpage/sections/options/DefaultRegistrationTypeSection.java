@@ -23,6 +23,8 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 
 import java.util.function.Consumer;
 
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+
 /**
  * Registration Type Section for booking forms that offer In-Person vs Online choices.
  * Displays two options: "In Person" and "Online" (coming soon by default).
@@ -101,7 +103,7 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
     private void buildUI() {
         container.setAlignment(Pos.TOP_CENTER);
         container.setSpacing(0);
-        container.getStyleClass().add("bookingpage-registration-type-section");
+        container.getStyleClass().add(bookingpage_registration_type_section);
 
         // Event Header Section at the top
         Node eventHeader = eventHeaderSection.getView();
@@ -109,7 +111,7 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
 
         // Header question - centered
         Label headerLabel = I18nControls.newLabel(BookingPageI18nKeys.HowWouldYouLikeToAttend);
-        headerLabel.getStyleClass().addAll("bookingpage-text-xl", "bookingpage-font-semibold", "bookingpage-text-dark");
+        headerLabel.getStyleClass().addAll(bookingpage_text_xl, bookingpage_font_semibold, bookingpage_text_dark);
         headerLabel.setWrapText(true);
         headerLabel.setAlignment(Pos.CENTER);
         headerLabel.setMaxWidth(Double.MAX_VALUE);
@@ -153,10 +155,10 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
         card.setPadding(new Insets(28, 24, 28, 24));
         card.setAlignment(Pos.TOP_CENTER);
         card.setCursor(enabled ? Cursor.HAND : Cursor.DEFAULT);
-        card.getStyleClass().add("bookingpage-registration-type-card");
+        card.getStyleClass().add(bookingpage_registration_type_card);
 
         if (!enabled) {
-            card.getStyleClass().add("disabled");
+            card.getStyleClass().add(disabled);
         }
 
         // Circular icon container (64px)
@@ -164,18 +166,18 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
         iconContainer.setMinSize(64, 64);
         iconContainer.setPrefSize(64, 64);
         iconContainer.setMaxSize(64, 64);
-        iconContainer.getStyleClass().add("bookingpage-registration-type-icon-circle");
+        iconContainer.getStyleClass().add(bookingpage_registration_type_icon_circle);
 
         // SVG Icon (32px) - uses theme color via CSS class
         SVGPath icon = SvgIcons.createStrokeSVGPath(iconPath, null, 2);
-        icon.getStyleClass().add("bookingpage-icon-primary");
+        icon.getStyleClass().add(bookingpage_icon_primary);
         iconContainer.getChildren().add(icon);
 
         VBox.setMargin(iconContainer, new Insets(0, 0, 20, 0));
 
         // Title
         Label title = I18nControls.newLabel(titleKey);
-        title.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_dark);
         title.setWrapText(true);
         title.setAlignment(Pos.CENTER);
         title.setMaxWidth(Double.MAX_VALUE);
@@ -186,7 +188,7 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
 
         // Description
         Label description = I18nControls.newLabel(descriptionKey);
-        description.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        description.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         description.setWrapText(true);
         description.setAlignment(Pos.CENTER);
         description.setMaxWidth(Double.MAX_VALUE);
@@ -201,7 +203,7 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
         // Select button for enabled cards, "Coming Soon" placeholder for disabled cards
         if (enabled) {
             Button selectButton = new Button();
-            selectButton.getStyleClass().add("bookingpage-btn-select-type");
+            selectButton.getStyleClass().add(bookingpage_btn_select_type);
             selectButton.setPadding(new Insets(12, 24, 12, 24));
 
             // Button content with text and arrow
@@ -209,10 +211,10 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
             buttonContent.setAlignment(Pos.CENTER);
 
             Label buttonText = I18nControls.newLabel(BookingPageI18nKeys.SelectInPerson);
-            buttonText.getStyleClass().add("bookingpage-btn-select-type-text");
+            buttonText.getStyleClass().add(bookingpage_btn_select_type_text);
 
             SVGPath arrowIcon = SvgIcons.createStrokeSVGPath(ARROW_ICON_PATH, null, 2.5);
-            arrowIcon.getStyleClass().add("bookingpage-btn-select-type-icon");
+            arrowIcon.getStyleClass().add(bookingpage_btn_select_type_icon);
 
             buttonContent.getChildren().addAll(buttonText, arrowIcon);
             selectButton.setGraphic(buttonContent);
@@ -224,11 +226,11 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
             // "Coming Soon" placeholder styled like a disabled button
             HBox comingSoonContainer = new HBox(8);
             comingSoonContainer.setAlignment(Pos.CENTER);
-            comingSoonContainer.getStyleClass().add("bookingpage-btn-coming-soon");
+            comingSoonContainer.getStyleClass().add(bookingpage_btn_coming_soon);
             comingSoonContainer.setPadding(new Insets(12, 24, 12, 24));
 
             Label comingSoonText = I18nControls.newLabel(BookingPageI18nKeys.ComingSoon);
-            comingSoonText.getStyleClass().add("bookingpage-btn-coming-soon-text");
+            comingSoonText.getStyleClass().add(bookingpage_btn_coming_soon_text);
 
             comingSoonContainer.getChildren().add(comingSoonText);
             VBox.setMargin(comingSoonContainer, new Insets(8, 0, 0, 0));
@@ -252,12 +254,12 @@ public class DefaultRegistrationTypeSection implements BookingFormSection {
             // Update card styles
             if (oldType != null) {
                 VBox oldCard = oldType == RegistrationType.IN_PERSON ? inPersonCard : onlineCard;
-                oldCard.getStyleClass().remove("selected");
+                oldCard.getStyleClass().remove(selected);
             }
             if (newType != null) {
                 VBox newCard = newType == RegistrationType.IN_PERSON ? inPersonCard : onlineCard;
-                if (!newCard.getStyleClass().contains("disabled")) {
-                    newCard.getStyleClass().add("selected");
+                if (!newCard.getStyleClass().contains(disabled)) {
+                    newCard.getStyleClass().add(selected);
                 }
             }
         });

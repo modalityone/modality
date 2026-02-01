@@ -1,4 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections.options;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.i18n.controls.I18nControls;
@@ -31,6 +32,8 @@ import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.util.List;
 import java.util.function.Consumer;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default rate selection section for booking forms.
@@ -105,7 +108,7 @@ public class DefaultRateSection implements BookingFormSection, HasRateTypeSectio
         card.setMinWidth(160);
         card.setPrefWidth(180);
         card.setMaxWidth(220);
-        card.getStyleClass().addAll("bookingpage-card", "default-rate-card");
+        card.getStyleClass().addAll(bookingpage_card, "default-rate-card");
         card.setCursor(Cursor.HAND);
 
         // Track selection state for this card
@@ -119,11 +122,11 @@ public class DefaultRateSection implements BookingFormSection, HasRateTypeSectio
 
         // Rate type label
         Label titleLabel = I18nControls.newLabel(titleKey);
-        titleLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        titleLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         // Price label (per class)
         Label priceLabel = new Label();
-        priceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        priceLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         // Store reference for price updates
         if (rateType == RateType.STANDARD) {
@@ -147,11 +150,11 @@ public class DefaultRateSection implements BookingFormSection, HasRateTypeSectio
         // Update card styling based on selection
         FXProperties.runNowAndOnPropertyChange(selected -> {
             if (selected) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                    card.getStyleClass().add(BookingPageCssSelectors.selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(BookingPageCssSelectors.selected);
             }
         }, isSelected);
 

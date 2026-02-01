@@ -25,6 +25,8 @@ import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
 import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.event.client.event.fx.FXEvent;
 
+import static one.modality.event.backoffice.activities.program.ProgramCssSelectors.*;
+
 /**
  * Activity for managing event programs and teaching schedules in the back office.
  * This activity provides the main entry point for the Program module, which allows
@@ -195,12 +197,12 @@ final class ProgramActivity extends ViewDomainActivityBase {
 
         // Alert title
         Label alertTitle = Bootstrap.strong(I18nControls.newLabel(ProgramI18nKeys.ConfigurationRequired));
-        alertTitle.getStyleClass().add("program-alert-title");
+        alertTitle.getStyleClass().add(program_alert_title);
 
         // Alert message
         Label alertMessage = I18nControls.newLabel(ProgramI18nKeys.ConfigurationRequiredMessage);
         alertMessage.setWrapText(true);
-        alertMessage.getStyleClass().add("program-alert-message");
+        alertMessage.getStyleClass().add(program_alert_message);
 
         // Alert content
         VBox alertContent = new VBox(4, alertTitle, alertMessage);
@@ -208,7 +210,7 @@ final class ProgramActivity extends ViewDomainActivityBase {
         // Alert box
         HBox alertBox = new HBox(12, iconContainer, alertContent);
         alertBox.setAlignment(Pos.TOP_LEFT);
-        alertBox.getStyleClass().add("program-alert-box");
+        alertBox.getStyleClass().add(program_alert_box);
         alertBox.setPadding(new Insets(16, 20, 16, 20));
         alertBox.setMaxWidth(1122);
 

@@ -18,7 +18,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.time.ModalityDates;
 import one.modality.base.shared.entities.Item;
 import one.modality.base.shared.entities.Rate;
 import one.modality.base.shared.entities.ScheduledItem;
@@ -30,13 +29,14 @@ import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme
 import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the shuttle options section with grouped UI.
@@ -105,11 +105,11 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
     protected void buildUI() {
         container.setAlignment(Pos.TOP_LEFT);
         container.setSpacing(0);
-        container.getStyleClass().add("bookingpage-shuttle-section");
+        container.getStyleClass().add(bookingpage_shuttle_section);
 
         // Main grouped container with border
         groupedContainer = new VBox(0);
-        groupedContainer.getStyleClass().add("bookingpage-shuttle-container");
+        groupedContainer.getStyleClass().add(bookingpage_shuttle_container);
         groupedContainer.setPadding(new Insets(0)); // Padding handled by inner elements
 
         // Header with icon, title, description, and price
@@ -145,18 +145,18 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
 
         Label title = new Label();
         title.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.AirportShuttle));
-        title.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold, bookingpage_text_dark);
 
         Label description = new Label();
         // Use formatted text with price placeholder
         description.textProperty().bind(I18n.i18nTextProperty(BookingPageI18nKeys.SelectYourJourney, getFormattedSingleTripPrice()));
-        description.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        description.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
 
         textContent.getChildren().addAll(title, description);
 
         // Price label (only visible when any shuttle selected)
         totalPriceLabel = new Label();
-        totalPriceLabel.getStyleClass().addAll("bookingpage-price-medium", "bookingpage-text-primary");
+        totalPriceLabel.getStyleClass().addAll(bookingpage_price_medium, bookingpage_text_primary);
         updateTotalPriceLabel();
 
         headerPriceBox = new HBox(totalPriceLabel);
@@ -176,7 +176,7 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         StackPane iconContainer = new StackPane();
         iconContainer.setMinSize(36, 36);
         iconContainer.setMaxSize(36, 36);
-        iconContainer.getStyleClass().add("bookingpage-shuttle-icon-container");
+        iconContainer.getStyleClass().add(bookingpage_shuttle_icon_container);
 
         SVGPath icon = new SVGPath();
         icon.setContent(BookingPageUIBuilder.ICON_PLANE);
@@ -184,7 +184,7 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         icon.setScaleY(0.7);
         icon.setStrokeWidth(2);
         icon.setFill(Color.TRANSPARENT);
-        icon.getStyleClass().add("bookingpage-shuttle-icon");
+        icon.getStyleClass().add(bookingpage_shuttle_icon);
 
         iconContainer.getChildren().add(icon);
         iconContainer.setAlignment(Pos.CENTER);
@@ -225,7 +225,7 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setPadding(new Insets(12, 14, 12, 14));
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().add("bookingpage-shuttle-trip");
+        card.getStyleClass().add(bookingpage_shuttle_trip);
 
         // Checkbox indicator
         StackPane checkbox = BookingPageUIBuilder.createCheckboxIndicator(option.selectedProperty(), colorScheme);
@@ -236,16 +236,16 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
         HBox.setHgrow(textContent, Priority.ALWAYS);
 
         Label title = new Label(option.getName());
-        title.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium");
+        title.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium);
 
         Label dateTime = new Label(formatTripDateTime(option));
-        dateTime.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+        dateTime.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
 
         textContent.getChildren().addAll(title, dateTime);
 
         // Price label
         Label priceLabel = new Label(formatPrice(option.getPrice()));
-        priceLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-font-semibold");
+        priceLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_font_semibold);
 
         card.getChildren().addAll(checkbox, textContent, priceLabel);
 
@@ -284,11 +284,11 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
      */
     protected void updateCardStyle(HBox card, ShuttleOption option) {
         if (option.isSelected()) {
-            if (!card.getStyleClass().contains("selected")) {
-                card.getStyleClass().add("selected");
+            if (!card.getStyleClass().contains(selected)) {
+                card.getStyleClass().add(selected);
             }
         } else {
-            card.getStyleClass().remove("selected");
+            card.getStyleClass().remove(selected);
         }
     }
 
@@ -297,12 +297,12 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
      */
     protected void updateCardAvailability(HBox card, ShuttleOption option) {
         if (option.isAvailable()) {
-            card.getStyleClass().remove("disabled");
+            card.getStyleClass().remove(disabled);
             card.setCursor(Cursor.HAND);
             card.setOpacity(1.0);
         } else {
-            if (!card.getStyleClass().contains("disabled")) {
-                card.getStyleClass().add("disabled");
+            if (!card.getStyleClass().contains(disabled)) {
+                card.getStyleClass().add(disabled);
             }
             card.setCursor(Cursor.DEFAULT);
             card.setOpacity(0.5);
@@ -319,13 +319,13 @@ public class DefaultShuttleOptionsSection implements HasShuttleOptionsSection {
     protected void updateContainerStyle() {
         boolean hasSelection = options.stream().anyMatch(ShuttleOption::isSelected);
         if (hasSelection) {
-            if (!groupedContainer.getStyleClass().contains("has-selection")) {
-                groupedContainer.getStyleClass().add("has-selection");
+            if (!groupedContainer.getStyleClass().contains(has_selection)) {
+                groupedContainer.getStyleClass().add(has_selection);
             }
             headerPriceBox.setVisible(true);
             headerPriceBox.setManaged(true);
         } else {
-            groupedContainer.getStyleClass().remove("has-selection");
+            groupedContainer.getStyleClass().remove(has_selection);
             headerPriceBox.setVisible(false);
             headerPriceBox.setManaged(false);
         }

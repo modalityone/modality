@@ -12,6 +12,8 @@ import javafx.scene.text.TextAlignment;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.catering.backoffice.activities.kitchen.KitchenI18nKeys;
 
+import static one.modality.catering.backoffice.activities.kitchen.KitchenCssSelectors.*;
+
 /**
  * Empty state view displayed when no meal data is configured in the KBS3 system.
  * Follows the design from the HTML mockup with settings/gear icon and alert badge.
@@ -31,26 +33,26 @@ public final class KitchenEmptyStateView {
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50, 40, 50, 40));
         container.setMaxWidth(600);
-        container.getStyleClass().add("kitchen-empty-state-container");
+        container.getStyleClass().add(kitchen_empty_state_container);
 
         // Icon section with settings gear and alert badge
         VBox iconContainer = createIconSection();
 
         // Title
         Label titleLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateTitle);
-        titleLabel.getStyleClass().add("kitchen-empty-state-title");
+        titleLabel.getStyleClass().add(kitchen_empty_state_title);
         titleLabel.setWrapText(true);
         titleLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Subtitle
         Label subtitleLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateSubtitle);
-        subtitleLabel.getStyleClass().add("kitchen-empty-state-subtitle");
+        subtitleLabel.getStyleClass().add(kitchen_empty_state_subtitle);
         subtitleLabel.setWrapText(true);
         subtitleLabel.setTextAlignment(TextAlignment.CENTER);
 
         // Message
         Label messageLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateMessage);
-        messageLabel.getStyleClass().add("kitchen-empty-state-message");
+        messageLabel.getStyleClass().add(kitchen_empty_state_message);
         messageLabel.setWrapText(true);
         messageLabel.setTextAlignment(TextAlignment.CENTER);
 
@@ -103,14 +105,14 @@ public final class KitchenEmptyStateView {
     private static VBox createInfoBox() {
         VBox infoBox = new VBox(10);
         infoBox.setPadding(new Insets(20));
-        infoBox.getStyleClass().add("kitchen-empty-state-info-box");
+        infoBox.getStyleClass().add(kitchen_empty_state_info_box);
         infoBox.setMaxWidth(550);
 
         Label infoTitle = I18nControls.newLabel(KitchenI18nKeys.EmptyStateInfoTitle);
-        infoTitle.getStyleClass().add("kitchen-empty-state-info-title");
+        infoTitle.getStyleClass().add(kitchen_empty_state_info_title);
 
         Label infoText = I18nControls.newLabel(KitchenI18nKeys.EmptyStateInfoText);
-        infoText.getStyleClass().add("kitchen-empty-state-info-text");
+        infoText.getStyleClass().add(kitchen_empty_state_info_text);
         infoText.setWrapText(true);
 
         infoBox.getChildren().addAll(infoTitle, infoText);
@@ -123,12 +125,12 @@ public final class KitchenEmptyStateView {
     private static VBox createActionBox() {
         VBox actionBox = new VBox(15);
         actionBox.setPadding(new Insets(25));
-        actionBox.getStyleClass().add("kitchen-empty-state-action-box");
+        actionBox.getStyleClass().add(kitchen_empty_state_action_box);
         actionBox.setMaxWidth(550);
         actionBox.setAlignment(Pos.CENTER);
 
         Label actionTitle = I18nControls.newLabel(KitchenI18nKeys.EmptyStateActionTitle);
-        actionTitle.getStyleClass().add("kitchen-empty-state-action-title");
+        actionTitle.getStyleClass().add(kitchen_empty_state_action_title);
 
         // Email contact
         HBox emailContact = createContactRow(
@@ -146,7 +148,7 @@ public final class KitchenEmptyStateView {
         row.setAlignment(Pos.CENTER);
 
         Label textLabel = I18nControls.newLabel(KitchenI18nKeys.EmptyStateContactEmail);
-        textLabel.getStyleClass().add("kitchen-empty-state-contact-text");
+        textLabel.getStyleClass().add(kitchen_empty_state_contact_text);
 
         row.getChildren().addAll(textLabel);
         return row;

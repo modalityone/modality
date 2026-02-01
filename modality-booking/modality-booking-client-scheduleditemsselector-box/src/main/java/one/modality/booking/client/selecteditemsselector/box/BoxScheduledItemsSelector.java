@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static one.modality.booking.client.selecteditemsselector.box.BoxScheduledItemsSelectorCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -200,7 +202,7 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
         private final VBox box = new VBox();
 
         private ScheduledItemBox(ScheduledItem scheduledItem) {
-            box.getStyleClass().add("scheduled-item-box");
+            box.getStyleClass().add(scheduled_item_box);
             box.setAlignment(Pos.CENTER);
             box.setMinWidth(0);
             box.setMaxWidth(Double.MAX_VALUE);
@@ -220,7 +222,7 @@ public final class BoxScheduledItemsSelector implements ScheduledItemsSelector {
             box.getChildren().add(dateText);
             if (showTime) {
                 Text timeText = new Text();
-                timeText.getStyleClass().add("time");
+                timeText.getStyleClass().add(time);
                 timeText.fontProperty().bind(timeFontProperty);
                 LocalTime startTime = scheduledItem.getStartTime();
                 if (startTime == null) {

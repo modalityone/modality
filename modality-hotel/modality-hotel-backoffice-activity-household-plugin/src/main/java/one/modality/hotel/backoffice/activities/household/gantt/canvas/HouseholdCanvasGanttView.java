@@ -13,23 +13,25 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
 import one.modality.base.shared.entities.CleaningState;
+import one.modality.base.shared.entities.Pool;
 import one.modality.base.shared.entities.Resource;
 import one.modality.hotel.backoffice.accommodation.AccommodationPresentationModel;
 import one.modality.hotel.backoffice.activities.household.HouseholdI18nKeys;
-import one.modality.hotel.backoffice.activities.household.gantt.data.HouseholdGanttDataLoader;
 import one.modality.hotel.backoffice.activities.household.gantt.adapter.EntityDataAdapter;
+import one.modality.hotel.backoffice.activities.household.gantt.data.HouseholdGanttDataLoader;
 import one.modality.hotel.backoffice.activities.household.gantt.model.GanttRoomData;
+import one.modality.hotel.backoffice.activities.household.gantt.model.PoolInfo;
 import one.modality.hotel.backoffice.activities.household.gantt.model.RoomStatus;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttFilterManager;
 import one.modality.hotel.backoffice.activities.household.gantt.presenter.GanttPresenter;
 import one.modality.hotel.backoffice.activities.household.gantt.renderer.GanttColorScheme;
-import one.modality.hotel.backoffice.activities.household.gantt.model.PoolInfo;
-import one.modality.base.client.gantt.fx.highlight.FXGanttHighlight;
-import one.modality.base.shared.entities.Pool;
 
 import java.time.LocalDateTime;
 import java.util.*;
+
+import static one.modality.hotel.backoffice.activities.household.HouseholdCssSelectors.*;
 
 /**
  * Canvas-based Gantt view implementation for household/housekeeping management.
@@ -188,7 +190,7 @@ public class HouseholdCanvasGanttView {
         HBox statusSection = new HBox(8);
         statusSection.setAlignment(Pos.CENTER_LEFT);
         Label statusLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Status) + ":");
-        statusLabel.getStyleClass().add("gantt-filter-label");
+        statusLabel.getStyleClass().add(gantt_filter_label);
         statusLabel.setMinWidth(80);  // Fixed width for alignment (set in Java per guidelines)
         buildStatusFilterButtons();
         statusSection.getChildren().addAll(statusLabel, statusFilterGroup);
@@ -197,7 +199,7 @@ public class HouseholdCanvasGanttView {
         HBox groupingSection = new HBox(8);
         groupingSection.setAlignment(Pos.CENTER_LEFT);
         Label groupingLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.GroupBy) + ":");
-        groupingLabel.getStyleClass().add("gantt-filter-label");
+        groupingLabel.getStyleClass().add(gantt_filter_label);
         groupingLabel.setMinWidth(60);
         HBox groupingButtons = buildGroupingToggleButtons();
         groupingSection.getChildren().addAll(groupingLabel, groupingButtons);
@@ -219,7 +221,7 @@ public class HouseholdCanvasGanttView {
         HBox categorySection = new HBox(8);
         categorySection.setAlignment(Pos.CENTER_LEFT);
         Label categoryLabel = new Label("Room type:");
-        categoryLabel.getStyleClass().add("gantt-filter-label");
+        categoryLabel.getStyleClass().add(gantt_filter_label);
         categoryLabel.setMinWidth(80);  // Same width for alignment (set in Java per guidelines)
         categorySection.getChildren().addAll(categoryLabel, categoryFilterGroup);
 
@@ -233,7 +235,7 @@ public class HouseholdCanvasGanttView {
         HBox poolSection = new HBox(8);
         poolSection.setAlignment(Pos.CENTER_LEFT);
         Label poolLabel = new Label(I18n.getI18nText(HouseholdI18nKeys.Pool) + ":");
-        poolLabel.getStyleClass().add("gantt-filter-label");
+        poolLabel.getStyleClass().add(gantt_filter_label);
         poolLabel.setMinWidth(80);  // Same width for alignment (set in Java per guidelines)
         poolSection.getChildren().addAll(poolLabel, poolFilterGroup);
 
@@ -256,7 +258,7 @@ public class HouseholdCanvasGanttView {
         // Create button with arrow icon and text
         // Using Unicode arrow ➜ instead of emoji to ensure white color styling works
         Button btn = new Button("➜ Today");
-        btn.getStyleClass().add("gantt-today-btn");
+        btn.getStyleClass().add(gantt_today_btn);
         btn.setPadding(new Insets(6, 16, 6, 16));  // Comfortable padding (set in Java per guidelines)
 
         // Action: Reset to 2 days before today
@@ -295,7 +297,7 @@ public class HouseholdCanvasGanttView {
         // ═══════════════════════════════════════════════════════════════════
         HBox navGroup = new HBox(1);
         navGroup.setAlignment(Pos.CENTER);
-        navGroup.getStyleClass().add("gantt-nav-group");
+        navGroup.getStyleClass().add(gantt_nav_group);
 
         Button panLeftBtn = createIconButton("‹", "left");
         panLeftBtn.setOnAction(e -> panTimeWindow(-7));
@@ -310,7 +312,7 @@ public class HouseholdCanvasGanttView {
         // ═══════════════════════════════════════════════════════════════════
         HBox zoomGroup = new HBox(1);
         zoomGroup.setAlignment(Pos.CENTER);
-        zoomGroup.getStyleClass().add("gantt-nav-group");
+        zoomGroup.getStyleClass().add(gantt_nav_group);
 
         Button zoomOutBtn = createIconButton("−", "left");
         zoomOutBtn.setOnAction(e -> zoomTimeWindow(1.5));
@@ -338,14 +340,14 @@ public class HouseholdCanvasGanttView {
      */
     private Button createIconButton(String icon, String position) {
         Button btn = new Button(icon);
-        btn.getStyleClass().add("gantt-nav-btn");
+        btn.getStyleClass().add(gantt_nav_btn);
         btn.setPadding(new Insets(6, 12, 6, 12));  // Padding set in Java per guidelines
 
         // Position-specific style class for border radius
         if ("left".equals(position)) {
-            btn.getStyleClass().add("gantt-nav-btn-left");
+            btn.getStyleClass().add(gantt_nav_btn_left);
         } else if ("right".equals(position)) {
-            btn.getStyleClass().add("gantt-nav-btn-right");
+            btn.getStyleClass().add(gantt_nav_btn_right);
         }
 
         return btn;
@@ -416,7 +418,7 @@ public class HouseholdCanvasGanttView {
      */
     private Button createZoomResetButton() {
         Button btn = new Button("2w");
-        btn.getStyleClass().add("gantt-zoom-reset-btn");
+        btn.getStyleClass().add(gantt_zoom_reset_btn);
         btn.setPadding(new Insets(6, 8, 6, 8));  // Padding set in Java per guidelines
 
         return btn;
@@ -537,7 +539,7 @@ public class HouseholdCanvasGanttView {
     private Button createFilterToggleButton(String text, boolean isActive, Color statusColor) {
         Button btn = new Button();
         btn.setPadding(new Insets(4, 12, 4, 12));  // Padding set in Java per guidelines
-        btn.getStyleClass().add("gantt-filter-btn");
+        btn.getStyleClass().add(gantt_filter_btn);
 
         if (statusColor != null) {
             // Create button with colored status dot
@@ -549,7 +551,7 @@ public class HouseholdCanvasGanttView {
             dot.setFill(statusColor);
 
             Label label = new Label(text);
-            label.getStyleClass().add("gantt-filter-btn-label");
+            label.getStyleClass().add(gantt_filter_btn_label);
             content.getChildren().addAll(dot, label);
             btn.setGraphic(content);
         } else {
@@ -568,10 +570,10 @@ public class HouseholdCanvasGanttView {
      * @param statusColor Optional status color (for buttons with colored dots)
      */
     private void updateFilterButtonStyle(Button btn, boolean isActive, Color statusColor) {
-        btn.getStyleClass().removeAll("gantt-filter-btn-active");
+        btn.getStyleClass().removeAll(gantt_filter_btn_active);
 
         if (isActive) {
-            btn.getStyleClass().add("gantt-filter-btn-active");
+            btn.getStyleClass().add(gantt_filter_btn_active);
         }
         // Note: The base styling comes from "gantt-filter-btn" class added in createFilterToggleButton
     }

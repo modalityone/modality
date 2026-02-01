@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import one.modality.base.client.entities.filters.FilterButtonSelectorFactoryMixin;
 import one.modality.base.client.entities.filters.FilterSearchBar;
 
+import static one.modality.crm.backoffice.activities.customers.CustomersCssSelectors.*;
 import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
 /**
@@ -41,24 +42,24 @@ public final class CustomersFilterSearchBar {
 
         allAccountsButton = I18nControls.newToggleButton(AccountTypeFilterAll);
         allAccountsButton.setToggleGroup(accountTypeToggleGroup);
-        allAccountsButton.getStyleClass().add("account-type-toggle");
+        allAccountsButton.getStyleClass().add(account_type_toggle);
         allAccountsButton.setSelected(true);
 
         frontofficeButton = I18nControls.newToggleButton(AccountTypeFilterFrontoffice);
         frontofficeButton.setToggleGroup(accountTypeToggleGroup);
-        frontofficeButton.getStyleClass().add("account-type-toggle");
+        frontofficeButton.getStyleClass().add(account_type_toggle);
 
         backofficeButton = I18nControls.newToggleButton(AccountTypeFilterBackoffice);
         backofficeButton.setToggleGroup(accountTypeToggleGroup);
-        backofficeButton.getStyleClass().add("account-type-toggle");
+        backofficeButton.getStyleClass().add(account_type_toggle);
 
         ownerButton = I18nControls.newToggleButton(AccountTypeFilterOwner);
         ownerButton.setToggleGroup(accountTypeToggleGroup);
-        ownerButton.getStyleClass().add("account-type-toggle");
+        ownerButton.getStyleClass().add(account_type_toggle);
 
         nonOwnerButton = I18nControls.newToggleButton(AccountTypeFilterNonOwner);
         nonOwnerButton.setToggleGroup(accountTypeToggleGroup);
-        nonOwnerButton.getStyleClass().add("account-type-toggle");
+        nonOwnerButton.getStyleClass().add(account_type_toggle);
 
         // Bind account type toggle selection to presentation model
         if (pm instanceof HasAccountTypeFilterProperty filterPm) {
@@ -82,16 +83,16 @@ public final class CustomersFilterSearchBar {
 
         allStatusButton = I18nControls.newToggleButton(ActiveStatusFilterAll);
         allStatusButton.setToggleGroup(activeStatusToggleGroup);
-        allStatusButton.getStyleClass().add("account-type-toggle");
+        allStatusButton.getStyleClass().add(account_type_toggle);
 
         activeButton = I18nControls.newToggleButton(ActiveStatusFilterActive);
         activeButton.setToggleGroup(activeStatusToggleGroup);
-        activeButton.getStyleClass().add("account-type-toggle");
+        activeButton.getStyleClass().add(account_type_toggle);
         activeButton.setSelected(true);
 
         inactiveButton = I18nControls.newToggleButton(ActiveStatusFilterInactive);
         inactiveButton.setToggleGroup(activeStatusToggleGroup);
-        inactiveButton.getStyleClass().add("account-type-toggle");
+        inactiveButton.getStyleClass().add(account_type_toggle);
 
         // Bind active status toggle selection to presentation model
         if (pm instanceof HasActiveStatusFilterProperty statusPm) {
@@ -119,7 +120,7 @@ public final class CustomersFilterSearchBar {
 
         // Create a vertical separator between the two filter groups
         Separator separator = new Separator(Orientation.VERTICAL);
-        separator.getStyleClass().add("filter-group-separator");
+        separator.getStyleClass().add(filter_group_separator);
         separator.setMaxHeight(30); // Height of separator
 
         // Create spacer regions around the separator for additional spacing

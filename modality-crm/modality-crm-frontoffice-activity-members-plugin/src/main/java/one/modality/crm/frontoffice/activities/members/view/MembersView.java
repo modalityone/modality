@@ -51,6 +51,8 @@ import one.modality.crm.frontoffice.help.HelpPanel;
 
 import java.util.function.Consumer;
 
+import static one.modality.crm.frontoffice.activities.members.MembersCssSelectors.section_title_uppercase;
+
 /**
  * View class for the Members activity.
  * Handles all UI construction and rendering.
@@ -182,7 +184,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
         // Section title (same style as "WHO CAN BOOK FOR ME")
         Label sectionTitle = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.MembersICanBookFor)));
-        sectionTitle.getStyleClass().add("section-title-uppercase");
+        sectionTitle.getStyleClass().add(section_title_uppercase);
         sectionTitle.setTextAlignment(TextAlignment.CENTER);
         sectionTitle.setStyle("-fx-font-size: 18px;");
         sectionTitle.setWrapText(true);
@@ -291,7 +293,7 @@ public class MembersView implements MaterialFactoryMixin, ModalityButtonFactoryM
 
         Label dividerLabel = Bootstrap.textPrimary(Bootstrap.strong(
                 I18nControls.newLabel(MembersI18nKeys.WhoCanBookForMe)));
-        dividerLabel.getStyleClass().add("section-title-uppercase");
+        dividerLabel.getStyleClass().add(section_title_uppercase);
         dividerLabel.setTextAlignment(TextAlignment.CENTER);
         dividerLabel.setStyle("-fx-font-size: 18px;");
 

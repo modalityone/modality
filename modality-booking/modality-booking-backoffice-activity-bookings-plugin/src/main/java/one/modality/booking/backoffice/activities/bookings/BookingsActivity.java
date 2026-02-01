@@ -51,6 +51,7 @@ import java.util.function.Function;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.fields;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.booking.backoffice.activities.bookings.BookingsCssSelectors.*;
 
 final class BookingsActivity extends EventDependentViewDomainActivity implements
     OperationActionFactoryMixin,
@@ -143,7 +144,7 @@ final class BookingsActivity extends EventDependentViewDomainActivity implements
         pm.ganttSelectedObjectProperty().bind(FXGanttSelection.ganttSelectedObjectProperty());
 
         // Setting an Id for CSS styling
-        container.setId("bookings");
+        container.setId(bookings);
 
         return container;
     }

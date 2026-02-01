@@ -41,6 +41,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -270,7 +272,7 @@ final class LivestreamAndVideoPlayers {
                 commentUILabel = new Label(comment);
             }
             if (commentUILabel != null) {
-                commentUILabel.getStyleClass().add("video-comment");
+                commentUILabel.getStyleClass().add(video_comment);
                 commentUILabel.setTextAlignment(TextAlignment.CENTER);
                 Controls.setupTextWrapping(commentUILabel, true, false);
                 videoVBox.getChildren().add(commentUILabel);

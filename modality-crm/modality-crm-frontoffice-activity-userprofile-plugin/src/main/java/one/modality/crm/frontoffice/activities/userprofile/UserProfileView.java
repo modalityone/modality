@@ -47,6 +47,8 @@ import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.frontoffice.activities.createaccount.UserAccountUI;
 
+import static one.modality.crm.frontoffice.activities.userprofile.UserProfileCssSelectors.*;
+
 /**
  * @author David Hello
  */
@@ -122,7 +124,7 @@ public final class UserProfileView implements ModalityButtonFactoryMixin {
     public VBox buildView() {
         container = new VBox();
         container.setSpacing(20);
-        container.getStyleClass().add("user-profile");
+        container.getStyleClass().add(user_profile);
         container.setAlignment(Pos.TOP_CENTER);
 
         Label titleLabel = buildTitle();

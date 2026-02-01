@@ -8,7 +8,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.Event;
@@ -26,7 +29,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
-import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.*;
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
+import static one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder.createIcon;
 import static one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader.ICON_CALENDAR;
 
 /**
@@ -146,14 +150,14 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
 
     protected Label createPageTitle() {
         Label label = I18nControls.newLabel(BookingPageI18nKeys.ModifyYourBooking);
-        label.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-bold", "bookingpage-text-dark");
+        label.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_bold, bookingpage_text_dark);
         label.setWrapText(true);
         return label;
     }
 
     protected Label createPageSubtitle() {
         Label label = I18nControls.newLabel(BookingPageI18nKeys.AddOptionsToBooking);
-        label.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        label.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         label.setWrapText(true);
         return label;
     }
@@ -190,7 +194,7 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
 
         // Event name
         eventNameLabel = new Label(eventNameProperty.get());
-        eventNameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold", "bookingpage-text-dark");
+        eventNameLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold, bookingpage_text_dark);
         eventNameLabel.setWrapText(true);
         HBox.setHgrow(eventNameLabel, Priority.ALWAYS);
 
@@ -207,7 +211,7 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
 
         // Dates label
         datesLabel = new Label(formatDates());
-        datesLabel.getStyleClass().addAll("bookingpage-text-md", "bookingpage-text-dark");
+        datesLabel.getStyleClass().addAll(bookingpage_text_md, bookingpage_text_dark);
         datesLabel.setWrapText(true);
 
         row.getChildren().addAll(icon, datesLabel);
@@ -224,11 +228,11 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
         packageRow.managedProperty().bind(showPackageProperty);
 
         Label packageLabelTitle = I18nControls.newLabel(BookingPageI18nKeys.CurrentPackage);
-        packageLabelTitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        packageLabelTitle.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         packageLabelTitle.setMinWidth(80);
 
         packageLabel = new Label(packageNameProperty.get());
-        packageLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        packageLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
         packageLabel.setWrapText(true);
 
         packageRow.getChildren().addAll(packageLabelTitle, packageLabel);
@@ -238,11 +242,11 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
         referenceRow.setAlignment(Pos.CENTER_LEFT);
 
         Label referenceLabelTitle = I18nControls.newLabel(BookingPageI18nKeys.BookingReference);
-        referenceLabelTitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        referenceLabelTitle.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         referenceLabelTitle.setMinWidth(80);
 
         referenceLabel = new Label(bookingReferenceProperty.get() != null ? "#" + bookingReferenceProperty.get() : "");
-        referenceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        referenceLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         referenceRow.getChildren().addAll(referenceLabelTitle, referenceLabel);
 
@@ -251,11 +255,11 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
         attendeeRow.setAlignment(Pos.CENTER_LEFT);
 
         Label attendeeLabelTitle = I18nControls.newLabel(BookingPageI18nKeys.Attendee);
-        attendeeLabelTitle.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+        attendeeLabelTitle.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
         attendeeLabelTitle.setMinWidth(80);
 
         attendeeLabel = new Label(attendeeNameProperty.get());
-        attendeeLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-semibold", "bookingpage-text-dark");
+        attendeeLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_semibold, bookingpage_text_dark);
 
         attendeeRow.getChildren().addAll(attendeeLabelTitle, attendeeLabel);
 
@@ -267,7 +271,7 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
         Region divider = new Region();
         divider.setMinHeight(1);
         divider.setMaxHeight(1);
-        divider.getStyleClass().add("bookingpage-bg-lighter");
+        divider.getStyleClass().add(bookingpage_bg_lighter);
         return divider;
     }
 
@@ -287,15 +291,15 @@ public class DefaultExistingBookingSummarySection implements HasExistingBookingS
         switch (status) {
             case UPCOMING:
                 statusBadge.setText(I18n.getI18nText(BookingPageI18nKeys.StatusUpcoming));
-                statusBadge.getStyleClass().add("booking-form-status-upcoming");
+                statusBadge.getStyleClass().add(booking_form_status_upcoming);
                 break;
             case IN_PROGRESS:
                 statusBadge.setText(I18n.getI18nText(BookingPageI18nKeys.StatusInProgress));
-                statusBadge.getStyleClass().add("booking-form-status-in-progress");
+                statusBadge.getStyleClass().add(booking_form_status_in_progress);
                 break;
             case COMPLETED:
                 statusBadge.setText(I18n.getI18nText(BookingPageI18nKeys.StatusCompleted));
-                statusBadge.getStyleClass().add("booking-form-status-completed");
+                statusBadge.getStyleClass().add(booking_form_status_completed);
                 break;
         }
     }

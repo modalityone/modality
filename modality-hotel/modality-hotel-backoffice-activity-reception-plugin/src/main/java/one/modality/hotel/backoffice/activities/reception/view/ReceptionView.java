@@ -27,6 +27,7 @@ import one.modality.hotel.backoffice.activities.reception.row.GuestRow;
 import one.modality.hotel.backoffice.activities.reception.util.ReceptionStyles;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.hotel.backoffice.activities.reception.ReceptionCssSelectors.*;
 
 /**
  * Main view for the Reception Dashboard.
@@ -220,7 +221,7 @@ public class ReceptionView {
         double scale = maxDimension > 0 ? targetSize / maxDimension : 1.0;
         plusIcon.setScaleX(scale);
         plusIcon.setScaleY(scale);
-        plusIcon.getStyleClass().add("button-icon");
+        plusIcon.getStyleClass().add(button_icon);
         // Wrap icon in fixed-size container so button sizes correctly
         StackPane iconContainer = new StackPane(plusIcon);
         iconContainer.setMinSize(targetSize, targetSize);
@@ -228,7 +229,7 @@ public class ReceptionView {
         iconContainer.setMaxSize(targetSize, targetSize);
         newBookingBtn.setGraphic(iconContainer);
         // Apply purple styling from our CSS
-        newBookingBtn.getStyleClass().addAll("btn", "btn-purple");
+        newBookingBtn.getStyleClass().addAll("btn", btn_purple);
         newBookingBtn.setPadding(new Insets(8, 16, 8, 12));
         newBookingBtn.setPrefHeight(36);
         newBookingBtn.setOnAction(e -> handleNewBooking());
@@ -1144,7 +1145,7 @@ public class ReceptionView {
         Runnable updateStatusBadge = () -> statusBadge.setText(pm.isRegisterOpen() ? "Open" : "Closed");
         updateStatusBadge.run();
         pm.registerOpenProperty().addListener((obs, oldVal, newVal) -> updateStatusBadge.run());
-        statusBadge.getStyleClass().add("register-open"); // Will be updated dynamically
+        statusBadge.getStyleClass().add(register_open); // Will be updated dynamically
         statusBadge.setPadding(new Insets(2, 8, 2, 8));
 
         header.getChildren().addAll(title, spacer, statusBadge);
@@ -1211,7 +1212,7 @@ public class ReceptionView {
         // Buttons
         HBox buttons = new HBox(ReceptionStyles.SPACING_SM);
         Button addNoteButton = I18nControls.newButton(ReceptionI18nKeys.AddNote);
-        addNoteButton.getStyleClass().add("btn-purple");
+        addNoteButton.getStyleClass().add(btn_purple);
         addNoteButton.setPadding(new Insets(8, 16, 8, 16));
         HBox.setHgrow(addNoteButton, Priority.ALWAYS);
         addNoteButton.setMaxWidth(Double.MAX_VALUE);
@@ -1249,7 +1250,7 @@ public class ReceptionView {
         // Buttons
         HBox buttons = new HBox(ReceptionStyles.SPACING_SM);
         Button newMessageButton = I18nControls.newButton(ReceptionI18nKeys.NewMessage);
-        newMessageButton.getStyleClass().add("btn-teal");
+        newMessageButton.getStyleClass().add(btn_teal);
         newMessageButton.setPadding(new Insets(8, 16, 8, 16));
         HBox.setHgrow(newMessageButton, Priority.ALWAYS);
         newMessageButton.setMaxWidth(Double.MAX_VALUE);

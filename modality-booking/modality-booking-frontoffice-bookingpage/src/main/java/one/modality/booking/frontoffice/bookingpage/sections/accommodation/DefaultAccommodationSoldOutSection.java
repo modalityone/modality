@@ -24,9 +24,9 @@ import one.modality.booking.client.workingbooking.WorkingBookingProperties;
 import one.modality.booking.frontoffice.bookingpage.BookingPageI18nKeys;
 import one.modality.booking.frontoffice.bookingpage.components.BookingPageUIBuilder;
 import one.modality.booking.frontoffice.bookingpage.components.StyledSectionHeader;
+import one.modality.booking.frontoffice.bookingpage.sections.roommate.DefaultRoommateInfoSection;
 import one.modality.booking.frontoffice.bookingpage.standard.BookingSelectionState;
 import one.modality.booking.frontoffice.bookingpage.standard.StandardBookingFormCallbacks;
-import one.modality.booking.frontoffice.bookingpage.sections.roommate.DefaultRoommateInfoSection;
 import one.modality.booking.frontoffice.bookingpage.theme.BookingFormColorScheme;
 
 import java.time.LocalDate;
@@ -36,6 +36,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the accommodation sold out recovery section.
@@ -215,11 +217,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         StackPane iconCircle = new StackPane();
         iconCircle.setMinSize(80, 80);
         iconCircle.setMaxSize(80, 80);
-        iconCircle.getStyleClass().add("bookingpage-soldout-icon-circle");
+        iconCircle.getStyleClass().add(bookingpage_soldout_icon_circle);
 
         SVGPath exchangeIcon = new SVGPath();
         exchangeIcon.setContent(ICON_EXCHANGE);
-        exchangeIcon.getStyleClass().add("bookingpage-soldout-icon-circle-icon");
+        exchangeIcon.getStyleClass().add(bookingpage_soldout_icon_circle_icon);
         exchangeIcon.setStrokeWidth(2);
         exchangeIcon.setScaleX(1.5);
         exchangeIcon.setScaleY(1.5);
@@ -227,11 +229,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Title - "Choose Another Option"
         Label title = I18nControls.newLabel(BookingPageI18nKeys.ChooseAnotherOption);
-        title.getStyleClass().addAll("bookingpage-text-2xl", "bookingpage-font-semibold", "bookingpage-text-dark");
+        title.getStyleClass().addAll(bookingpage_text_2xl, bookingpage_font_semibold, bookingpage_text_dark);
 
         // Subtitle - "Your first choice is no longer available"
         Label subtitle = I18nControls.newLabel(BookingPageI18nKeys.FirstChoiceNoLongerAvailable);
-        subtitle.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-muted");
+        subtitle.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_muted);
         subtitle.setWrapText(true);
 
         section.getChildren().addAll(iconCircle, title, subtitle);
@@ -246,11 +248,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
     private VBox createExplanationBox() {
         VBox box = new VBox(12);
         box.setPadding(new Insets(20));
-        box.getStyleClass().add("bookingpage-soldout-explanation-box");
+        box.getStyleClass().add(bookingpage_soldout_explanation_box);
 
         // Main explanation text - "Due to high demand, [item name] is now fully booked."
         eventNameLabel = new Label();
-        eventNameLabel.getStyleClass().addAll("bookingpage-text-base", "bookingpage-text-warning-dark");
+        eventNameLabel.getStyleClass().addAll(bookingpage_text_base, bookingpage_text_warning_dark);
         eventNameLabel.setWrapText(true);
         updateExplanationText();
 
@@ -259,7 +261,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Reassurance text - "Your other choices...are saved"
         Label reassuranceLabel = I18nControls.newLabel(BookingPageI18nKeys.OtherChoicesSaved);
-        reassuranceLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-warning-dark");
+        reassuranceLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_warning_dark);
         reassuranceLabel.setWrapText(true);
 
         box.getChildren().addAll(eventNameLabel, soldOutIndicator, reassuranceLabel);
@@ -273,12 +275,12 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         HBox indicator = new HBox(8);
         indicator.setAlignment(Pos.CENTER_LEFT);
         indicator.setPadding(new Insets(10, 12, 10, 12));
-        indicator.getStyleClass().add("bookingpage-soldout-indicator");
+        indicator.getStyleClass().add(bookingpage_soldout_indicator);
 
         // X icon (circle with X)
         SVGPath xIcon = new SVGPath();
         xIcon.setContent(ICON_CIRCLE_X);
-        xIcon.getStyleClass().add("bookingpage-soldout-indicator-icon");
+        xIcon.getStyleClass().add(bookingpage_soldout_indicator_icon);
         xIcon.setStrokeWidth(2);
         xIcon.setScaleX(0.67);
         xIcon.setScaleY(0.67);
@@ -290,7 +292,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Item name + " — SOLD OUT" text
         originalNameLabel = new Label();
-        originalNameLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-font-medium", "bookingpage-text-warning-dark");
+        originalNameLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_font_medium, bookingpage_text_warning_dark);
         updateSoldOutIndicatorText();
 
         indicator.getChildren().addAll(iconWrapper, originalNameLabel);
@@ -313,7 +315,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             if (oldOption != null) {
                 VBox oldCard = optionCardMap.get(oldOption);
                 if (oldCard != null) {
-                    oldCard.getStyleClass().remove("selected");
+                    oldCard.getStyleClass().remove(selected);
                 }
                 StackPane oldCheckmark = checkmarkBadgeMap.get(oldOption);
                 if (oldCheckmark != null) {
@@ -323,7 +325,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             if (newOption != null) {
                 VBox newCard = optionCardMap.get(newOption);
                 if (newCard != null) {
-                    newCard.getStyleClass().add("selected");
+                    newCard.getStyleClass().add(selected);
                 }
                 StackPane newCheckmark = checkmarkBadgeMap.get(newOption);
                 if (newCheckmark != null) {
@@ -500,12 +502,12 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         if (!isDisabled) {
             card.setPadding(new Insets(20));
         }
-        card.getStyleClass().add("bookingpage-selectable-card");
+        card.getStyleClass().add(bookingpage_selectable_card);
 
         if (isDisabled) {
-            card.getStyleClass().addAll("soldout", "disabled");
+            card.getStyleClass().addAll(soldout, disabled);
         } else if (isSelected) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Content container
@@ -519,11 +521,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
         // Room name
         Label nameLabel = new Label(option.getName());
-        nameLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
+        nameLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold);
         if (isDisabled) {
-            nameLabel.getStyleClass().add("bookingpage-text-muted-light");
+            nameLabel.getStyleClass().add(bookingpage_text_muted_light);
         } else {
-            nameLabel.getStyleClass().add("bookingpage-text-dark");
+            nameLabel.getStyleClass().add(bookingpage_text_dark);
         }
         nameLabel.setWrapText(true);
 
@@ -534,11 +536,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         if (!option.isDayVisitor()) {
             // Per-night price with "/night" label
             Label perNightLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.PricePerNight, formatPrice(pricePerNight)));
-            perNightLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
+            perNightLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold);
             if (isDisabled) {
-                perNightLabel.getStyleClass().addAll("bookingpage-text-muted-light", "bookingpage-text-strikethrough");
+                perNightLabel.getStyleClass().addAll(bookingpage_text_muted_light, bookingpage_text_strikethrough);
             } else {
-                perNightLabel.getStyleClass().add("bookingpage-text-dark");
+                perNightLabel.getStyleClass().add(bookingpage_text_dark);
             }
             priceContainer.getChildren().add(perNightLabel);
 
@@ -556,9 +558,9 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
                 Object nightsKey = numberOfNights == 1 ? BookingPageI18nKeys.Night : BookingPageI18nKeys.Nights;
                 String nightsText = I18n.getI18nText(nightsKey);
                 Label totalLabel = new Label(I18n.getI18nText(BookingPageI18nKeys.TotalForNightsFormat, formatPrice(totalForDuration), numberOfNights, nightsText));
-                totalLabel.getStyleClass().addAll("bookingpage-text-sm", "bookingpage-text-muted");
+                totalLabel.getStyleClass().addAll(bookingpage_text_sm, bookingpage_text_muted);
                 if (isDisabled) {
-                    totalLabel.getStyleClass().add("bookingpage-text-strikethrough");
+                    totalLabel.getStyleClass().add(bookingpage_text_strikethrough);
                 }
                 priceContainer.getChildren().add(totalLabel);
             }
@@ -566,16 +568,16 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             // Per person/room indicator
             Object pricingTypeKey = option.isPerPerson() ? BookingPageI18nKeys.PerPerson : BookingPageI18nKeys.PerRoom;
             Label pricingTypeLabel = I18nControls.newLabel(pricingTypeKey);
-            pricingTypeLabel.getStyleClass().addAll("bookingpage-text-xs", "bookingpage-text-muted");
+            pricingTypeLabel.getStyleClass().addAll(bookingpage_text_xs, bookingpage_text_muted);
             priceContainer.getChildren().add(pricingTypeLabel);
         } else {
             // Day visitor - just show "Free" or the price
             Label priceLabel = new Label(pricePerNight == 0 ? I18n.getI18nText(BookingPageI18nKeys.Free) : formatPrice(pricePerNight));
-            priceLabel.getStyleClass().addAll("bookingpage-text-lg", "bookingpage-font-semibold");
+            priceLabel.getStyleClass().addAll(bookingpage_text_lg, bookingpage_font_semibold);
             if (isDisabled) {
-                priceLabel.getStyleClass().addAll("bookingpage-text-muted-light", "bookingpage-text-strikethrough");
+                priceLabel.getStyleClass().addAll(bookingpage_text_muted_light, bookingpage_text_strikethrough);
             } else {
-                priceLabel.getStyleClass().add("bookingpage-text-dark");
+                priceLabel.getStyleClass().add(bookingpage_text_dark);
             }
             priceContainer.getChildren().add(priceLabel);
         }
@@ -626,11 +628,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         // Description
         if (option.getDescription() != null && !option.getDescription().isEmpty()) {
             Label descLabel = new Label(option.getDescription());
-            descLabel.getStyleClass().add("bookingpage-text-sm");
+            descLabel.getStyleClass().add(bookingpage_text_sm);
             if (isDisabled) {
-                descLabel.getStyleClass().add("bookingpage-text-muted-disabled");
+                descLabel.getStyleClass().add(bookingpage_text_muted_disabled);
             } else {
-                descLabel.getStyleClass().add("bookingpage-text-muted");
+                descLabel.getStyleClass().add(bookingpage_text_muted);
             }
             descLabel.setWrapText(true);
             contentBox.getChildren().add(descLabel);
@@ -643,11 +645,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
             Integer capacity = item != null ? item.getCapacity() : null;
             if (capacity != null && capacity > 1) {
                 Label sharingNote = I18nControls.newLabel(BookingPageI18nKeys.RoomBookingSharingNote);
-                sharingNote.getStyleClass().add("bookingpage-text-sm");
+                sharingNote.getStyleClass().add(bookingpage_text_sm);
                 if (isDisabled) {
-                    sharingNote.getStyleClass().add("bookingpage-text-muted-disabled");
+                    sharingNote.getStyleClass().add(bookingpage_text_muted_disabled);
                 } else {
-                    sharingNote.getStyleClass().add("bookingpage-text-muted");
+                    sharingNote.getStyleClass().add(bookingpage_text_muted);
                 }
                 sharingNote.setWrapText(true);
                 contentBox.getChildren().add(sharingNote);
@@ -693,11 +695,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
 
     private Node createSoldOutRibbon() {
         StackPane ribbon = new StackPane();
-        ribbon.getStyleClass().add("bookingpage-soldout-ribbon");
+        ribbon.getStyleClass().add(bookingpage_soldout_ribbon);
         ribbon.setAlignment(Pos.CENTER);
 
         Label ribbonText = I18nControls.newLabel(BookingPageI18nKeys.SoldOut);
-        ribbonText.getStyleClass().add("bookingpage-soldout-ribbon-text");
+        ribbonText.getStyleClass().add(bookingpage_soldout_ribbon_text);
 
         ribbon.setPadding(new Insets(4, 35, 4, 55));
         ribbon.getChildren().add(ribbonText);
@@ -719,11 +721,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         badge.setAlignment(Pos.CENTER_LEFT);
         badge.setPadding(new Insets(4, 10, 4, 10));
         badge.setMaxWidth(Region.USE_PREF_SIZE);
-        badge.getStyleClass().add("bookingpage-badge-constraint");
+        badge.getStyleClass().add(bookingpage_badge_constraint);
 
         // Apply disabled class for sold out state - CSS handles colors
         if (isSoldOut) {
-            badge.getStyleClass().add("disabled");
+            badge.getStyleClass().add(disabled);
         }
 
         // Info icon (circle with "i" - using SVG path) - CSS handles colors
@@ -731,7 +733,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         infoIcon.setContent(ICON_INFO);
         infoIcon.setScaleX(0.5);
         infoIcon.setScaleY(0.5);
-        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
+        infoIcon.getStyleClass().add(bookingpage_badge_constraint_icon);
 
         // Text
         String constraintText = option.getConstraintLabel();
@@ -741,7 +743,7 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
                 : I18n.getI18nText(BookingPageI18nKeys.MinNights, option.getMinNights());
         }
         Label textLabel = new Label(constraintText);
-        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+        textLabel.getStyleClass().add(bookingpage_badge_constraint_text);
 
         badge.getChildren().addAll(infoIcon, textLabel);
         return badge;
@@ -760,10 +762,10 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         badge.setAlignment(Pos.CENTER_LEFT);
         badge.setPadding(new Insets(4, 10, 4, 10));
         badge.setMaxWidth(Region.USE_PREF_SIZE);
-        badge.getStyleClass().add("bookingpage-badge-constraint");
+        badge.getStyleClass().add(bookingpage_badge_constraint);
 
         if (isDisabled) {
-            badge.getStyleClass().add("disabled");
+            badge.getStyleClass().add(disabled);
         }
 
         // Info icon
@@ -771,11 +773,11 @@ public class DefaultAccommodationSoldOutSection implements HasAccommodationSoldO
         infoIcon.setContent(ICON_INFO);
         infoIcon.setScaleX(0.5);
         infoIcon.setScaleY(0.5);
-        infoIcon.getStyleClass().add("bookingpage-badge-constraint-icon");
+        infoIcon.getStyleClass().add(bookingpage_badge_constraint_icon);
 
         // Text
         Label textLabel = I18nControls.newLabel(i18nKey);
-        textLabel.getStyleClass().add("bookingpage-badge-constraint-text");
+        textLabel.getStyleClass().add(bookingpage_badge_constraint_text);
 
         badge.getChildren().addAll(infoIcon, textLabel);
         return badge;

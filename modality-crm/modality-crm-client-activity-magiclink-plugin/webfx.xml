@@ -14,6 +14,8 @@
         <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.activities.magiclink.MagicLinkRouting$MagicLinkUiRoute</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.activities.magiclink.MagicLinkI18nKeys"/>
+    <java-ui-api package="one.modality.crm.activities.magiclink" prefix="MagicLink">
+        <i18n/>
+    </java-ui-api>
 
 </project>

@@ -26,6 +26,8 @@ import java.util.LinkedHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static one.modality.ecommerce.frontoffice.order.OrderCssSelectors.*;
+
 /**
  * @author Bruno Salmon
  */
@@ -53,7 +55,7 @@ public final class OrderDetails {
 
             if (displayName) {
                 Label nameSectionLabel = Bootstrap.textPrimary(I18nControls.newLabel(CrmI18nKeys.Name));
-                nameSectionLabel.getStyleClass().addAll("detail-label", "detail-subitem"); // Same style as family item
+                nameSectionLabel.getStyleClass().addAll(detail_label, detail_subitem); // Same style as family item
 
                 // For new bookings, the name might not be set; the person is more reliable in that case
                 HasPersonalDetails personalDetails = document.getPerson();
@@ -61,7 +63,7 @@ public final class OrderDetails {
                 if (personalDetails == null || personalDetails.getFirstName() == null)
                     personalDetails = document;
                 Label nameLabel = BookingElements.secondaryOptionLabel(new Label(personalDetails.getFullName()));
-                nameLabel.getStyleClass().addAll("detail-label", "detail-item"); // Same style as item
+                nameLabel.getStyleClass().addAll(detail_label, detail_item); // Same style as item
                 nameLabel.setMaxWidth(Double.MAX_VALUE); // To make the separator line fill the whole width
                 nameLabel.setPadding(new Insets(10, 0, 15, 20)); // same padding as items
 
@@ -74,7 +76,7 @@ public final class OrderDetails {
                 .forEach((itemFamily, documentLinesInFamily) -> {
                     // Show item family category
                     Label familyLabel = Bootstrap.textPrimary(I18nEntities.newTranslatedEntityLabel(itemFamily));
-                    familyLabel.getStyleClass().add("detail-label");
+                    familyLabel.getStyleClass().add(detail_label);
 
                     // Calculate the total price for this family
                     int familyTotalPrice;
@@ -86,7 +88,7 @@ public final class OrderDetails {
                             .sum();
                     }
                     Label familyPriceLabel = BookingElements.createPriceLabel(EventPriceFormatter.formatWithCurrency(familyTotalPrice, document.getEvent()));
-                    //familyPriceLabel.getStyleClass().add("detail-value");
+                    //familyPriceLabel.getStyleClass().add(OrderCssSelectors.detail_value);
 
                     HBox detailHeader = new HBox(familyLabel, Layouts.createHGrowable(), familyPriceLabel);
                     detailHeader.getStyleClass().addAll("detail-header", "expandable");
@@ -97,7 +99,7 @@ public final class OrderDetails {
                     documentLinesInFamily.forEach(documentLine -> {
                         // Show item family category
                         Label itemLabel = BookingElements.secondaryOptionLabel(I18nEntities.newTranslatedEntityLabel(documentLine.getItem()));
-                        //itemLabel.getStyleClass().add("detail-subitem-label");
+                        //itemLabel.getStyleClass().add(OrderCssSelectors.detail_subitem_label);
                         itemLabel.setWrapText(true);
 
                         Label datesLabel = BookingElements.createPeriodLabel(documentLine.getDates());
@@ -119,7 +121,7 @@ public final class OrderDetails {
                         //priceLabel.getStyleClass().add("detail-subitem-value");
 
                         HBox subItem = new HBox(itemLabel, Layouts.createHGrowable(), datesLabel, priceLabel);
-                        subItem.getStyleClass().add("detail-subitem");
+                        subItem.getStyleClass().add(detail_subitem);
                         detailContentVBox.getChildren().add(subItem);
                     });
 
@@ -127,7 +129,7 @@ public final class OrderDetails {
                         detailHeader,
                         detailContentVBox
                     );
-                    detailItem.getStyleClass().add("detail-item");
+                    detailItem.getStyleClass().add(detail_item);
                     detailItem.setPadding(new Insets(15, 0, 0, 0));
                     orderDetails.getChildren().add(detailItem);
                 });

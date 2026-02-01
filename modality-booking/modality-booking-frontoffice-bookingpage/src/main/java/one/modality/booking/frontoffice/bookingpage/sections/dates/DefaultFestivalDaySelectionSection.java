@@ -1,4 +1,5 @@
 package one.modality.booking.frontoffice.bookingpage.sections.dates;
+import one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors;
 
 import dev.webfx.extras.i18n.I18n;
 import dev.webfx.platform.uischeduler.UiScheduler;
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
+
+import static one.modality.booking.frontoffice.bookingpage.BookingPageCssSelectors.*;
 
 /**
  * Default implementation of the festival day selection section.
@@ -217,7 +220,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
         // Change Arrival button - uses CSS class for theme colors
         Button changeArrivalBtn = new Button("→ Change Arrival");
-        changeArrivalBtn.getStyleClass().add("bookingpage-change-arrival-btn");
+        changeArrivalBtn.getStyleClass().add(bookingpage_change_arrival_btn);
         changeArrivalBtn.setPadding(new Insets(10, 16, 10, 16));
         changeArrivalBtn.setFocusTraversable(false); // Prevent focus-related scroll issues
         changeArrivalBtn.setOnAction(e -> {
@@ -229,7 +232,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
         // Change Departure button - uses CSS class for theme colors
         Button changeDepartureBtn = new Button("← Change Departure");
-        changeDepartureBtn.getStyleClass().add("bookingpage-change-departure-btn");
+        changeDepartureBtn.getStyleClass().add(bookingpage_change_departure_btn);
         changeDepartureBtn.setPadding(new Insets(10, 16, 10, 16));
         changeDepartureBtn.setFocusTraversable(false); // Prevent focus-related scroll issues
         changeDepartureBtn.setOnAction(e -> {
@@ -247,7 +250,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         VBox section = new VBox(12);
         section.setPadding(new Insets(16, 20, 16, 20));
         // Use CSS classes for theming - arrival uses primary color, departure uses dark text
-        section.getStyleClass().add(isArrival ? "bookingpage-time-section-arrival" : "bookingpage-time-section-departure");
+        section.getStyleClass().add(isArrival ? bookingpage_time_section_arrival : bookingpage_time_section_departure);
 
         // Header with clock icon and title with date
         HBox header = new HBox(8);
@@ -256,13 +259,13 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         // Clock SVG icon - uses CSS class for theming
         javafx.scene.shape.SVGPath clockIcon = new javafx.scene.shape.SVGPath();
         clockIcon.setContent("M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z");
-        clockIcon.getStyleClass().add(isArrival ? "bookingpage-time-section-icon-arrival" : "bookingpage-time-section-icon-departure");
+        clockIcon.getStyleClass().add(isArrival ? bookingpage_time_section_icon_arrival : bookingpage_time_section_icon_departure);
         clockIcon.setScaleX(0.7);
         clockIcon.setScaleY(0.7);
 
         // Title label - uses CSS class for styling
         Label titleLabel = new Label();
-        titleLabel.getStyleClass().add("bookingpage-time-section-title");
+        titleLabel.getStyleClass().add(bookingpage_time_section_title);
 
         header.getChildren().addAll(clockIcon, titleLabel);
 
@@ -305,28 +308,28 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         card.setPadding(new Insets(14, 16, 14, 16));
         card.setMinWidth(140);
         card.setCursor(Cursor.HAND);
-        card.getStyleClass().addAll("bookingpage-time-option", contextClass);
+        card.getStyleClass().addAll(bookingpage_time_option, contextClass);
 
         boolean isSelected = timeProperty.get() == time;
 
         // Apply initial selected state via CSS class
         if (isSelected) {
-            card.getStyleClass().add("selected");
+            card.getStyleClass().add(selected);
         }
 
         // Time label - uses CSS class for styling
         Label timeLabel = new Label(getTimeLabel(time));
-        timeLabel.getStyleClass().add("bookingpage-time-option-label");
+        timeLabel.getStyleClass().add(bookingpage_time_option_label);
 
         // Time range - uses CSS class for styling
         Label rangeLabel = new Label(getTimeRange(time, isArrival));
-        rangeLabel.getStyleClass().add("bookingpage-time-option-range");
+        rangeLabel.getStyleClass().add(bookingpage_time_option_range);
 
         // Meal note - uses CSS class based on meal availability
         String mealText = getMealNote(time, isArrival);
         boolean hasNoMeals = mealText.contains("\u2717");
         Label mealLabel = new Label(mealText);
-        mealLabel.getStyleClass().addAll("bookingpage-time-option-meal",
+        mealLabel.getStyleClass().addAll(bookingpage_time_option_meal,
             hasNoMeals ? "bookingpage-time-option-meal-negative" : "bookingpage-time-option-meal-positive");
 
         card.getChildren().addAll(timeLabel, rangeLabel, mealLabel);
@@ -335,11 +338,11 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         timeProperty.addListener((obs, old, newVal) -> {
             boolean selected = newVal == time;
             if (selected) {
-                if (!card.getStyleClass().contains("selected")) {
-                    card.getStyleClass().add("selected");
+                if (!card.getStyleClass().contains(BookingPageCssSelectors.selected)) {
+                    card.getStyleClass().add(BookingPageCssSelectors.selected);
                 }
             } else {
-                card.getStyleClass().remove("selected");
+                card.getStyleClass().remove(BookingPageCssSelectors.selected);
             }
         });
 
@@ -761,11 +764,11 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         boolean showWarning = isChangingMode && hasMinNightsConstraint;
 
         // Update box style based on warning state - CSS handles styling
-        instructionBox.getStyleClass().removeAll("bookingpage-info-box-warning", "bookingpage-info-box-neutral");
+        instructionBox.getStyleClass().removeAll(bookingpage_info_box_warning, bookingpage_info_box_neutral);
         if (showWarning) {
-            instructionBox.getStyleClass().add("bookingpage-info-box-warning");
+            instructionBox.getStyleClass().add(bookingpage_info_box_warning);
         } else {
-            instructionBox.getStyleClass().add("bookingpage-info-box-neutral");
+            instructionBox.getStyleClass().add(bookingpage_info_box_neutral);
         }
 
         // Determine the base instruction text
@@ -788,18 +791,18 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         String finalText;
 
         // Update CSS classes for text color based on warning state
-        instructionLabel.getStyleClass().removeAll("bookingpage-text-warning", "bookingpage-text-dark");
-        instructionLabel.getStyleClass().add("bookingpage-text-base");
+        instructionLabel.getStyleClass().removeAll(bookingpage_text_warning, bookingpage_text_dark);
+        instructionLabel.getStyleClass().add(bookingpage_text_base);
 
         if (isChangingMode && hasMinNightsConstraint) {
             // Warning mode: concatenate instruction + warning about min nights
-            instructionLabel.getStyleClass().add("bookingpage-text-warning");
+            instructionLabel.getStyleClass().add(bookingpage_text_warning);
             String baseText = I18n.getI18nText(baseI18nKey);
             String warningText = I18n.getI18nText("FestivalDaysMinNightsWarning", minNightsConstraint);
             finalText = baseText + " " + warningText;
         } else {
             // Normal mode: just the instruction text
-            instructionLabel.getStyleClass().add("bookingpage-text-dark");
+            instructionLabel.getStyleClass().add(bookingpage_text_dark);
             finalText = I18n.getI18nText(baseI18nKey);
         }
 
@@ -872,32 +875,32 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         card.setCursor(isDisabled ? Cursor.DEFAULT : (isClickable ? Cursor.HAND : Cursor.DEFAULT));
 
         // Apply CSS classes based on state - CSS handles styling
-        card.getStyleClass().add("bookingpage-festival-day-card");
+        card.getStyleClass().add(bookingpage_festival_day_card);
         if (isDisabled) {
-            card.getStyleClass().add("disabled");
+            card.getStyleClass().add(disabled);
         } else if (isArrival) {
-            card.getStyleClass().add("arrival");
+            card.getStyleClass().add(BookingPageCssSelectors.arrival);
         } else if (isDeparture) {
-            card.getStyleClass().add("departure");
+            card.getStyleClass().add(BookingPageCssSelectors.departure);
         } else if (isChangingMode) {
-            card.getStyleClass().add("changing");
+            card.getStyleClass().add(changing);
         } else if (isInStay) {
-            card.getStyleClass().add("in-stay");
+            card.getStyleClass().add(in_stay);
         } else if (isFestival) {
-            card.getStyleClass().add("festival");
+            card.getStyleClass().add(festival);
         }
 
         // Weekday (10px, uppercase, semibold) - CSS handles text color based on card state
         Label weekdayLabel = new Label(day.getWeekday().toUpperCase());
-        weekdayLabel.getStyleClass().add("bookingpage-festival-day-weekday");
+        weekdayLabel.getStyleClass().add(bookingpage_festival_day_weekday);
 
         // Day number (22px, bold) - CSS handles text color based on card state
         Label dayLabel = new Label(String.valueOf(day.getDayOfMonth()));
-        dayLabel.getStyleClass().add("bookingpage-festival-day-number");
+        dayLabel.getStyleClass().add(bookingpage_festival_day_number);
 
         // Month (9px, uppercase, semibold) - CSS handles text color based on card state
         Label monthLabel = new Label(day.getMonthShort().toUpperCase());
-        monthLabel.getStyleClass().add("bookingpage-festival-day-month");
+        monthLabel.getStyleClass().add(bookingpage_festival_day_month);
 
         card.getChildren().addAll(weekdayLabel, dayLabel, monthLabel);
 
@@ -909,12 +912,12 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             Region separator = new Region();
             separator.setMinHeight(1);
             separator.setMaxHeight(1);
-            separator.getStyleClass().add("bookingpage-festival-day-separator");
+            separator.getStyleClass().add(bookingpage_festival_day_separator);
             VBox.setMargin(separator, new Insets(4, 0, 6, 0));
 
             // Teaching title - CSS handles text color based on card state
             Label titleLabel = new Label(day.getTitle() != null ? day.getTitle() : "");
-            titleLabel.getStyleClass().add("bookingpage-festival-day-title");
+            titleLabel.getStyleClass().add(bookingpage_festival_day_title);
             titleLabel.setWrapText(true);
             titleLabel.setMaxWidth(88);
             titleLabel.setMinHeight(24);
@@ -922,7 +925,7 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
 
             // Price - CSS handles text color based on card state
             Label priceLabel = new Label(formatPrice(day.getTeachingPrice()));
-            priceLabel.getStyleClass().add("bookingpage-festival-day-price");
+            priceLabel.getStyleClass().add(bookingpage_festival_day_price);
 
             card.getChildren().addAll(separator, titleLabel, priceLabel);
         }
@@ -935,16 +938,16 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
         if (isFestival && (isArrival || isDeparture)) {
             // For festival days, badge goes at top-right or top-left
             Label badge = new Label(isArrival ? "ARRIVAL" : "DEPARTURE");
-            badge.getStyleClass().add("bookingpage-festival-day-badge");
+            badge.getStyleClass().add(bookingpage_festival_day_badge);
             badge.setPadding(new Insets(2, 6, 2, 6));
             // Add state class for color
             boolean isChangingThisDate = changingDateMode != null && changingDateMode.equals(isArrival ? "arrival" : "departure");
             if (isChangingThisDate) {
-                badge.getStyleClass().add("changing");
+                badge.getStyleClass().add(changing);
             } else if (isArrival) {
-                badge.getStyleClass().add("arrival");
+                badge.getStyleClass().add(BookingPageCssSelectors.arrival);
             } else {
-                badge.getStyleClass().add("departure");
+                badge.getStyleClass().add(BookingPageCssSelectors.departure);
             }
             StackPane.setAlignment(badge, isArrival ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
             StackPane.setMargin(badge, new Insets(-8, isArrival ? -4 : 0, 0, isDeparture ? -4 : 0));
@@ -953,16 +956,16 @@ public class DefaultFestivalDaySelectionSection implements HasFestivalDaySelecti
             // For non-festival days, badge at bottom
             String badgeText = isSameDay ? "DAY VISIT" : (isArrival ? "→ ARRIVAL" : "← DEPARTURE");
             Label badge = new Label(badgeText);
-            badge.getStyleClass().add("bookingpage-festival-day-badge-large");
+            badge.getStyleClass().add(bookingpage_festival_day_badge_large);
             // Add state class for color - also determines padding
             if (isSameDay) {
-                badge.getStyleClass().add("day-visit");
+                badge.getStyleClass().add(day_visit);
                 badge.setPadding(new Insets(4, 10, 4, 10)); // Wider padding for DAY VISIT
             } else if (isArrival) {
-                badge.getStyleClass().add("arrival");
+                badge.getStyleClass().add(BookingPageCssSelectors.arrival);
                 badge.setPadding(new Insets(4, 8, 4, 8));
             } else {
-                badge.getStyleClass().add("departure");
+                badge.getStyleClass().add(BookingPageCssSelectors.departure);
                 badge.setPadding(new Insets(4, 8, 4, 8));
             }
             StackPane.setAlignment(badge, Pos.BOTTOM_CENTER);

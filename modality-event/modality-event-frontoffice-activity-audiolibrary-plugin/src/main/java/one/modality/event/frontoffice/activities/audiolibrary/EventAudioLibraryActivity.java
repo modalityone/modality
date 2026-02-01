@@ -56,6 +56,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static one.modality.event.frontoffice.activities.audiolibrary.AudioLibraryCssSelectors.*;
+
 /**
  * @author David Hello
  * @author Bruno Salmon
@@ -245,7 +247,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
 
         Text listOfTrackLabel = I18n.newText(AudioLibraryI18nKeys.ListOfTracks);
         VBox.setMargin(listOfTrackLabel, new Insets(30, 0, 0, 0));
-        listOfTrackLabel.getStyleClass().add("list-tracks-title");
+        listOfTrackLabel.getStyleClass().add(list_tracks_title);
 
         loadedContentVBox = new VBox(40,
             eventHeader.getView(),
@@ -275,7 +277,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
         // ************************************* Building final container **********************************************
         // *************************************************************************************************************
 
-        pageContainer.getStyleClass().addAll("audio-library");
+        pageContainer.getStyleClass().addAll(audio_library);
         // Setting a max width for big desktop screens
         return FOPageUtil.restrictToMaxPageWidthAndApplyPageLeftTopRightBottomPadding(pageContainer);
     }

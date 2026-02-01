@@ -15,6 +15,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.organizations.OrganizationsRouting$RouteToOrganizationsRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.crm.backoffice.activities.organizations.OrganizationsI18nKeys"/>
+    <java-ui-api package="one.modality.crm.backoffice.activities.organizations" prefix="Organizations">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

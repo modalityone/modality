@@ -48,6 +48,7 @@ import one.modality.booking.backoffice.activities.bookings.BookingsRouting;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.limit;
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.crm.backoffice.activities.customers.CustomersCssSelectors.*;
 import static one.modality.crm.backoffice.activities.customers.CustomersI18nKeys.*;
 
 /**
@@ -150,7 +151,7 @@ final class CustomersView {
 
         // Main container
         view = new BorderPane();
-        view.setId("customers");
+        view.setId(customers);
 
         // Create limit checkbox
 
@@ -163,7 +164,7 @@ final class CustomersView {
         customersGrid.setMinWidth(0);
         customersGrid.setPrefWidth(Double.MAX_VALUE);
         customersGrid.setMaxWidth(Double.MAX_VALUE);
-        customersGrid.getStyleClass().addAll("customers-grid");
+        customersGrid.getStyleClass().addAll(customers_grid);
 
         // Create loading indicator
         loadingSpinner = Controls.createPageSizeSpinner();
@@ -526,7 +527,7 @@ final class CustomersView {
         // Discrete close button with × symbol
         Button closeButton = I18nControls.newButton(CloseButtonSymbol);
         closeButton.setPadding(new Insets(4, 8, 4, 8));
-        closeButton.getStyleClass().addAll("btn", "btn-close");
+        closeButton.getStyleClass().addAll("btn", btn_close);
         Bootstrap.button(closeButton);
         closeButton.setOnAction(e -> closeEditPanel());
 
@@ -685,7 +686,7 @@ final class CustomersView {
         VBox registrationsBox = new VBox();
         registrationsBox.setSpacing(16);
         registrationsBox.setPadding(new Insets(20));
-        registrationsBox.getStyleClass().add("members-box");
+        registrationsBox.getStyleClass().add(members_box);
 
         Label title = I18nControls.newLabel(RegistrationsTab);
         title.getStyleClass().add("form-section-title");
@@ -709,7 +710,7 @@ final class CustomersView {
 
     private Node createRegistrationCard(Document doc) {
         GridPane card = new GridPane();
-        card.getStyleClass().add("member-item");
+        card.getStyleClass().add(member_item);
         card.setHgap(16);
         card.setPadding(new Insets(12));
 
@@ -834,17 +835,17 @@ final class CustomersView {
         selectorButton.disableProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal) {
                 // Button became disabled, add readonly style
-                if (!selectorButton.getStyleClass().contains("readonly-field")) {
-                    selectorButton.getStyleClass().add("readonly-field");
+                if (!selectorButton.getStyleClass().contains(readonly_field)) {
+                    selectorButton.getStyleClass().add(readonly_field);
                 }
             } else {
                 // Button became enabled, remove readonly style
-                selectorButton.getStyleClass().remove("readonly-field");
+                selectorButton.getStyleClass().remove(readonly_field);
             }
         });
         // Set initial state
         if (selectorButton.isDisabled()) {
-            selectorButton.getStyleClass().add("readonly-field");
+            selectorButton.getStyleClass().add(readonly_field);
         }
 
         VBox box = ModalityStyle.createFormEntitySelector(label, selector);
@@ -1057,16 +1058,16 @@ final class CustomersView {
             VBox linkedBox = new VBox();
             linkedBox.setSpacing(16);
             linkedBox.setPadding(new Insets(20));
-            linkedBox.getStyleClass().add("members-box");
+            linkedBox.getStyleClass().add(members_box);
 
             Label description = I18nControls.newLabel(MembersDescription);
-            description.getStyleClass().add("members-description");
+            description.getStyleClass().add(members_description);
 
             // Get members for this person
             Person selectedPerson = selectedPersonProperty.get();
             VBox personItems = new VBox();
             personItems.setSpacing(8);
-            personItems.getStyleClass().add("member-items");
+            personItems.getStyleClass().add(member_items);
 
             if (selectedPerson != null) {
                 // The membersFeed already contains only accounts using the selected person's frontendAccount
@@ -1080,17 +1081,17 @@ final class CustomersView {
                             HBox personItem = new HBox();
                             personItem.setSpacing(12);
                             personItem.setPadding(new Insets(12));
-                            personItem.getStyleClass().add("member-item");
+                            personItem.getStyleClass().add(member_item);
                             personItem.setAlignment(Pos.CENTER_LEFT);
 
                             Text checkIcon = new Text("✓");
-                            checkIcon.getStyleClass().add("member-check-icon");
+                            checkIcon.getStyleClass().add(member_check_icon);
 
                             Label personName = new Label("#" + member.getId().getPrimaryKey().toString() + " " + member.getFirstName() + " " + member.getLastName());
-                            personName.getStyleClass().add("member-name");
+                            personName.getStyleClass().add(member_name);
 
                             Label personEmail = new Label(member.getEmail());
-                            personEmail.getStyleClass().add("member-email");
+                            personEmail.getStyleClass().add(member_email);
                             HBox.setHgrow(personEmail, Priority.ALWAYS);
 
 
@@ -1108,7 +1109,7 @@ final class CustomersView {
                             // Add delete button (visible only in edit mode)
                             Button deleteButton = I18nControls.newButton(DeleteMemberButtonSymbol);
                             deleteButton.setPadding(new Insets(4, 8, 4, 8));
-                            deleteButton.getStyleClass().addAll("action-button", "danger");
+                            deleteButton.getStyleClass().addAll(action_button, danger);
                             deleteButton.setOnAction(e -> deleteMember(member));
                             // Bind visibility to edit mode (edit mode = saveButton is visible)
                             deleteButton.visibleProperty().bind(saveButton.visibleProperty());
@@ -1149,25 +1150,25 @@ final class CustomersView {
                     VBox ownerBox = new VBox();
                     ownerBox.setSpacing(16);
                     ownerBox.setPadding(new Insets(20));
-                    ownerBox.getStyleClass().add("members-box");
+                    ownerBox.getStyleClass().add(members_box);
 
                     Label ownerDescription = I18nControls.newLabel(OwnerAccountDescription);
-                    ownerDescription.getStyleClass().add("members-description");
+                    ownerDescription.getStyleClass().add(members_description);
 
                     HBox ownerItem = new HBox();
                     ownerItem.setSpacing(12);
                     ownerItem.setPadding(new Insets(12));
-                    ownerItem.getStyleClass().add("member-item");
+                    ownerItem.getStyleClass().add(member_item);
                     ownerItem.setAlignment(Pos.CENTER_LEFT);
 
                     Text ownerIcon = new Text("\uD83D\uDC64"); // 👤
-                    ownerIcon.getStyleClass().add("member-user-icon");
+                    ownerIcon.getStyleClass().add(member_user_icon);
 
                     Label ownerName = new Label("#" + owner.getPrimaryKey().toString() + " " + owner.getFirstName() + " " + owner.getLastName());
-                    ownerName.getStyleClass().add("member-name");
+                    ownerName.getStyleClass().add(member_name);
 
                     Label ownerEmail = new Label(owner.getEmail());
-                    ownerEmail.getStyleClass().add("member-email");
+                    ownerEmail.getStyleClass().add(member_email);
                     HBox.setHgrow(ownerEmail, Priority.ALWAYS);
 
                     ownerItem.getChildren().addAll(ownerIcon, ownerName, ownerEmail);
@@ -1183,25 +1184,25 @@ final class CustomersView {
                     VBox linkedBox = new VBox();
                     linkedBox.setSpacing(16);
                     linkedBox.setPadding(new Insets(20));
-                    linkedBox.getStyleClass().add("members-box");
+                    linkedBox.getStyleClass().add(members_box);
 
                     Label linkedDescription = I18nControls.newLabel(LinkedAccountDescription);
-                    linkedDescription.getStyleClass().add("members-description");
+                    linkedDescription.getStyleClass().add(members_description);
 
                     HBox linkedItem = new HBox();
                     linkedItem.setSpacing(12);
                     linkedItem.setPadding(new Insets(12));
-                    linkedItem.getStyleClass().add("member-item");
+                    linkedItem.getStyleClass().add(member_item);
                     linkedItem.setAlignment(Pos.CENTER_LEFT);
 
                     Text linkedIcon = new Text("🔗"); // Link icon
-                    linkedIcon.getStyleClass().add("member-user-icon");
+                    linkedIcon.getStyleClass().add(member_user_icon);
 
                     Label linkedName = new Label("#" + accountPerson.getPrimaryKey().toString() + " " + accountPerson.getFirstName() + " " + accountPerson.getLastName());
-                    linkedName.getStyleClass().add("member-name");
+                    linkedName.getStyleClass().add(member_name);
 
                     Label linkedEmail = new Label(accountPerson.getEmail());
-                    linkedEmail.getStyleClass().add("member-email");
+                    linkedEmail.getStyleClass().add(member_email);
                     HBox.setHgrow(linkedEmail, Priority.ALWAYS);
 
                     linkedItem.getChildren().addAll(linkedIcon, linkedName, linkedEmail);
@@ -1215,7 +1216,7 @@ final class CustomersView {
                     VBox placeholderBox = new VBox();
                     placeholderBox.setSpacing(16);
                     placeholderBox.setPadding(new Insets(20));
-                    placeholderBox.getStyleClass().add("members-box");
+                    placeholderBox.getStyleClass().add(members_box);
                     Label placeholder = new Label(I18n.getI18nText(NoOwnerText));
                     placeholderBox.getChildren().add(placeholder);
                     accountTypeSection.getChildren().add(placeholderBox);
@@ -1225,7 +1226,7 @@ final class CustomersView {
             VBox ownerBox = new VBox();
             ownerBox.setSpacing(16);
             ownerBox.setPadding(new Insets(20));
-            ownerBox.getStyleClass().add("members-box");
+            ownerBox.getStyleClass().add(members_box);
             Label placeholder = new Label(I18n.getI18nText(NoOwnerText));
             ownerBox.getChildren().add(placeholder);
             accountTypeSection.getChildren().add(ownerBox);
