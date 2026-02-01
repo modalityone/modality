@@ -145,7 +145,7 @@ public final class WebPaymentForm {
                     BrowserUtil.openInternalBrowser(result.url(), "/secured-" + result.gatewayName().toLowerCase() + "-payment-form");
                     //Browser.launchExternalBrowser(url); // Chrome is blocks this current implementation (to investigate)
                 } catch (Exception e) {
-                    Console.log(e);
+                    Console.error(e);
                 }
             }
         }

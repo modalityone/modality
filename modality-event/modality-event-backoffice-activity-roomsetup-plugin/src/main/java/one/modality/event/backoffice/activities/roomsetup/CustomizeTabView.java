@@ -907,7 +907,7 @@ final class CustomizeTabView {
         // Track changed entity for targeted refresh
         final Entity changedConfig = config;
         getUpdateStore().submitChanges()
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(r -> {
                 // Refresh only the changed entities - this triggers async data fetch
                 // The reactive mapper's entity handler will call notifyBedConfigurationChanged()
@@ -935,7 +935,7 @@ final class CustomizeTabView {
         getUpdateStore().deleteEntity(eventOverride);
 
         getUpdateStore().submitChanges()
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(r -> {
                 // Refresh event data to remove the deleted override from the list
                 dataModel.refreshEventData();

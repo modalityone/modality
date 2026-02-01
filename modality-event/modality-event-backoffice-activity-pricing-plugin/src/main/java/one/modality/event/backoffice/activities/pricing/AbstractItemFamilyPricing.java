@@ -136,7 +136,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 if (dateUIs.stream().allMatch(DateUI::isValid)) {
                     AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         updateStore.submitChanges()
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                         , saveButton);
                 }
             }

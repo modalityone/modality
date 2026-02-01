@@ -125,7 +125,7 @@ public abstract class StepSlide implements Supplier<Node> {
             .onFailure(paymentResult -> {
                 turnOffWaitMode();
                 displayErrorMessage(BookI18nKeys.ErrorWhileInitiatingPayment);
-                Console.log(paymentResult);
+                Console.error(paymentResult);
             })
             .onSuccess(paymentResult -> {
                 turnOffWaitMode();

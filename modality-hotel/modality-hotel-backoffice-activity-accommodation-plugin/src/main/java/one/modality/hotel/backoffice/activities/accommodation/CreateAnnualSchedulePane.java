@@ -91,7 +91,7 @@ public final class CreateAnnualSchedulePane extends VBox {
         EntityId organizationId = FXOrganizationId.getOrganizationId();
         EntityStore.create().<ResourceConfiguration>executeQuery("select distinct rc.item.name, rc.resource.site from ResourceConfiguration rc where rc.item.family.code='acco' and rc.resource.site.organization.id=$1 and rc.resource.site.event is null and rc.endDate is null", organizationId)
                 .onFailure(error -> {
-                    Console.log("Error while reading scheduled items.", error);
+                    Console.error("Error while reading scheduled items.", error);
                 })
                 .onSuccess(resourceConfigurations -> {
                     site = resourceConfigurations.iterator().next().getResource().getSite();
@@ -199,7 +199,7 @@ public final class CreateAnnualSchedulePane extends VBox {
 
         EntityStore.create().<ScheduledItem>executeQuery("select item.id, max(date) as date, available, online, resource from ScheduledItem si where item.id in (" + commaSeparatedItemIds + ") group by item.id, available, online, resource")
                 .onFailure(error -> {
-                    Console.log("Error while reading scheduled items.", error);
+                    Console.error("Error while reading scheduled items.", error);
                 })
                 .onSuccess(latestScheduledItems -> {
                     UpdateStore updateStore = UpdateStore.createAbove(selectedItems.iterator().next().getStore());

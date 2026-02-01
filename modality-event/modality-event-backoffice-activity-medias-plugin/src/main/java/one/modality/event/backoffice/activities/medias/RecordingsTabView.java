@@ -163,7 +163,7 @@ final class RecordingsTabView {
         saveButton.setOnAction(e -> {
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     //TODO : display a message to say the data has been saved
                     .onSuccess(Console::log);
             }
@@ -203,7 +203,7 @@ final class RecordingsTabView {
                              from Media
                              where scheduledItem.(event = $1 and item.family.code = $2)""",
                         currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()))
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(entityList -> {
                     EntityList<ScheduledItem> itemList = entityList[0];
@@ -384,7 +384,7 @@ final class RecordingsTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
-                .onFailure((Console::log))
+                .onFailure((Console::error))
                 .inUiThread()
                 .onSuccess(ignored -> drawContainer())
                 ;

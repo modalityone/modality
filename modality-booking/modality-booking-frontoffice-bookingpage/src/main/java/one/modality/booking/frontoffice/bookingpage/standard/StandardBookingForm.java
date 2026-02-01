@@ -886,7 +886,7 @@ public class StandardBookingForm extends MultiPageBookingForm
         return callbacks.onSubmitBooking()
             .compose(ignored -> submitBookingAsync())
             .onFailure(error -> {
-                Console.log(error);  // Keep for debugging
+                Console.error(error);  // Keep for debugging
                 showSubmissionErrorDialog(error);
             })
             .inUiThread()
@@ -1282,7 +1282,7 @@ public class StandardBookingForm extends MultiPageBookingForm
         Object accountId = ModalityUserPrincipal.getUserAccountId(FXModalityUserPrincipal.getModalityUserPrincipal());
 
         DocumentService.loadDocuments(LoadDocumentArgument.ofDocumentOrAccount(getWorkingBooking().getDocument(), accountId, getEvent()))
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .inUiThread()
             .onSuccess(documentAggregates -> {
                 PolicyAggregate policyAggregate = workingBookingProperties.getPolicyAggregate();

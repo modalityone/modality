@@ -266,7 +266,7 @@ public final class SquarePaymentGateway implements PaymentGateway {
             }
         }
         if (DEBUG_LOG) {
-            Console.log(method, ex);
+            Console.error(method, ex);
         }
         return message.toString();
     }

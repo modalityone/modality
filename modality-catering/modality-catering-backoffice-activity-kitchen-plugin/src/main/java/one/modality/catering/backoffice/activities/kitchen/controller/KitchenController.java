@@ -321,7 +321,7 @@ public final class KitchenController {
                     });
                 })
                 .onFailure(error -> {
-                    Console.log("Failed to load attendees", error);
+                    Console.error("Failed to load attendees", error);
                     // Close loading dialog on error
                     UiScheduler.runInUiThread(loadingDialog::closeDialog);
                 });

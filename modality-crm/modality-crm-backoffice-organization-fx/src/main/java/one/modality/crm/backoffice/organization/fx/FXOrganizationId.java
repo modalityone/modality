@@ -49,7 +49,7 @@ public final class FXOrganizationId {
                 } else { // Otherwise, we request the server to load that organization from that id
                     organizationStore.<Organization>executeQueryWithCache("modality/crm/backoffice/fx-organization",
                             "select " + FXOrganization.EXPECTED_FIELDS + " from Organization where id=$1", organizationId)
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .inUiThread()
                         .onCacheAndOrSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                             if (Objects.equals(organizationId, getOrganizationId())) { // final check it is still relevant

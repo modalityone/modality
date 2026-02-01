@@ -128,7 +128,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                             from Event
                             where id=$1
                             limit 1""", eventId)
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .onCacheAndOrSuccess(events -> {
                         Event event = events.get(0);
                         UiScheduler.runInUiThread(() -> eventProperty.set(event)); // will update i18n bindings
@@ -179,7 +179,7 @@ final class EventAudioLibraryActivity extends ViewDomainActivityBase {
                                      from Media
                                      where scheduledItem.(event=$1 and online and published and item.code in ($2, $3))""",
                                     eventIdContainingAudios, pathItemCodeProperty.get(), KnownItem.AUDIO_RECORDING_ENGLISH.getCode()))
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                             .inUiThread()
                             .onCacheAndOrSuccess(entityLists -> {
                                 AstArray parameters;

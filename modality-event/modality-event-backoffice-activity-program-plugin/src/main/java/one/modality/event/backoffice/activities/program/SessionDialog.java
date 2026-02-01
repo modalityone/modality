@@ -464,7 +464,7 @@ public class SessionDialog {
      * Shows an error dialog with the given error message.
      */
     private static void showErrorDialog(Throwable error) {
-        Console.log(error);
+        Console.error(error);
 
         // Extract error message, showing a user-friendly message
         String errorMessage = error.getMessage();

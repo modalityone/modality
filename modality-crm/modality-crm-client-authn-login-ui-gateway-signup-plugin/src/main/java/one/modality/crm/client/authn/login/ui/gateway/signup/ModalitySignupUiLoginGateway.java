@@ -143,7 +143,7 @@ public final class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                             errorMessage.setText("An error has occurred during the creation. Please try later");
                             errorMessage.setVisible(true);
                         }
-                        Console.log(exception);
+                        Console.error(exception);
                         updateStore.cancelChanges();
                     })
                     .onSuccess(result -> {

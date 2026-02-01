@@ -70,7 +70,7 @@ final class AudioLibraryActivity extends ViewDomainActivityBase {
                        " or item.family.code=$1)" +
                        " order by document.event.startDate desc",
                         new Object[]{ KnownItemFamily.AUDIO_RECORDING.getCode(), modalityUserPrincipal.getUserAccountId()})
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .inUiThread()
                     .onCacheAndOrSuccess(documentLinesWithBookedAudios::setAll);
             }

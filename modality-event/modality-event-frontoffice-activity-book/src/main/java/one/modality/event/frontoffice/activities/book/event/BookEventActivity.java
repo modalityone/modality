@@ -211,7 +211,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             // We load the required information about this payment (its state, amount, and associated document/event)
             EntityStore.create(getDataSourceModel())
                 .<MoneyTransfer>executeQuery("select pending,successful,amount,document.(ref,person.(firstName,lastName,email),event.(" + FXEvent.EXPECTED_FIELDS + ")) from MoneyTransfer where id = $1 or parent = $1 order by id=$1 desc", resumePaymentMoneyTransferId)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(moneyTransfers -> {
                     loadingResumePaymentMoneyTransferId = null;
                     MoneyTransfer moneyTransfer = Collections.first(moneyTransfers);
@@ -238,7 +238,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             }
             // Note: this call doesn't automatically rebuild PolicyAggregate entities
             DocumentService.loadPolicyAndDocument(LoadDocumentArgument.ofDocument(modifyOrPayOrderDocumentId))
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(policyAndDocumentAggregates -> {
                     loadingModifyOrPayOrderDocumentId = null;
                     // Double-checking it's still relevant
@@ -263,7 +263,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
                     userPersonPrimaryKey = FXUserPersonId.getUserPersonPrimaryKey();
                 }
                 DocumentService.loadPolicyAndDocument(event, userPersonPrimaryKey)
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .onSuccess(policyAndDocumentAggregates -> {
                         if (event == FXEvent.getEvent()) // Double-checking that no other changes occurred in the meantime
                             onPolityAndDocumentAggregatesLoaded(policyAndDocumentAggregates);
@@ -349,7 +349,7 @@ public final class BookEventActivity extends ViewDomainActivityBase implements B
             return Future.succeededFuture();
         // Loading the possible existing booking of the new person to book for that event
         return DocumentService.loadDocument(event, personToBook)
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(newPersonExistingBooking -> {
                 // Re-instantiating the working booking with that new existing booking (can be null if it doesn't exist)
                 onPolityAndDocumentAggregatesLoaded(workingBookingProperties.getPolicyAggregate(), newPersonExistingBooking);

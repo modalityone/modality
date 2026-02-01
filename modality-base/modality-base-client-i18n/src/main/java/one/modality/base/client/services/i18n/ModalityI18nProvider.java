@@ -74,7 +74,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
                         String entityHolderName = forward.getString("entity"); // actually refers to the entity holder (ex: FXOrganization)
                         Supplier<Entity> entityGetter = FORWARD_ENTITY_HOLDERS.get(entityHolderName);
                         if (entityGetter == null) {
-                            Console.log("[ModalityI18nProvider] ⚠️ Unknown '" + entityHolderName + "' entity holder for '" + stringMessageKey + "' forward");
+                            Console.warn("[ModalityI18nProvider] Unknown '" + entityHolderName + "' entity holder for '" + stringMessageKey + "' forward");
                         } else {
                             entity = entityGetter.get();
                         }

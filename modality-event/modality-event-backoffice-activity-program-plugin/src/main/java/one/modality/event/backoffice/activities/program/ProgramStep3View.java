@@ -855,7 +855,7 @@ final class ProgramStep3View {
                     buildDaySections(scheduledItemsList);
                 })
                 .onFailure(error -> {
-                    Console.log(error);
+                    Console.error(error);
                     buildDaySections(scheduledItemsList);
                 });
         });
@@ -1353,7 +1353,7 @@ final class ProgramStep3View {
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(Console::log);
+            .onFailure(Console::error);
     }
 
     private void handleCancelSession(ScheduledItem scheduledItem) {
@@ -1385,7 +1385,7 @@ final class ProgramStep3View {
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(Console::log);
+            .onFailure(Console::error);
     }
 
     private void handleUncancelSession(ScheduledItem scheduledItem) {
@@ -1417,6 +1417,6 @@ final class ProgramStep3View {
 
         updateStore.submitChanges()
             .onSuccess(result -> loadProgramData())
-            .onFailure(Console::log);
+            .onFailure(Console::error);
     }
 }

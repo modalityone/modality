@@ -137,7 +137,7 @@ public class ScheduledItemGenerationView {
 
         EntityStore entityStore = EntityStore.create();
         entityStore.executeQuery("select name, globalSite, globalSite.name from Organization where id=$1", organizationId)
-                .onFailure(e -> Console.log("Error fetching organization info", e))
+                .onFailure(e -> Console.error("Error fetching organization info", e))
                 .onSuccess(result -> {
                     if (!result.isEmpty()) {
                         Organization org = (Organization) result.get(0);
@@ -177,7 +177,7 @@ public class ScheduledItemGenerationView {
 
         entityStore.executeQuery(timelineDql, globalSite)
                 .onFailure(e -> {
-                    Console.log("Error fetching timelines", e);
+                    Console.error("Error fetching timelines", e);
                     Platform.runLater(() -> {
                         availableTimelines.clear();
                         showDangerMessage("Error fetching timelines: " + e.getMessage());
@@ -233,7 +233,7 @@ public class ScheduledItemGenerationView {
 
         entityStore.executeQuery(configDql, globalSite)
                 .onFailure(e -> {
-                    Console.log("Error fetching resource configurations", e);
+                    Console.error("Error fetching resource configurations", e);
                     Platform.runLater(() -> {
                         availableResources.clear();
                         accommodationItemsWithResources.clear();
@@ -300,7 +300,7 @@ public class ScheduledItemGenerationView {
 
         entityStore.executeQuery(siDql, organizationId, start, end)
                 .onFailure(e -> {
-                    Console.log("refreshStatus: Error loading ScheduledItems", e);
+                    Console.error("refreshStatus: Error loading ScheduledItems", e);
                     Platform.runLater(() -> {
                         statusPane.getChildren().setAll(new Label("Error loading status: " + e.getMessage()));
                     });
@@ -311,7 +311,7 @@ public class ScheduledItemGenerationView {
                     // Fetch ScheduledResources
                     entityStore.executeQuery(srDql, organizationId, start, end)
                             .onFailure(e -> {
-                                Console.log("refreshStatus: Error loading ScheduledResources", e);
+                                Console.error("refreshStatus: Error loading ScheduledResources", e);
                                 Platform.runLater(() -> {
                                     statusPane.getChildren().setAll(new Label("Error loading status: " + e.getMessage()));
                                 });
@@ -612,7 +612,7 @@ public class ScheduledItemGenerationView {
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build())
                 .onFailure(e -> {
-                    Console.log("Error executing SQL: " + sql, e);
+                    Console.error("Error executing SQL: " + sql, e);
                     handleError("Error generating scheduled items", e);
                 })
                 .onSuccess(result -> {
@@ -668,7 +668,7 @@ public class ScheduledItemGenerationView {
                         .setDataSourceId(DataSourceModelService.getDefaultDataSourceId())
                         .build())
                 .onFailure(e -> {
-                    Console.log("Error generating scheduled resources", e);
+                    Console.error("Error generating scheduled resources", e);
                     handleError("Error generating scheduled resources", e);
                 })
                 .onSuccess(result -> {
@@ -689,7 +689,7 @@ public class ScheduledItemGenerationView {
             progressBar.setVisible(false);
             statusLabel.setText("Error: " + message);
             if (e != null)
-                Console.log(message, e);
+                Console.error(message, e);
             showErrorDialog("Generation Error", message + (e != null ? "\n\n" + e.getMessage() : ""));
         });
     }
@@ -1102,7 +1102,7 @@ public class ScheduledItemGenerationView {
 
         EntityStore.create().executeQuery(dql, globalSite.getPrimaryKey(), monthStart, monthEnd)
                 .onFailure(e -> {
-                    Console.log("Error loading month details", e);
+                    Console.error("Error loading month details", e);
                     Platform.runLater(() -> {
                         detailsContent.getChildren().clear();
                         Label errorLabel = new Label("Error loading data: " + e.getMessage());

@@ -2144,7 +2144,7 @@ public class DefaultYourInformationSection implements HasYourInformationSection 
             try {
                 Browser.launchExternalBrowser(privacyUrl);
             } catch (Exception e) {
-                Console.log(e);
+                Console.error(e);
             }
         }
     }

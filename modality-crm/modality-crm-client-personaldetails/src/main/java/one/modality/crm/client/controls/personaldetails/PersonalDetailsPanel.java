@@ -207,7 +207,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             syncModelFromUi(updatingEntity);
             if (updateStore.hasChanges()) {
                 updateStore.submitChanges()
-                    .onFailure(dev.webfx.platform.console.Console::log)
+                    .onFailure(dev.webfx.platform.console.Console::error)
                     .onSuccess(submitResultBatch -> {
                         syncModelFromUi(entity);
                         setEditable(false);

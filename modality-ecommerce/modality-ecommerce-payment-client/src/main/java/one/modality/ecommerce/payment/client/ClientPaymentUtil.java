@@ -5,7 +5,6 @@ import dev.webfx.platform.async.Future;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.origin.client.ClientOrigin;
-import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
 import one.modality.ecommerce.payment.PaymentAllocation;
@@ -27,7 +26,7 @@ public final class ClientPaymentUtil {
                     "/resume-payment/:moneyTransferId")
             )
             .inUiThread()
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .map(paymentResult -> new WebPaymentForm(paymentResult, FXUserPerson.getUserPerson()));
 
     }

@@ -399,7 +399,7 @@ final class ProgramModel {
                     selectedEvent, KnownItemFamily.TEACHING.getCode()),
                         new EntityStoreQuery("select name, code from item  where code = $1",
                                 KnownItem.PROGRAM_SESSION.getCode()))
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(entityLists -> {
                     // Extract query results
@@ -648,7 +648,7 @@ final class ProgramModel {
                     dialog.setOk();
                     DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
                     dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    Console.log(x);
+                    Console.error(x);
                 })
                 .onSuccess(x -> reloadProgramFromSelectedEvent(FXEvent.getEvent()));
         // Note: reloadProgramFromSelectedEvent() already calls resetModelAndUiToInitial() in its success handler
@@ -683,7 +683,7 @@ final class ProgramModel {
                     dialog.setOk();
                     DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
                     dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    Console.log(x);
+                    Console.error(x);
                 })
                 .onSuccess(x -> reloadProgramFromSelectedEvent(FXEvent.getEvent()));
     }

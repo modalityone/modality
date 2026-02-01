@@ -81,7 +81,7 @@ final class LiveStreamingTabView {
 
         publishMessageButton.setOnAction(event ->
             updateStore.submitChanges()
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(result -> {
                     notifyFrontOfficeClientsAboutLivestreamMessageChanges(result);
@@ -96,7 +96,7 @@ final class LiveStreamingTabView {
             if (labelToDelete != null) {
                 currentEvent.setLivestreamMessageLabel(null);
                 updateStore.deleteEntity(labelToDelete);
-                updateStore.submitChanges().onFailure(Console::log)
+                updateStore.submitChanges().onFailure(Console::error)
                     .inUiThread()
                     .onSuccess(result -> {
                         notifyFrontOfficeClientsAboutLivestreamMessageChanges(result);

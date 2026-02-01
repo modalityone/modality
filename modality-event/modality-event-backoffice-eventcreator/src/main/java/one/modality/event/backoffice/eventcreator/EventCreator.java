@@ -49,7 +49,7 @@ public final class EventCreator {
                 event.setVenue(venue);
                 return updateStore.submitChanges();
             })
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(ignored -> {
                 // Automatically selecting this new event
                 EntityId eventId = event.getId();

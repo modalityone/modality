@@ -101,7 +101,7 @@ final class DeclineInvitationActivity extends ViewDomainActivityBase {
         // Step 1: Find invitation by token
         InvitationOperations.findByDeclineToken(token, getDataSourceModel())
                 .onFailure(error -> {
-                    Console.log("Failed to find invitation by token", error);
+                    Console.error("Failed to find invitation by token", error);
                     showError(MembersI18nKeys.InvalidInvitationLink,
                              MembersI18nKeys.InvalidInvitationLinkDescription);
                 })
@@ -122,7 +122,7 @@ final class DeclineInvitationActivity extends ViewDomainActivityBase {
         // Call decline operation
         InvitationOperations.cancelInvitation(invitation, getDataSourceModel())
                 .onFailure(error -> {
-                    Console.log("Failed to decline invitation", error);
+                    Console.error("Failed to decline invitation", error);
                     showError(MembersI18nKeys.DeclineFailedTitle,
                              MembersI18nKeys.DeclineFailedDescription);
                 })

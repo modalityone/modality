@@ -62,7 +62,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                         where officeType
                     """.replace("officeType", officeType))
             .onFailure(cause -> {
-                Console.log("Failed loading operations", cause);
+                Console.error("Failed loading operations", cause);
                 // Schedule a retry, as the client won't work anyway without a successful load
                 Scheduler.scheduleDeferred(this::bootModule);
             })

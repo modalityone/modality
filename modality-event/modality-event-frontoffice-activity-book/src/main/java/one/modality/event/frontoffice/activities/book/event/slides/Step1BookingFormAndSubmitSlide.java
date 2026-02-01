@@ -305,7 +305,7 @@ final class Step1BookingFormAndSubmitSlide extends StepSlide implements BookingF
                 .onComplete(ar -> turnOffWaitMode())
                 .onFailure(throwable -> {
                     displayErrorMessage(BookI18nKeys.ErrorWhileInsertingBooking);
-                    Console.log(throwable);
+                    Console.error(throwable);
                 })
                 .onSuccess(result -> {
                     workingBookingProperties.setBookingReference(result.documentRef());

@@ -46,7 +46,7 @@ public final class BrowserUtil {
         try {
             Browser.launchExternalBrowser(url);
         } catch (Exception e) {
-            Console.log(e);
+            Console.error(e);
         }
     }
 

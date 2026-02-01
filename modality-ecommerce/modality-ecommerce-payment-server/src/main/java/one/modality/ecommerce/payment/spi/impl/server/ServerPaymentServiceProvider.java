@@ -170,7 +170,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
             // finalize the payment and return the status). However, we add a record in the history to indicate that the
             // booker submitted valid cc details.
             HistoryRecorder.preparePaymentHistoriesBeforeSubmit("Submitted card details to " + gatewayName + " for payment [amount]", databasePayment)
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .onSuccess(x -> updateStore.submitChanges());
 
             // TODO check accessToken is set, otherwise return an error
@@ -202,7 +202,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
                             pending,
                             successful))
                             .map(ignoredVoid -> new CompletePaymentResult(paymentStatus, failureReason))
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                     );
                 });
         });
@@ -256,7 +256,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
         return updatePaymentStatusImpl(UpdatePaymentStatusArgument.createCancelStatusArgument(argument.paymentPrimaryKey(), argument.isExplicitUserCancellation()))
             // When payments are canceled on recurring events, we automatically un-book unpaid options
             .compose(this::unbookUnpaidOptionsIfRecurringEvent)
-            .onFailure(Console::log);
+            .onFailure(Console::error);
     }
 
     private Future<CancelPaymentResult> unbookUnpaidOptionsIfRecurringEvent(MoneyTransfer moneyTransfer) {
@@ -351,7 +351,7 @@ public final class ServerPaymentServiceProvider implements PaymentServiceProvide
         paymentId = Numbers.toShortestNumber(Entities.getPrimaryKey(paymentId));
         return EntityStore.create()
             .<GatewayParameter>executeQuery("select name,value from GatewayParameter where (account=(select toMoneyAccount from MoneyTransfer where id=$1) or account==null and lower(company.name)=lower((select lower(toMoneyAccount.gatewayCompany.name) from MoneyTransfer where id=$1))) and ($2 ? live : test) order by account nulls first", paymentId, live)
-            .onFailure(e -> Console.log("An error occurred while loading paymentGatewayParameters", e))
+            .onFailure(e -> Console.error("An error occurred while loading paymentGatewayParameters", e))
             .map(gpList -> {
                 Map<String, String> parameters = new HashMap<>();
                 gpList.forEach(gp -> parameters.put(gp.getName(), gp.getValue()));

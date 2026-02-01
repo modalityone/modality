@@ -25,9 +25,9 @@ public final class GeoImportJob implements ApplicationJob {
         UpdateStore updateStore = UpdateStore.create();
         // TODO: rename geonameid to geonamesId in the domain model
         EntityStore.create().<Country>executeQuery("select id,iso_alpha2,latitude,longitude,north,south,east,west,geonameid from Country")
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(countries -> JsonFetch.fetchJsonObject(GEO_FETCH_URL)
-                .onFailure(error -> Console.log("Error while fetching " + GEO_FETCH_URL, error))
+                .onFailure(error -> Console.error("Error while fetching " + GEO_FETCH_URL, error))
                 .onSuccess(geoJsonObject -> {
 
                     ReadOnlyAstArray geonames = geoJsonObject.getArray("geonames");
@@ -58,7 +58,7 @@ public final class GeoImportJob implements ApplicationJob {
                         Console.log("No Countries to update");
                     } else {
                         Console.log("Updating Countries... ");
-                        updateStore.submitChanges().onFailure(Console::log);
+                        updateStore.submitChanges().onFailure(Console::error);
                     }
                 }));
     }

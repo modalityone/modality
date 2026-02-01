@@ -350,7 +350,7 @@ public final class PolicyAggregate {
         List<Rate> dailyRates = getDailyRates();
         int dailyRatesCount = dailyRates.size();
         if (dailyRatesCount > 1) {
-            Console.log("⚠️ WARNING: PolicyAggregate.getDailyRate() is meant to be used with single daily rate policies, but this policy has " + dailyRatesCount + " rates.");
+            Console.warn("PolicyAggregate.getDailyRate() is meant to be used with single daily rate policies, but this policy has " + dailyRatesCount + " rates.");
         }
         return Collections.first(dailyRates);
     }

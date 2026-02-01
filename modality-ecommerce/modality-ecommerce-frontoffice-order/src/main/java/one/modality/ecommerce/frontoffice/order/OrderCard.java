@@ -281,7 +281,7 @@ public final class OrderCard {
                 // Note: this will update the fields of the already present orderDocument because we use the same entity store
                 new EntityStoreQuery("select " + ORDER_REQUIRED_FIELDS + " from Document d " +
                                      " where d = $1", orderDocument))
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             // We update orderDocumentLines, which will consequently update both the card and details UI (so we do that in the UI thread)
             .inUiThread()
             .onSuccess(entityLists -> orderDocumentLines.setAll(entityLists[0]));

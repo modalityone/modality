@@ -281,7 +281,7 @@ final class ManageRecurringEventView {
                 new EntityStoreQuery("select Item where family=$1 and organization=$2", KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 1: the audio Item (we should have exactly one that has the same language as the default language of the organization)
                 new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language", KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .inUiThread()
             .onSuccess(entityLists -> {
                     EntityList<Item> videoItems = entityLists[0];
@@ -348,7 +348,7 @@ final class ManageRecurringEventView {
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
                 new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language",
                     KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .inUiThread()
             .onSuccess(entityLists -> {
                 EntityList<ScheduledItem> scheduledItems = entityLists[0];
@@ -551,7 +551,7 @@ final class ManageRecurringEventView {
     public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
             ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
                     recentlyUploadedCloudPictureId = cloudImagePath;
@@ -565,7 +565,7 @@ final class ManageRecurringEventView {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
             ModalityCloudImageService.deleteImage(cloudImagePath)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
                     if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
@@ -609,7 +609,7 @@ final class ManageRecurringEventView {
             currentEditedEvent = updateStore.insertEntity(Event.class);
             currentObservedEvent = currentEditedEvent;
             entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=$1", FXOrganization.getOrganization())
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(e -> {
                     //TODO: if there is several type of recurring EventType for an organization, create an UI that allow to select which one we choose.
@@ -1103,7 +1103,7 @@ final class ManageRecurringEventView {
                     dialog.setOk();
                     DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
                     dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    Console.log(ex);
+                    Console.error(ex);
                 })
                 .onSuccess(x -> {
                     String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);

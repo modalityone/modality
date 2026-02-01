@@ -101,7 +101,7 @@ final class ApproveInvitationActivity extends ViewDomainActivityBase {
         // Step 1: Find invitation by token
         InvitationOperations.findByApproveToken(token, getDataSourceModel())
                 .onFailure(error -> {
-                    Console.log("Failed to find invitation by token", error);
+                    Console.error("Failed to find invitation by token", error);
                     showError(MembersI18nKeys.InvalidInvitationLink,
                              MembersI18nKeys.InvalidInvitationLinkDescription);
                 })
@@ -125,7 +125,7 @@ final class ApproveInvitationActivity extends ViewDomainActivityBase {
         // Call approval operation
         InvitationOperations.approveInvitation(invitation, clientOrigin, getDataSourceModel())
                 .onFailure(error -> {
-                    Console.log("Failed to approve invitation", error);
+                    Console.error("Failed to approve invitation", error);
                     showError(MembersI18nKeys.ApprovalFailedTitle,
                              MembersI18nKeys.ApprovalFailedDescription);
                 })

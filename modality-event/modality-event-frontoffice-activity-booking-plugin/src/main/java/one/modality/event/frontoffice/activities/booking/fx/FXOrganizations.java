@@ -16,7 +16,7 @@ public final class FXOrganizations {
     static {
         EntityStore.create()
             .<Organization>executeQuery("select name,type,latitude,longitude,country from Organization where !closed and name!='ISC' order by country.name,name")
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .inUiThread()
             .onSuccess(organizations::setAll);
 

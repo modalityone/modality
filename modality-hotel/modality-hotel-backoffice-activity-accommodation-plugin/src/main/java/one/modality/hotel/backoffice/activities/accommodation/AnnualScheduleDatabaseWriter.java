@@ -122,7 +122,7 @@ public class AnnualScheduleDatabaseWriter {
                 numInsertions++;
                 if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                     updateStore.submitChanges()
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                             .onSuccess(result -> continueSaving());
                     return;
                 }
@@ -159,7 +159,7 @@ public class AnnualScheduleDatabaseWriter {
                     numInsertions++;
                     if (numInsertions >= MAX_INSERTS_PER_TRANSACTION) {
                         updateStore.submitChanges()
-                                .onFailure(Console::log)
+                                .onFailure(Console::error)
                                 .onSuccess(result -> continueSaving());
                         return;
                     }
@@ -170,7 +170,7 @@ public class AnnualScheduleDatabaseWriter {
         }
 
         updateStore.submitChanges()
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(result -> System.out.println("Finished.\n" + result));
     }
 

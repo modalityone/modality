@@ -93,24 +93,24 @@ public final class SquareRestApiJob implements ApplicationJob {
         Console.log(logPrefix + "Called with payload = " + textPayload);
         String squareEventType = AST.lookupString(payload, "type");
         if (!"payment.updated".equals(squareEventType)) {
-            Console.log(logPrefix + "⚠️  Received an event type that is not managed by this webhook: " + squareEventType);
+            Console.warn(logPrefix + "Received an event type that is not managed by this webhook: " + squareEventType);
             ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
         } else {
             // If the payment was created through the embedded payment form, the Square payment id has been recorded
             // as transactionRef by `ServerPaymentServiceProvider.completePayment()`. So we can find it by this id.
             String transactionRef = AST.lookupString(payload, "data.object.payment.id");
             if (transactionRef == null) {
-                Console.log(logPrefix + "⛔️  Couldn't find data.object.payment.id in the payload!");
+                Console.warn(logPrefix + "Couldn't find data.object.payment.id in the payload!");
                 ctx.response().setStatusCode(HttpResponseStatus.BAD_REQUEST_400).end();
             } else
                 loadAndUpdatePaymentStatus("transactionRef", transactionRef, live, payload, textPayload, logPrefix)
                     .onSuccess(v -> ctx.response().setStatusCode(HttpResponseStatus.OK_200).end())
                     .onFailure(ex -> {
                         if (ex.getMessage().contains("No referenceId was found")) {
-                            Console.log(logPrefix + "🤷️  Assuming this payment is from another POS (Café or Shop)", ex);
+                            Console.error(logPrefix + "Assuming this payment is from another POS (Café or Shop) 🤷️", ex);
                             ctx.response().setStatusCode(HttpResponseStatus.OK_200).end();
                         } else {
-                            Console.log(logPrefix + "⛔️️  An error occurred while processing the Square webhook", ex);
+                            Console.error(logPrefix + "An error occurred while processing the Square webhook", ex);
                             ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR_500).end();
                         }
                     });
@@ -120,7 +120,7 @@ public final class SquareRestApiJob implements ApplicationJob {
     private static Future<Void> loadAndUpdatePaymentStatus(String field, Object value, boolean live, ReadOnlyAstObject payload, String textPayload, String logPrefix) {
         return EntityStore.create()
             .<MoneyTransfer>executeQuery("select pending,successful,status,gatewayResponse from MoneyTransfer where " + field + " = $1", value)
-            .onFailure(e -> Console.log(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
+            .onFailure(e -> Console.error(logPrefix + "⛔️️  An error occurred when reading the payment with " + field + " = " + value, e))
             .compose(payments -> {
                 int n = payments.size();
                 if (n == 1)
@@ -203,7 +203,7 @@ public final class SquareRestApiJob implements ApplicationJob {
                 payment = updateStore.updateEntity(payment);
                 payment.setGatewayResponse(textPayload);
                 return updateStore.submitChanges()
-                    .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update gatewayResponse for payment " + paymentPk, e))
+                    .onFailure(e -> Console.error(logPrefix + "⛔️️  Failed to update gatewayResponse for payment " + paymentPk, e))
                     .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated gatewayResponse for payment " + paymentPk))
                     .mapEmpty();
             }
@@ -211,7 +211,7 @@ public final class SquareRestApiJob implements ApplicationJob {
             // We finally update the payment status through the payment service (this will also create a history entry)
             return SQUARE_HISTORY_USER_ID.callAndReturn(() ->
                 PaymentService.updatePaymentStatus(UpdatePaymentStatusArgument.createCapturedStatusArgument(paymentPk, textPayload, id, status, pending, successful))
-                    .onFailure(e -> Console.log(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
+                    .onFailure(e -> Console.error(logPrefix + "⛔️️  Failed to update status " + status + " for transactionRef = " + id, e))
                     .onSuccess(v -> Console.log(logPrefix + "✅  Successfully updated status " + status + " for transactionRef = " + id))
             );
         }

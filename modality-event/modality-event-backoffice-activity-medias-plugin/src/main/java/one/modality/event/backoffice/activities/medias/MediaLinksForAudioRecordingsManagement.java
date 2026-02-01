@@ -86,7 +86,7 @@ public class MediaLinksForAudioRecordingsManagement extends MediaLinksManagement
 
         SvgIcons.armButton(trashImage, () ->
             ModalityCloudImageService.deleteImage(eventCoverCloudImagePath)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(e -> {
                     eventCoverImageContainer.setContent(SvgIcons.createAudioCoverPath());

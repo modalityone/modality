@@ -32,7 +32,7 @@ public final class FXUserPerson {
                         from Person
                         where id=$1
                     """, userPersonId)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onCacheAndOrSuccess(persons -> {
                     setUserPerson(null); // Temporary transition to null because otherwise DynamicEntity.equals()

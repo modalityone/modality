@@ -191,7 +191,7 @@ final class ChangePictureUI {
                 deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
             } else {
                 ModalityCloudImageService.prepareImageForUpload(originalImage, true, zoomFactor, deltaX, deltaY, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .onSuccess(blob -> {
                         cloudPictureFileToUpload = blob;
                         deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
@@ -315,7 +315,7 @@ final class ChangePictureUI {
     public void uploadCloudPictureIfNeeded(String cloudImagePath) {
         if (isPictureToBeUploaded.get()) {
             ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     recentlyUploadedCloudPictureId = cloudImagePath;
                     callback.closeDialog();

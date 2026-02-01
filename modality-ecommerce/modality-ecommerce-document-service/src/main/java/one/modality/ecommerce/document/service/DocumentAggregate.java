@@ -96,7 +96,7 @@ public final class DocumentAggregate {
                 moneyTransfers.remove(rmte.getMoneyTransfer());
             } else { // Ex: AddDocumentEvent, CancelDocumentEvent, UpdateMoneyTransferEvent, etc...
                 e.replayEvent();
-                //Console.log("⚠️ DocumentAggregate doesn't recognize this event: " + e.getClass());
+                //Console.warn("DocumentAggregate doesn't recognize this event: " + e.getClass());
             }
             if (document == null)
                 document = e.getDocument();

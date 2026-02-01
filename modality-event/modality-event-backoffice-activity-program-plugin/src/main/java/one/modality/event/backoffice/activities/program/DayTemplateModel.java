@@ -243,7 +243,7 @@ final class DayTemplateModel {
                     "select item, dayTemplate, startTime, endTime, videoOffered, audioOffered, name, site, eventTimeline from Timeline where dayTemplate=$1 order by startTime"
                     , dayTemplate
                 )
-                .onFailure(Console::log)
+                .onFailure(Console::error)
                 .inUiThread()
                 .onSuccess(timelines -> {
                     // Convert to UpdateStore entities for change tracking

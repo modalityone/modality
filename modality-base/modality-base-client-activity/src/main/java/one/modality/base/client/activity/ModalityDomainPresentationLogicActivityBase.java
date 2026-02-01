@@ -31,7 +31,7 @@ public abstract class ModalityDomainPresentationLogicActivityBase<PM>
         // Loading the parameters from the requested activity state
         QueryService.executeQuery(DqlQueries.newQueryArgument(getDataSourceId(),
                 "select parameters from ActivityState where id=$1", activityStateId))
-            .onFailure(Console::log)
+            .onFailure(Console::error)
             .onSuccess(queryResult -> {
                 // Parsing the read parameters (JSON string expected) into a JSON object
                 ReadOnlyAstObject stateParameters = AST.parseObject(queryResult.getValue(0, 1), "json");

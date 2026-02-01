@@ -52,7 +52,7 @@ public final class FXEventId {
                     FXEvent.setEventOnceExpectedFieldsAreLoaded(event);
                 } else { // Otherwise, we request the server to load that event from that id
                     eventStore.<Event>executeQuery("select " + FXEvent.EXPECTED_FIELDS + " from Event where id=$1", eventId)
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .inUiThread()
                         .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                             if (Objects.equals(eventId, getEventId())) { // final check it is still relevant

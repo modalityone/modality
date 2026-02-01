@@ -338,7 +338,7 @@ public class UserAccountUI implements ModalityButtonFactoryMixin {
                     AuthenticationService.authenticate(new FinaliseAccountCreationCredentials(token, passwordField.getText().trim()))
                         .inUiThread()
                         .onFailure(failure -> {
-                            Console.log("Error while creating account:", failure);
+                            Console.error("Error while creating account:", failure);
                             transformPaneToAccountCreationError(CreateAccountI18nKeys.CreatingAccountError);
                         })
                         .onSuccess(faPk -> {

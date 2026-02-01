@@ -78,7 +78,7 @@ public final class OrderActions {
 
                 AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .onComplete(c -> contactUsWindow.displaySuccessMessage(5000, messageWindowCallback::closeDialog)),
                     contactUsWindow.getSendButton(), contactUsWindow.getCancelButton());
             });
@@ -159,7 +159,7 @@ public final class OrderActions {
                 //TODO: prevent the Refund to display if the refund as already been requested, and display somewhere in the interface that the refund has been requested
                 AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .onComplete(c -> refundWindow.displayRefundSuccessMessage(8000, messageWindowCallback::closeDialog)),
                     refundWindow.getRefundButton(), refundWindow.getDonateButton(), refundWindow.getCancelButton());
 
@@ -169,7 +169,7 @@ public final class OrderActions {
                 //TODO implementation
                 AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                     updateStore.submitChanges()
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .onComplete(c -> refundWindow.displayDonationSuccessMessage(8000, messageWindowCallback::closeDialog)),
                     refundWindow.getRefundButton(), refundWindow.getDonateButton());
 
@@ -222,7 +222,7 @@ public final class OrderActions {
                             return workingBooking.submitChanges("Booking canceled online by user", false)
                                 .compose(result -> loadFromDatabaseFunction.get());
                         })
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .onComplete(ar -> {
                             // Close the dialog only after the operation completes (success or failure)
                             errorMessageCallback.closeDialog();

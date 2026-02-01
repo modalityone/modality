@@ -131,7 +131,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                             // 4) Smallest event (ex: favor Spring Festival over STTP)
                             ", document.event.(endDate - startDate)",
                             userAccountId, KnownItemFamily.VIDEO.getCode())
-                        .onFailure(Console::log)
+                        .onFailure(Console::error)
                         .inUiThread()
                         .onCacheAndOrSuccess(documentLines -> {
                             // Extracting the events with videos from the document lines.
@@ -178,7 +178,7 @@ final class VideoStreamingActivity extends ViewDomainActivityBase {
                                     and documentLine.(!cancelled and document.(event=$5 and accountCanAccessPersonMedias($1, person))))
                              order by date, programScheduledItem.timeline?.startTime""",
                         /*$1*/ userAccountId, /*$2*/ eventContainingVideos, /*$3*/ KnownItemFamily.TEACHING.getCode(), /*$4*/ KnownItem.VIDEO.getCode(), /*$5*/ event)
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     .inUiThread()
                     .onCacheAndOrSuccess(videoScheduledItems::setAll); // Will trigger the build of the video table.
             }

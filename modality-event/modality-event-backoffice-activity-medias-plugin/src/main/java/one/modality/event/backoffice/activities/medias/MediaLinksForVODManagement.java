@@ -462,7 +462,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 saveButton.setOnAction(e -> {
                     if (validationSupport.isValid()) {
                         localUpdateStore.submitChanges()
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                             .inUiThread()
                             .onSuccess(result -> {
                                 // Notifying the front-office clients of the possible changes made on ScheduledItems.published
@@ -478,7 +478,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 //We submit the changes in the update store to add the child scheduledItem that could have been created
                 if (localUpdateStore.hasChanges()) {
-                    localUpdateStore.submitChanges().onFailure(Console::log)
+                    localUpdateStore.submitChanges().onFailure(Console::error)
                         .onSuccess(Console::log);
                 }
 

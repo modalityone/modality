@@ -41,7 +41,7 @@ public enum OrderStatus {
         Boolean arrived = document.isArrived();
         Integer priceNet = document.getPriceNet();
         if (priceNet == null || priceDeposit == null || priceMinDeposit == null || cancelled == null || confirmed == null || arrived == null) {
-            Console.log("⚠️ Booking status cannot be computed (so returning INCOMPLETE) because some required fields are null: " + document);
+            Console.warn("Booking status cannot be computed (so returning INCOMPLETE) because some required fields are null: " + document);
             return OrderStatus.INCOMPLETE;
         }
         if (priceDeposit < priceMinDeposit)

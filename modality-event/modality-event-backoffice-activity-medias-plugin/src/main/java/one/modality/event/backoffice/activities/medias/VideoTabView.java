@@ -202,7 +202,7 @@ final class VideoTabView {
         saveButton.setOnAction(e -> {
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     //TODO : display a message to say the data has been saved
                     .onSuccess(Console::log);
             }
@@ -285,7 +285,7 @@ final class VideoTabView {
                     currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()),
                 new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = $1 and scheduledItem.item.code = $2 order by id",
                     currentEditedEvent, KnownItem.VIDEO.getCode())
-            ).onFailure(Console::log)
+            ).onFailure(Console::error)
             .inUiThread()
             .onSuccess(entityList -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
@@ -350,7 +350,7 @@ final class VideoTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
-                .onFailure((Console::log))
+                .onFailure((Console::error))
                 .inUiThread()
                 .onSuccess(ignored -> drawContainer());
     }

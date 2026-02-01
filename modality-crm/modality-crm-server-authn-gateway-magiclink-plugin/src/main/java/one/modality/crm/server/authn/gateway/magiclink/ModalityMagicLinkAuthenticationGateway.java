@@ -161,7 +161,7 @@ public final class ModalityMagicLinkAuthenticationGateway implements ServerAuthe
                                 // we mark the magic link as used (to prevent using it again).
                                 return MagicLinkService.markMagicLinkAsUsed(magicLink, usageRunId)
                                     .map(ignored2 -> magicLink.getRequestedPath())
-                                    .onFailure(Console::log)
+                                    .onFailure(Console::error)
                                     .onSuccess(ignored2 -> {
                                         // 6) We also finally push the userId to the original login client here, and
                                         // this should be followed by a later push of the authorizations to that same
