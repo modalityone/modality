@@ -1,3 +1,5 @@
-one.modality.ecommerce.document.service.buscall.LoadPolicyMethodEndpoint
+one.modality.ecommerce.document.service.buscall.FetchEventQueueResultDocumentMethodEndpoint
+one.modality.ecommerce.document.service.buscall.LeaveEventQueueDocumentMethodEndpoint
 one.modality.ecommerce.document.service.buscall.LoadDocumentMethodEndpoint
+one.modality.ecommerce.document.service.buscall.LoadDocumentsMethodEndpoint
 one.modality.ecommerce.document.service.buscall.SubmitDocumentMethodEndpoint

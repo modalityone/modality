@@ -1,21 +1,19 @@
 package one.modality.crm.client.authn.login.ui.gateway.signup;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
+import dev.webfx.extras.validation.ValidationSupport;
+import dev.webfx.platform.console.Console;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginGatewayBase;
 import dev.webfx.stack.authn.login.ui.spi.impl.gateway.UiLoginPortalCallback;
 import dev.webfx.stack.hash.md5.Md5;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.session.state.client.fx.FXUserId;
-import dev.webfx.stack.ui.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.geometry.Insets;
@@ -25,17 +23,19 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
 import one.modality.base.shared.entities.FrontendAccount;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.client.i18n.CrmI18nKeys;
 import one.modality.crm.shared.services.authn.ModalityUserPrincipal;
 
-public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
+/**
+ * @author David Hello
+ */
+public final class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private TextField emailInput;
@@ -110,7 +110,7 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
 
         grid.add(passwordInput, 0, 7);
 
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
         saveButton.setOnAction(event -> {
             errorMessage.setText("");
             errorMessage.setVisible(false);
@@ -134,7 +134,8 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                 person.setFrontendAccount(frontendAccount);
 
                 updateStore.submitChanges()
-                    .onFailure(exception -> Platform.runLater(() -> {
+                    .inUiThread()
+                    .onFailure(exception -> {
                         if (exception.getMessage().contains("ERROR: duplicate key value violates unique constraint \"frontend_account_corporation_id_username\"")) {
                             errorMessage.setText("Your email is already registered in the database. Try to reset the password to access your account");
                             errorMessage.setVisible(true);
@@ -142,14 +143,13 @@ public class ModalitySignupUiLoginGateway extends UiLoginGatewayBase {
                             errorMessage.setText("An error has occurred during the creation. Please try later");
                             errorMessage.setVisible(true);
                         }
-                        System.out.println(exception.getMessage());
+                        Console.error(exception);
                         updateStore.cancelChanges();
-                    }))
-                    .onSuccess(result -> Platform.runLater(() -> {
-                        System.out.println("insert done");
+                    })
+                    .onSuccess(result -> {
                         //We log the user in
                         FXUserId.setUserId(new ModalityUserPrincipal(frontendAccount.getPrimaryKey(), person.getPrimaryKey()));
-                    }));
+                    });
             }
         });
 

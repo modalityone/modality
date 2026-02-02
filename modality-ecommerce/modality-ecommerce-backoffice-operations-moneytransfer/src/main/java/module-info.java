@@ -9,19 +9,19 @@ module modality.ecommerce.backoffice.operations.moneytransfer {
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.web;
-    requires modality.base.backoffice.operations.generic;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.client.util;
     requires modality.base.shared.domainmodel;
     requires modality.base.shared.entities;
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.payment;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.util.layout;
     requires webfx.platform.async;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.ui.dialog;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.moneytransfer;

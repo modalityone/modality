@@ -23,7 +23,19 @@
 
         <dependency>
             <groupId>one.modality</groupId>
+            <artifactId>modality-base-shared-entity-message-sender</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
             <artifactId>modality-ecommerce-document-service</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-ecommerce-document-service-buscall</artifactId>
             <version>1.0.0-SNAPSHOT</version>
         </dependency>
 
@@ -47,19 +59,31 @@
 
         <dependency>
             <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-console</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-platform-scheduler</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
             <artifactId>webfx-platform-util</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-com-serial</artifactId>
+            <artifactId>webfx-stack-com-bus</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>dev.webfx</groupId>
-            <artifactId>webfx-stack-db-query</artifactId>
+            <artifactId>webfx-stack-com-serial</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 
@@ -72,6 +96,18 @@
         <dependency>
             <groupId>dev.webfx</groupId>
             <artifactId>webfx-stack-orm-entity</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-push-server</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.webfx</groupId>
+            <artifactId>webfx-stack-session-state</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

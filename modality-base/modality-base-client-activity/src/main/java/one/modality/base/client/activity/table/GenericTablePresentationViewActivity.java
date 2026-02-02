@@ -1,7 +1,7 @@
 package one.modality.base.client.activity.table;
 
 import dev.webfx.stack.routing.uirouter.activity.presentation.view.impl.PresentationViewActivityImpl;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 
 /**

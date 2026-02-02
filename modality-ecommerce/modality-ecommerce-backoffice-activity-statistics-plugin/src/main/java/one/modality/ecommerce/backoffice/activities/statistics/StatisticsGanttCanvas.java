@@ -146,13 +146,14 @@ final class StatisticsGanttCanvas {
 
     public void startLogic(Object mixin) {
         ReactiveEntitiesMapper.<Attendance>createPushReactiveChain(mixin)
-                .always("{class: 'Attendance', alias: 'a', fields: 'documentLine.item.family,date,count(1) as count', where: 'present and !documentLine.cancelled', groupBy: 'documentLine.item.family,documentLine.item,date'}")
+                .always( // language=JSON5
+                    "{class: 'Attendance', alias: 'a', fields: 'documentLine.item.family,date,count(1) as count', where: 'present and !documentLine.cancelled', groupBy: 'documentLine.item.family,documentLine.item,date'}")
                 .always(orderBy("documentLine.item.family.ord,documentLine.item,date")) // Order is important for TimeBarUtil (see comment on barsLayout)
                 // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=?", o))
+                .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("documentLine.document.event.organization=$1", o))
                 // Restricting events to those appearing in the time window
-                .always(pm.timeWindowStartProperty(), startDate -> where("date >= ?", startDate))
-                .always(pm.timeWindowEndProperty(),   endDate   -> where("date <= ?", endDate))
+                .always(pm.timeWindowStartProperty(), startDate -> where("date >= $1", startDate))
+                .always(pm.timeWindowEndProperty(),   endDate   -> where("date <= $1", endDate))
                 // Storing the result directly in the events layer
                 .storeEntitiesInto(barsLayout.getChildren())
                 // We are now ready to start

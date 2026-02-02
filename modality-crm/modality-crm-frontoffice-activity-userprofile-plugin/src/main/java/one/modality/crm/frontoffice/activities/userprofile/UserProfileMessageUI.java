@@ -1,8 +1,8 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.dialog.DialogCallback;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.util.dialog.DialogCallback;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,6 +12,11 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import static one.modality.crm.frontoffice.activities.userprofile.UserProfileCssSelectors.*;
+
+/**
+ * @author David Hello
+ */
 final class UserProfileMessageUI {
 
     private final VBox container = new VBox();
@@ -30,8 +35,8 @@ final class UserProfileMessageUI {
         VBox.setMargin(closeButton, new Insets(0, 0, 50, 0));
         container.getChildren().setAll(title, infoMessage, closeButton);
         container.setAlignment(Pos.TOP_CENTER);
-        container.getStyleClass().add("user-profile-modal-window");
-        container.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
+        container.getStyleClass().add(user_profile_modal_window);
+        //container.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         container.setSpacing(20);
         container.setOnMouseClicked(Event::consume);
 
@@ -42,13 +47,13 @@ final class UserProfileMessageUI {
         return container;
     }
 
-    public void setInfoMessage(String messageKey,String cssClasses) {
-        I18nControls.bindI18nProperties(infoMessage,messageKey);
+    public void setInfoMessage(Object messageI18nKey, String cssClasses) {
+        I18nControls.bindI18nProperties(infoMessage, messageI18nKey);
         infoMessage.getStyleClass().clear();
         infoMessage.getStyleClass().add(cssClasses);
     }
-    public void setTitle(String titleKey) {
-        I18nControls.bindI18nProperties(title, titleKey);
+    public void setTitle(Object titleI18nKey) {
+        I18nControls.bindI18nProperties(title, titleI18nKey);
     }
 
     public void resetToInitialState() {

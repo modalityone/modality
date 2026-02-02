@@ -7,11 +7,11 @@ module modality.base.frontoffice.activity.alerts.plugin {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires webfx.extras.operation;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.base.frontoffice.activities.alerts;

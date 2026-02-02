@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.MembersRouting$MembersUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.ApproveInvitationRouting$ApproveInvitationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.members.DeclineInvitationRouting$DeclineInvitationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.members.MembersRouting$RouteToMembersRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.crm.frontoffice.activities.members" prefix="Members">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

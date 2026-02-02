@@ -1,19 +1,26 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.extras.filepicker.FilePicker;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
-import dev.webfx.extras.theme.Facet;
 import dev.webfx.extras.theme.shape.ShapeTheme;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.time.pickers.DatePicker;
 import dev.webfx.extras.time.pickers.DatePickerOptions;
 import dev.webfx.extras.util.control.Controls;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.extras.webtext.HtmlText;
 import dev.webfx.extras.webtext.HtmlTextEditor;
@@ -21,22 +28,12 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import dev.webfx.stack.ui.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
@@ -65,14 +62,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.text.Text;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.icons.SvgIcons;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
 import one.modality.base.shared.entities.*;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
 
@@ -91,6 +89,7 @@ import java.util.stream.Collectors;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.BASIC;
 import static dev.webfx.extras.webtext.HtmlTextEditor.Mode.STANDARD;
 import static one.modality.base.client.time.BackOfficeTimeFormats.*;
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
 
 /**
  * @author David Hello
@@ -100,14 +99,16 @@ final class ManageRecurringEventView {
     private static final double EVENT_IMAGE_WIDTH = 200;
     private static final double EVENT_IMAGE_HEIGHT = 200;
 
-    private static final String EVENT_COLUMNS = "[" +
-        "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-        "{expression: 'advertised', label: 'Advertised'}," +
-        "{expression: 'name', label: 'Name'}," +
-        "{expression: 'type', label: 'TypeOfEvent'}," +
-        "{expression: 'venue.name', label: 'Location'}," +
-        "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
-        "]";
+    private static final String EVENT_COLUMNS = // language=JSON5
+        """
+            [
+                {expression: 'state', label: 'Status', renderer: 'eventStateRenderer'},
+                {expression: 'advertised', label: 'Advertised'},
+                {expression: 'name', label: 'Name'},
+                {expression: 'type', label: 'TypeOfEvent'},
+                {expression: 'venue.name', label: 'Location'},
+                {expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}
+            ]""";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -116,8 +117,7 @@ final class ManageRecurringEventView {
     private final HtmlTextEditor shortDescriptionHtmlEditor = new HtmlTextEditor();
     private final HtmlTextEditor descriptionHtmlEditor = new HtmlTextEditor();
     private final TextField timeOfTheEventTextField = I18nControls.bindI18nProperties(new TextField(), RecurringEventsI18nKeys.TimeOfTheEvent);
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private List<ScheduledItem> teachingsScheduledItemsReadFromDatabase = new ArrayList<>();
     private List<ScheduledItem> audioScheduledItemsReadFromDatabase = new ArrayList<>();
     private List<ScheduledItem> videoScheduledItemsReadFromDatabase = new ArrayList<>();
@@ -245,10 +245,10 @@ final class ManageRecurringEventView {
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
             validationSupport.addRequiredInput(nameOfEventTextField);
-            validationSupport.addValidationRule(FXProperties.compute(timeOfTheEventTextField.textProperty(), s1 -> isLocalTimeTextValid(timeOfTheEventTextField.getText())), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
-            validationSupport.addValidationRule(FXProperties.compute(durationTextField.textProperty(), s -> isIntegerValid(durationTextField.getText())), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
+            validationSupport.addValidationRule(timeOfTheEventTextField.textProperty().map(ManageRecurringEventView::isLocalTimeTextValid), timeOfTheEventTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+            validationSupport.addValidationRule(durationTextField.textProperty().map(ManageRecurringEventView::isIntegerValid), durationTextField, I18n.i18nTextProperty("ValidationDurationIncorrect")); // ???
             validationSupport.addValidationRule(isTeachingsWorkingScheduledItemEmpty.not(), datesOfTheEventLabel, I18n.i18nTextProperty(RecurringEventsI18nKeys.ValidationSelectOneDate));
-            validationSupport.addValidationRule(FXProperties.compute(externalLinkTextField.textProperty(), s1 -> isValidUrl(externalLinkTextField.getText())), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
+            validationSupport.addValidationRule(externalLinkTextField.textProperty().map(ManageRecurringEventView::isValidUrl), externalLinkTextField, I18n.i18nTextProperty("ValidationUrlIncorrect")); // ???
         }
     }
 
@@ -263,8 +263,9 @@ final class ManageRecurringEventView {
         RecurringEventRenderers.registerRenderers();
 
         eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
-            .always("{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
-            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
+            .always( // language=JSON5
+                "{class: 'Event', alias: 'e', fields: 'type.recurringItem, recurringWithAudio, recurringWithVideo, (select site.name from Timeline where event=e limit 1) as location'}")
+            .always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o))
             .always(DqlStatement.where("type.recurringItem!=null and kbs3"))
             .setEntityColumns(EVENT_COLUMNS)
             .setStore(entityStore)
@@ -274,6 +275,21 @@ final class ManageRecurringEventView {
             .addEntitiesHandler(entityList -> Console.log("Reactive visual Mapper loaded"))
             .start();
 
+        //We need initialize the audio and video Item Id.
+        entityStore.executeQueryBatch(
+                //Index 0: the video Item (we should have exactly 1)
+                new EntityStoreQuery("select Item where family=$1 and organization=$2", KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
+                //Index 1: the audio Item (we should have exactly one that has the same language as the default language of the organization)
+                new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language", KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
+            .onFailure(Console::error)
+            .inUiThread()
+            .onSuccess(entityLists -> {
+                    EntityList<Item> videoItems = entityLists[0];
+                    EntityList<Item> audioItems = entityLists[1];
+                    if (!videoItems.isEmpty()) videoItemId = Entities.getPrimaryKey(videoItems.get(0));
+                    if (!audioItems.isEmpty()) audioItemId = Entities.getPrimaryKey(audioItems.get(0));
+
+                });
         /*
         We create a booleanBinding that will be used by the submit and draft button if either the updateStoreChanged, or the pictures needs to be uploaded
         or deleted
@@ -319,18 +335,22 @@ final class ManageRecurringEventView {
         eventDetailsVBox.setManaged(true);
 
         currentMode.set(EDIT_MODE);
-        //We execute the query in batch, otherwise we can have synchronisation problem between the different threads
+        //We execute the query in batch, otherwise we can have a synchronisation problem between the different threads
         entityStore.executeQueryBatch(
-                // Index 0: the  scheduledItem
-                new EntityStoreQuery("select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance " +
-                    " where scheduledItem=si limit 1) as attendance " +
-                    " from ScheduledItem si where event=?", new Object[]{e}),
+                // Index 0: the scheduledItem
+                new EntityStoreQuery("""
+                    select item,date,startTime, site, programScheduledItem, bookableScheduledItem, endTime, cancelled, event.(openingDate, shortDescription, description, state, advertised, kbs3, type.recurringItem, externalLink, venue.name), (select id from Attendance \
+                     where scheduledItem=si limit 1) as attendance \
+                     from ScheduledItem si where event=$1""", e),
                 //Index 1: the video Item (we should have exactly 1)
-                new EntityStoreQuery("select Item where family=? and organization=?", new Object[]{KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()}),
+                new EntityStoreQuery("select Item where family=$1 and organization=$2",
+                    KnownItemFamily.VIDEO.getPrimaryKey(), FXOrganization.getOrganization()),
                 //Index 2: the audio Item (we should have exactly one that has the same language as the default language of the organization)
-                new EntityStoreQuery("select Item where family=? and organization=? and language=organization.language", new Object[]{KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()}))
-            .onFailure(Console::log)
-            .onSuccess(entityLists -> Platform.runLater(() -> {
+                new EntityStoreQuery("select Item where family=$1 and organization=$2 and language=organization.language",
+                    KnownItemFamily.AUDIO_RECORDING.getPrimaryKey(), FXOrganization.getOrganization()))
+            .onFailure(Console::error)
+            .inUiThread()
+            .onSuccess(entityLists -> {
                 EntityList<ScheduledItem> scheduledItems = entityLists[0];
                 EntityList<Item> videoItems = entityLists[1];
                 EntityList<Item> audioItems = entityLists[2];
@@ -462,7 +482,7 @@ final class ManageRecurringEventView {
                 }
                 currentObservedEvent = currentEditedEvent;
                 bindButtons();
-            }));
+            });
     }
 
     private void bindButtons() {
@@ -510,11 +530,11 @@ final class ManageRecurringEventView {
     }
 
     private void loadEventImageIfExists() {
-        String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+        String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
         if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
             return;
-        ModalityCloudinary.loadImage(cloudImagePath, eventImageContainer, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, () -> null)
-                .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
+        ModalityCloudImageService.loadHdpiImage(cloudImagePath, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, eventImageContainer, () -> null)
+            .onComplete(ar -> isPictureDisplayed.setValue(eventImageContainer.getContent() != null));
     }
 
 
@@ -530,8 +550,8 @@ final class ManageRecurringEventView {
 
     public void uploadCloudPictureIfNecessary(String cloudImagePath) {
         if (isCloudPictureToBeUploaded.getValue()) {
-            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
-                .onFailure(Console::log)
+            ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     isCloudPictureToBeUploaded.set(false);
                     recentlyUploadedCloudPictureId = cloudImagePath;
@@ -544,8 +564,8 @@ final class ManageRecurringEventView {
         if (isCloudPictureToBeDeleted.getValue()) {
             //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
             //to this assets
-            ModalityCloudinary.deleteImage(cloudImagePath)
-                .onFailure(Console::log)
+            ModalityCloudImageService.deleteImage(cloudImagePath)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     isCloudPictureToBeDeleted.set(false);
                     if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
@@ -562,7 +582,7 @@ final class ManageRecurringEventView {
      */
     public Node buildContainer() {
         BorderPane mainFrame = new BorderPane();
-        mainFrame.getStyleClass().add("recurring-event");
+        mainFrame.getStyleClass().add(recurring_event);
         //Displaying The title of the frame
         Label title = I18nControls.newLabel(RecurringEventsI18nKeys.EventTitle);
         title.setPadding(new Insets(30));
@@ -588,9 +608,10 @@ final class ManageRecurringEventView {
             eventDetailsVBox.setManaged(true);
             currentEditedEvent = updateStore.insertEntity(Event.class);
             currentObservedEvent = currentEditedEvent;
-            entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=?", FXOrganization.getOrganization())
-                .onFailure(Console::log)
-                .onSuccess(e -> Platform.runLater(() -> {
+            entityStore.executeQuery("select recurringItem, organization from EventType where recurringItem!=null and organization=$1", FXOrganization.getOrganization())
+                .onFailure(Console::error)
+                .inUiThread()
+                .onSuccess(e -> {
                     //TODO: if there is several type of recurring EventType for an organization, create an UI that allow to select which one we choose.
                     EventType eventType = (EventType) e.get(0);
                     recurringItem = eventType.getRecurringItem();
@@ -603,13 +624,13 @@ final class ManageRecurringEventView {
                     currentEditedEvent.setAdvertised(false);
                     currentMode.set(ADD_MODE);
                     I18nControls.bindI18nTextProperty(titleEventDetailsLabel, RecurringEventsI18nKeys.EventDetailsTitle);
-                    siteSelector = new EntityButtonSelector<Site>(
+                    siteSelector = new EntityButtonSelector<Site>( // language=JSON5
                         "{class: 'Site', alias: 's', where: 'event=null', orderBy :'name'}",
-                        activity, eventDetailsVBox, dataSourceModel
+                        activity, eventDetailsVBox, DataSourceModelService.getDefaultDataSourceModel()
                     ) { // Overriding the button content to add the possibility of Adding a new site prefix text
                         private final BorderPane bp = new BorderPane();
                         final TextField searchTextField = super.getSearchTextField();
-                        private final UpdateStore updateStoreForSite = UpdateStore.create(DataSourceModelService.getDefaultDataSourceModel());
+                        private final UpdateStore updateStoreForSite = UpdateStore.create();
 
                         final Text addSiteText = I18n.newText(RecurringEventsI18nKeys.AddNewLocation);
                         final MonoPane addSitePane = new MonoPane(addSiteText);
@@ -623,22 +644,23 @@ final class ManageRecurringEventView {
                             addSitePane.setOnMousePressed(event -> {
                                 Site site = updateStoreForSite.insertEntity(Site.class);
                                 site.setName(searchTextField.getText());
-                                site.setForeignField("organization", FXOrganization.getOrganization());
-                                site.setFieldValue("asksForPassport", false);
+                                site.setOrganization(FXOrganization.getOrganization());
+                                site.setItemFamily(KnownItemFamily.TEACHING.getPrimaryKey());
+                                site.setMain(true);
                                 site.setFieldValue("online", false);
-                                site.setFieldValue("hideDates", true);
                                 site.setFieldValue("forceSoldout", false);
-                                site.setFieldValue("main", true);
-                                site.setFieldValue("itemFamily", KnownItemFamily.TEACHING.getPrimaryKey());
+                                site.setFieldValue("hideDates", true);
+                                site.setFieldValue("asksForPassport", false);
                                 //We had in the database the site now (otherwise too complicated to manage with the actual components)
-                                updateStoreForSite.submitChanges().onSuccess((batch -> Platform.runLater(() -> {
-                                        Object newSiteId = batch.getArray()[0].getGeneratedKeys()[0];
+                                updateStoreForSite.submitChanges()
+                                    .inUiThread()
+                                    .onSuccess((result -> {
+                                        Object newSiteId = result.getGeneratedKey();
                                         Site newSite = updateStoreForSite.createEntity(Site.class, newSiteId);
                                         //The createEntity doesn't load the name, so we need to set it up manually
                                         newSite.setName(site.getName());
                                         setSelectedItem(newSite);
-                                    }
-                                )));
+                                    }));
                             });
                         }
 
@@ -667,14 +689,14 @@ final class ManageRecurringEventView {
                             }, searchTextField.textProperty());
                             return super.getOrCreateButtonContentFromSelectedItem();
                         }
-                    }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o)).autoSelectFirstEntity();
+                    }.always(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o)).autoSelectFirstEntity();
                     siteSelector.selectedItemProperty().addListener(observable -> {
                         eventSite = siteSelector.getSelectedItem();
                         currentEditedEvent.setVenue(eventSite);
                         teachingsWorkingScheduledItems.forEach(si -> si.setSite(eventSite));
                     });
                     locationHBox.getChildren().setAll(siteLabel, siteSelector.getButton());
-                }));
+                });
         })));
 
         titleEventDetailsLabel = I18nControls.newLabel(RecurringEventsI18nKeys.EventDetailsTitle);
@@ -695,7 +717,8 @@ final class ManageRecurringEventView {
                     teachingsScheduledItemsReadFromDatabase.forEach(updateStore::deleteEntity);
                     updateStore.deleteEntity(currentEditedEvent);
                     return updateStore.submitChanges()
-                        .onFailure(x -> Platform.runLater(() -> {
+                        .inUiThread()
+                        .onFailure(x -> {
                             areWeDeleting = false;
                             Text infoText = I18n.newText(RecurringEventsI18nKeys.ErrorWhileDeletingEvent);
                             Bootstrap.textSuccess(Bootstrap.strong(Bootstrap.h3(infoText)));
@@ -706,18 +729,18 @@ final class ManageRecurringEventView {
                             errorDialog.setCenter(deleteErrorTest);
                             BorderPane.setAlignment(deleteErrorTest, Pos.CENTER);
                             BorderPane.setMargin(deleteErrorTest, new Insets(30, 0, 30, 0));
-                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.newButton(ModalityI18nKeys.Ok));
+                            Button okErrorButton = Bootstrap.largeDangerButton(I18nControls.newButton(BaseI18nKeys.Ok));
 
                             DialogCallback errorMessageCallback = DialogUtil.showModalNodeInGoldLayout(errorDialog, FXMainFrameDialogArea.getDialogArea());
                             okErrorButton.setOnAction(m -> errorMessageCallback.closeDialog());
                             errorDialog.setBottom(okErrorButton);
                             BorderPane.setAlignment(okErrorButton, Pos.CENTER);
-                        }))
-                        .onSuccess(x -> Platform.runLater(() -> {
-                            String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                        })
+                        .onSuccess(x -> {
+                            String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                             deleteCloudPictureIfNecessary(cloudImagePath);
                             uploadCloudPictureIfNecessary(cloudImagePath);
-                        }));
+                        });
                 });
             }
         });
@@ -797,15 +820,28 @@ final class ManageRecurringEventView {
         ShapeTheme.createPrimaryShapeFacet(uploadSVGPath).style();
         uploadButton.setGraphic(uploadSVGPath);
         FilePicker filePicker = FilePicker.create();
-        filePicker.getAcceptedExtensions().addAll("image/*");
+        filePicker.getAcceptedExtensions().addAll("image/*", ".webp", "image/webp");
         filePicker.setGraphic(uploadButton);
         filePicker.getSelectedFiles().addListener((InvalidationListener) obs -> {
             ObservableList<File> fileList = filePicker.getSelectedFiles();
-            cloudPictureFileToUpload = fileList.get(0);
-            Image imageToDisplay = new Image(cloudPictureFileToUpload.getObjectURL());
-            isCloudPictureToBeUploaded.setValue(true);
-            eventImageContainer.setContent(new ImageView(imageToDisplay));
-            isPictureDisplayed.setValue(true);
+            File selectedFile = fileList.get(0);
+            // Load the image from the uploaded file
+            Image originalImage = new Image(selectedFile.getObjectURL(), true);
+            FXProperties.runOnPropertiesChange(property -> {
+                if (originalImage.progressProperty().get() == 1) {
+                    // Convert the image to PNG format before uploading
+                    ModalityCloudImageService.prepareImageForUpload(originalImage, false, 1, 0, 0, EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT)
+                        .onFailure(e -> Console.log("Failed to prepare image for upload: " + e))
+                        .onSuccess(pngBlob -> {
+                            // Store the PNG blob for upload (cast Blob to File as expected by cloudPictureFileToUpload)
+                            cloudPictureFileToUpload = (File) pngBlob;
+                            isCloudPictureToBeUploaded.setValue(true);
+                            // Display the original image
+                            eventImageContainer.setContent(new ImageView(originalImage));
+                            isPictureDisplayed.setValue(true);
+                        });
+                }
+            }, originalImage.progressProperty());
         });
 
         Label uploadButtonDescription = Bootstrap.small(I18nControls.newLabel(RecurringEventsI18nKeys.SelectYourFile));
@@ -864,7 +900,7 @@ final class ManageRecurringEventView {
         HBox line1 = new HBox(timeOfEventLabel, timeOfTheEventTextField, durationLabel, durationTextField);
         line1.setAlignment(Pos.CENTER_LEFT);
         line1.setPadding(new Insets(0, 0, 20, 0));
-        datesOfTheEventLabel = I18nControls.newLabel(ModalityI18nKeys.Dates);
+        datesOfTheEventLabel = I18nControls.newLabel(BaseI18nKeys.Dates);
         datesOfTheEventLabel.setPadding(new Insets(0, 0, 5, 0));
         calendarPane = new EventCalendarPane();
         calendarPane.getDatePicker().getSelectedDates().addListener(onChangeDateListener);
@@ -905,13 +941,13 @@ final class ManageRecurringEventView {
         line5.setPadding(new Insets(20, 0, 0, 0));
         line5.setAlignment(Pos.CENTER_LEFT);
 
-        Label audioCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.AudioCorrespondanceProgram);
+        Label audioCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.AudioCorrespondenceProgram);
         audioCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 0));
         audioCorrespondanceProgramLabel.setPrefWidth(labelWidth + 50);
         audioCorrespondanceProgramSwitch = new Switch();
         audioCorrespondanceProgramSwitch.selectedProperty().addListener(obs -> currentEditedEvent.setRecurringWithAudio(audioCorrespondanceProgramSwitch.selectedProperty().get()));
 
-        Label videoCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.VideoCorrespondanceProgram);
+        Label videoCorrespondanceProgramLabel = I18nControls.newLabel(RecurringEventsI18nKeys.VideoCorrespondenceProgram);
         videoCorrespondanceProgramLabel.setPadding(new Insets(0, 20, 0, 40));
         videoCorrespondanceProgramLabel.setPrefWidth(labelWidth + 60);
         videoCorrespondanceProgramSwitch = new Switch();
@@ -942,7 +978,7 @@ final class ManageRecurringEventView {
 
         cancelButton = Bootstrap.largeSecondaryButton(I18nControls.newButton(RecurringEventsI18nKeys.CancelButton));
         cancelButton.setOnAction(e -> displayEventDetails(currentEditedEvent));
-        cancelButton.disableProperty().bind(FXProperties.compute(currentMode, mode -> mode.intValue() == ADD_MODE));
+        cancelButton.disableProperty().bind(currentMode.map(mode -> mode.intValue() == ADD_MODE));
 
         saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(RecurringEventsI18nKeys.SaveButton));
         saveButton.setOnAction(event -> {
@@ -1059,19 +1095,18 @@ final class ManageRecurringEventView {
         // Unbinding buttons, so they can be displayed as disabled during the process
         saveButton.disableProperty().unbind();
         cancelButton.disableProperty().unbind();
-        OperationUtil.turnOnButtonsWaitModeDuringExecution(
+        AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
             updateStore.submitChanges()
-                .onFailure(x -> {
-                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", x.getMessage());
+                .inUiThread()
+                .onFailure(ex -> {
+                    DialogContent dialog = DialogContent.createConfirmationDialog("Error", "Operation failed", ex.getMessage());
                     dialog.setOk();
-                    Platform.runLater(() -> {
-                        DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
-                        dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
-                    });
-                    Console.log(x);
+                    DialogBuilderUtil.showModalNodeInGoldLayout(dialog, FXMainFrameDialogArea.getDialogArea());
+                    dialog.getPrimaryButton().setOnAction(a -> dialog.getDialogCallback().closeDialog());
+                    Console.error(ex);
                 })
-                .onSuccess(x -> Platform.runLater(() -> {
-                    String cloudImagePath = ModalityCloudinary.eventImagePath(currentEditedEvent);
+                .onSuccess(x -> {
+                    String cloudImagePath = ModalityCloudImageService.eventImagePath(currentEditedEvent);
                     deleteCloudPictureIfNecessary(cloudImagePath);
                     uploadCloudPictureIfNecessary(cloudImagePath);
                     isCloudPictureToBeDeleted.setValue(false);
@@ -1079,9 +1114,9 @@ final class ManageRecurringEventView {
                     cloudPictureFileToUpload = null;
                     eventVisualMapper.requestSelectedEntity(currentEditedEvent);
                     // displayEventDetails(currentEditedEvent);
-                }))
+                })
                 // Reestablishing buttons binding
-                .onComplete(ar -> Platform.runLater(this::bindButtons))
+                .onComplete(ar -> bindButtons())
             , saveButton, cancelButton);
     }
 
@@ -1205,16 +1240,40 @@ final class ManageRecurringEventView {
             Text dateText = new Text();
             dateText.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, RECURRING_EVENT_SCHEDULED_ITEM_DATE_FORMAT));
 
-            SVGPath trashDate = SvgIcons.createTrashSVGPath();
-            Facet facet = ShapeTheme.createSecondaryShapeFacet(trashDate).style();
-
             TextField currentScheduleItemStartTime = new TextField();
 
+            // Create a container for the left icon (either trash or cancel button)
+            MonoPane leftIconContainer = new MonoPane();
+            leftIconContainer.setMinSize(20, 20); // Set minimum size for easier clicking
+
             if (scheduledItem.getFieldValue("attendance") == null) {
+                // No attendance - show trash button
+                SVGPath trashDate = SvgIcons.createTrashSVGPath();
+                ShapeTheme.createSecondaryShapeFacet(trashDate).style();
                 SvgIcons.armButton(trashDate, () -> datePicker.getSelectedDates().remove(date));
+                leftIconContainer.setContent(trashDate);
             } else {
-                facet.setDisabled(true);
+                // Has attendance - show cancel/uncancel button instead
                 currentScheduleItemStartTime.setDisable(true);
+
+                // Create cancel/uncancel button using a red cross icon
+                SVGPath cancelIcon = SvgIcons.createRedCross();
+
+                // Initialize the icon state based on current cancelled status
+                Boolean cancelledValue = scheduledItem.isCancelled();
+                boolean isCancelled = Boolean.TRUE.equals(cancelledValue);
+                updateCancelIconAppearance(cancelIcon, isCancelled);
+
+                // Add click handler to toggle cancelled status
+                SvgIcons.armButton(cancelIcon, () -> {
+                    Boolean currentCancelledValue = scheduledItem.isCancelled();
+                    boolean currentCancelledState = Boolean.TRUE.equals(currentCancelledValue);
+                    boolean newCancelledState = !currentCancelledState;
+                    scheduledItem.setCancelled(newCancelledState);
+                    updateCancelIconAppearance(cancelIcon, newCancelledState);
+                });
+
+                leftIconContainer.setContent(cancelIcon);
             }
 
             //We add a listener to update the value of the scheduled item when the text field is changed
@@ -1243,7 +1302,8 @@ final class ManageRecurringEventView {
             }
             BorderPane currentLineBorderPane = new BorderPane();
             BorderPane.setMargin(dateText, new Insets(0, 20, 0, 10));
-            currentLineBorderPane.setLeft(trashDate);
+
+            currentLineBorderPane.setLeft(leftIconContainer);
             currentLineBorderPane.setCenter(dateText);
             currentLineBorderPane.setRight(currentScheduleItemStartTime);
             currentLineBorderPane.setPadding(new Insets(0, 0, 3, 0));
@@ -1275,6 +1335,25 @@ final class ManageRecurringEventView {
             return super.computePrefHeight(width) + 10;
         }
 
+    }
+
+    /**
+     * Updates the visual appearance of the cancel icon based on the cancelled state.
+     * When cancelled, the icon appears red. When not cancelled, it appears gray with reduced opacity.
+     *
+     * @param cancelIcon the SVGPath icon to update
+     * @param isCancelled whether the scheduled item is cancelled
+     */
+    private void updateCancelIconAppearance(SVGPath cancelIcon, boolean isCancelled) {
+        if (isCancelled) {
+            // Show red cross for cancelled state
+            cancelIcon.setStroke(Color.RED);
+            cancelIcon.setOpacity(1.0);
+        } else {
+            // Show gray cross with reduced opacity for normal state (indicates it can be clicked to cancel)
+            cancelIcon.setStroke(Color.GRAY);
+            cancelIcon.setOpacity(0.5);
+        }
     }
 
     /**

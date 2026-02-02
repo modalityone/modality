@@ -1,5 +1,6 @@
 package one.modality.base.client.application;
 
+import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.scene.SceneUtil;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.scene.DeviceSceneUtil;
@@ -8,9 +9,7 @@ import dev.webfx.stack.orm.domainmodel.activity.viewdomain.ViewDomainActivityCon
 import dev.webfx.stack.routing.activity.ActivityManager;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -34,16 +33,16 @@ public class ModalityClientApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        // On desktops, we open a window with width = 80% screen width & height = 90% screen height
+        // On desktops, we open a window with width = 80% screen width and height = 90% screen height
         Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
         double width = screenVisualBounds.getWidth() * 0.8;
         double height = screenVisualBounds.getHeight() * 0.9;
-        // We first create a scene with a dummy root (waiting for the ui router to start)
-        Scene scene = DeviceSceneUtil.newScene(new BorderPane(), width, height);
-        // When the ui router will start, it will set modalityClientStarterActivity.nodeProperty()
+        // We first create a scene with an initial spinner (waiting for the ui router to start)
+        Scene scene = DeviceSceneUtil.newScene(Controls.createPageSizeSpinner(), width, height);
+        // When the ui router starts, it will set modalityClientStarterActivity.nodeProperty()
         FXProperties.onPropertySet(modalityClientStarterActivity.nodeProperty(), node -> {
             // From that moment on, we bind the scene root to the ui router activity node
-            scene.rootProperty().bind(FXProperties.compute(modalityClientStarterActivity.nodeProperty(), n -> (Parent) n));
+            scene.rootProperty().bind(modalityClientStarterActivity.nodeProperty().map(n -> n));
         });
         // Activating focus owner auto scroll
         SceneUtil.installSceneFocusOwnerAutoScroll(scene);

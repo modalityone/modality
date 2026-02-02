@@ -13,20 +13,22 @@
     </dependencies>
 
     <providers>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.settings.AccountSettingsUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyUiRoute</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.AccountRouting$AccountUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationRouting$AccountPersonalInformationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.settings.AccountSettingsRouting$AccountSettingsUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyRouting$AccountFriendsAndFamilyUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditRouting$AccountFriendsAndFamilyEditUiRoute</provider>
 
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.RouteToAccountRequestEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.settings.RouteToAccountSettingsRequestEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.personalinfo.RouteToAccountPersonalInformationEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.RouteToAccountFriendsAndFamilyEmitter</provider>
-        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.edit.RouteToAccountFriendsAndFamilyEditEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.AccountRouting$RouteToAccountRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.settings.AccountSettingsRouting$RouteToAccountSettingsRequestEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.personalinfo.AccountPersonalInformationRouting$RouteToAccountPersonalInformationEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.AccountFriendsAndFamilyRouting$RouteToAccountFriendsAndFamilyEmitter</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.base.frontoffice.activities.account.friendsfamily.edit.AccountFriendsAndFamilyEditRouting$RouteToAccountFriendsAndFamilyEditEmitter</provider>
 
     </providers>
 
-    <i18n javaKeysClass="one.modality.base.frontoffice.activities.account.AccountI18nKeys"/>
+    <java-ui-api package="one.modality.base.frontoffice.activities.account" prefix="Account">
+        <i18n/>
+    </java-ui-api>
 
 </project>

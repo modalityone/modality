@@ -4,7 +4,7 @@
     <description>Define a generic Modality JavaFX application (common code to the back-office and front-office).</description>
 
     <properties>
-        <show-loading-spinner-on-startup>true</show-loading-spinner-on-startup>
+        <show-loading-spinner-on-startup>false</show-loading-spinner-on-startup>
     </properties>
 
     <exported-packages>

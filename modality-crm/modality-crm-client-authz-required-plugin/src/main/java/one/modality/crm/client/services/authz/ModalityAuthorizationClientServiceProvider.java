@@ -21,8 +21,8 @@ public final class ModalityAuthorizationClientServiceProvider extends Authorizat
     }
 
     @Override
-    protected UserAuthorizationChecker createUserAuthorizationChecker() {
-        return new ModalityInMemoryUserAuthorizationChecker(dataSourceModel);
+    protected UserAuthorizationChecker createUserAuthorizationChecker(Object userId) {
+        return new ModalityInMemoryUserAuthorizationChecker(userId);
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class ModalityAuthorizationClientServiceProvider extends Authorizat
         //FXUserPrincipal.setUserPrincipal(FXUserId.getUserId());
         ModalityInMemoryUserAuthorizationChecker checker = (ModalityInMemoryUserAuthorizationChecker)
                 getOrCreateUserAuthorizationChecker();
-        checker.onAuthorizationPush(pushObject);
+        checker.onAuthorizationPush(pushObject, true);
         return null;
     }
 }

@@ -16,12 +16,16 @@ public interface Rate extends
 
     String startDate = "startDate";
     String endDate = "endDate";
+    String onDate = "onDate";
+    String offDate = "offDate";
     String minDay = "minDay";
     String maxDay = "maxDay";
     String perDay = "perDay";
     String perPerson = "perPerson";
     String price = "price";
     String minDeposit = "minDeposit";
+    String cutoffDate = "cutoffDate";
+    String minDeposit2 = "minDeposit2";
     String age1_max = "age1_max";
     String age1_price = "age1_price";
     String age1_discount = "age1_discount";
@@ -62,6 +66,22 @@ public interface Rate extends
 
     default LocalDate getEndDate() {
         return getLocalDateFieldValue(endDate);
+    }
+
+    default void setOnDate(LocalDate value) {
+        setFieldValue(onDate, value);
+    }
+
+    default LocalDate getOnDate() {
+        return getLocalDateFieldValue(onDate);
+    }
+
+    default void setOffDate(LocalDate value) {
+        setFieldValue(offDate, value);
+    }
+
+    default LocalDate getOffDate() {
+        return getLocalDateFieldValue(offDate);
     }
 
     default void setMinDay(Integer value) {
@@ -110,6 +130,22 @@ public interface Rate extends
 
     default Integer getMinDeposit() {
         return getIntegerFieldValue(minDeposit);
+    }
+
+    default void setCutoffDate(Object value) {
+        setFieldValue(cutoffDate, value);
+    }
+
+    default LocalDate getCutoffDate() {
+        return getLocalDateFieldValue(cutoffDate);
+    }
+
+    default void setMinDeposit2(Object value) {
+        setFieldValue(minDeposit2, value);
+    }
+
+    default Integer getMinDeposit2() {
+        return getIntegerFieldValue(minDeposit2);
     }
 
     default void setAge1Max(Integer value) {

@@ -2,7 +2,7 @@ package one.modality.ecommerce.backoffice.operations.entities.document.cart;
 
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Document;
-import dev.webfx.stack.ui.controls.alert.AlertUtil;
+import dev.webfx.extras.util.alert.AlertUtil;
 import dev.webfx.kit.launcher.WebFxKitLauncher;
 import dev.webfx.platform.async.Future;
 

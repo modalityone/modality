@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <module transitive="true">modality-ecommerce-payment</module>
+            <module transitive="true">modality-base-shared-entities</module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <java-ui-api package="one.modality.booking.frontoffice.bookingform" prefix="BookingForm">
+        <i18n/>
+    </java-ui-api>
+
+</project>

@@ -1,0 +1,87 @@
+// File managed by WebFX (DO NOT EDIT MANUALLY)
+
+module modality.booking.frontoffice.bookingpage {
+
+    // Direct dependencies modules
+    requires javafx.base;
+    requires javafx.controls;
+    requires javafx.graphics;
+    requires modality.base.client.cloud.image;
+    requires modality.base.client.entities;
+    requires modality.base.client.error;
+    requires modality.base.client.i18n;
+    requires modality.base.client.icons;
+    requires modality.base.client.mainframe.fx;
+    requires modality.base.client.time;
+    requires modality.base.shared.domainmodel;
+    requires modality.base.shared.entities;
+    requires modality.base.shared.knownitems;
+    requires modality.booking.client.workingbooking;
+    requires modality.booking.frontoffice.bookingelements;
+    requires modality.booking.frontoffice.bookingform;
+    requires modality.crm.client.authn.fx;
+    requires modality.crm.shared.authn;
+    requires modality.ecommerce.document.service;
+    requires modality.ecommerce.payment;
+    requires modality.ecommerce.payment.client;
+    requires modality.ecommerce.policy.service;
+    requires modality.ecommerce.shared.pricecalculator;
+    requires modality.event.frontoffice.activity.book;
+    requires webfx.extras.aria;
+    requires webfx.extras.async;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.operation;
+    requires webfx.extras.panes;
+    requires webfx.extras.responsive;
+    requires webfx.extras.styles.bootstrap;
+    requires webfx.extras.util.control;
+    requires webfx.extras.util.dialog;
+    requires webfx.extras.util.layout;
+    requires webfx.extras.validation;
+    requires webfx.extras.webtext;
+    requires webfx.kit.util;
+    requires webfx.platform.async;
+    requires webfx.platform.browser;
+    requires webfx.platform.conf;
+    requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
+    requires webfx.platform.visibility;
+    requires webfx.platform.windowhistory;
+    requires webfx.platform.windowlocation;
+    requires webfx.stack.authn;
+    requires webfx.stack.authn.logout.client;
+    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.stack.orm.entity;
+    requires webfx.stack.session.state.client.fx;
+
+    // Exported packages
+    exports one.modality.booking.frontoffice.bookingpage;
+    exports one.modality.booking.frontoffice.bookingpage.cart;
+    exports one.modality.booking.frontoffice.bookingpage.components;
+    exports one.modality.booking.frontoffice.bookingpage.components.price;
+    exports one.modality.booking.frontoffice.bookingpage.navigation;
+    exports one.modality.booking.frontoffice.bookingpage.pages.countdown;
+    exports one.modality.booking.frontoffice.bookingpage.pages.offline;
+    exports one.modality.booking.frontoffice.bookingpage.sections.accommodation;
+    exports one.modality.booking.frontoffice.bookingpage.sections.audio;
+    exports one.modality.booking.frontoffice.bookingpage.sections.confirmation;
+    exports one.modality.booking.frontoffice.bookingpage.sections.dates;
+    exports one.modality.booking.frontoffice.bookingpage.sections.existing;
+    exports one.modality.booking.frontoffice.bookingpage.sections.generalprogram;
+    exports one.modality.booking.frontoffice.bookingpage.sections.meals;
+    exports one.modality.booking.frontoffice.bookingpage.sections.member;
+    exports one.modality.booking.frontoffice.bookingpage.sections.options;
+    exports one.modality.booking.frontoffice.bookingpage.sections.payment;
+    exports one.modality.booking.frontoffice.bookingpage.sections.prerequisite;
+    exports one.modality.booking.frontoffice.bookingpage.sections.queue;
+    exports one.modality.booking.frontoffice.bookingpage.sections.roommate;
+    exports one.modality.booking.frontoffice.bookingpage.sections.summary;
+    exports one.modality.booking.frontoffice.bookingpage.sections.transport;
+    exports one.modality.booking.frontoffice.bookingpage.sections.user;
+    exports one.modality.booking.frontoffice.bookingpage.standard;
+    exports one.modality.booking.frontoffice.bookingpage.theme;
+    exports one.modality.booking.frontoffice.bookingpage.util;
+
+}

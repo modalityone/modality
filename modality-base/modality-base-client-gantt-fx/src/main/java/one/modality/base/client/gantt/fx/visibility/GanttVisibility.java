@@ -8,6 +8,10 @@ public enum GanttVisibility {
 
     DAYS,
 
-    EVENTS
+    ALL_EVENTS,
+
+    RECURRING_EVENTS,
+
+    ONSITE_ACCOMMODATION_EVENTS
 
 }

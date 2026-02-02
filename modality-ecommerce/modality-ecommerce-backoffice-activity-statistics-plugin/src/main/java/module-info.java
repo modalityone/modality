@@ -21,21 +21,21 @@ module modality.ecommerce.backoffice.activity.statistics.plugin {
     requires webfx.extras.canvas.bar;
     requires webfx.extras.canvas.pane;
     requires webfx.extras.geometry;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
+    requires webfx.extras.operation.action;
     requires webfx.extras.theme;
     requires webfx.extras.time.layout;
     requires webfx.extras.time.layout.gantt;
     requires webfx.extras.time.window;
     requires webfx.extras.util.control;
     requires webfx.platform.windowhistory;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel.activity;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.reactive.entities;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.operation;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.activities.statistics;

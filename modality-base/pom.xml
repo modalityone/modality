@@ -19,11 +19,16 @@
 
     <modules>
         <module>modality-base-backoffice-activity-filters-plugin</module>
+        <module>modality-base-backoffice-activity-globalsetup-home-plugin</module>
         <module>modality-base-backoffice-activity-home-plugin</module>
         <module>modality-base-backoffice-activity-operations-plugin</module>
+        <module>modality-base-backoffice-activity-superadmin-home-plugin</module>
         <module>modality-base-backoffice-application</module>
+        <module>modality-base-backoffice-claude</module>
+        <module>modality-base-backoffice-formatters-renderers</module>
         <module>modality-base-backoffice-gantt-canvas</module>
         <module>modality-base-backoffice-gantt-canvas-basic-plugin</module>
+        <module>modality-base-backoffice-homemenu</module>
         <module>modality-base-backoffice-mainframe-activity</module>
         <module>modality-base-backoffice-mainframe-fx</module>
         <module>modality-base-backoffice-mainframe-headernode</module>
@@ -39,17 +44,18 @@
         <module>modality-base-client-application</module>
         <module>modality-base-client-bootstrap</module>
         <module>modality-base-client-brand</module>
-        <module>modality-base-client-cloudinary</module>
+        <module>modality-base-client-cloud-image</module>
         <module>modality-base-client-css</module>
         <module>modality-base-client-entities</module>
+        <module>modality-base-client-entity-message-receiver</module>
+        <module>modality-base-client-error</module>
         <module>modality-base-client-gantt-fx</module>
         <module>modality-base-client-i18n</module>
         <module>modality-base-client-icons</module>
         <module>modality-base-client-mainframe-fx</module>
         <module>modality-base-client-max-plugin</module>
-        <module>modality-base-client-messaging</module>
         <module>modality-base-client-min-plugin</module>
-        <module>modality-base-client-navigationarrows-java-plugin</module>
+        <module>modality-base-client-navigationarrows-openjfx-plugin</module>
         <module>modality-base-client-operationactionsloading-plugin</module>
         <module>modality-base-client-presentationmodel</module>
         <module>modality-base-client-profile-fx</module>
@@ -61,6 +67,7 @@
         <module>modality-base-frontoffice-activity-alerts-plugin</module>
         <module>modality-base-frontoffice-application</module>
         <module>modality-base-frontoffice-mainframe-activity</module>
+        <module>modality-base-frontoffice-mainframe-footernode</module>
         <module>modality-base-frontoffice-mainframe-fx</module>
         <module>modality-base-frontoffice-max-plugin</module>
         <module>modality-base-frontoffice-min-plugin</module>
@@ -74,6 +81,10 @@
         <module>modality-base-shared-context</module>
         <module>modality-base-shared-domainmodel</module>
         <module>modality-base-shared-entities</module>
+        <module>modality-base-shared-entity-message-bus</module>
+        <module>modality-base-shared-entity-message-sender</module>
+        <module>modality-base-shared-knownitems</module>
+        <module>modality-base-shared-util</module>
     </modules>
 
 </project>

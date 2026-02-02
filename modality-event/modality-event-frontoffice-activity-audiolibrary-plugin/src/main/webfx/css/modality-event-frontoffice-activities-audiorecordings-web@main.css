@@ -1,0 +1,35 @@
+.audio-library {
+    font-family: "Poppins", sans-serif;
+}
+
+.list-tracks-title {
+    font-weight: bold;
+    font-size: 24px;
+    color: var(--bootstrap-grey7)
+}
+
+/** styles for the video desktop table and mobile view **/
+
+.audio-library .name, .audio-library .btn {
+    font-weight: 400; /* Semibold equivalent - value 600 in JavaFX looks too bold in web */
+    font-size: 16px;
+}
+
+.audio-library .session-cancelled {
+    font-weight: 200;
+    font-size: 16px;
+    font-style: italic;
+    color: var(--bootstrap-grey5);
+}
+
+.audio-library .cancelled {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--bootstrap-grey5);
+}
+
+.audio-library .comment {
+    font-weight: 300; /* Light equivalent */
+    font-size: 10px;
+    color: var(--bootstrap-grey5);
+}

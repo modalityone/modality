@@ -1,8 +1,9 @@
 package one.modality.base.client.operationactionsloading;
 
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.spi.HasDictionaryMessageKey;
+import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.spi.HasDictionaryMessageKey;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 
@@ -41,12 +42,12 @@ final class ModalityOperationI18nKey implements HasDictionaryMessageKey, HasEnti
         this.operationRequest = operationRequest;
         // Setting the default i18nKey provided by the software if no i18nCode was read from the database.
         if (dictionaryMessageKey == null // indicates that no i18nCode was read from the database
-            && operationRequest instanceof HasI18nKey) { // indicates that a default 18n key is provided
+            && operationRequest instanceof HasI18nKey hasI18nKey) { // indicates that a default 18n key is provided
             // Then we change the message key to that default i18n key. This change won't affect the
             // uniqueness of ModalityOperationI18nKey because equals() & hashCode() depends only on the
             // operation id.
-            Object i18nKey = ((HasI18nKey) operationRequest).getI18nKey();
-            //Console.log("Applying software i18nKey = " + i18nKey);
+            Object i18nKey = hasI18nKey.getI18nKey();
+            Console.log("Applying software i18nKey = " + i18nKey);
             setDictionaryMessageKey(i18nKey);
         }
     }

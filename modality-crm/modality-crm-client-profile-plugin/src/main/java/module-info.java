@@ -12,6 +12,9 @@ module modality.crm.client.profile.plugin {
     requires modality.crm.backoffice.organization.fx;
     requires modality.crm.client.authn.fx;
     requires modality.crm.client.personaldetails;
+    requires webfx.extras.action;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation.action;
     requires webfx.extras.panes;
     requires webfx.extras.switches;
     requires webfx.extras.theme;
@@ -22,15 +25,12 @@ module modality.crm.client.profile.plugin {
     requires webfx.platform.util;
     requires webfx.stack.authn;
     requires webfx.stack.authn.logout.client;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.session.state.client.fx;
-    requires webfx.stack.ui.action;
-    requires webfx.stack.ui.operation.action;
 
     // Exported packages
     exports one.modality.crm.client.profile;

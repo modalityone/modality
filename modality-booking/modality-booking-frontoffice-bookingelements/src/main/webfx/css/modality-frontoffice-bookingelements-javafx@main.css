@@ -1,0 +1,113 @@
+.booking-elements {
+    -fx-font-family: "Poppins";
+}
+
+.booking-elements.booking-form {
+    -fx-font-size: 15px;
+}
+
+.personal-details-container {
+    -fx-font-size: 15px;
+}
+
+.person-to-book-button, .person-to-book-dialog {
+    -fx-background-color: -brand-blue-color;
+    -fx-border-style: none;
+    -fx-text-fill: white;
+}
+
+.person-to-book-button Text, .person-to-book-dialog Text {
+    -fx-fill: white;
+}
+
+.person-to-book-button SVGPath {
+    -fx-fill: transparent;
+    -fx-stroke: white;
+}
+
+.person-to-book-dialog {
+    -webfx-visualgrid-selection-color: #6aabd5;
+}
+
+.webfx-button-selector-dialog {
+    -fx-font-family: "Poppins", sans-serif;
+    -fx-font-size: 18px;
+}
+
+.booking-elements .navigation-bar {
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+}
+
+.booking-elements .navigation-bar .title {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+}
+
+.booking-elements .navigation-bar ToggleButton {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.booking-elements .navigation-bar ToggleButton:disabled {
+    -fx-text-fill: transparent;
+}
+
+.booking-elements .back-button {
+    -fx-text-fill: -bootstrap-grey5;
+}
+
+.booking-elements .next-button {
+    -fx-text-fill: white;
+}
+
+.booking-elements .back-button SVGPath, .booking-elements .next-button SVGPath {
+    -fx-fill: transparent; /* for the chevron icon */
+}
+
+.booking-elements .price-bar {
+    -fx-background-color: #F4F4F4;
+    -fx-font-weight: bold;
+}
+
+.booking-elements .badge { /* badges don't look vertically centered with Poppins font on the web version */
+    -fx-font-family: "Montserrat", sans-serif;
+}
+
+.booking-elements .wording-label {
+    -fx-line-spacing: 5px; // --fx-line-height: 1.6;
+}
+
+.booking-elements .option-label {
+    -fx-font-weight: bold;
+}
+
+.booking-elements .option-label-secondary {
+    -fx-font-weight: 600;
+}
+
+.booking-elements .period-label {
+    -fx-text-fill: #838788;
+}
+
+.booking-elements .price-label {
+    -fx-font-weight: bold;
+    -fx-text-fill: #838788;
+}
+
+.booking-elements .sub-price-label {
+    -fx-text-fill: #838788;
+}
+
+.booking-elements .price-textfield {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-border-style: none;
+}
+
+.booking-elements .text-area {
+    -fx-border-color: black;
+    -fx-border-radius: 19px;
+    -fx-background-radius: 19px;
+}

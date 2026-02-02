@@ -10,10 +10,10 @@ import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.action.ActionGroup;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -154,9 +154,10 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
     protected void startLogic() {
         // Setting up the master mapper that build the content displayed in the master view
         moneyAccountVisualMapper = ReactiveVisualMapper.<MoneyAccount>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', where: 'event=null', orderBy: 'name desc'}")
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
-                .ifTrimNotEmpty(pm.searchTextProperty(), s -> DqlStatement.where("name like ?", AbcNames.evaluate(s, true)))
+                .always( // language=JSON5
+                    "{class: 'MoneyAccount', alias: 'ma', columns: 'name,closed,currency,event,gatewayCompany,type', fields: 'id', where: 'event=null', orderBy: 'name desc'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
+                .ifTrimNotEmpty(pm.searchTextProperty(), s -> DqlStatement.where("name like $1", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.moneyAccountsVisualResultProperty())
@@ -165,7 +166,8 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                 .start();
 
         moneyFlowVisualMapper = ReactiveVisualMapper.<MoneyFlow>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'organization', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
+                .always( // language=JSON5
+                    "{class: 'MoneyFlow', alias: 'mf', fields: 'organization', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
                 .setEntityColumns("[" +
                         "{label: 'From', expression: 'fromMoneyAccount'}," +
                         "{label: 'To', expression: 'toMoneyAccount'}," +
@@ -174,7 +176,7 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                         "{label: 'Negative Amounts', expression: 'negativeAmounts'}" +
                         //"{label: 'Auto Transfer Time', expression: '[autoTransferTime]'}," +
                         "]")
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.moneyFlowsVisualResultProperty())
@@ -183,16 +185,18 @@ final class MoneyFlowsActivity extends OrganizationDependentViewDomainActivity i
                 .start();
 
         ReactiveObjectsMapper.<MoneyAccount, MoneyAccountPane>createPushReactiveChain(this)
-                .always("{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization', where: 'event=null'}")
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .always( // language=JSON5
+                    "{class: 'MoneyAccount', alias: 'ma', fields: 'name,type,organization', where: 'event=null'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
                 .setIndividualEntityToObjectMapperFactory(MoneyAccountToPaneMapper::new)
                 .setStore(moneyAccountVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyAccountPanes())
                 .start();
 
         ReactiveObjectsMapper.<MoneyFlow, MoneyFlowArrowView>createPushReactiveChain(this)
-                .always("{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .always( // language=JSON5
+                    "{class: 'MoneyFlow', alias: 'mf', fields: 'fromMoneyAccount,toMoneyAccount', where: 'fromMoneyAccount.event=null && toMoneyAccount.event=null'}")
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
                 .setIndividualEntityToObjectMapperFactory(graph::newMoneyFlowToArrowMapper)
                 .setStore(moneyAccountVisualMapper.getStore())
                 .storeMappedObjectsInto(graph.moneyFlowArrowViews())

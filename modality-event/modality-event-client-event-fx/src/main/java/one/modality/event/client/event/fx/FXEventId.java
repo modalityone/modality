@@ -2,8 +2,9 @@ package one.modality.event.client.event.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.authn.login.ui.FXLoginContext;
+import dev.webfx.stack.authz.client.context.AuthorizationContext;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -24,59 +25,63 @@ public final class FXEventId {
     private static final String SESSION_FX_EVENT_ID_KEY = "fxEventId";
 
     private final static ObjectProperty<EntityId> eventIdProperty = FXProperties.newObjectProperty(eventId -> {
-        // Storing this new value (more precisely the primary key) in the session, and save it
+        // Storing this new value (more precisely the primary key) in the session and save it
         Session session = FXSession.getSession();
+        Object eventPrimaryKey = Entities.getPrimaryKey(eventId);
         if (session != null) {
-            session.put(SESSION_FX_EVENT_ID_KEY, Entities.getPrimaryKey(eventId));
+            session.put(SESSION_FX_EVENT_ID_KEY, eventPrimaryKey);
             session.store();
         }
         // Also updating the FXLoginContext
         Object loginContext = FXLoginContext.getLoginContext();
         if (loginContext instanceof ModalityContext) {
-            ((ModalityContext) loginContext).setEventId(Entities.getPrimaryKey(eventId));
+            ((ModalityContext) loginContext).setEventId(eventPrimaryKey);
         }
-        // Synchronizing FXEvent to match that new event id (FXEventId => FXEvent)
-        if (!Objects.equals(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
+        // Synchronizing FXEvent to match that new eventId (FXEventId => FXEvent)
+        if (!Entities.samePrimaryKey(eventId, FXEvent.getEventId())) { // Sync only if ids differ.
             // If the new event id is null, we set the FXEvent to null
-            if (Entities.getPrimaryKey(eventId) == null)
+            if (eventPrimaryKey == null)
                 FXEvent.setEvent(null);
             else {
                 // Getting the event store
                 EntityStore eventStore = FXEvent.getEventStore();
                 // Checking if we can find the event in memory in that store
                 Event event = eventStore.getEntity(eventId);
-                // If yes, there is no need to request the server, we use directly that instance
-                if (event != null)
-                    FXEvent.setEvent(event);
-                else { // Otherwise, we request the server to load that event from that id
-                    eventStore.<Event>executeQuery("select " + FXEvent.EXPECTED_FIELDS + " from Event where id=?", eventId)
-                        .onFailure(Console::log)
-                        .onSuccess(list -> // on successfully receiving the list (should be a singleton list)
-                            UiScheduler.runInUiThread(() -> {
-                                if (Objects.equals(eventId, getEventId())) { // final check it is still relevant
-                                    Event loadedEvent = list.isEmpty() ? null : list.get(0);
-                                    FXEvent.setEvent(loadedEvent); // we finally set FXEvent
-                                    // In addition, in case FXOrganizationId is not yet set, we set it now. For ex,
-                                    // if a user books an event for the first time through visiting the organization
-                                    // website which redirected the booking to Modality, we memorize the organization
-                                    // so that at the end of the booking process, if the users visits the Modality
-                                    // booking page, he doesn't have to select the organization again, it is already
-                                    // selected, and the user can see all its other events on the booking page.
-                                    if (loadedEvent != null && FXOrganizationId.getOrganizationId() == null) {
-                                        FXOrganizationId.setOrganizationId(loadedEvent.getOrganizationId());
-                                    }
+                // If yes, there is no need to request the server; we use directly that instance
+                if (event != null) {
+                    FXEvent.setEventOnceExpectedFieldsAreLoaded(event);
+                } else { // Otherwise, we request the server to load that event from that id
+                    eventStore.<Event>executeQuery("select " + FXEvent.EXPECTED_FIELDS + " from Event where id=$1", eventId)
+                        .onFailure(Console::error)
+                        .inUiThread()
+                        .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
+                            if (Objects.equals(eventId, getEventId())) { // final check it is still relevant
+                                Event loadedEvent = list.isEmpty() ? null : list.get(0);
+                                FXEvent.setEvent(loadedEvent); // we finally set FXEvent
+                                // In addition, in case FXOrganizationId is not yet set, we set it now. For ex,
+                                // if a user books an event for the first time through visiting the organization
+                                // website which redirected the booking to Modality, we memorize the organization
+                                // so that at the end of the booking process. If the user visits the Modality
+                                // booking page, he doesn't have to select the organization again, it is already
+                                // selected, and the user can see all its other events on the booking page.
+                                if (loadedEvent != null/* && FXOrganizationId.getOrganizationId() == null // commented for collapsedProperty() binding in ModalityFrontOfficeMainFrameActivity*/) {
+                                    FXOrganizationId.setOrganizationId(loadedEvent.getOrganizationId());
                                 }
-                            }));
+                            }
+                        });
                 }
             }
         }
+        // Passing eventId to AuthorizationContext. This will cause a reevaluation of the authorizations, because
+        // some may be granted only to a specific event.
+        AuthorizationContext.setContextProperty("eventId", Strings.toString(eventPrimaryKey));
     });
 
     static {
         // Initializing the eventId from the last value stored in the session
         FXProperties.runNowAndOnPropertyChange(session -> {
             Object primaryKey = session == null ? null : session.get(SESSION_FX_EVENT_ID_KEY);
-            setEventId(primaryKey == null ? null : EntityId.create(Event.class, primaryKey));
+            setEventPrimaryKey(primaryKey);
         }, FXSession.sessionProperty());
     }
 
@@ -95,6 +100,10 @@ public final class FXEventId {
     public static void setEventId(EntityId eventId) {
         if (!Objects.equals(eventId, getEventId()))
             eventIdProperty.set(eventId);
+    }
+
+    public static void setEventPrimaryKey(Object primaryKey) {
+        setEventId(primaryKey == null ? null : EntityId.create(Event.class, primaryKey));
     }
 
 }

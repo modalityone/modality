@@ -1,40 +1,119 @@
-CollapsePane.menu-bar.non-mobile {
+.main-frame {
+    -fx-background-color: white;
+}
+
+/* Actually not working in JavaFX
+.main-frame.keyboard-navigation-off {
+    -fx-border-style-focus: none;
+}
+so replaced by the following:
+*/
+
+.main-frame.keyboard-navigation-off :focused {
+    -fx-border-style: none;
+}
+
+/* Actually not working in JavaFX
+.main-frame.keyboard-navigation-on {
+    -fx-border-style-focus: dashed;
+}
+so replaced by the following:
+*/
+
+.main-frame.keyboard-navigation-on :focused {
+    -fx-border-style: dashed;
+    -fx-border-width: 1px;
+    -fx-border-color: -brand-blue-color;
+}
+
+.main-menu-bar ToggleButton, .user-menu-bar ToggleButton {
+    -fx-border-radius: 5px;
+}
+
+/* Actually not working in JavaFX
+.main-frame.keyboard-navigation-off .lang-menu-bar {
+    -fx-border-style-focus: solid;
+}
+so replaced by the following:
+*/
+
+.main-frame.keyboard-navigation-off .lang-menu-bar :focused {
+    -fx-border-style: solid;
+}
+
+.menu-bar {
+    -fx-font-family: "Poppins";
+}
+
+.menu-bar ToggleButton {
+    -fx-background-color: transparent; /* removes old-style button gradient */
+}
+
+.main-menu-bar ToggleButton {
+    -fx-text-fill: black;
+}
+
+
+/* Highlighting the selected menu items (those with the class "fired") by making them bold (in addition to being colored
+   already with the rule defined in .menu-bar { -webfx-aria-toggle-button-text-fill-fired: -brand-blue-color; }). */
+.main-menu-bar ToggleButton.fired, .user-menu-bar ToggleButton.fired {
+    -fx-text-fill: #0096D6;
+    -fx-font-weight: bold;
+}
+
+.main-menu-bar ToggleButton.fired SVGPath, .user-menu-bar ToggleButton.fired SVGPath {
+    -fx-fill: #0096D6;
+}
+
+
+.user-menu-bar Label, .user-menu-bar ToggleButton {
+    -fx-font-size: 12px;
+    -fx-text-fill: #838788;
+}
+
+.main-frame Label.brand {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -brand-blue-color;
+}
+
+.main-frame Label.brand SVGPath {
+    -fx-fill: -brand-blue-color;
+}
+
+.lang-menu-bar ToggleButton {
+    -fx-border-color: #0096D6;
+    -fx-border-width: 1px 1px 1px 0;
+    -fx-text-fill: #0096D6;;
+}
+
+.lang-menu-bar ToggleButton.first-child {
+    -fx-border-width: 1px;
+    -fx-border-radius: 10px 0px 0px 10px;
+    -fx-background-radius: 10px 0px 0px 10px;
+}
+
+.lang-menu-bar ToggleButton.last-child {
+    -fx-border-radius:  0px 10px 10px 0px;
+    -fx-background-radius:  0px 10px 10px 0px;
+}
+
+.lang-menu-bar ToggleButton.fired {
+    -fx-background-color: #0096D6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.menu-bar.non-mobile {
     -fx-background-color: white;
     -fx-border-width: 0 0 1px 0 ;
     -fx-border-color: lightgray;
 }
 
-CollapsePane.menu-bar.lang-menu-bar {
+.menu-bar.lang-menu-bar {
     -fx-border-width: 0;
 }
 
-.menu-bar {
-    -fx-font-family: -poppins-font-family;
-}
-
-.lang-menu-bar .selected Text {
-    -fx-fill: white;
-}
-
-.menu-bar Button {
-    -fx-background-color: white; /* removes old-style button gradient */
-}
-
-.main-menu-bar Button {
-    -fx-text-fill: black;
-}
-
-.user-menu-bar Label, .user-menu-bar Button {
-    -fx-font-size: 12px;
-    -fx-text-fill: #838788;
-}
-
-.main-menu-bar Label.brand {
-    -fx-font-size: 16px;
-    -fx-font-weight: bold;
-    -fx-text-fill: -brand-blue-color;
-}
-
-.main-menu-bar Label.brand SVGPath {
-    -fx-fill: -brand-blue-color;
+.modality-dialog-area {
+    -fx-background-color: #4D4D4D80;
 }

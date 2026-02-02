@@ -1,29 +1,25 @@
 package one.modality.ecommerce.payment.server.gateway;
 
+import java.util.Map;
+
 /**
+ * @param accountParameters
  * @author Bruno Salmon
  */
-public class GatewayCompletePaymentArgument {
+public record GatewayCompletePaymentArgument(
+    boolean isLive,
+    String accessToken,
+    String payload,
+    // The above is enough for some payment gateways like Square, but not for others like Authorize.net where some
+    // transaction settings (including payment amount) are set on completion and not on initialization.
+    // The additional fields below might be necessary in this case for the Gateway API calls.
+    Map<String, String> accountParameters,
+    long amount,
+    GatewayCustomer customer,
+    GatewayOrder order
+) {
 
-    private final boolean live;
-    private final String accessToken;
-    private final String payload;
-
-    public GatewayCompletePaymentArgument(boolean live, String accessToken, String payload) {
-        this.live = live;
-        this.accessToken = accessToken;
-        this.payload = payload;
-    }
-
-    public boolean isLive() {
-        return live;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public String getPayload() {
-        return payload;
+    public String getAccountParameter(String key) {
+        return accountParameters.get(key);
     }
 }

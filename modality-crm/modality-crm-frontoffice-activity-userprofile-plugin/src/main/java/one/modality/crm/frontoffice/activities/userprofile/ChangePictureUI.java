@@ -1,17 +1,16 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
 import dev.webfx.extras.filepicker.FilePicker;
-import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.blob.Blob;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.file.File;
 import dev.webfx.platform.uischeduler.UiScheduler;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -29,17 +28,20 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.cloudinary.ModalityCloudinary;
+import one.modality.base.client.cloud.image.ModalityCloudImageService;
 import one.modality.base.client.icons.SvgIcons;
 
 import java.util.Objects;
 
+/**
+ * @author David Hello
+ */
 final class ChangePictureUI {
 
     static final long CLOUDINARY_RELOAD_DELAY = 10000;
     private static final int MAX_PICTURE_SIZE = 240;
 
-    private final VBox changePictureVBox = new VBox();
+    private final VBox container = new VBox();
     private final Slider zoomSlider;
     private final ImageView imageView;
     private double deltaX = 0;
@@ -47,7 +49,6 @@ final class ChangePictureUI {
     private double zoomFactor = 1;
     private Blob cloudPictureFileToUpload;
     private Object recentlyUploadedCloudPictureId;
-    private final ScalePane container = new ScalePane(changePictureVBox);
     private final UserProfileActivity parentActivity;
     private DialogCallback callback;
     //Those two boolean property are used to know if we have to delete the picture, upload a new one, or if we are currently processing
@@ -62,9 +63,9 @@ final class ChangePictureUI {
 
 
     public ChangePictureUI(UserProfileActivity activity) {
-        changePictureVBox.setMinWidth(500);
+        //container.setMinWidth(500);
         parentActivity = activity;
-        changePictureVBox.setPadding(new Insets(15, 0, 0, 0));
+        container.setPadding(new Insets(15, 0, 0, 0));
 
         StackPane imageStackPane = new StackPane();
         imageStackPane.setMaxWidth(MAX_PICTURE_SIZE);
@@ -104,6 +105,10 @@ final class ChangePictureUI {
             deltaY = event.getSceneY() - mouseAnchorY[0] + initialTranslateY[0];
             imageView.setTranslateX(deltaX);
             imageView.setTranslateY(deltaY);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
 
         Label infoMessage = Bootstrap.textDanger(new Label());
@@ -118,6 +123,10 @@ final class ChangePictureUI {
             imageView.setScaleX(zoomFactor);
             imageView.setScaleY(zoomFactor);
             zoomPropertyChanged.setValue(true);
+            // Mark that we need to upload the modified image
+            if (imageView.getImage() != null) {
+                isPictureToBeUploaded.setValue(true);
+            }
         });
         SVGPath zoomOutIcon = SvgIcons.createZoomInOutPath();
         SVGPath zoomInIcon = SvgIcons.createZoomInOutPath();
@@ -132,7 +141,9 @@ final class ChangePictureUI {
         zoomSliderHBox.setAlignment(Pos.CENTER);
 
         Hyperlink removePictureLink = Bootstrap.strong(Bootstrap.textDanger(I18nControls.newHyperlink(UserProfileI18nKeys.RemovePicture)));
+        removePictureLink.setMinWidth(Region.USE_PREF_SIZE);
         Hyperlink addPictureLink = Bootstrap.strong(Bootstrap.textPrimary(I18nControls.newHyperlink(UserProfileI18nKeys.UploadPicture)));
+        addPictureLink.setMinWidth(Region.USE_PREF_SIZE);
 
         FilePicker filePicker = FilePicker.create();
         filePicker.getAcceptedExtensions().addAll("image/*");
@@ -156,7 +167,9 @@ final class ChangePictureUI {
         removePictureLink.setOnAction(e -> removePicture());
 
         // Layout
-        HBox hyperlinks = new HBox(70, removePictureLink, filePicker.getView());
+        Region hGrowable = Layouts.createHGrowable(70);
+        hGrowable.setMinWidth(10);
+        HBox hyperlinks = new HBox(removePictureLink, hGrowable, filePicker.getView());
         hyperlinks.setAlignment(Pos.CENTER);
         zoomSliderPane.setBottom(hyperlinks);
 
@@ -168,17 +181,17 @@ final class ChangePictureUI {
         saveButton.disableProperty().bind((isPictureToBeUploaded.not().and(isPictureToBeDeleted.not().and(zoomPropertyChanged.not())).or(isCurrentlyProcessing)));
 
         saveButton.setOnAction(e -> {
-            OperationUtil.turnOnButtonsWaitMode(saveButton);
+            AsyncSpinner.displayButtonSpinner(saveButton);
             isCurrentlyProcessing.setValue(true);
-            String cloudImagePath = ModalityCloudinary.personImagePath(parentActivity.getCurrentPerson());
+            String cloudImagePath = ModalityCloudImageService.personImagePath(parentActivity.getCurrentPerson());
             // Create a Canvas to draw the original image
             Image originalImage = imageView.getImage();
             if (originalImage == null) {
                 //Here we choose to remove the picture
                 deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
             } else {
-                ModalityCloudinary.prepareImageForUpload(originalImage, true, zoomFactor, deltaX, deltaY, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
-                    .onFailure(Console::log)
+                ModalityCloudImageService.prepareImageForUpload(originalImage, true, zoomFactor, deltaX, deltaY, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
+                    .onFailure(Console::error)
                     .onSuccess(blob -> {
                         cloudPictureFileToUpload = blob;
                         deleteIfNeededAndUploadIfNeededCloudPicture(cloudImagePath);
@@ -187,19 +200,23 @@ final class ChangePictureUI {
         });
 
         Hyperlink cancel = Bootstrap.textSecondary(I18nControls.newHyperlink(UserProfileI18nKeys.Cancel));
+        cancel.setMinWidth(Region.USE_PREF_SIZE);
         cancel.setOnAction(e -> {
             if (callback != null)
                 callback.closeDialog();
         });
-        HBox actionHBox = new HBox(60, cancel, saveButton);
+        hGrowable = Layouts.createHGrowable();
+        hGrowable.setPrefWidth(60);
+        hGrowable.setMinWidth(10);
+        HBox actionHBox = new HBox(cancel, hGrowable, saveButton);
         actionHBox.setAlignment(Pos.CENTER);
         actionHBox.setPadding(new Insets(40, 0, 0, 0));
-        changePictureVBox.getChildren().setAll(imageStackPane, zoomSliderPane, infoMessage, actionHBox);
-        changePictureVBox.setMaxWidth(MAX_PICTURE_SIZE);
-        changePictureVBox.setBackground(Background.fill(Color.WHITE));
-        changePictureVBox.setAlignment(Pos.CENTER);
-        changePictureVBox.setSpacing(20);
-        ChangePasswordUI.setupModalVBox(changePictureVBox);
+        container.getChildren().setAll(
+            imageStackPane,
+            zoomSliderPane,
+            infoMessage,
+            actionHBox);
+        ChangePasswordUI.setupModalVBox(container);
 
         //We prevent the mouse click event to pass through the Pane
         container.setOnMouseClicked(Event::consume);
@@ -210,12 +227,13 @@ final class ChangePictureUI {
         //We delete the pictures, and all the cached picture in cloudinary that can have been transformed, related
         //to these assets, then upload the new picture
         if (isPictureToBeDeleted.getValue()) {
-            ModalityCloudinary.deleteImage(cloudImagePath)
+            ModalityCloudImageService.deleteImage(cloudImagePath)
                 .onFailure(fail -> Console.log("Error while deleting the picture: " + fail.getMessage()))
                 .onSuccess(ok -> {
                     if (Objects.equals(cloudImagePath, recentlyUploadedCloudPictureId))
                         recentlyUploadedCloudPictureId = null;
                 })
+                .inUiThread()
                 .onComplete(ar -> {
                     if (isPictureToBeUploaded.getValue())
                         uploadCloudPictureIfNeeded(cloudImagePath);
@@ -223,7 +241,7 @@ final class ChangePictureUI {
                     else {
                         parentActivity.removeUserProfilePicture();
                         callback.closeDialog();
-                        Platform.runLater(() -> OperationUtil.turnOffButtonsWaitMode(saveButton));
+                        AsyncSpinner.hideButtonSpinner(saveButton);
                         isCurrentlyProcessing.setValue(false);
                         reinitialize();
                     }
@@ -233,7 +251,7 @@ final class ChangePictureUI {
         }
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 
@@ -270,6 +288,21 @@ final class ChangePictureUI {
         this.callback = callback;
     }
 
+    public void initializeWithCurrentPicture() {
+        String cloudImagePath = ModalityCloudImageService.personImagePath(parentActivity.getCurrentPerson());
+        ModalityCloudImageService.getHdpiImageOnReady(cloudImagePath, MAX_PICTURE_SIZE, MAX_PICTURE_SIZE)
+            .onSuccess(image -> {
+                if (image != null) {
+                    setImage(image);
+                    // Reset flags after initialization - loading the existing picture shouldn't mark it for upload
+                    isPictureToBeUploaded.setValue(false);
+                    isPictureToBeDeleted.setValue(false);
+                    zoomPropertyChanged.setValue(false);
+                }
+            })
+            .onFailure(e -> Console.log("Failed to load profile picture: " + e));
+    }
+
     private void removePicture() {
         setImage(null);
         isPictureToBeDeleted.setValue(true);
@@ -281,17 +314,18 @@ final class ChangePictureUI {
 
     public void uploadCloudPictureIfNeeded(String cloudImagePath) {
         if (isPictureToBeUploaded.get()) {
-            ModalityCloudinary.uploadImage(cloudImagePath, cloudPictureFileToUpload)
-                .onFailure(Console::log)
+            ModalityCloudImageService.uploadImage(cloudImagePath, cloudPictureFileToUpload)
+                .onFailure(Console::error)
                 .onSuccess(ok -> {
                     recentlyUploadedCloudPictureId = cloudImagePath;
                     callback.closeDialog();
                 })
+                .inUiThread()
                 .onComplete(event -> {
-                    Platform.runLater(parentActivity::showProgressIndicator);
-                    //We wait for some time before reloading the image so cloudinary has the time to process it (it can take up to 10 seconds)
+                    parentActivity.showProgressIndicator();
+                    //We wait for some time before reloading the image, so cloudinary has the time to process it (it can take up to 10 seconds)
                     UiScheduler.scheduleDelay(CLOUDINARY_RELOAD_DELAY, parentActivity::loadProfilePictureIfExist);
-                    Platform.runLater(() -> OperationUtil.turnOffButtonsWaitMode(saveButton));
+                    AsyncSpinner.hideButtonSpinner(saveButton);
                     isCurrentlyProcessing.setValue(false);
                     reinitialize();
                 });
@@ -305,6 +339,7 @@ final class ChangePictureUI {
     private void reinitialize() {
         isPictureToBeDeleted.setValue(false);
         isPictureToBeUploaded.setValue(false);
+        zoomPropertyChanged.setValue(false);
         recentlyUploadedCloudPictureId = null;
     }
 

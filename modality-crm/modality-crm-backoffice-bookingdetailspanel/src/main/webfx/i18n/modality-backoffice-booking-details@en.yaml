@@ -1,18 +1,30 @@
-PersonalDetails:
+PersonalDetailsTab:
+  text: "[PersonalDetails]" # defined in modality-crm-client-i18n
   graphic: "images/s16/personalDetails.png"
-Options:
+OptionsTab:
+  text: "[Options]"
   graphic: "images/s16/options.png"
-Payments:
+PaymentsTab:
+  text: "[Payments]"
   graphic: "images/s16/methods/generic.png"
-Comments:
+CommentsTab:
+  text: "[Comments]"
   graphic: "images/s16/note.png"
-Cart:
+CartTab:
+  text: "[Cart]"
   graphic: "images/s16/cart.png"
-MultipleBookings:
+MultipleBookingsTab:
+  text: "[MultipleBookings]"
   graphic: "images/s16/multipleBookings/redCross.png"
-Family:
+FamilyTab:
+  text: "[Family]"
   graphic: "images/s16/child.png"
-Mails:
+MediasTab:
+  text: "[Medias]"
+  #graphic: "images/s16/mailbox.png"
+MailsTab:
+  text: "[Mails]"
   graphic: "images/s16/mailbox.png"
-History:
+HistoryTab:
+  text: "[History]"
   graphic: "images/s16/history.png"

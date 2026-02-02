@@ -3,28 +3,24 @@ package one.modality.crm.frontoffice.activities.createaccount;
 
 public interface CreateAccountI18nKeys {
 
-    String Or = "Or";
-    String AgreeTermAndCond = "AgreeTermAndCond";
-    String CreateAccountButton = "CreateAccountButton";
-    String AddressInformation = "AddressInformation";
-    String NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
-    String LoginTitle = "LoginTitle";
-    String AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
-    String PersonalDetails = "PersonalDetails";
-    String ReadTermAndCond = "ReadTermAndCond";
-    String FindAddress = "FindAddress";
-    String LoginDetails = "LoginDetails";
-    String CountryRequired = "CountryRequired";
-    String SelectKadampaCenter = "SelectKadampaCenter";
-    String SaveChanges = "SaveChanges";
-    String TermsAndCondsRequired = "TermsAndCondsRequired";
-    String CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
-    String PasswordStrength = "PasswordStrength";
-    String CreatingAccountError = "CreatingAccountError";
-    String PasswordNotMatchingError = "PasswordNotMatchingError";
-    String textFill = "textFill";
-    String graphic = "graphic";
-    String fill = "fill";
-    String svgPath = "svgPath";
+    Object AccountCreatedWithSuccess = "AccountCreatedWithSuccess";
+    Object AddressInformation = "AddressInformation";
+    Object AgreeTermAndCond = "AgreeTermAndCond";
+    Object Cancel = "Cancel";
+    Object CountryRequired = "CountryRequired";
+    Object CreateAccountButton = "CreateAccountButton";
+    Object CreatingAccountError = "CreatingAccountError";
+    Object CreatingPersonAssociatedToAccountError = "CreatingPersonAssociatedToAccountError";
+    Object FindAddress = "FindAddress";
+    Object LoginDetails = "LoginDetails";
+    Object LoginTitle = "LoginTitle";
+    Object NoAttendanceToAKadampaCenter = "NoAttendanceToAKadampaCenter";
+    Object Or = "Or";
+    Object PasswordNotMatchingError = "PasswordNotMatchingError";
+    Object PasswordStrength = "PasswordStrength";
+    Object ReadTermAndCond = "ReadTermAndCond";
+    Object SaveChanges = "SaveChanges";
+    Object SelectKadampaCenter = "SelectKadampaCenter";
+    Object TermsAndCondsRequired = "TermsAndCondsRequired";
 
 }

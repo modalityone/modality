@@ -1,6 +1,7 @@
 package one.modality.base.shared.entities;
 
 import one.modality.base.shared.entities.markers.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 
 /**
  * @author Bruno Salmon
@@ -13,8 +14,19 @@ public interface ItemFamily extends
         EntityHasOrd,
         HasItemFamilyType {
 
+    String summaryHidden = "summaryHidden";
+
     @Override
     default KnownItemFamily getItemFamilyType() {
         return KnownItemFamily.fromCode(getCode());
     }
+
+    default void setSummaryHidden(Boolean value) {
+        setFieldValue(summaryHidden, value);
+    }
+
+    default Boolean isSummaryHidden() {
+        return getBooleanFieldValue(summaryHidden);
+    }
+
 }

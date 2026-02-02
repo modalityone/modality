@@ -1,0 +1,208 @@
+/* Customer Management Styles - Web */
+
+/* Root variables */
+:root {
+    --kbs-primary-color: #00A3FF;
+    --kbs-primary-hover-color: #0088D9;
+    --kbs-danger-color: #F44336;
+    --kbs-text-primary-color: #2C3E50;
+    --kbs-text-secondary-color: #7F8C8D;
+    --kbs-border-color: #E8EAED;
+    --kbs-bg-light-color: #F8F9FA;
+    --kbs-white-color: #FFFFFF;
+}
+
+/* Page Header */
+.page-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--kbs-border-color);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--kbs-text-primary-color);
+}
+
+.page-subtitle {
+    font-size: 13px;
+    color: var(--kbs-text-secondary-color);
+}
+
+/* Customers container */
+#customers {
+    background-color: transparent;
+}
+
+/* Customers grid styling */
+.customers-grid {
+    background-color: var(--kbs-white-color);
+}
+
+/* Customer ID - monospace display */
+.customer-id {
+    font-family: 'Courier New', monospace;
+}
+
+/* Panel header icon */
+.panel-header-icon {
+    font-size: 20px;
+}
+
+/* Role/Link icons and text */
+.role-icon {
+    font-size: 13px;
+}
+
+.role-icon-success {
+    font-size: 13px;
+    color: #2E7D32;
+}
+
+.role-link-text {
+    font-size: 13px;
+    color: var(--kbs-text-secondary-color);
+}
+
+.account-type-toggle {
+    background-color: var(--kbs-white-color);
+    border: 1px solid var(--kbs-border-color);
+    border-radius: 6px;
+    --fx-text-fill: var(--kbs-text-secondary-color);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.account-type-toggle:hover {
+    background-color: var(--kbs-bg-light-color);
+    --fx-text-fill: var(--kbs-text-primary-color);
+}
+
+.account-type-toggle.pseudo-selected {
+    background-color: var(--kbs-primary-color);
+    --fx-text-fill: var(--kbs-white-color);
+    border-color: var(--kbs-primary-color);
+}
+
+.account-type-toggle.pseudo-selected:hover {
+    background-color: var(--kbs-primary-hover-color);
+    border-color: var(--kbs-primary-hover-color);
+}
+
+/* Filter Group Separator */
+.filter-group-separator {
+    background-color: var(--kbs-border-color);
+    opacity: 0.5;
+}
+
+/* Members Box */
+.members-box {
+    background: #F0F8FF;
+    border: 1px solid #B3D9FF;
+    border-radius: 8px;
+}
+
+.members-description {
+    color: var(--kbs-text-secondary-color);
+    font-size: 13px;
+}
+
+.member-items {
+    /* No padding/spacing here - set in Java code */
+}
+
+.member-item {
+    /* No padding/spacing here - set in Java code */
+    background: white;
+    border-radius: 6px;
+    border: 1px solid var(--kbs-border-color);
+}
+
+.member-check-icon {
+    font-size: 14px;
+    color: #2E7D32;
+}
+
+.member-user-icon {
+    font-size: 20px;
+}
+
+.member-name {
+    font-weight: 600;
+    color: var(--kbs-text-primary-color);
+}
+
+.member-email {
+    font-size: 12px;
+    color: var(--kbs-text-secondary-color);
+}
+
+.member-id {
+    font-size: 11px;
+    color: var(--kbs-text-secondary-color);
+}
+
+/* Action Buttons */
+.action-button {
+    background-color: transparent;
+    border-color: transparent;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.action-button:hover {
+    background-color: var(--kbs-bg-light-color);
+}
+
+.action-button.danger:hover {
+    background-color: #FFEBEE;
+}
+
+.action-icon {
+    color: #666666;
+}
+
+.action-icon.danger {
+    color: var(--kbs-danger-color);
+}
+
+.action-button:hover .action-icon {
+    color: var(--kbs-text-primary-color);
+}
+
+.action-button.danger:hover .action-icon.danger {
+    color: var(--kbs-danger-color);
+}
+
+/* Filter Group Separator Line */
+.filter-group-separator .line {
+    border-color: var(--kbs-border-color);
+    background-color: var(--kbs-border-color);
+    opacity: 0.5;
+}
+
+/* Readonly field styling */
+.readonly-field {
+    background-color: var(--kbs-bg-light-color);
+    opacity: 1.0;
+}
+
+/* Close Button */
+.btn-close {
+    background-color: transparent;
+    color: #666666;
+    font-size: 20px;
+    font-weight: 300;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.btn-close:hover {
+    background-color: #E3F2FD;
+    color: var(--kbs-primary-color);
+}
+
+.btn-close.pressed {
+    background-color: #BBDEFB;
+}

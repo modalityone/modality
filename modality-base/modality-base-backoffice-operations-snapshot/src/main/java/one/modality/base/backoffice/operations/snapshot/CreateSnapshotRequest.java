@@ -1,7 +1,7 @@
 package one.modality.base.backoffice.operations.snapshot;
 
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.platform.async.AsyncFunction;
 

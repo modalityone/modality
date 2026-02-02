@@ -15,6 +15,7 @@ public interface Document extends
     EntityHasPerson,
     EntityHasPersonalDetailsCopy {
     String ref = "ref";
+    String personLang = "person_lang";
     String cart = "cart";
     String priceNet = "price_net";
     String priceDeposit = "price_deposit";
@@ -26,6 +27,13 @@ public interface Document extends
     String passReady = "passReady";
     String flagged = "flagged";
     String personFacilityFee = "person_facilityFee";
+    String request = "request";
+    String dates = "dates";
+    String checkedOut = "checkedOut";
+    String groupDocument = "groupDocument";
+    String inPerson = "inPerson";
+    String carer1Document = "person_carer1Document";
+    String carer2Document = "person_carer2Document";
 
     default void setRef(Integer value) {
         setFieldValue(ref, value);
@@ -33,6 +41,14 @@ public interface Document extends
 
     default Integer getRef() {
         return getIntegerFieldValue(ref);
+    }
+
+    default void setPersonLang(String value) {
+        setFieldValue(personLang, value);
+    }
+
+    default String getPersonLang() {
+        return getStringFieldValue(personLang);
     }
 
     default void setCart(Object value) {
@@ -126,4 +142,73 @@ public interface Document extends
     default Boolean isPersonFacilityFee() {
         return getBooleanFieldValue(personFacilityFee);
     }
+
+    default void setRequest(String value) {
+        setFieldValue(request, value);
+    }
+
+    default String getRequest() {
+        return getStringFieldValue(request);
+    }
+
+    default String getDates() {
+        return getStringFieldValue(dates);
+    }
+
+    default void setDates(String value) {
+        setFieldValue(dates, value);
+    }
+
+    default Boolean getCheckedOut() {
+        return getBooleanFieldValue(checkedOut);
+    }
+
+    default void setCheckedOut(Boolean value) {
+        setFieldValue(checkedOut, value);
+    }
+
+    default Document getGroupDocument() {
+        return getForeignEntity(groupDocument);
+    }
+
+    default EntityId getGroupDocumentId() {
+        return getForeignEntityId(groupDocument);
+    }
+
+    default void setGroupDocument(Object value) {
+        setForeignField(groupDocument, value);
+    }
+
+    default Boolean isInPerson() {
+        return getBooleanFieldValue(inPerson);
+    }
+
+    default void setInPerson(Boolean value) {
+        setFieldValue(inPerson, value);
+    }
+
+    default Document getCarer1Document() {
+        return getForeignEntity(carer1Document);
+    }
+
+    default EntityId getCarer1DocumentId() {
+        return getForeignEntityId(carer1Document);
+    }
+
+    default void setCarer1Document(Object value) {
+        setForeignField(carer1Document, value);
+    }
+
+    default Document getCarer2Document() {
+        return getForeignEntity(carer2Document);
+    }
+
+    default EntityId getCarer2DocumentId() {
+        return getForeignEntityId(carer2Document);
+    }
+
+    default void setCarer2Document(Object value) {
+        setForeignField(carer2Document, value);
+    }
+
 }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>webfx-stack-db-query</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.frontoffice.activities.orders.OrdersRouting$UserProfileUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.frontoffice.activities.orders.OrdersRouting$RouteToOrdersRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.crm.frontoffice.activities.orders" prefix="Orders">
+        <i18n/>
+    </java-ui-api>
+
+</project>

@@ -1,21 +1,25 @@
 package one.modality.base.client.entities.filters;
 
-import javafx.beans.property.Property;
-import javafx.scene.layout.Pane;
+import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
+import dev.webfx.stack.orm.dql.DqlStatement;
+import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasColumnsDqlStatementProperty;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasGroupDqlStatementProperty;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import javafx.beans.property.Property;
+import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.Filter;
-import dev.webfx.stack.orm.dql.DqlStatement;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
-import dev.webfx.kit.util.properties.FXProperties;
 
 import java.util.function.Predicate;
 
 public interface FilterButtonSelectorFactoryMixin extends ButtonFactoryMixin, HasDataSourceModel {
 
-    String FILTER_SELECTOR_TEMPLATE = "{class: 'Filter', fields: 'class,alias,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause,columns', where: `class='#class#' and #condition# and (activityName='#activityName#' or !exists(select Filter where class='#class#' and #condition# and activityName='#activityName#') and activityName=null)`, orderBy: 'ord,id'}";
+    String FILTER_SELECTOR_TEMPLATE = // language=JSON5
+        """
+            {class: 'Filter',
+             fields: 'class,alias,fields,whereClause,groupByClause,havingClause,orderByClause,limitClause,columns',
+             where: 'class=`#class#` and #condition# and (activityName=`#activityName#` or !exists(select Filter where class=`#class#` and #condition# and activityName=`#activityName#`) and activityName=null)',
+             orderBy: 'ord,id'}""";
 
     default EntityButtonSelector<Filter> createFilterButtonSelector(String activityName, String domainClassId, String conditionToken, Predicate<Filter> autoSelectPredicate, Pane parent) {
         EntityButtonSelector<Filter> selector = new EntityButtonSelector<>(FILTER_SELECTOR_TEMPLATE.replaceAll("#class#", domainClassId).replaceAll("#condition#", conditionToken).replaceAll("#activityName#", activityName), this, parent, getDataSourceModel());
@@ -77,19 +81,19 @@ public interface FilterButtonSelectorFactoryMixin extends ButtonFactoryMixin, Ha
 
     default EntityButtonSelector<Filter> createConditionFilterButtonSelectorAndBind(String activityName, String domainClassId, Pane parent, Property<DqlStatement> conditionDqlStatementProperty) {
         EntityButtonSelector<Filter> conditionSelector = createConditionFilterButtonSelector(activityName, domainClassId, parent);
-        conditionDqlStatementProperty.bind(FXProperties.compute(conditionSelector.selectedItemProperty(), Filters::toDqlStatement));
+        conditionDqlStatementProperty.bind(conditionSelector.selectedItemProperty().map(Filters::toDqlStatement));
         return conditionSelector;
     }
 
     default EntityButtonSelector<Filter> createGroupFilterButtonSelectorAndBind(String activityName, String domainClassId, Pane parent, Property<DqlStatement> groupDqlStatementProperty) {
         EntityButtonSelector<Filter> conditionSelector = createGroupFilterButtonSelector(activityName, domainClassId, parent);
-        groupDqlStatementProperty.bind(FXProperties.compute(conditionSelector.selectedItemProperty(), Filters::toDqlStatement));
+        groupDqlStatementProperty.bind(conditionSelector.selectedItemProperty().map(Filters::toDqlStatement));
         return conditionSelector;
     }
 
     default EntityButtonSelector<Filter> createColumnsFilterButtonSelectorAndBind(String activityName, String domainClassId, Pane parent, Property<DqlStatement> columnsDqlStatementProperty) {
         EntityButtonSelector<Filter> conditionSelector = createColumnsFilterButtonSelector(activityName, domainClassId, parent);
-        columnsDqlStatementProperty.bind(FXProperties.compute(conditionSelector.selectedItemProperty(), Filters::toDqlStatement));
+        columnsDqlStatementProperty.bind(conditionSelector.selectedItemProperty().map(Filters::toDqlStatement));
         return conditionSelector;
     }
 

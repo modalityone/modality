@@ -3,7 +3,7 @@ package one.modality.base.frontoffice.activities.account;
 import dev.webfx.platform.resource.Resource;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -74,7 +74,7 @@ public final class AccountUtility {
         Node gender = GeneralUtility.createField("Biological gender", createHorizontalRadioButtons("Male", "Female", personPM.IS_MALE, !personPM.IS_NEW));
         Node practitioner = GeneralUtility.createField("Practitioner", createHorizontalRadioButtons("Lay", "Ordained", personPM.IS_LAY, !personPM.IS_NEW));
 
-        EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>(
+        EntityButtonSelector<Country> countriesButtonSelector = new EntityButtonSelector<>( // language=JSON5
                 "{class:'country', orderBy:'name'}",
                 activityMixin, container, activity.getDataSourceModel()
         );

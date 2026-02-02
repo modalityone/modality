@@ -8,8 +8,6 @@ module modality.base.server.geoimport.plugin {
     requires webfx.platform.boot;
     requires webfx.platform.console;
     requires webfx.platform.fetch.ast.json;
-    requires webfx.stack.orm.datasourcemodel.service;
-    requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
 
     // Exported packages

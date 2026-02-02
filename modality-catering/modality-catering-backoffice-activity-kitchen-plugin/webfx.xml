@@ -13,7 +13,15 @@
     </exported-packages>
 
     <dependencies>
+        <source-modules>
+            <module>modality-base-frontoffice-utility</module>
+            <module>webfx-extras-styles-bootstrap</module>
+        </source-modules>
         <used-by-source-modules/>
     </dependencies>
+    <java-ui-api package="one.modality.catering.backoffice.activities.kitchen" prefix="Kitchen">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

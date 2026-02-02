@@ -7,6 +7,35 @@
     /* Overriding some WebFX Extras CSS variables  */
     --webfx-switch-selected-background-color: var(--brand-main-background-color);
     --webfx-visualgrid-selection-color: #BBBBBB;
+
+    /* Modern Tab Design */
+    --fx-tabheaderarea-background-color: transparent;
+    --fx-tabheaderarea-padding-top: 0;
+    --fx-tabheaderarea-padding-left: 0;
+    --fx-tabheader-background-color: transparent;
+    --fx-tabheader-background-color-selected: transparent;
+    --fx-tabheader-border-width: 0px;
+    --fx-tabheader-border-width-selected: 0 0 3px 0;
+    --fx-tabheader-border-color: #00b8d4;
+    --fx-tabheader-padding-top: 15px;
+    --fx-tabheader-padding-right: 20px;
+    --fx-tabheader-padding-bottom: 15px;
+    --fx-tabheader-padding-left: 20px;
+    --fx-tabheader-text-fill: #666;
+    --fx-tabheader-text-fill-selected: #00b8d4;
+}
+
+fx-tabpane {
+    --fx-background-color: white;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-color: #ddd;
+    --fx-border-radius: 8px;
+    --fx-background-radius: 8px;
+}
+
+fx-tabheaderskin {
+    font-size: 14px;
 }
 
 /* Applying Montserrat as default font for Modality */
@@ -18,13 +47,10 @@ body, textarea /* because textarea has explicit default monospace font */ {
 
 /* Not sure if it's the right place for this CSS rules */
 .event-button {
-    border-radius: 4px;
     height: 35px;
     max-height: 35px;
     text-align: center;
     font-weight: normal;
-}
-
-.event-button > fx-border {
-    border: none;
+    --fx-border-style: none;
+    --fx-border-radius: 4px;
 }

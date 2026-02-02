@@ -1,0 +1,71 @@
+// File managed by WebFX (DO NOT EDIT MANUALLY)
+package one.modality.crm.backoffice.activities.admin;
+
+public interface Admin18nKeysI18nKeys {
+
+    Object AccessTypeLabel = "AccessTypeLabel";
+    Object AdminMenu = "AdminMenu";
+    Object AndMoreItems = "AndMoreItems";
+    Object AssignRoleButton = "AssignRoleButton";
+    Object AssignRoleDialogTitle = "AssignRoleDialogTitle";
+    Object AssignRoleSummaryText = "AssignRoleSummaryText";
+    Object AssignRoleToUser = "AssignRoleToUser";
+    Object AutoTranslate = "AutoTranslate";
+    Object Cancel = "Cancel";
+    Object ClearAll = "ClearAll";
+    Object ConfirmDeleteLabel = "ConfirmDeleteLabel";
+    Object CreateLabel = "CreateLabel";
+    Object CreateLabelCopy = "CreateLabelCopy";
+    Object DashSeparator = "DashSeparator";
+    Object Delete = "Delete";
+    Object DeleteLabelMessage = "DeleteLabelMessage";
+    Object DetailsNotAvailable = "DetailsNotAvailable";
+    Object EditLabel = "EditLabel";
+    Object EnterTextIn = "EnterTextIn";
+    Object EntireOrganization = "EntireOrganization";
+    Object EntireOrganizationDescription = "EntireOrganizationDescription";
+    Object Error = "Error";
+    Object EventPrefix = "EventPrefix";
+    Object FailedToDeleteLabel = "FailedToDeleteLabel";
+    Object FailedToRevokeAccess = "FailedToRevokeAccess";
+    Object FailedToSaveLabel = "FailedToSaveLabel";
+    Object FailedToSaveRole = "FailedToSaveRole";
+    Object LabelEditor = "LabelEditor";
+    Object LabelEditorDescription = "LabelEditorDescription";
+    Object LabelInUseMessage = "LabelInUseMessage";
+    Object LabelInUseQuestion = "LabelInUseQuestion";
+    Object LabelInUseTitle = "LabelInUseTitle";
+    Object LabelInUseWarning = "LabelInUseWarning";
+    Object LabelUsageLocation = "LabelUsageLocation";
+    Object LabelUsageTitle = "LabelUsageTitle";
+    Object LabelsTitle = "LabelsTitle";
+    Object ManageUsers = "ManageUsers";
+    Object ManageUsersDescription = "ManageUsersDescription";
+    Object NewLabel = "NewLabel";
+    Object NoDetails = "NoDetails";
+    Object OK = "OK";
+    Object OrganizationLabel = "OrganizationLabel";
+    Object PlusMoreItems = "PlusMoreItems";
+    Object ReadAndWrite = "ReadAndWrite";
+    Object ReadOnly = "ReadOnly";
+    Object ReferenceLanguage = "ReferenceLanguage";
+    Object RevokeAccessConfirmation = "RevokeAccessConfirmation";
+    Object Save = "Save";
+    Object Saving = "Saving";
+    Object Scope = "Scope";
+    Object ScopeDescription = "ScopeDescription";
+    Object SearchLabels = "SearchLabels";
+    Object SearchUsers = "SearchUsers";
+    Object SelectEventPlaceholder = "SelectEventPlaceholder";
+    Object SelectRole = "SelectRole";
+    Object SelectUser = "SelectUser";
+    Object Space = "Space";
+    Object SpecificEvent = "SpecificEvent";
+    Object SpecificEventDescription = "SpecificEventDescription";
+    Object TeamMembersAndRoles = "TeamMembersAndRoles";
+    Object Translating = "Translating";
+    Object TranslationError = "TranslationError";
+    Object TranslationErrorEmptySource = "TranslationErrorEmptySource";
+    Object UpdateExistingLabel = "UpdateExistingLabel";
+
+}

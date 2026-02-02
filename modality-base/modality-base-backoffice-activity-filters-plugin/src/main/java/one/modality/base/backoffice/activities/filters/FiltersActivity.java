@@ -3,7 +3,6 @@ package one.modality.base.backoffice.activities.filters;
 import dev.webfx.extras.cell.renderer.TextRenderer;
 import dev.webfx.extras.visual.VisualColumn;
 import dev.webfx.extras.visual.VisualResultBuilder;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.stack.orm.domainmodel.DomainClass;
@@ -12,11 +11,11 @@ import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
-import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.action.ActionGroup;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -33,7 +32,6 @@ import one.modality.base.backoffice.operations.entities.filters.*;
 import one.modality.base.shared.entities.Filter;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.*;
@@ -60,7 +58,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         ButtonSelector<DomainClass> classSelector = new ButtonSelector<>(this, container) {
             private final List<DomainClass> allClasses = getDomainModel().getAllClasses();
             private List<DomainClass> searchedClasses;
-            private final VisualGrid dialogVisualGrid = new SkinnedVisualGrid(); // Better rendering in desktop JavaFX (but might be slower in web version)
+            private final VisualGrid dialogVisualGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
             {
                 dialogVisualGrid.setHeaderVisible(false);
                 dialogVisualGrid.setCursor(Cursor.HAND);
@@ -119,8 +117,7 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         // FieldPane components
         Label fieldSearchLabel = new Label("Search fields");
         TextField fieldSearchField = new TextField();
-        //BooleanBinding isSelectedFilterNull = selectedFilter.isNull(); // Not yet emulated by WebFX
-        ObservableValue<Boolean> isSelectedFilterNull = FXProperties.compute(selectedFilter, Objects::isNull); // WebFX replacement
+        BooleanBinding isSelectedFilterNull = selectedFilter.isNull();
         fieldSearchField.disableProperty().bind(isSelectedFilterNull);
         Button addNewFieldsButton = newButton(newOperationAction(() -> new AddNewFieldsRequest(entityStore, container)));
         HBox fieldsSearchRow = new HBox(fieldSearchField, addNewFieldsButton);
@@ -247,24 +244,21 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
 
         // Setting up the filter mapper that builds the content displayed in the filters listing
         filtersVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
-                .setEntityColumns("[" +
-                        "{label: 'Name', expression: 'name'}," +
-                        //"{label: 'Is Columns', expression: 'isColumns'}," +
-                        //"{label: 'Is Condition', expression: 'isCondition'}," +
-                        //"{label: 'Is Group', expression: 'isGroup'}," +
-                        //"{label: 'Is Active', expression: 'active'}," +
-                        "{label: 'Activity Name', expression: 'activityName'}," +
-                        "{label: 'Class', expression: 'class'}," +
-                        //"{label: 'Columns', expression: 'columns'}," +
-                        "{label: 'Where', expression: 'whereClause'}," +
-                        "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        "{label: 'Having', expression: 'havingClause'}," +
-                        //"{label: 'OrderBy', expression: 'orderByClause'}," +
-                        "{label: 'Limit', expression: 'limitClause'}" +
-                        "]")
-                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = ?", s.toLowerCase()))
+                .always( // language=JSON5
+                    "{class: 'Filter', alias: 'fil', fields: 'id', where: '!isColumns', orderBy: 'name asc'}")
+                .setEntityColumns( // language=JSON5
+                    """
+                        [
+                            {label: 'Name', expression: 'name'},
+                            {label: 'Activity Name', expression: 'activityName'},
+                            {label: 'Class', expression: 'class'},
+                            {label: 'Where', expression: 'whereClause'},
+                            {label: 'GroupBy', expression: 'groupByClause'},
+                            {label: 'Having', expression: 'havingClause'},
+                            {label: 'Limit', expression: 'limitClause'}
+                        ]""")
+                .ifTrimNotEmpty(pm.searchTextProperty(), s -> where("lower(name) like $1", "%" + s.toLowerCase() + "%"))
+                .ifTrimNotEmpty(pm.filterClassProperty(), s -> where("lower(class) = $1", s.toLowerCase()))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.filtersVisualResultProperty())
@@ -279,24 +273,21 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
                 .start();
 
         fieldsVisualMapper = ReactiveVisualMapper.<Filter>createPushReactiveChain(this)
-                .always("{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
-                .setEntityColumns("[" +
-                        "{label: 'Name', expression: 'name'}," +
-                        //"{label: 'Is Columns', expression: 'isColumns'}," +
-                        //"{label: 'Is Condition', expression: 'isCondition'}," +
-                        "{label: 'Is Group', expression: 'isGroup'}," +
-                        //"{label: 'Is Active', expression: 'active'}," +
-                        "{label: 'Activity Name', expression: 'activityName'}," +
-                        //"{label: 'Class', expression: 'class'}," +
-                        "{label: 'Columns', expression: 'columns'}," +
-                        "{label: 'Where', expression: 'whereClause'}," +
-                        "{label: 'GroupBy', expression: 'groupByClause'}," +
-                        //"{label: 'Having', expression: 'havingClause'}," +
-                        "{label: 'OrderBy', expression: 'orderByClause'}" +
-                        //"{label: 'Limit', expression: 'limitClause'}" +
-                        "]")
-                .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like ?", "%" + s.toLowerCase() + "%"))
-                .always(selectedFilter, s -> s != null ? where("lower(class) = ?", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
+                .always( // language=JSON5
+                    "{class: 'Filter', alias: 'fil', fields: 'id', where: 'isColumns', orderBy: 'name asc'}")
+                .setEntityColumns( // language=JSON5
+                    """
+                        [
+                            {label: 'Name', expression: 'name'},
+                            {label: 'Is Group', expression: 'isGroup'},
+                            {label: 'Activity Name', expression: 'activityName'},
+                            {label: 'Columns', expression: 'columns'},
+                            {label: 'Where', expression: 'whereClause'},
+                            {label: 'GroupBy', expression: 'groupByClause'},
+                            {label: 'OrderBy', expression: 'orderByClause'}
+                        ]""")
+                .ifTrimNotEmpty(pm.fieldsSearchTextProperty(), s -> where("lower(name) like $1", "%" + s.toLowerCase() + "%"))
+                .always(selectedFilter, s -> s != null ? where("lower(class) = $1", s.getClassId().toString().toLowerCase()) : where("1 = 0"))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it
                 .visualizeResultInto(pm.fieldsVisualResultProperty())
@@ -320,11 +311,12 @@ final class FiltersActivity extends ViewDomainActivityBase implements OperationA
         displayStatus(status);
 
         filterFieldsResultVisualMapper = ReactiveVisualMapper.<Entity>createPushReactiveChain(this)
-                .always("{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + ", limit: 100}")
+                .always( // language=JSON5
+                    "{class: '" + selectedClass + "', alias: 'ma', columns: '" + columns + "', fields: 'id'" + orderBy + ", limit: 100}")
                 .ifNotNull(selectedFilter, s -> where(s.getWhereClause()))
                 .ifNotNull(selectedFilter, s -> limit(s.getLimitClause()))
                 .ifNotNull(selectedFilter, s -> s.getOrderByClause() != null && !s.getOrderByClause().isEmpty() ? parse("orderBy: '" + s.getOrderByClause() + "'") : null)
-                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=?", organization))
+                .ifNotNull(pm.organizationIdProperty(), organization -> where("organization=$1", organization))
                 //.ifTrimNotEmpty(pm.searchTextProperty(), s -> where("name like ?", AbcNames.evaluate(s, true)))
                 .applyDomainModelRowStyle() // Colorizing the rows
                 .autoSelectSingleRow() // When the result is a singe row, automatically select it

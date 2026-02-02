@@ -1,7 +1,7 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.registration;
 
 import dev.webfx.platform.async.AsyncFunction;
-import dev.webfx.stack.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.HasI18nKey;
 import javafx.scene.layout.Pane;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.shared.entities.Document;

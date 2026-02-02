@@ -5,9 +5,9 @@ module modality.base.backoffice.mainframe.headernode {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
+    requires webfx.extras.controlfactory;
     requires webfx.platform.service;
     requires webfx.stack.orm.domainmodel;
-    requires webfx.stack.ui.controls;
 
     // Exported packages
     exports one.modality.base.backoffice.mainframe.headernode;

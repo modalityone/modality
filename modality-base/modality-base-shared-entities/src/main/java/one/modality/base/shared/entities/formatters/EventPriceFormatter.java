@@ -15,19 +15,37 @@ public class EventPriceFormatter extends PriceFormatter {
     }
 
     public static String getEventCurrencyCode(Event event) {
-        // Temporary hardcoded
+        // Handle null event - default to GBP
+        if (event == null)
+            return "GBP";
+
         Object organizationPk = Entities.getPrimaryKey(event.getOrganizationId());
-        if (organizationPk == null)
-            return null;
-        boolean isKMCF = Numbers.toInteger(organizationPk) == 2;
-        return isKMCF ? "EUR" : "GBP";
+        if (organizationPk != null) {
+            int orgId = Numbers.toInteger(organizationPk);
+            // KMCF (organization 2) uses EUR
+            if (orgId == 2) {
+                return "EUR";
+            }
+            // KMCNY (organization 187) uses USD
+            if (orgId == 187) {
+                return "USD";
+            }
+        }
+
+        // Default to GBP (UK)
+        return "GBP";
     }
 
     public static String getEventCurrencySymbol(Event event) {
-        // Temporary hardcoded
-        if ("EUR".equals(getEventCurrencyCode(event)))
-            return " €";
-        return "£ ";
+        String currencyCode = getEventCurrencyCode(event);
+        switch (currencyCode) {
+            case "USD":
+                return "$ ";
+            case "EUR":
+                return " €";
+            default:
+                return "£ ";
+        }
     }
 
     public static String formatWithCurrency(Object value, Event event) {

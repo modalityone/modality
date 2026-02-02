@@ -100,7 +100,7 @@ public class MasterSlaveView implements UiBuilder {
     ==================================================================================================================*/
 
     public <E extends Entity> void doVisibilityBinding(GroupView<E> groupView, ObjectProperty<E> masterSelectedEntityProperty, Function<E, Boolean> additionalSlaveVisibilityCondition) {
-        slaveVisibleProperty().bind(FXProperties.compute(masterSelectedEntityProperty, selectedEntity -> selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
+        slaveVisibleProperty().bind(masterSelectedEntityProperty.map(selectedEntity -> selectedEntity != null && (additionalSlaveVisibilityCondition == null || additionalSlaveVisibilityCondition.apply(selectedEntity))));
     }
 
 

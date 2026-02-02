@@ -13,16 +13,16 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.util.Arrays;
 import dev.webfx.platform.util.Booleans;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParameters;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
@@ -36,9 +36,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.FrontOfficeTimeFormats;
-import dev.webfx.stack.ui.validation.ValidationSupport;
+import dev.webfx.extras.validation.ValidationSupport;
 import one.modality.base.shared.domainmodel.functions.AbcNames;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
@@ -77,9 +77,9 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         updateUiEditable();
     });
 
-    private final Hyperlink updateLink = newHyperlink(ModalityI18nKeys.Update, e -> setEditable(true));
-    private final Hyperlink saveLink = newHyperlink(ModalityI18nKeys.Save, e -> save());
-    private final Hyperlink cancelLink = newHyperlink(ModalityI18nKeys.Cancel, e -> cancel());
+    private final Hyperlink updateLink = newHyperlink(BaseI18nKeys.Update, e -> setEditable(true));
+    private final Hyperlink saveLink = newHyperlink(BaseI18nKeys.Save, e -> save());
+    private final Hyperlink cancelLink = newHyperlink(BaseI18nKeys.Cancel, e -> cancel());
 
     {
         cancelLink.setContentDisplay(ContentDisplay.TEXT_ONLY);
@@ -137,14 +137,18 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
         streetTextField = newMaterialTextField(CrmI18nKeys.Street);
         postCodeTextField = newMaterialTextField(CrmI18nKeys.Postcode);
         cityNameTextField = newMaterialTextField(CrmI18nKeys.City);
-        String countryJson = "{class: 'Country', orderBy: 'name'}";
+        String countryJson = // language=JSON5
+            "{class: 'Country', orderBy: 'name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            countryJson = "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
+            countryJson = // language=JSON5
+                "{class: 'Country', orderBy: 'name', columns: [{expression: '[image(`images/s16/countries/svg/` + iso_alpha2 + `.svg`),name]'}] }";
         countrySelector = createEntityButtonSelector(countryJson, dataSourceModel, buttonSelectorParameters);
         countryButton = countrySelector.toMaterialButton(CrmI18nKeys.Country);
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        String organizationJson = // language=JSON5
+            "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
-            organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
+            organizationJson = // language=JSON5
+                "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name', columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }";
         organizationSelector = createEntityButtonSelector(organizationJson, dataSourceModel, buttonSelectorParameters);
         organizationButton = organizationSelector.toMaterialButton(CrmI18nKeys.Centre);
         SceneUtil.onSceneReady(getContainer(), scene -> {
@@ -203,7 +207,7 @@ public class PersonalDetailsPanel implements ModalityButtonFactoryMixin {
             syncModelFromUi(updatingEntity);
             if (updateStore.hasChanges()) {
                 updateStore.submitChanges()
-                    .onFailure(dev.webfx.platform.console.Console::log)
+                    .onFailure(dev.webfx.platform.console.Console::error)
                     .onSuccess(submitResultBatch -> {
                         syncModelFromUi(entity);
                         setEditable(false);

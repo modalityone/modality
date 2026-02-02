@@ -6,3 +6,8 @@ Expired:
   textFill: "#FF0404"
 Unpublished:
   textFill: "#FF0404"
+AvailableUntil1:
+  textFill: "#41BA4D"
+ExpiredSince1:
+  textFill: "#FF0404"
+

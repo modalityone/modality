@@ -47,7 +47,7 @@ final class ExportHelper {
         if (expression instanceof Dot) {
             Dot<T> dot = (Dot<T>) expression;
             Expression<T> r = getTextExpression(dot.getRight(), excludeNumbers, skipArray);
-            return r == null ? null : r == dot.getRight() ? dot : new Dot<>(dot.getLeft(), r, dot.isOuterJoin());
+            return r == null ? null : r == dot.getRight() ? dot : Dot.dot(dot.getLeft(), r, dot.isOuterJoin());
         }
         Type type = expression.getType();
         if (excludeNumbers && Types.isNumberType(type) || Types.isImageType(type))
@@ -57,7 +57,7 @@ final class ExportHelper {
             DomainClass foreignClass = ((DomainField) topRightExpression).getForeignClass();
             if (foreignClass != null) {
                 Expression<T> fte = getTextExpression(foreignClass.getForeignFields(), excludeNumbers, skipArray);
-                return fte == null ? null : new Dot<>(expression, fte, true);
+                return fte == null ? null : Dot.dot(expression, fte, true);
             }
         }
         PrimType primType = Types.getPrimType(type);

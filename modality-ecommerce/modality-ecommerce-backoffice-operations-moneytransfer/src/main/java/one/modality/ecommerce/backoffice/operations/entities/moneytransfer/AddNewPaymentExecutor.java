@@ -1,10 +1,9 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
-import dev.webfx.platform.async.Future;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.dialog.DialogUtil;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.dialog.DialogUtil;
 import dev.webfx.extras.util.layout.Layouts;
-import javafx.application.Platform;
+import dev.webfx.platform.async.Future;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -12,8 +11,10 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.web.WebView;
 import one.modality.base.shared.entities.Document;
-import one.modality.ecommerce.payment.PaymentService;
 import one.modality.ecommerce.payment.InitiatePaymentArgument;
+import one.modality.ecommerce.payment.PaymentAllocation;
+import one.modality.ecommerce.payment.PaymentFormType;
+import one.modality.ecommerce.payment.PaymentService;
 
 final class AddNewPaymentExecutor {
 
@@ -32,12 +33,13 @@ final class AddNewPaymentExecutor {
         Layouts.setMaxSizeToInfinite(stackPane);
         BorderPane borderPane = new BorderPane(stackPane);
         int amount = document.getPriceNet() - document.getPriceDeposit();
-        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, document.getPrimaryKey(), false, false))
-                .onFailure(e -> Platform.runLater(() -> borderPane.setCenter(new Label(e.getMessage()))))
-                .onSuccess(r -> Platform.runLater(() -> {
-                    String htmlContent = r.getHtmlContent();
-                    webView.getEngine().loadContent(htmlContent);
-                }));
+        PaymentService.initiatePayment(new InitiatePaymentArgument(amount, new PaymentAllocation[]{ new PaymentAllocation(document.getPrimaryKey(), amount)}, PaymentFormType.EMBEDDED, false, false, null, null))
+            .inUiThread()
+            .onFailure(e -> borderPane.setCenter(new Label(e.getMessage())))
+            .onSuccess(r -> {
+                String htmlContent = r.htmlContent();
+                webView.getEngine().loadContent(htmlContent);
+            });
         Button cancelButton = new Button("Cancel");
         Layouts.setMaxWidthToInfinite(cancelButton);
         borderPane.setBottom(cancelButton);

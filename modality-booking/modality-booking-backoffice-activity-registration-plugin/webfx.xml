@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+        <!-- Additional dependencies for WorkingBooking integration -->
+        <source-modules>
+            <source-module>modality-booking-client-workingbooking</source-module>
+            <source-module>modality-ecommerce-document-service</source-module>
+            <source-module>modality-ecommerce-policy-service</source-module>
+            <source-module>modality-ecommerce-shared-pricecalculator</source-module>
+            <source-module>modality-base-shared-knownitems</source-module>
+        </source-modules>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.booking.backoffice.activities.registration.RegistrationRouting$RegistrationUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.booking.backoffice.activities.registration.RegistrationRouting$RouteToRegistrationRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.booking.backoffice.activities.registration" prefix="Registration">
+        <i18n/>
+    </java-ui-api>
+
+</project>

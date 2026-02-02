@@ -7,7 +7,12 @@
     </exported-packages>
 
     <dependencies>
-        <used-by-source-modules/>
+        <used-by-source-modules>
+            <module>webfx-extras-cell</module>
+            <module>webfx-stack-orm-entity-controls</module>
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-presentationmodel</module>
+        </used-by-source-modules>
     </dependencies>
 
     <providers>
@@ -15,6 +20,9 @@
         <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.medias.MediasRouting$RouteToMediasRequestEmitter</provider>
     </providers>
 
-    <i18n javaKeysClass="one.modality.event.backoffice.activities.medias.MediasI18nKeys"/>
+    <java-ui-api package="one.modality.event.backoffice.activities.medias" prefix="Medias">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

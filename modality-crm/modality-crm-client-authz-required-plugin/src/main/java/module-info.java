@@ -9,20 +9,15 @@ module modality.crm.client.authz.required.plugin {
     requires modality.crm.client.authn.fx;
     requires webfx.platform.boot;
     requires webfx.platform.console;
-    requires webfx.platform.meta;
-    requires webfx.platform.util;
     requires webfx.stack.authz.client;
-    requires webfx.stack.cache;
-    requires webfx.stack.cache.client;
     requires webfx.stack.com.bus.call;
-    requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
-    requires webfx.stack.orm.dql;
-    requires webfx.stack.orm.entity;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.session.state;
     requires webfx.stack.session.state.client.fx;
+    requires webfx.stack.shareddata.cache;
+    requires webfx.stack.shareddata.cache.serial;
 
     // Exported packages
     exports one.modality.crm.client.services.authz;

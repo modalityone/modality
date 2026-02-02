@@ -40,6 +40,7 @@ import one.modality.base.shared.entities.markers.HasAudioUrl;
 import one.modality.base.shared.entities.markers.HasMediaInfo;
 import one.modality.base.shared.entities.markers.HasWistiaVideoId;
 import one.modality.base.shared.entities.markers.HasYoutubeVideoId;
+import one.modality.event.frontoffice.medias.MediaUtil;
 
 public abstract class MediaInfoView {
 
@@ -370,11 +371,11 @@ public abstract class MediaInfoView {
 
     private void updateElapsedTimeAndProgressBar(Duration elapsed) {
         if (isAudio) {
-            updateText(elapsedTimeText, formatDuration(elapsed) + " / " + formatDuration(mediaDuration));
+            updateText(elapsedTimeText, MediaUtil.formatDuration(elapsed) + " / " + MediaUtil.formatDuration(mediaDuration));
             if (mediaDuration != null)
                 progressBar.setProgress(elapsed.toMillis() / mediaDuration.toMillis());
         } else
-            updateText(elapsedTimeText, formatDuration(mediaDuration));
+            updateText(elapsedTimeText, MediaUtil.formatDuration(mediaDuration));
     }
 
     private static void updateText(Text text, String newContent) {
@@ -385,14 +386,6 @@ public abstract class MediaInfoView {
     private static void updateLabel(Label label, String newContent) {
         if (!Objects.areEquals(newContent, label.getText()))
             label.setText(newContent);
-    }
-
-    private static String formatDuration(Duration duration) {
-        if (duration == null || duration.isIndefinite() || duration.isUnknown())
-            return "xx:xx";
-        int minutes = (int) duration.toMinutes();
-        int seconds = ((int) duration.toSeconds()) % 60;
-        return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
 }

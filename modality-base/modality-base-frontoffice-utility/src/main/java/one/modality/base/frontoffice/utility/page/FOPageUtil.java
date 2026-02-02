@@ -11,7 +11,11 @@ public final class FOPageUtil {
     public static final double MAX_PAGE_WIDTH = 1440 - 2 * 160;
     public static final double LEFT_RIGHT_PAGE_INSETS = 20;
     public static final double TOP_PAGE_INSETS = 88;
-    public static final double BOTTOM_PAGE_INSETS = 160;
+    public static final double BOTTOM_PAGE_INSETS = 70; /* = space between the last node of the page (ex: Help Panel)
+      and the footer. 70 is the last value computed, to fit well in particular on the Video page, where the HelpPanel
+      has a breathing space above of 90 pixels = 50 (padding top) + 40 (VBox spacing). We repeat that same breathing
+      space under the HelpPanel, and we add an extra 30-pixel (looks better) before the footer logo, but because this
+      footer has also a 50-pixel top-margin, we remove it => 90 + 30 - 50 = 70 */
 
     public static <R extends Region> R restrictToMaxPageWidth(R region) {
         region.setMaxWidth(MAX_PAGE_WIDTH);

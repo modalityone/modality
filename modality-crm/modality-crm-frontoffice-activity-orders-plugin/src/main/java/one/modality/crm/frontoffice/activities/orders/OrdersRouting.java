@@ -1,0 +1,81 @@
+package one.modality.crm.frontoffice.activities.orders;
+
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.platform.windowhistory.spi.BrowsingHistory;
+import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityContextFinal;
+import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
+import dev.webfx.stack.routing.router.util.PathBuilder;
+import dev.webfx.stack.routing.uirouter.UiRoute;
+import dev.webfx.stack.routing.uirouter.activity.uiroute.UiRouteActivityContext;
+import dev.webfx.stack.routing.uirouter.impl.UiRouteImpl;
+import dev.webfx.stack.routing.uirouter.operations.RoutePushRequest;
+import dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter;
+import one.modality.base.client.util.routing.ModalityRoutingUtil;
+
+/**
+ * @author Bruno Salmon
+ */
+public class OrdersRouting {
+
+    private final static String ANY_PATH = "/orders(/:documentId)?";
+    private final static String PATH = "/orders";
+    private final static String DOCUMENT_PATH = "/orders/:documentId";
+    private final static String OPERATION_CODE = "RouteToOrders";
+
+    public static String getAnyPath() {
+        return ANY_PATH;
+    }
+
+    public static String getPath() {
+        return PATH;
+    }
+
+    public static String getDocumentPath(Object document) {
+        return ModalityRoutingUtil.interpolateDocumentIdInPath(document, DOCUMENT_PATH);
+    }
+
+    public static class UserProfileUiRoute extends UiRouteImpl<ViewDomainActivityContextFinal> {
+
+        public UserProfileUiRoute() {
+            super(uiRoute());
+        }
+
+        public static UiRoute<ViewDomainActivityContextFinal> uiRoute() {
+            return UiRoute.createRegex(PathBuilder.toRegexPath(OrdersRouting.getAnyPath())
+                    , true
+                    , OrdersActivity::new
+                    , ViewDomainActivityContextFinal::new
+            );
+        }
+    }
+
+    public static class RouteToOrdersRequest extends RoutePushRequest implements HasOperationCode, HasI18nKey {
+
+        public RouteToOrdersRequest(Object document, BrowsingHistory browsingHistory) {
+            super(getDocumentPath(document), browsingHistory);
+        }
+
+        public RouteToOrdersRequest(BrowsingHistory browsingHistory) {
+            super(getPath(), browsingHistory);
+        }
+
+        @Override
+        public Object getOperationCode() {
+            return OPERATION_CODE;
+        }
+
+        @Override
+        public Object getI18nKey() {
+            return OrdersI18nKeys.OrdersMenu;
+        }
+    }
+
+    public static class RouteToOrdersRequestEmitter implements RouteRequestEmitter {
+
+        @Override
+        public RouteRequest instantiateRouteRequest(UiRouteActivityContext context) {
+            return new RouteToOrdersRequest(context.getHistory());
+        }
+    }
+}

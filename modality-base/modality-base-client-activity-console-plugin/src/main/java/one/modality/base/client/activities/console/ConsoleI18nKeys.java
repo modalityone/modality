@@ -3,6 +3,6 @@ package one.modality.base.client.activities.console;
 
 public interface ConsoleI18nKeys {
 
-    String Console = "Console";
+    Object Console = "Console";
 
 }

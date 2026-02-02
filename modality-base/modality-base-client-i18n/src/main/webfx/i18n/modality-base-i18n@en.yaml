@@ -1,0 +1,19 @@
+">>": " »"
+"<<": "« "
+"...": "…"
+English:
+  graphic: "images/s16/system/lang_en.png"
+Français:
+  graphic: "images/s16/system/lang_fr.png"
+Add:
+  graphic: "images/s16/actions/add.png"
+Edit:
+  graphic: "images/s16/actions/edit.png"
+Delete:
+  graphic: "images/s16/actions/delete.png"
+CopySelection:
+  graphic: "images/s16/actions/copy.png"
+CopyAll:
+  graphic: "images/s16/actions/copy.png"
+GenericSearch:
+  prompt: "[GenericSearchPrompt]"

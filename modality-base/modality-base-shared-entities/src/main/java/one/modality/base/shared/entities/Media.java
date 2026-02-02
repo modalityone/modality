@@ -2,31 +2,19 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.platform.util.Strings;
 import dev.webfx.stack.orm.entity.Entity;
-import dev.webfx.stack.orm.entity.EntityId;
+import one.modality.base.shared.entities.markers.EntityHasScheduledItem;
 
 /**
  * @author Bruno Salmon
  */
-public interface Media extends Entity {
-    String scheduledItem = "scheduledItem";
+public interface Media extends Entity,
+    EntityHasScheduledItem {
     String type = "type";
     String lang = "lang";
     String url = "url";
     String multilang = "multilang";
     String ord = "ord";
     String durationMillis = "durationMillis";
-
-    default void setScheduledItem(Object value) {
-        setForeignField(scheduledItem, value);
-    }
-
-    default EntityId getScheduledItemId() {
-        return getForeignEntityId(scheduledItem);
-    }
-
-    default ScheduledItem getScheduledItem() {
-        return getForeignEntity(scheduledItem);
-    }
 
     default void setType(Object value) {
         setFieldValue(type, Strings.stringValue(value));

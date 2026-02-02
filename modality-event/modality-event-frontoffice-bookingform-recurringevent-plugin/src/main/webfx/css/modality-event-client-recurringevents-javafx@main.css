@@ -1,0 +1,32 @@
+.root {
+    -fx-event-description-text-color: #444;
+}
+
+.event-title, .event-title Text, .event-title SVGPath {
+    -fx-text-fill: white;
+    -fx-fill: white;
+}
+
+.event-description-text, .event-description-text Text {
+    -fx-text-fill: -fx-event-description-text-color;
+    -fx-fill: -fx-event-description-text-color;
+    -fx-text-alignment: justify;
+}
+
+.event-description-text TextFlow {
+    -fx-line-spacing: 12px;
+}
+
+.subtitle-grey {
+   -fx-text-fill: grey;
+   -fx-fill: grey;
+   -fx-font-size: 14px;
+}
+
+.line-total {
+    -fx-background-color: #CCCCCC;
+}
+
+.line-total Text {
+    -fx-font-weight: bolder;
+}

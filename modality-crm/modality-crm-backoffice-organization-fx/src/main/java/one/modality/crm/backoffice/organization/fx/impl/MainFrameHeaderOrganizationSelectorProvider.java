@@ -2,7 +2,7 @@ package one.modality.crm.backoffice.organization.fx.impl;
 
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
@@ -25,7 +25,7 @@ public class MainFrameHeaderOrganizationSelectorProvider implements MainFrameHea
     @Override
     public Node getHeaderNode(ButtonFactoryMixin buttonFactory, Pane frameContainer, DataSourceModel dataSourceModel) {
         if (organizationSelector == null) {
-            organizationSelector = new EntityButtonSelector<>(
+            organizationSelector = new EntityButtonSelector<>( // language=JSON5
                     "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)'}",
                     buttonFactory, frameContainer, dataSourceModel
             );

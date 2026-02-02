@@ -1,5 +1,6 @@
 package one.modality.base.shared.entities;
 
+import one.modality.base.shared.entities.markers.EntityHasI18nFields;
 import one.modality.base.shared.entities.markers.EntityHasIcon;
 import one.modality.base.shared.entities.markers.EntityHasOrganization;
 
@@ -8,50 +9,26 @@ import one.modality.base.shared.entities.markers.EntityHasOrganization;
  */
 public interface Label extends
     EntityHasIcon,
-    EntityHasOrganization {
-    String de = "de";
-    String en = "en";
-    String es = "es";
-    String fr = "fr";
-    String pt = "pt";
+    EntityHasOrganization,
+    EntityHasI18nFields {
 
-    default void setDe(String value) {
-        setFieldValue(de, value);
+    String ref = "ref";
+    String livestreamMessage = "livestreamMessage";
+
+    default void setRef(String value) {
+        setFieldValue(ref, value);
     }
 
-    default String getDe() {
-        return getStringFieldValue(de);
+    default String getRef() {
+        return getStringFieldValue(ref);
     }
 
-    default void setEn(String value) {
-        setFieldValue(en, value);
+    default void setLivestreamMessage(Boolean value) {
+        setFieldValue(livestreamMessage, value);
     }
 
-    default String getEn() {
-        return getStringFieldValue(en);
+    default Boolean isLivestreamMessage() {
+        return getBooleanFieldValue(livestreamMessage);
     }
 
-    default void setEs(String value) {
-        setFieldValue(es, value);
-    }
-
-    default String getEs() {
-        return getStringFieldValue(es);
-    }
-
-    default void setFr(String value) {
-        setFieldValue(fr, value);
-    }
-
-    default String getFr() {
-        return getStringFieldValue(fr);
-    }
-
-    default void setPt(String value) {
-        setFieldValue(pt, value);
-    }
-
-    default String getPt() {
-        return getStringFieldValue(pt);
-    }
 }

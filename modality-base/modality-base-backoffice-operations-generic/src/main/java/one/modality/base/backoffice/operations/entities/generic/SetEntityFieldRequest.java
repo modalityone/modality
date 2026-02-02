@@ -2,8 +2,8 @@ package one.modality.base.backoffice.operations.entities.generic;
 
 import javafx.scene.layout.Pane;
 import dev.webfx.stack.orm.expression.Expression;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 import dev.webfx.platform.async.AsyncFunction;

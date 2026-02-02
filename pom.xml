@@ -28,7 +28,7 @@
     <repositories>
         <repository>
             <id>webfx-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <url>https://central.sonatype.com/repository/maven-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -56,8 +56,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-all</module>
         <module>modality-base</module>
+        <module>modality-booking</module>
         <module>modality-catering</module>
         <module>modality-crm</module>
         <module>modality-ecommerce</module>

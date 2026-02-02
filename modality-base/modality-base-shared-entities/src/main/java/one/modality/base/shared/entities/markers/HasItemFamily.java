@@ -1,7 +1,7 @@
 package one.modality.base.shared.entities.markers;
 
 import one.modality.base.shared.entities.ItemFamily;
-import one.modality.base.shared.entities.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import dev.webfx.stack.orm.entity.EntityId;
 
 /**

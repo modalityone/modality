@@ -10,9 +10,9 @@ import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.authn.UserClaims;
 import dev.webfx.stack.authn.logout.client.operation.LogoutRequest;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequest;
-import dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.operations.ChangeLanguageRequest;
+import dev.webfx.extras.i18n.operations.ChangeLanguageRequestEmitter;
 import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
@@ -20,9 +20,9 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParamet
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.session.state.client.fx.FXUserClaims;
-import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionBinder;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
@@ -71,7 +71,7 @@ final class ModalityClientProfilePanel {
                     FXProfile.hideProfilePanel();
                     PersonalDetailsPanel.editPersonalDetails(userPerson, true, new ButtonSelectorParameters().setButtonFactory(buttonFactoryMixin).setDialogParent(FXMainFrameDialogArea.getDialogArea()));
                 });
-                // If there is no organization selected by the user (which happens on very first login), then we set it to its affiliated organization by default
+                // If there is no organization selected by the user (which happens on the very first login), then we set it to its affiliated organization by default
                 if (FXOrganization.getOrganization() == null
                         // Also checking organizationId because if it's non-null (ex: retrieved from session), it means the Organization is loading
                         && Entities.getPrimaryKey(FXOrganizationId.getOrganizationId()) == null) {
@@ -79,13 +79,14 @@ final class ModalityClientProfilePanel {
                 }
                 ReactiveVisualMapper.createReactiveChain(null)
                     .setDataSourceModel(userPerson.getStore().getDataSourceModel())
-                    .always("{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")
-                    .always(DqlStatement.where("active and management.user=?", userPerson))
+                    .always( // language=JSON5
+                        "{class: 'AuthorizationAssignment', columns: [{expression: 'role.name', label:'Role', textAlign: 'center'},{expression: 'management.manager.fullName', label:'Granted by', textAlign: 'center'}]}")
+                    .always(DqlStatement.where("active and management.user=$1", userPerson))
                     .visualizeResultInto(roleGrid)
                     .start();
             } else {
                 UserClaims userClaims = FXUserClaims.getUserClaims();
-                identityLink.setText(userClaims == null ? null : userClaims.getEmail());
+                identityLink.setText(userClaims == null ? null : userClaims.email());
                 identityLink.setOnAction(null);
                 roleGrid.visualResultProperty().unbind();
                 roleGrid.setVisualResult(null);
@@ -108,7 +109,7 @@ final class ModalityClientProfilePanel {
             });
         }), I18n.dictionaryProperty());
 
-        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>(
+        EntityButtonSelector<Organization> organizationSelector = new EntityButtonSelector<>( // language=JSON5
                 "{class: 'Organization', alias: 'o', where: 'exists(select Event where organization=o)', fields: '" + FXOrganization.EXPECTED_FIELDS + "'}",
                 buttonFactoryMixin, vBox, DataSourceModelService.getDefaultDataSourceModel()
         );

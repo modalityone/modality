@@ -8,18 +8,18 @@ module modality.ecommerce.backoffice.operations.documentline {
     // Direct dependencies modules
     requires javafx.controls;
     requires javafx.graphics;
-    requires modality.base.backoffice.operations.generic;
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
+    requires modality.base.client.util;
     requires modality.base.shared.entities;
     requires modality.ecommerce.backoffice.operations.document;
     requires modality.ecommerce.document.service;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
     requires webfx.platform.async;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.ecommerce.backoffice.operations.entities.documentline;

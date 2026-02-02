@@ -13,11 +13,13 @@
 
     <dependencies>
         <used-by-source-modules>
-            <undetected-module>javafx-base</undetected-module>
+            <undetected-module>javafx-graphics</undetected-module>
         </used-by-source-modules>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.base.client.operationactionsloading.ModalityOperationI18nKeys"/>
+    <java-ui-api package="one.modality.base.client.operationactionsloading" prefix="ModalityOperation">
+        <i18n/>
+    </java-ui-api>
 
 
 </project>

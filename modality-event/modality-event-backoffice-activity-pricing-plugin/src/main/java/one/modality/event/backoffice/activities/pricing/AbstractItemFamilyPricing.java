@@ -1,7 +1,10 @@
 package one.modality.event.backoffice.activities.pricing;
 
+import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.time.TimeUtil;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
@@ -9,12 +12,9 @@ import dev.webfx.platform.util.Numbers;
 import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.platform.util.collection.HashList;
 import dev.webfx.platform.util.time.Times;
-import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.HPos;
@@ -29,11 +29,15 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.domainmodel.formatters.PriceFormatter;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Rate;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.SiteItem;
 import one.modality.base.shared.entities.formatters.EventPriceFormatter;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.base.shared.knownitems.KnownItemFamily;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -61,14 +65,14 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
     private final List<SiteItem> initialSelectedSiteItems;
     // If the managers add or remove some options, this list will contain their most recent selection.
     private final List<SiteItem> selectedSiteItems = new ArrayList<>();
-    // Map associating each option to its model (containing the rates and scheduled items for that option). This map
+    // Map associating each option with its model (containing the rates and scheduled items for that option). This map
     // may contain more options than selectedSiteItems, because it also contains the options that have been removed
     private final Map<SiteItem, SiteItemModel> siteItemModels = new HashMap<>();
     private final List<ScheduledItem> initialScheduledItems;
 
     private boolean syncingUI;
-    private final Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
-    private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(ModalityI18nKeys.Cancel));
+    private final Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.Save));
+    private final Button cancelButton = Bootstrap.secondaryButton(I18nControls.newButton(BaseI18nKeys.Cancel));
 
     public AbstractItemFamilyPricing(KnownItemFamily knownItemFamily, Object itemFamilyI18nKey, PolicyAggregate eventPolicy, boolean everyday) {
         this.itemFamilyI18nKey = itemFamilyI18nKey;
@@ -76,7 +80,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         this.everyday = everyday;
         this.updateStore = UpdateStore.createAbove(eventPolicy.getEntityStore());
         EntityBindings.disableNodesWhenUpdateStoreHasNoChanges(updateStore, saveButton, cancelButton);
-        initialScheduledItems = eventPolicy.getFamilyScheduledItems(knownItemFamily);
+        initialScheduledItems = eventPolicy.filterScheduledItemsOfFamily(knownItemFamily);
         initialSelectedSiteItems = initialScheduledItems.stream().map(SiteItem::new).distinct().collect(Collectors.toList());
 
         Event event = getEvent();
@@ -130,9 +134,9 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
 
         saveButton.setOnAction(e -> {
                 if (dateUIs.stream().allMatch(DateUI::isValid)) {
-                    OperationUtil.turnOnButtonsWaitModeDuringExecution(
+                    AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                         updateStore.submitChanges()
-                            .onFailure(Console::log)
+                            .onFailure(Console::error)
                         , saveButton);
                 }
             }
@@ -160,7 +164,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
             siteItemUI.checkBox.setSelected(selectedSiteItems.contains(siteItemUI.siteItem));
         }
 
-        // All the selected options share the same dates and rates (in reality the ScheduledItem and Rate will be created
+        // All the selected options share the same dates and rates (in reality, the ScheduledItem and Rate will be created
         // in the database for each SiteItem, but with the same information regarding dates and rates). So in the UI, we
         // show this information (dates and rates) only once. referenceSiteItem is the sample that we will use for this.
         SiteItem referenceSiteItem = Collections.first(selectedSiteItems);
@@ -196,7 +200,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 siteItemModel.initialRates.forEach(updateStore::deleteEntity);
                 continue; // nothing more to do for this siteItem
             }
-            // If we reach this points, it's because the siteItem has been added or eventually modified
+            // If we reach this point, it's because the siteItem has been added or eventually modified
             // We will try to reuse existing rates if possible (and eventually update them), otherwise we will create new ones
             List<Rate> initialRates = siteItemModel.initialRates; // from policy rates, kept only those related to this siteItem
             int lastUsedInitialRateIndex = -1;
@@ -223,7 +227,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 Object price = priceFormatter.parseValue(rateField.getText());
                 Rate rate = null;
                 if (lastUpdatedRate != null && Numbers.identicalObjectsOrNumberValues(price, lastUpdatedRate.getPrice())) {
-                    rate = lastUpdatedRate; // continuing using same rate (extending its end date)
+                    rate = lastUpdatedRate; // continuing using the same rate (extending its end date)
                 } else if (lastUsedInitialRateIndex < initialRates.size() - 1) {
                     rate = Collections.findFirst(initialRates, lastUsedInitialRateIndex + 1, r -> siteItemModel.rateMatchesSiteItemPerDayAndDate(r, date));
                     if (rate != null) {
@@ -247,7 +251,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
                 completeRate(rate);
                 lastUpdatedRate = rate;
             }
-            // Deleting remaining daily teaching rates (i.e. those not reused)
+            // Deleting remaining daily teaching rates (i.e., those not reused)
             for (int i = lastUsedInitialRateIndex + 1; i < initialRates.size(); i++) {
                 Rate rate = initialRates.get(i);
                 if (rate != null && !Entities.sameId(rate, lastUpdatedRate))
@@ -260,11 +264,11 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         rate.setPerDay(true);
         rate.setPerPerson(true);
         // Hardcoded 100% min deposit for online events (to change this when in-person and online events are merged)
-        if (getEvent().isOnlineEvent())
+        if (getEvent().isOnlineAllowed())
             rate.setMinDeposit(100);
     }
 
-    // Class containing the UI elements associated to a date (checkbox, text and rate text field)
+    // Class containing the UI elements associated with a date (checkbox, text and rate text field)
     private class DateUI {
         private final LocalDate date;
         private final Text dateText;
@@ -291,7 +295,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         }
     }
 
-    // Class containing the UI elements associated to a SiteIem (checkbox with text)
+    // Class containing the UI elements associated with a SiteIem (checkbox with text)
     private class SiteItemUI {
         private final SiteItem siteItem;
         private final CheckBox checkBox;
@@ -315,7 +319,7 @@ abstract class AbstractItemFamilyPricing implements ItemFamilyPricing {
         }
     }
 
-    // Class containing the information (model) associated to a SiteItem.
+    // Class containing the information (model) associated with a SiteItem.
     private class SiteItemModel {
         private final SiteItem siteItem;
         private final List<Rate> initialRates;

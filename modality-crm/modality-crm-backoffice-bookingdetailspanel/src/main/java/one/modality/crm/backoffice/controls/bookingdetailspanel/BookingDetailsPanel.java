@@ -1,5 +1,12 @@
 package one.modality.crm.backoffice.controls.bookingdetailspanel;
 
+import dev.webfx.extras.action.ActionBinder;
+import dev.webfx.extras.action.ActionGroup;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.async.AsyncSpinner;
+import dev.webfx.extras.operation.action.OperationAction;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
 import dev.webfx.extras.panes.ColumnsPane;
 import dev.webfx.extras.panes.FlexPane;
 import dev.webfx.extras.panes.ScalePane;
@@ -7,7 +14,6 @@ import dev.webfx.extras.visual.VisualResult;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.domainmodel.HasDataSourceModel;
 import dev.webfx.stack.orm.entity.Entity;
@@ -16,12 +22,6 @@ import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelectorParamet
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.ReactiveVisualMapper;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
-import dev.webfx.stack.ui.action.ActionBinder;
-import dev.webfx.stack.ui.action.ActionGroup;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import dev.webfx.stack.ui.operation.action.OperationAction;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -36,13 +36,14 @@ import javafx.scene.layout.*;
 import one.modality.base.backoffice.controls.masterslave.UiBuilder;
 import one.modality.base.backoffice.operations.entities.generic.CopyAllRequest;
 import one.modality.base.backoffice.operations.entities.generic.CopySelectionRequest;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.client.presentationmodel.HasSelectedDocumentProperty;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.DocumentLine;
 import one.modality.base.shared.entities.Mail;
 import one.modality.base.shared.entities.MoneyTransfer;
+import one.modality.booking.backoffice.operations.entities.document.registration.ShowBookingEditorRequest;
 import one.modality.crm.backoffice.operations.entities.mail.ComposeNewMailRequest;
 import one.modality.crm.backoffice.operations.entities.mail.OpenMailRequest;
 import one.modality.crm.client.controls.personaldetails.BookingPersonalDetailsPanel;
@@ -69,7 +70,8 @@ public final class BookingDetailsPanel implements
     HasActiveProperty,
     UiBuilder {
 
-    public static final String REQUIRED_FIELDS = "person_firstName,person_lastName,person_age,person_email,person_organization,person_phone,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates"; // event.startDate is required for the personal details panel
+    public static final String REQUIRED_FIELDS = // event.startDate is required for the personal details panel
+        "person_firstName,person_lastName,person_male,person_age,person_ordained,person_email,person_organization,person_phone,person_street,person_postCode,person_cityName,person_country,person_carer1Name,person_carer2Name,event.startDate,dates";
 
     private final ObjectProperty<Document> selectedDocumentProperty;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty(true);
@@ -120,22 +122,31 @@ public final class BookingDetailsPanel implements
             createFlexButton(ShowBookingEditorRequest::new),
             createFlexButton(ToggleMarkDocumentAsReadRequest::new),
             createFlexButton(ToggleMarkDocumentAsWillPayRequest::new),
+            createFlexButton(ToggleConfirmDocumentRequest::new),
             createFlexButton(ToggleCancelDocumentRequest::new),
             createFlexButton(ToggleMarkDocumentAsArrivedRequest::new)
         );
         BorderPane.setMargin(flexButtonBar, new Insets(1, 0, 1, 0));
         container.setTop(flexButtonBar);
         container.setCenter(new TabPane(
-            createTab(BookingDetailsI18nKeys.PersonalDetails, buildPersonalDetailsView()),
-            createFilterTab(BookingDetailsI18nKeys.Options, "{class: 'DocumentLine', columns: `site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit`, where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site..ord,item.ord'}"),
-            createFilterTab(BookingDetailsI18nKeys.Payments, "{class: 'MoneyTransfer', columns: `date,method,transactionRef,comment,amount,verified`, where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
-            createTab(BookingDetailsI18nKeys.Comments, buildCommentView()),
-            createFilterTab(BookingDetailsI18nKeys.Cart, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance`, where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.MultipleBookings, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.Family, "{class: 'Document', columns:`ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions`, where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
-            createFilterTab(BookingDetailsI18nKeys.Medias, "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.Mails, "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
-            createFilterTab(BookingDetailsI18nKeys.History, "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
+            createTab(BookingDetailsI18nKeys.PersonalDetailsTab, buildPersonalDetailsView()),
+            createFilterTab(BookingDetailsI18nKeys.OptionsTab, // language=JSON5
+                "{class: 'DocumentLine', columns: 'site,item,dates,lockAllocation,resourceConfiguration,comment,price_isCustom,price_net,price_nonRefundable,price_minDeposit,price_deposit', where: 'document=${selectedDocument}', orderBy: 'item.family.ord,site?.ord,item.ord'}"),
+            createFilterTab(BookingDetailsI18nKeys.PaymentsTab, // language=JSON5
+                "{class: 'MoneyTransfer', columns: 'date,method,transactionRef,comment,amount,verified', where: 'document=${selectedDocument}', orderBy: 'date,id'}"),
+            createTab(BookingDetailsI18nKeys.CommentsTab, buildCommentView()),
+            createFilterTab(BookingDetailsI18nKeys.CartTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_net,price_deposit,price_balance', where: 'cart=(select cart from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.MultipleBookingsTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions', where: 'multipleBooking=(select multipleBooking from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.FamilyTab, // language=JSON5
+                "{class: 'Document', columns:'ref,multipleBookingIcon,langIcon,genderIcon,person_firstName,person_lastName,person_age,noteIcon,price_deposit,plainOptions', where: 'person_carer1Document=${selectedDocument} or person_carer2Document=${selectedDocument} or id=(select person_carer1Document from Document where id=${selectedDocument}) or id=(select person_carer2Document from Document where id=${selectedDocument})', orderBy: 'ref'}"),
+            createFilterTab(BookingDetailsI18nKeys.MediasTab, // language=JSON5
+                "{class: 'MediaConsumption', columns: ['date',{expression: 'action', textAlign: 'center'},'mediaInfo',{expression: 'durationMillis', label: 'Duration', renderer: 'durationMillisRenderer', prefWidth: 70}], where: 'attendance.documentLine.document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.MailsTab, // language=JSON5
+                "{class: 'Mail', columns: 'date,subject,transmitted,error', where: 'document=${selectedDocument}', orderBy: 'date desc'}"),
+            createFilterTab(BookingDetailsI18nKeys.HistoryTab, // language=JSON5
+                "{class: 'History', columns: 'date,userDisplay,comment,request', where: 'document=${selectedDocument}', orderBy: 'date desc'}")
         ));
         return container;
     }
@@ -148,14 +159,14 @@ public final class BookingDetailsPanel implements
         return button;
     }
 
-    private static Tab createTab(String i18nKey, Node node) {
+    private static Tab createTab(Object i18nKey, Node node) {
         Tab tab = I18nControls.bindI18nProperties(new Tab(), i18nKey);
         tab.setContent(node);
         tab.setClosable(false);
         return tab;
     }
 
-    private Tab createFilterTab(String i18nKey, String dqlStatementString) {
+    private Tab createFilterTab(Object i18nKey, String dqlStatementString) {
         VisualGrid table = new VisualGrid();
         Tab tab = createTab(i18nKey, table);
         // The following is required only for gwt version for any reason (otherwise the table height is not resized when growing)
@@ -180,10 +191,11 @@ public final class BookingDetailsPanel implements
         tab.getProperties().put("visualMapper", visualMapper); // used by getTabVisualMapper()
 
         Supplier<ActionGroup> contextMenuActionGroupFactory = null;
-        switch (i18nKey) {
-            case "Options":
+        // TODO: move this to switch(Object) in Java 21
+        switch (i18nKey.toString()) {
+            case "OptionsTab": // TODO: Move this to BookingDetailsI18nKeys.OptionsTab in Java 21
                 contextMenuActionGroupFactory = () -> newActionGroup(
-                    newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor not implemented yet
+                    newSelectedDocumentOperationAction(AddNewDocumentLineRequest::new), // Executor isn't implemented yet
                     newSeparatorActionGroup(
                         newTabSelectedDocumentLineOperationAction(EditDocumentLineRequest::new, tab), // PropertySheet not using DocumentService
                         newTabSelectedDocumentLineOperationAction(ToggleCancelDocumentLineRequest::new, tab),
@@ -192,7 +204,7 @@ public final class BookingDetailsPanel implements
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "Payments":
+            case "PaymentsTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newSelectedDocumentOperationAction(AddNewPaymentRequest::new),
                     newSelectedDocumentOperationAction(AddNewTransferRequest::new),
@@ -203,7 +215,7 @@ public final class BookingDetailsPanel implements
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "MultipleBookings":
+            case "MultipleBookingTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedDocumentOperationAction(MergeMultipleBookingsOptionsRequest::new, tab),
                     newTabSelectedDocumentOperationAction(CancelOtherMultipleBookingsRequest::new, tab),
@@ -212,19 +224,19 @@ public final class BookingDetailsPanel implements
                     newTabSelectedDocumentOperationAction(ToggleMarkNotMultipleBookingRequest::new, tab)
                 );
                 break;
-            case "Cart":
+            case "CartTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedDocumentOperationAction(OpenBookingCartRequest::new, tab)
                 );
                 break;
-            case "Mails":
+            case "MailsTab":
                 contextMenuActionGroupFactory = () -> newActionGroup(
                     newTabSelectedMailOperationAction(OpenMailRequest::new, tab),
                     newSelectedDocumentOperationAction(ComposeNewMailRequest::new),
                     newTabCopyActionGroup(true, tab)
                 );
                 break;
-            case "History":
+            case "HistoryTab":
                 contextMenuActionGroupFactory = () -> newTabCopyActionGroup(false, tab);
                 break;
         }
@@ -278,9 +290,9 @@ public final class BookingDetailsPanel implements
         titledPane.setCollapsible(false);
         titledPane.setMaxHeight(Double.MAX_VALUE);
         GridPane.setColumnIndex(titledPane, columnIndex++);
-        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Update);
-        Hyperlink saveLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Save);
-        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), ModalityI18nKeys.Cancel);
+        Hyperlink updateLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Update);
+        Hyperlink saveLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Save);
+        Hyperlink cancelLink = I18nControls.bindI18nTextProperty(new Hyperlink(), BaseI18nKeys.Cancel);
         BooleanProperty editableProperty = FXProperties.newBooleanProperty(true, editable -> {
             updateLink.setManaged(!editable);
             updateLink.setVisible(!editable);
@@ -307,7 +319,7 @@ public final class BookingDetailsPanel implements
             UpdateStore updateStore = UpdateStore.createAbove(originalDocument.getStore());
             Document updatedDocument = updateStore.updateEntity(originalDocument);
             updatedDocument.setFieldValue(commentField, textArea.getText());
-            OperationUtil.turnOnButtonsWaitModeDuringExecution(
+            AsyncSpinner.displayButtonSpinnerDuringAsyncExecution(
                 updateStore.submitChanges().onSuccess(x -> {
                     // Now that the changes have been successfully recorded in the database, we will exit the edit
                     // mode. But this will also trigger textSyncer, which will copy the text from the original
@@ -339,7 +351,7 @@ public final class BookingDetailsPanel implements
 
     private OperationAction<?, Object> newSelectedDocumentOperationAction(Function<Document, ?> operationRequestFactory) {
         return newOperationAction(
-            // Creating a new operation request associated to the selected document each time the user clicks on this action
+            // Creating a new operation request associated with the selected document each time the user clicks on this action
             () -> operationRequestFactory.apply(getSelectedDocument()),
             // Refreshing the graphical properties of this action (through i18n) each time the user selects another document,
             selectedDocumentProperty,
@@ -349,16 +361,16 @@ public final class BookingDetailsPanel implements
         );
     }
 
-    // Same but with a selected entity in a tab (note: this method can't be called directly without a cast, that's why other methods follows)
+    // Same but with a selected entity in a tab (note: this method can't be called directly without a cast, that's why other methods follow)
     private <E extends Entity> OperationAction<?, Object> newTabSelectedEntityOperationAction(Function<E, ?> operationRequestFactory, Tab tab) {
         ObjectProperty<E> tabSelectedEntityProperty = getTabSelectedEntityProperty(tab);
         return newOperationAction(
-            // Creating a new operation request associated to the selected entity in the tab each time the user clicks on this action
+            // Creating a new operation request associated with the selected entity in the tab each time the user clicks on this action
             () -> operationRequestFactory.apply(tabSelectedEntityProperty.get()),
             // Refreshing the graphical properties of this action (through i18n) each time the user selects another entity in this tab,
             tabSelectedEntityProperty,
             // or when the server refreshes the data, in particular on push notification after that action has been
-            // executed (ex: "Cancel" => cancelled=true in database => server push => "Uncancel").
+            // executed (ex: "Cancel" => cancelled=true in the database => server push => "Uncancel").
             getTabVisualMapper(tab).visualResultProperty()
         );
     }
@@ -423,4 +435,3 @@ public final class BookingDetailsPanel implements
         return null;
     }
 }
-

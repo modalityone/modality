@@ -3,8 +3,7 @@ package one.modality.server.base.rest.map;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.SourcesConfig;
 import dev.webfx.platform.util.http.HttpHeaders;
-import dev.webfx.platform.vertx.common.VertxInstance;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
+import dev.webfx.platform.util.vertx.VertxInstance;
 import dev.webfx.stack.orm.entity.EntityStore;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.ext.web.Router;
@@ -12,6 +11,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.client.WebClient;
 import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.Organization;
+
 import static dev.webfx.platform.util.http.HttpResponseStatus.*;
 
 /**
@@ -39,8 +39,8 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                 .handler(ctx -> {
                     int organizationId = Integer.parseInt(ctx.pathParam("organizationId"));
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "12";
-                    EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                            .<Organization>executeQuery("select latitude,longitude from Organization where id=?", organizationId)
+                    EntityStore.create()
+                            .<Organization>executeQuery("select latitude,longitude from Organization where id=$1", organizationId)
                             .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;
@@ -57,8 +57,8 @@ public class RestMapModuleBooter implements ApplicationModuleBooter {
                 .handler(ctx -> {
                     int countryId = Integer.parseInt(ctx.pathParam("countryId"));
                     String zoom = ctx.queryParams().contains("zoom") ? ctx.queryParams().get("zoom") : "5";
-                    EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                            .<Country>executeQuery("select latitude,longitude from Country where id=?", countryId)
+                    EntityStore.create()
+                            .<Country>executeQuery("select latitude,longitude from Country where id=$1", countryId)
                             .onFailure(err -> ctx.response().setStatusCode(INTERNAL_SERVER_ERROR_500).send())
                             .onSuccess(list -> { // on successfully receiving the list (should be a singleton list)
                                 Float latitude = null, longitude = null;

@@ -18,6 +18,12 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>modality-crm-backoffice-activity-admin-plugin</module>
+        <module>modality-crm-backoffice-activity-administrators-plugin</module>
+        <module>modality-crm-backoffice-activity-customers-plugin</module>
+        <module>modality-crm-backoffice-activity-lettersetup-plugin</module>
+        <module>modality-crm-backoffice-activity-operationsandroles-plugin</module>
+        <module>modality-crm-backoffice-activity-organizations-plugin</module>
         <module>modality-crm-backoffice-bookingdetailspanel</module>
         <module>modality-crm-backoffice-max-plugin</module>
         <module>modality-crm-backoffice-min-plugin</module>
@@ -35,7 +41,10 @@
         <module>modality-crm-client-personaldetails</module>
         <module>modality-crm-client-profile-plugin</module>
         <module>modality-crm-frontoffice-activity-createaccount-plugin</module>
+        <module>modality-crm-frontoffice-activity-members-plugin</module>
+        <module>modality-crm-frontoffice-activity-orders-plugin</module>
         <module>modality-crm-frontoffice-activity-userprofile-plugin</module>
+        <module>modality-crm-frontoffice-help</module>
         <module>modality-crm-frontoffice-max-plugin</module>
         <module>modality-crm-frontoffice-min-plugin</module>
         <module>modality-crm-server-authn-gateway-magiclink-plugin</module>

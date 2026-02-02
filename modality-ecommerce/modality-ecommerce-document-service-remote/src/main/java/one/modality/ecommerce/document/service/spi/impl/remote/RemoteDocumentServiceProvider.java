@@ -1,8 +1,9 @@
 package one.modality.ecommerce.document.service.spi.impl.remote;
 
+import dev.webfx.platform.util.Arrays;
 import dev.webfx.stack.com.bus.call.BusCallService;
 import one.modality.ecommerce.document.service.*;
-import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddress;
+import one.modality.ecommerce.document.service.buscall.DocumentServiceBusAddresses;
 import one.modality.ecommerce.document.service.spi.DocumentServiceProvider;
 
 import dev.webfx.platform.async.Future;
@@ -12,17 +13,29 @@ import dev.webfx.platform.async.Future;
 public class RemoteDocumentServiceProvider implements DocumentServiceProvider {
 
     @Override
-    public Future<PolicyAggregate> loadPolicy(LoadPolicyArgument argument) {
-        return BusCallService.call(DocumentServiceBusAddress.LOAD_POLICY_METHOD_ADDRESS, argument);
+    public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
+        return BusCallService.call(DocumentServiceBusAddresses.LOAD_DOCUMENT_METHOD_ADDRESS, argument);
     }
 
     @Override
-    public Future<DocumentAggregate> loadDocument(LoadDocumentArgument argument) {
-        return BusCallService.call(DocumentServiceBusAddress.LOAD_DOCUMENT_METHOD_ADDRESS, argument);
+    public Future<DocumentAggregate[]> loadDocuments(LoadDocumentArgument argument) {
+        return BusCallService.call(DocumentServiceBusAddresses.LOAD_DOCUMENTS_METHOD_ADDRESS, argument)
+            // The serialization will return an Object[] instead of a DocumentAggregate[], so we map it to a DocumentAggregate[]
+            .map(objects -> Arrays.map((Object[]) objects, o -> (DocumentAggregate) o, DocumentAggregate[]::new));
     }
 
     @Override
     public Future<SubmitDocumentChangesResult> submitDocumentChanges(SubmitDocumentChangesArgument argument) {
-        return BusCallService.call(DocumentServiceBusAddress.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, argument);
+        return BusCallService.call(DocumentServiceBusAddresses.SUBMIT_DOCUMENT_CHANGES_METHOD_ADDRESS, argument);
+    }
+
+    @Override
+    public Future<Boolean> leaveEventQueue(Object queueToken) {
+        return BusCallService.call(DocumentServiceBusAddresses.LEAVE_EVENT_QUEUE_ADDRESS, queueToken);
+    }
+
+    @Override
+    public Future<SubmitDocumentChangesResult> fetchEventQueueResult(Object queueToken) {
+        return BusCallService.call(DocumentServiceBusAddresses.FETCH_EVENT_QUEUE_RESULT_ADDRESS, queueToken);
     }
 }

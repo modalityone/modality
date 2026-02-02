@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <description>The back-office Household activity.</description>
+
+    <exported-packages>
+        <source-packages/>
+    </exported-packages>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.hotel.backoffice.activities.household.HouseholdRouting$HouseholdUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.household.HouseholdRouting$RouteToHouseholdRequestEmitter</provider>
+    </providers>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+            <undetected-module>webfx-platform-console</undetected-module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <java-ui-api package="one.modality.hotel.backoffice.activities.household" prefix="Household">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

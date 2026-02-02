@@ -1,0 +1,269 @@
+/* Media Dashboard Styles */
+
+/* Event Subtitle - discrete display */
+.event-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #7f8c8d;
+    -fx-font-weight: 400;
+}
+
+/* Livestream Section */
+.livestream-section {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+/* No Livestream Message */
+.no-livestream-message {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+.no-livestream-icon {
+    -fx-fill: #95a5a6;
+}
+
+.no-livestream-text {
+    -fx-font-size: 18px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #2c3e50;
+}
+
+.no-livestream-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #00ADEF;
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.section-title-icon {
+    -fx-fill: #00ADEF;
+}
+
+.section-title-text {
+    -fx-text-fill: #00ADEF;
+}
+
+/* Session Info Box */
+.session-info-box {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 8px;
+    -fx-border-width: 0 0 0 4px;
+    -fx-border-color: #e74c3c;
+}
+
+.session-name-live {
+    -fx-font-size: 18px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #2c3e50;
+}
+
+.session-date-live {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.session-time-live {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.live-badge {
+    -fx-background-color: #e74c3c;
+    -fx-background-radius: 6px;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+}
+
+.live-dot {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+}
+
+.live-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+/* Stat Cards */
+.stat-card {
+    -fx-background-color: #3498db;
+    -fx-background-radius: 5px;
+}
+
+.stat-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+}
+
+.stat-value {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.stat-value-live {
+    -fx-text-fill: white;
+}
+
+/* Session Details Section */
+.session-details-section {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-color: #ddd;
+    -fx-border-width: 1px;
+}
+
+.session-selector-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.session-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #2c3e50;
+}
+
+.session-cell {
+    /* Container for session dropdown cells */
+}
+
+.select-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #00ADEF;
+}
+
+.session-select {
+    -fx-background-color: white;
+    -fx-border-color: #e8e8e8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 15px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #2c3e50;
+}
+
+.session-select:hover {
+    -fx-border-color: #00ADEF;
+    -fx-effect: dropshadow(gaussian, rgba(0,173,239,0.1), 8, 0, 0, 2);
+}
+
+.session-select:focused {
+    -fx-border-color: #00ADEF;
+    -fx-effect: dropshadow(gaussian, rgba(0,173,239,0.1), 3, 0, 0, 0);
+}
+
+.filter-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555;
+    -fx-font-weight: 600;
+}
+
+/* Filter Buttons */
+.filter-button {
+    -fx-cursor: hand;
+}
+
+.filter-button-active {
+    -fx-background-color: #007bff;
+    -fx-text-fill: white;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-font-weight: 600;
+}
+
+.filter-button-inactive {
+    -fx-background-color: #f8f9fa;
+    -fx-text-fill: #495057;
+    -fx-background-radius: 4px;
+    -fx-border-color: #dee2e6;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+}
+
+.filter-select {
+    -fx-background-color: white;
+    -fx-border-color: #e8e8e8;
+    -fx-border-width: 2px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+    -fx-text-fill: #2c3e50;
+}
+
+.filter-select:hover {
+    -fx-border-color: #00ADEF;
+    -fx-effect: dropshadow(gaussian, rgba(0,173,239,0.1), 8, 0, 0, 2);
+}
+
+.filter-select:focused {
+    -fx-border-color: #00ADEF;
+    -fx-effect: dropshadow(gaussian, rgba(0,173,239,0.1), 3, 0, 0, 0);
+}
+
+/* Stat Boxes */
+.stat-box {
+    -fx-background-radius: 5px;
+}
+
+.stat-box-purple {
+    -fx-background-color: #9b59b6;
+}
+
+.stat-box-red {
+    -fx-background-color: #e74c3c;
+}
+
+.stat-box-green {
+    -fx-background-color: #2ecc71;
+}
+
+.stat-box-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: white;
+}
+
+.stat-box-value {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+/* Table Styling for Media Dashboard */
+.livestream-section .grid-head Text,
+.session-details-section .grid-head Text {
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-fill: #00ADEF;
+}
+
+.livestream-section .grid-head,
+.session-details-section .grid-head {
+    -fx-background-color: #f8f9fa;
+    -fx-border-color: #e8e8e8;
+    -fx-border-width: 0 0 2px 0;
+}
+
+.livestream-section .grid-body,
+.session-details-section .grid-body {
+    -fx-border-color: #f0f0f0;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.livestream-section .grid-row:hover,
+.session-details-section .grid-row:hover {
+    -fx-background-color: #f8fafb;
+}

@@ -22,6 +22,10 @@ public interface Organization extends
     String longitude = "longitude";
     String importIssue = "importIssue";
     String language = "language";
+    String teachingsDayTicketItem = "teachingsDayTicketItem";
+    String globalSite = "globalSite";
+    String termsUrlLabel = "termsUrlLabel";
+    String privacyUrlLabel = "privacyUrlLabel";
 
     default void setClosed(boolean value) { setFieldValue(closed, value); }
 
@@ -83,6 +87,54 @@ public interface Organization extends
 
     default Language getLanguage() {
         return getForeignEntity(language);
+    }
+
+    default void setTeachingsDayTicketItem(Object value) {
+        setForeignField(teachingsDayTicketItem, value);
+    }
+
+    default EntityId getTeachingsDayTicketItemId() {
+        return getForeignEntityId(teachingsDayTicketItem);
+    }
+
+    default Item getTeachingsDayTicketItem() {
+        return getForeignEntity(teachingsDayTicketItem);
+    }
+
+    default void setGlobalSite(Object value) {
+        setForeignField(globalSite, value);
+    }
+
+    default EntityId getGlobalSiteId() {
+        return getForeignEntityId(globalSite);
+    }
+
+    default Site getGlobalSite() {
+        return getForeignEntity(globalSite);
+    }
+
+    default void setTermsUrlLabel(Object value) {
+        setForeignField(termsUrlLabel, value);
+    }
+
+    default EntityId getTermsUrlLabelId() {
+        return getForeignEntityId(termsUrlLabel);
+    }
+
+    default Label getTermsUrlLabel() {
+        return getForeignEntity(termsUrlLabel);
+    }
+
+    default void setPrivacyUrlLabel(Object value) {
+        setForeignField(privacyUrlLabel, value);
+    }
+
+    default EntityId getPrivacyUrlLabelId() {
+        return getForeignEntityId(privacyUrlLabel);
+    }
+
+    default Label getPrivacyUrlLabel() {
+        return getForeignEntity(privacyUrlLabel);
     }
 
 }

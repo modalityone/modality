@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <undetected-module>javafx-controls</undetected-module>
+            <module>webfx-extras-controlfactory</module>
+            <module>webfx-extras-util-dialog</module>
+            <module>webfx-extras-util-layout</module>
+            <module>webfx-kit-util</module>
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-bootstrap</module>
+            <module>modality-base-client-tile</module>
+            <module>modality-base-backoffice-mainframe-fx</module>
+            <module>webfx-stack-orm-entity-controls</module>
+            <module>webfx-stack-orm-entity-binding</module>
+            <module>webfx-stack-orm-datasourcemodel-service</module>
+            <module>webfx-stack-orm-reactive-entities</module>
+            <module>modality-base-shared-entities</module>
+            <module>modality-base-shared-domainmodel</module>
+        </used-by-source-modules>
+    </dependencies>
+
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesRouting$SuperAdminUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.crm.backoffice.activities.operationsandroles.OperationsAndRolesRouting$RouteToSuperAdminRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.crm.backoffice.activities.operationsandroles" prefix="OperationsAndRoles">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

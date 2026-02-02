@@ -1,0 +1,8 @@
+:root {
+    /* We don't show the vertical grid lines in the front office (ex: AudioLibraryActivity or VideoStreamingActivity) */
+    --webfx-visualgrid-col-border-color: transparent;
+
+    /* Overriding the default focused & fired background colors for aria toggle buttons with bootstrap and brand colors */
+    --webfx-aria-toggle-button-background-color-focused: var(--bootstrap-grey1);
+    --webfx-aria-toggle-button-background-color-fired: var(--brand-blue-color);
+}

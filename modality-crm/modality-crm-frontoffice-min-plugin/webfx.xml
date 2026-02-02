@@ -10,6 +10,7 @@
         <used-by-source-modules/>
         <plugin-module>modality-crm-frontoffice-activity-createaccount-plugin</plugin-module>
         <plugin-module>modality-crm-frontoffice-activity-userprofile-plugin</plugin-module>
+        <plugin-module>modality-crm-frontoffice-activity-orders-plugin</plugin-module>
 
         <plugin-module>modality-crm-client-min-plugin</plugin-module>
 

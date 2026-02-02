@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <!-- JavaFX dependencies -->
+            <module>javafx-controls</module>
+            <module>javafx-graphics</module>
+            <module>javafx-base</module>
+
+            <!-- WebFX extras -->
+            <module>webfx-extras-controlfactory</module>
+            <module>webfx-extras-filepicker</module>
+            <module>webfx-extras-panes</module>
+            <module>webfx-extras-styles-bootstrap</module>
+            <module>webfx-extras-type</module>
+            <module>webfx-extras-util-control</module>
+            <module>webfx-extras-util-dialog</module>
+            <module>webfx-extras-validation</module>
+            <module>webfx-extras-visual</module>
+            <module>webfx-extras-visual-grid</module>
+
+            <!-- WebFX platform -->
+            <module>webfx-kit-util</module>
+            <module>webfx-platform-console</module>
+            <module>webfx-platform-file</module>
+
+            <!-- WebFX stack ORM -->
+            <module>webfx-stack-orm-domainmodel</module>
+            <module>webfx-stack-orm-domainmodel-activity</module>
+            <module>webfx-stack-orm-dql</module>
+            <module>webfx-stack-orm-entity</module>
+            <module>webfx-stack-orm-entity-controls</module>
+            <module>webfx-stack-orm-reactive-entities</module>
+
+            <!-- Modality modules -->
+            <module>modality-base-backoffice-mainframe-fx</module>
+            <module>modality-base-client-activity-organizationdependent</module>
+            <module>modality-base-client-bootstrap</module>
+            <module>modality-base-client-cloud-image</module>
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-base-client-tile</module>
+            <module>modality-base-shared-entities</module>
+            <module>modality-base-shared-knownitems</module>
+            <module>modality-crm-backoffice-organization-fx</module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.hotel.backoffice.activities.roomsetup.RoomSetupRouting$RoomSetupUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.hotel.backoffice.activities.roomsetup.RoomSetupRouting$RouteToRoomSetupRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.hotel.backoffice.activities.roomsetup" prefix="RoomSetup">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

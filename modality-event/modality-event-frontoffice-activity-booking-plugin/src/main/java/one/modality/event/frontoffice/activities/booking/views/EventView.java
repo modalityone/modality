@@ -3,9 +3,6 @@ package one.modality.event.frontoffice.activities.booking.views;
 import dev.webfx.extras.panes.ScalePane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,13 +16,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
 import one.modality.base.shared.entities.Event;
 import one.modality.base.shared.entities.EventState;
-import one.modality.event.frontoffice.activities.booking.BookingI18nKeys;
-import one.modality.event.frontoffice.activities.booking.process.BookingStarter;
+import one.modality.booking.frontoffice.bookingform.BookingFormI18nKeys;
+import one.modality.event.frontoffice.activities.book.BookStarter;
 
 public final class EventView {
 
@@ -42,9 +40,9 @@ public final class EventView {
         eventCentreLocationText,
         eventCountryLocationText
     );
-    private final Button comingSoonButton = GeneralUtility.createButton(BookingI18nKeys.comingSoon);
-    private final Button bookButton = GeneralUtility.createButton(BookingI18nKeys.bookNow);
-    private final Button closedButton = GeneralUtility.createButton(BookingI18nKeys.closed);
+    private final Button comingSoonButton = GeneralUtility.createButton(BookingFormI18nKeys.comingSoon);
+    private final Button bookButton = GeneralUtility.createButton(BookingFormI18nKeys.bookNow);
+    private final Button closedButton = GeneralUtility.createButton(BookingFormI18nKeys.closed);
     private final BorderPane buttonContainer = new BorderPane();
 
     private final VBox container = new VBox(10,
@@ -60,7 +58,7 @@ public final class EventView {
     );
 
     public EventView() {
-        GeneralUtility.onNodeClickedWithoutScroll(e -> BookingStarter.startEventBooking(event), bookButton);
+        GeneralUtility.onNodeClickedWithoutScroll(e -> BookStarter.startBookEvent(event), bookButton);
         container.setPadding(new Insets(40));
         container.setBackground(Background.fill(StyleUtility.BACKGROUND_GRAY_COLOR));
 
@@ -102,10 +100,10 @@ public final class EventView {
         if (hasImage) {
             eventImageView.setImage(new Image(imageUrl, true));
         }
-        I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
-        I18nControls.bindI18nProperties(eventDescriptionLabel, new I18nSubKey("expression: i18n(shortDescriptionLabel)", event));
-        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
-        I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
+        I18nEntities.bindExpressionToProperties(eventNameLabel,           event, "i18n(this)");
+        I18nEntities.bindExpressionToProperties(eventDescriptionLabel,    event, "i18n(shortDescriptionLabel)");
+        I18nEntities.bindExpressionToProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
+        I18nEntities.bindExpressionToProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
         eventDateText.setText(Strings.toString(event.getStartDate()));
         buttonContainer.setCenter((event.isLive() || event.getState() == EventState.OPEN) ? bookButton : comingSoonButton);
     }

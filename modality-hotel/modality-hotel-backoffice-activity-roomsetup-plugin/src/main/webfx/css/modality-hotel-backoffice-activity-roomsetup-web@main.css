@@ -1,0 +1,796 @@
+/* RoomSetup Module - Web CSS
+ * Prefix: roomsetup-
+ *
+ * This CSS follows the module namespacing convention to prevent conflicts
+ * when CSS is merged across different modules.
+ *
+ * Web CSS uses standard CSS properties and fx-text/fx-background/fx-border
+ * pseudo-elements for WebFX compatibility.
+ */
+
+/* ============================================================================
+   TYPOGRAPHY
+   ============================================================================ */
+
+.roomsetup-title {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.roomsetup-title fx-text {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.roomsetup-subtitle {
+    font-size: 14px;
+    color: #78716c;
+}
+
+.roomsetup-subtitle fx-text {
+    font-size: 14px;
+    color: #78716c;
+}
+
+.roomsetup-caption {
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+.roomsetup-caption fx-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+.roomsetup-body {
+    font-size: 13px;
+    color: #78716c;
+}
+
+.roomsetup-body fx-text {
+    font-size: 13px;
+    color: #78716c;
+}
+
+.roomsetup-body-bold {
+    font-weight: 600;
+    color: #1c1917;
+}
+
+.roomsetup-body-bold fx-text {
+    font-weight: 600;
+    color: #1c1917;
+}
+
+.roomsetup-small {
+    font-size: 11px;
+    color: #78716c;
+}
+
+.roomsetup-small fx-text {
+    font-size: 11px;
+    color: #78716c;
+}
+
+.roomsetup-hint {
+    font-size: 12px;
+    color: #78716c;
+}
+
+.roomsetup-hint fx-text {
+    font-size: 12px;
+    color: #78716c;
+}
+
+/* ============================================================================
+   BADGES
+   ============================================================================ */
+
+.roomsetup-badge-warning {
+    font-size: 12px;
+    color: #92400e;
+    background-color: #fef3c7;
+    border-radius: 4px;
+    /* New single-host model */
+    --fx-background-color: #fef3c7;
+    --fx-border-radius: 4px;
+}
+
+.roomsetup-badge-warning > fx-text {
+    font-size: 12px;
+    color: #92400e;
+}
+
+.roomsetup-badge-success {
+    background-color: #dcfce7;
+    color: #166534;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    /* New single-host model */
+    --fx-background-color: #dcfce7;
+    --fx-border-radius: 6px;
+}
+
+.roomsetup-badge-success fx-text {
+    color: #166534;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.roomsetup-badge-info {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    /* New single-host model */
+    --fx-background-color: #dbeafe;
+    --fx-border-radius: 6px;
+}
+
+.roomsetup-badge-info fx-text {
+    color: #1e40af;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.roomsetup-badge-split {
+    font-size: 11px;
+    color: #7c3aed;
+    background-color: #f5f3ff;
+    border-radius: 4px;
+    /* New single-host model */
+    --fx-background-color: #f5f3ff;
+    --fx-border-radius: 4px;
+}
+
+.roomsetup-badge-split fx-text {
+    font-size: 11px;
+    color: #7c3aed;
+}
+
+/* ============================================================================
+   FORM FIELDS
+   ============================================================================ */
+
+.roomsetup-text-field {
+    /* New single-host model */
+    --fx-border-color: #e5e5e5;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 10px;
+}
+
+.roomsetup-text-area {
+    /* New single-host model */
+    --fx-border-color: #e5e5e5;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+    --fx-border-radius: 10px;
+}
+
+.roomsetup-field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+.roomsetup-field-label fx-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #78716c;
+}
+
+/* ============================================================================
+   CONTAINERS & CARDS
+   ============================================================================ */
+
+.roomsetup-card {
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-radius: 12px;
+    --fx-border-color: #e5e5e5;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+.roomsetup-card-header {
+    /* New single-host model */
+    --fx-background-color: #fafaf9;
+    --fx-border-radius: 12px 12px 0 0;
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-dialog-header {
+    /* New single-host model */
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-dialog-container {
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-radius: 16px;
+}
+
+.roomsetup-cell {
+    /* New single-host model */
+    --fx-border-color: #e5e5e5 transparent transparent transparent;
+    --fx-border-width: 1px 0 0 0;
+    --fx-border-style: solid;
+}
+
+/* ============================================================================
+   INTERACTIVE ELEMENTS
+   ============================================================================ */
+
+.roomsetup-clickable {
+    cursor: pointer;
+}
+
+/* ============================================================================
+   FILTER CHIPS
+   ============================================================================ */
+
+
+.roomsetup-filter-chip {
+    font-size: 12px;
+    cursor: pointer;
+    /* New single-host model */
+    --fx-background-color: #f5f5f5;
+    --fx-border-radius: 12px;
+    --fx-border-color: #d4d4d4;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+.roomsetup-filter-chip:hover {
+    /* New single-host model */
+    --fx-background-color: #e5e5e5;
+    --fx-border-color: #a3a3a3;
+}
+
+
+.roomsetup-filter-chip-active {
+    /* New single-host model */
+    --fx-background-color: #0096D6;
+    --fx-border-radius: 12px;
+    --fx-border-color: #0096D6;
+}
+
+.roomsetup-filter-chip-active {
+    --fx-text-fill: white;
+}
+
+.roomsetup-filter-chip-active:hover {
+    /* New single-host model */
+    --fx-background-color: #007AB8;
+    --fx-border-color: #007AB8;
+}
+
+/* ============================================================================
+   GROUP HEADERS
+   ============================================================================ */
+
+.roomsetup-group-header {
+    /* New single-host model */
+    --fx-background-color: #f8fafc;
+    --fx-border-color: transparent transparent #e2e8f0 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-group-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.roomsetup-group-title fx-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #334155;
+}
+
+.roomsetup-group-count {
+    font-size: 12px;
+    --fx-text-fill: #64748b;
+    /* New single-host model */
+    --fx-background-color: #e2e8f0;
+    --fx-border-radius: 10px;
+}
+
+/* ============================================================================
+   ROOM ITEMS
+   ============================================================================ */
+
+.roomsetup-room-row {
+    cursor: pointer;
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-room-row:hover {
+    /* New single-host model */
+    --fx-background-color: #f8fafc;
+}
+
+.roomsetup-room-name {
+    font-size: 14px;
+    font-weight: 600;
+    --fx-text-fill: #1e293b;
+}
+
+.roomsetup-room-type {
+    font-size: 12px;
+    --fx-text-fill: #64748b;
+}
+
+.roomsetup-room-capacity {
+    font-size: 12px;
+    --fx-text-fill: #64748b;
+    /* New single-host model */
+    --fx-background-color: #f1f5f9;
+    --fx-border-radius: 4px;
+}
+
+/* ============================================================================
+   BUILDING/ZONE ITEMS
+   ============================================================================ */
+
+.roomsetup-building-header {
+    cursor: pointer;
+    /* New single-host model */
+    --fx-background-color: #f8fafc;
+    --fx-border-color: transparent transparent #e2e8f0 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-building-header:hover {
+    /* New single-host model */
+    --fx-background-color: #f1f5f9;
+}
+
+.roomsetup-building-name {
+    font-size: 14px;
+    font-weight: 600;
+    --fx-text-fill: #1e293b;
+}
+
+.roomsetup-zone-row {
+    cursor: pointer;
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-zone-row:hover {
+    /* New single-host model */
+    --fx-background-color: #fafafa;
+}
+
+.roomsetup-zone-name {
+    font-size: 13px;
+    --fx-text-fill: #334155;
+}
+
+/* ============================================================================
+   POOL ITEMS
+   ============================================================================ */
+
+.roomsetup-pool-card {
+    cursor: pointer;
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-radius: 8px;
+    --fx-border-color: #e2e8f0;
+    --fx-border-width: 1px;
+    --fx-border-style: solid;
+}
+
+.roomsetup-pool-card:hover {
+    /* New single-host model */
+    --fx-background-color: #f8fafc;
+    --fx-border-color: #94a3b8;
+}
+
+.roomsetup-pool-name {
+    font-size: 14px;
+    font-weight: 500;
+    --fx-text-fill: #1e293b;
+}
+
+.roomsetup-pool-badge-source {
+    font-size: 10px;
+    --fx-text-fill: #0891b2;
+    /* New single-host model */
+    --fx-background-color: #ecfeff;
+    --fx-border-radius: 4px;
+}
+
+.roomsetup-pool-badge-category {
+    font-size: 10px;
+    --fx-text-fill: #7c3aed;
+    /* New single-host model */
+    --fx-background-color: #f5f3ff;
+    --fx-border-radius: 4px;
+}
+
+/* ============================================================================
+   ALLOCATION ITEMS
+   ============================================================================ */
+
+.roomsetup-allocation-room {
+    /* New single-host model */
+    --fx-background-color: white;
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-allocation-room:hover {
+    /* New single-host model */
+    --fx-background-color: #fafafa;
+}
+
+.roomsetup-allocation-pool-tag {
+    font-size: 11px;
+    /* New single-host model */
+    --fx-border-radius: 4px;
+}
+
+.roomsetup-allocation-unassigned {
+    font-size: 12px;
+    --fx-text-fill: #dc2626;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   TOOLBAR & ACTIONS
+   ============================================================================ */
+
+.roomsetup-toolbar {
+    /* New single-host model */
+    --fx-background-color: #fafaf9;
+    --fx-border-color: transparent transparent #e5e5e5 transparent;
+    --fx-border-width: 0 0 1px 0;
+    --fx-border-style: solid;
+}
+
+.roomsetup-action-button {
+    cursor: pointer;
+}
+
+.roomsetup-action-button:hover {
+    /* New single-host model */
+    --fx-background-color: #f5f5f5;
+}
+
+/* ============================================================================
+   EMPTY STATE
+   ============================================================================ */
+
+.roomsetup-empty-state {
+    /* New single-host model */
+    --fx-background-color: #fafafa;
+    --fx-border-radius: 8px;
+}
+
+.roomsetup-empty-state-text {
+    font-size: 14px;
+    --fx-text-fill: #9ca3af;
+    font-weight: 500;
+}
+
+/* ============================================================================
+   INFO BAR
+   ============================================================================ */
+
+.roomsetup-info-bar {
+    /* New single-host model */
+    --fx-background-color: #dbeafe;
+    --fx-border-radius: 8px;
+}
+
+.roomsetup-info-bar-text {
+    font-size: 13px;
+    --fx-text-fill: #1e40af;
+}
+
+.roomsetup-info-bar-link {
+    font-size: 13px;
+    --fx-text-fill: #1e40af;
+    font-weight: 600;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.roomsetup-info-bar-link:hover {
+    --fx-text-fill: #1e3a8a;
+}
+
+
+/* ============================================================================
+   WARNING BAR
+   ============================================================================ */
+
+.roomsetup-warning-bar {
+    /* New single-host model */
+    --fx-background-color: #fef3c7;
+    --fx-border-radius: 8px;
+}
+
+.roomsetup-warning-bar-text {
+    font-size: 13px;
+    --fx-text-fill: #92400e;
+}
+
+/* ============================================================================
+   EXPAND/COLLAPSE
+   ============================================================================ */
+
+.roomsetup-expand-arrow {
+    font-size: 12px;
+    --fx-text-fill: #64748b;
+}
+
+.roomsetup-expand-arrow-expanded {
+    transform: rotate(90deg);
+}
+
+/* ============================================================================
+   COLOR PICKER SWATCHES
+   ============================================================================ */
+
+/* Amber color swatch */
+.roomsetup-color-amber {
+    /* New single-host model */
+    --fx-background-color: #d97706;
+    --fx-border-radius: 50%;
+}
+
+/* Red color swatch */
+.roomsetup-color-red {
+    /* New single-host model */
+    --fx-background-color: #dc2626;
+    --fx-border-radius: 50%;
+}
+
+/* Pink color swatch */
+.roomsetup-color-pink {
+    /* New single-host model */
+    --fx-background-color: #db2777;
+    --fx-border-radius: 50%;
+}
+
+/* Purple color swatch */
+.roomsetup-color-purple {
+    /* New single-host model */
+    --fx-background-color: #7c3aed;
+    --fx-border-radius: 50%;
+}
+
+/* Blue color swatch */
+.roomsetup-color-blue {
+    /* New single-host model */
+    --fx-background-color: #2563eb;
+    --fx-border-radius: 50%;
+}
+
+/* Cyan color swatch */
+.roomsetup-color-cyan {
+    /* New single-host model */
+    --fx-background-color: #0891b2;
+    --fx-border-radius: 50%;
+}
+
+/* Green color swatch */
+.roomsetup-color-green {
+    /* New single-host model */
+    --fx-background-color: #059669;
+    --fx-border-radius: 50%;
+}
+
+/* Slate color swatch */
+.roomsetup-color-slate {
+    background-color: #475569;
+    border-radius: 50%;
+}
+
+.roomsetup-color-slate {
+    /* New single-host model */
+    --fx-background-color: #475569;
+    --fx-border-radius: 50%;
+}
+
+/* Color cell container - unselected */
+.roomsetup-color-cell {
+    cursor: pointer;
+}
+
+/* Color cell container - selected state */
+.roomsetup-color-cell-selected {
+    cursor: pointer;
+}
+
+.roomsetup-color-cell-selected {
+    cursor: pointer;
+    /* New single-host model */
+    --fx-border-width: 2px;
+    --fx-border-style: solid;
+    --fx-border-radius: 10px;
+}
+
+/* Selected state border colors per color */
+.roomsetup-color-cell-selected.roomsetup-color-cell-amber {
+    /* New single-host model */
+    --fx-background-color: rgba(217, 119, 6, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #d97706;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-red {
+    /* New single-host model */
+    --fx-background-color: rgba(220, 38, 38, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #dc2626;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-pink {
+    /* New single-host model */
+    --fx-background-color: rgba(219, 39, 119, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #db2777;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-purple {
+    /* New single-host model */
+    --fx-background-color: rgba(124, 58, 237, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #7c3aed;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-blue {
+    /* New single-host model */
+    --fx-background-color: rgba(37, 99, 235, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #2563eb;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-cyan {
+    /* New single-host model */
+    --fx-background-color: rgba(8, 145, 178, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #0891b2;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-green {
+    /* New single-host model */
+    --fx-background-color: rgba(5, 150, 105, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #059669;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-slate {
+    background-color: rgba(71, 85, 105, 0.13);
+    border-radius: 10px;
+}
+
+.roomsetup-color-cell-selected.roomsetup-color-cell-slate {
+    /* New single-host model */
+    --fx-background-color: rgba(71, 85, 105, 0.13);
+    --fx-border-radius: 10px;
+    --fx-border-color: #475569;
+}
+
+/* ============================================================================
+   SITE COMPARISON
+   ============================================================================ */
+
+/* Column backgrounds */
+.roomsetup-comparison-column-both {
+    /* New single-host model */
+    --fx-background-color: #d4edda;
+    --fx-border-radius: 6px;
+}
+
+.roomsetup-comparison-column-global {
+    /* New single-host model */
+    --fx-background-color: #fff3cd;
+    --fx-border-radius: 6px;
+}
+
+.roomsetup-comparison-column-event {
+    /* New single-host model */
+    --fx-background-color: #f8d7da;
+    --fx-border-radius: 6px;
+}
+
+/* Column headers */
+.roomsetup-comparison-header-both {
+    font-weight: bold;
+    --fx-text-fill: #155724;
+}
+
+.roomsetup-comparison-header-global {
+    font-weight: bold;
+    --fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-header-event {
+    font-weight: bold;
+    --fx-text-fill: #721c24;
+}
+
+
+/* Resource text colors */
+.roomsetup-comparison-text-both {
+    --fx-text-fill: #155724;
+}
+
+.roomsetup-comparison-text-global {
+    --fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-text-event {
+    --fx-text-fill: #721c24;
+}
+
+/* Resource states */
+.roomsetup-comparison-resource-linked {
+    --fx-text-fill: #2e7d32;
+    font-style: italic;
+}
+
+.roomsetup-comparison-resource-selected {
+    --fx-text-fill: white;
+    /* New single-host model */
+    --fx-background-color: #1976d2;
+    --fx-border-radius: 3px;
+}
+
+/* Link badge */
+.roomsetup-comparison-link-badge {
+    --fx-text-fill: white;
+    font-size: 10px;
+    font-weight: bold;
+    /* New single-host model */
+    --fx-border-radius: 3px;
+}
+
+/* Unlink button */
+.roomsetup-comparison-unlink-btn {
+    --fx-text-fill: #d32f2f;
+    /* New single-host model */
+    --fx-background-color: transparent;
+}
+
+/* Warning box */
+.roomsetup-comparison-warning {
+    /* New single-host model */
+    --fx-background-color: #fff3cd;
+    --fx-border-radius: 8px;
+}
+
+.roomsetup-comparison-warning-icon {
+    font-size: 32px;
+    font-weight: bold;
+    --fx-text-fill: #856404;
+}
+
+.roomsetup-comparison-warning-text {
+    font-size: 16px;
+    --fx-text-fill: #856404;
+}

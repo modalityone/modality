@@ -41,7 +41,7 @@
     </required-libraries>
 
     <maven-repositories>
-        <snapshot-repository id="webfx-snapshots">https://oss.sonatype.org/content/repositories/snapshots/</snapshot-repository>
+        <webfx-repository/>
         <snapshot-repository id="modality-sonatype-deploy">https://s01.oss.sonatype.org/content/repositories/snapshots/</snapshot-repository>
     </maven-repositories>
 

@@ -1,0 +1,109 @@
+.order-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+    border-bottom: 1px solid #eee;
+}
+
+.order-status {
+    border-radius: 18px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.status-incomplete {
+    background-color: #ffebee;
+    --fx-text-fill: #c62828;
+}
+
+.status-progress {
+    background-color: #e3f2fd;
+    --fx-text-fill: #1976d2;
+}
+
+.status-confirmed,
+.status-complete {
+    background-color: #e8f5e8;
+    --fx-text-fill: #2e7d32;
+}
+
+.status-cancelled {
+    background-color: #ffebee;
+    --fx-text-fill: #c62828;
+}
+
+.order-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.order-id {
+    font-size: 14px;
+    color: #666;
+}
+
+.booker-name {
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.semi-bold {
+    font-weight: 700;
+}
+
+.order-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+}
+
+.order-dates {
+    font-size: 14px;
+    color: #666;
+}
+
+.detail-item {
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 700;
+}
+
+.detail-value {
+    font-size: 15px;
+}
+
+.detail-subitem {
+    font-size: 14px;
+}
+
+.detail-subitem-label {
+    color: #666;
+}
+
+.payment-row {
+    font-size: 14px;
+    color: black;
+}
+
+.payment-remaining {
+    font-weight: 700;
+    color: black;
+    font-size: 16px;
+    border-top: 1px solid #eee;
+}
+
+.thank-you-message {
+    font-size: 16px;
+    color: #666;
+}

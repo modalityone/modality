@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <java-ui-api package="one.modality.booking.frontoffice.bookingpage" prefix="BookingPage">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

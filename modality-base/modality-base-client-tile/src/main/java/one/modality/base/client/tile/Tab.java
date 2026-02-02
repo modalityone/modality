@@ -1,7 +1,7 @@
 package one.modality.base.client.tile;
 
 import dev.webfx.extras.theme.FacetState;
-import dev.webfx.stack.ui.action.Action;
+import dev.webfx.extras.action.Action;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ObservableValue;

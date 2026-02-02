@@ -7,27 +7,33 @@ import dev.webfx.extras.webview.pane.LoadOptions;
 import dev.webfx.extras.webview.pane.WebViewPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.async.Future;
-import dev.webfx.platform.browser.Browser;
-import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.scheduler.Scheduled;
 import dev.webfx.platform.scheduler.Scheduler;
 import dev.webfx.platform.shutdown.Shutdown;
 import dev.webfx.platform.uischeduler.UiScheduler;
+import dev.webfx.platform.useragent.UserAgent;
 import dev.webfx.platform.util.Numbers;
-import javafx.application.Platform;
+import dev.webfx.platform.windowlocation.WindowLocation;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import one.modality.base.client.error.ErrorReporter;
+import dev.webfx.stack.origin.client.ClientOrigin;
+import one.modality.base.frontoffice.utility.browser.BrowserUtil;
+import one.modality.base.shared.entities.Country;
 import one.modality.base.shared.entities.markers.HasPersonalDetails;
 import one.modality.ecommerce.payment.*;
 
@@ -39,7 +45,7 @@ import java.util.stream.Collectors;
 /**
  * @author Bruno Salmon
  */
-public class WebPaymentForm {
+public final class WebPaymentForm {
 
     private static final boolean DEBUG = true;
 
@@ -52,26 +58,34 @@ public class WebPaymentForm {
         if (allowed)
             hideOverlay();
     });
+    private String htmlHeaderText;
+    private String htmlPayButtonText;
     private Scheduled initFailureChecker;
-    private boolean inited;
+    private Object debugStep;
+    private int debugStepCounter;
+    private boolean initialized;
     private Consumer<String> onLoadFailure; // Called when the webview failed to load
-    private Consumer<String> onInitFailure; // Called when the payment page failed to initialised (otherwise the card details should appear)
+    private Consumer<String> onInitFailure; // Called when the payment page failed to initialize (otherwise the card details should appear)
     private Consumer<String> onVerificationFailure; // Called when the gateway failed to create the payment (just after the buyer pressed Pay)
     private Consumer<String> onPaymentFailure; // Called when Modality couldn't complete the payment
-    private Consumer<PaymentStatus> onPaymentCompletion;
+    private Consumer<CompletePaymentResult> onPaymentCompletion;
     private boolean paymentCancelled;
     private boolean paymentCompleted;
 
     public WebPaymentForm(InitiatePaymentResult result, HasPersonalDetails buyerPersonalDetails) {
         this.result = result;
         this.buyerPersonalDetails = buyerPersonalDetails;
-        // If the user closes the window while he hasn't cancelled or completed the payment, we consider this as a
+        // If the user closes the window while he hasn't canceled or completed the payment, we consider this as a
         // user cancellation
         Shutdown.addShutdownHook(e -> {
-            if (!paymentCancelled && !paymentCompleted) {
+            if (isEmbeddedPaymentForm() && !paymentCancelled && !paymentCompleted) {
                 cancelPayment(false); // false indicates it's not an explicit user cancellation
             }
         });
+    }
+
+    public int getAmount() {
+        return result.amount();
     }
 
     public WebPaymentForm setOnLoadFailure(Consumer<String> onLoadFailure) {
@@ -94,43 +108,66 @@ public class WebPaymentForm {
         return this;
     }
 
-    public WebPaymentForm setOnPaymentCompletion(Consumer<PaymentStatus> onPaymentCompletion) {
+    public WebPaymentForm setOnPaymentCompletion(Consumer<CompletePaymentResult> onPaymentCompletion) {
         this.onPaymentCompletion = onPaymentCompletion;
         return this;
     }
 
-    public Region buildPaymentForm() {
-        String url = result.getUrl();
-        if (result.isRedirect()) {
-            try {
-                Browser.launchExternalBrowser(url);
-            } catch (Exception e) {
-                Console.log(e);
+    public boolean hasHtmlPayButton() {
+        return result.hasHtmlPayButton();
+    }
+
+    public void setHtmlHeaderText(String htmlHeaderText) {
+        this.htmlHeaderText = htmlHeaderText;
+    }
+
+    public void setHtmlPayButtonText(String htmlPayButtonText) {
+        this.htmlPayButtonText = htmlPayButtonText;
+    }
+
+    public boolean isRedirectedPaymentForm() {
+        return result.formType() == PaymentFormType.REDIRECTED;
+    }
+
+    public boolean isEmbeddedPaymentForm() {
+        return result.formType() == PaymentFormType.EMBEDDED;
+    }
+
+    public void navigateToRedirectedPaymentForm() {
+        if (isRedirectedPaymentForm()) {
+            if (UserAgent.isBrowser()) // In the browser, we redirect the user to the payment page directly
+                WindowLocation.assignHref(result.url());
+            else {
+                try {
+                    // Opening the page in our internal browser which will fit the whole browser page. The benefit is that
+                    // we don't leave the webapp, and we will be able to easily restore the application state exactly where
+                    // it was after the payment is done.
+                    BrowserUtil.openInternalBrowser(result.url(), "/secured-" + result.gatewayName().toLowerCase() + "-payment-form");
+                    //Browser.launchExternalBrowser(url); // Chrome is blocks this current implementation (to investigate)
+                } catch (Exception e) {
+                    Console.error(e);
+                }
             }
-            return null;
         }
+    }
+
+    public Region buildEmbeddedPaymentForm() {
+        if (isRedirectedPaymentForm())
+            return null;
         webViewPane.setFitHeight(true); // Note: works with browser seamless mode and OpenJFX WebView, but not well with browser iFrame (constantly increasing)
         webViewPane.setMaxHeight(800); // Setting a maximum in case we are in browser iFrame (which we avoid for now)
-        webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
-        //webViewPane.setRedirectConsole(true); // causes stack overflow
+        // Commented for Authorized.net, as this makes the payment form to always increase TODO: check with Square
+        // webViewPane.setFitHeightExtra(result.isSeamless() ? 5 : 10);
+        // Commented as this causes stack overflows
+        // webViewPane.setRedirectConsole(true);
         LoadOptions loadOptions = new LoadOptions()
             .setOnLoadFailure(this::onLoadFailure)
             .setOnLoadSuccess(() -> { // Note: can be called several times in case of an iFrame reload
-                try {
-                    if (initFailureChecker != null)  // can happen on iFrame reload
-                        initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
-                    webViewPane.setWindowMember("modality_javaPaymentForm", WebPaymentForm.this);
-                    webViewPane.callWindow("modality_injectJavaPaymentForm", WebPaymentForm.this);
-                    initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
-                        if (!inited) {
-                            onGatewayInitFailure("The payment page didn't respond as expected");
-                        }
-                    });
-                } catch (Exception ex) {
-                    onGatewayInitFailure(ex.getMessage());
-                }
+                if (initFailureChecker != null)  // can happen on iFrame reload
+                    initFailureChecker.cancel(); // we cancel the previous checker to prevent outdated init failure
+                injectPaymentFormToJS(1);
             });
-        String htmlContent = result.getHtmlContent();
+        String htmlContent = result.htmlContent();
         if (htmlContent != null) {
             if (result.isSeamless()) {
                 loadOptions
@@ -141,8 +178,9 @@ public class WebPaymentForm {
                 webViewPane.loadFromHtml(htmlContent, loadOptions, false);
             }
         } else {
+            String url = result.url();
             if (url.startsWith("/")) {
-                url = getHttpServerOrigin() + url;
+                url = ClientOrigin.getHttpServerOrigin() + url;
             }
             webViewPane.loadFromUrl(url, loadOptions, false);
         }
@@ -150,6 +188,27 @@ public class WebPaymentForm {
         showLoadingFormOverlay();
         stackPane.setMaxWidth(Double.MAX_VALUE);
         return stackPane;
+    }
+
+    private void injectPaymentFormToJS(int attempt) {
+        logDebug("Injecting the payment form into the Modality JS code - attempt n°" + attempt);
+        try {
+            webViewPane.setWindowMember("modality_javaPaymentForm", this);
+            webViewPane.callWindow("modality_injectJavaPaymentForm", this, htmlHeaderText, htmlPayButtonText);
+            initFailureChecker = Scheduler.scheduleDelay(5000, () -> {
+                if (!initialized) {
+                    onGatewayInitFailure("The payment page didn't respond as expected");
+                }
+            });
+        } catch (Exception ex) {
+            if (attempt < 100) {
+                logDebug("Attempt n°" + attempt + " failed - retrying in 100 ms");
+                UiScheduler.scheduleDelay(100, () -> injectPaymentFormToJS(attempt + 1));
+            } else {
+                logDebug("Attempt n°" + attempt + " failed - reporting initialization failure");
+                onGatewayInitFailure(ex.getMessage());
+            }
+        }
     }
 
     private void showOverlay(Node overlay) {
@@ -173,20 +232,20 @@ public class WebPaymentForm {
     private void showLoadingFormOverlay() {
         VBox vBox = new VBox(5,
             createLabel("The " + getGatewayName() + " payment form is loading"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
     }
 
-    private ProgressIndicator createProgressIndicator() {
-        return Controls.createProgressIndicator(32);
+    private Region createSpinner() {
+        return Controls.createSectionSizeSpinner();
     }
 
     private void showVerificationProcessOverlay() {
         VBox vBox = new VBox(5,
             createLabel(getGatewayName() + " is capturing your details"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -197,7 +256,7 @@ public class WebPaymentForm {
         VBox vBox = new VBox(5,
             createLabel("Your details have been successfully captured by " + getGatewayName()),
             createLabel(getGatewayName() + " is now completing your payment"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -206,7 +265,7 @@ public class WebPaymentForm {
     private void showCancellingOverlay() {
         VBox vBox = new VBox(5,
             createLabel("We are cancelling your payment"),
-            createProgressIndicator()
+            createSpinner()
         );
         vBox.setAlignment(Pos.CENTER);
         showOverlay(vBox);
@@ -220,7 +279,7 @@ public class WebPaymentForm {
     }
 
     public String getGatewayName() {
-        return result.getGatewayName();
+        return result.gatewayName();
     }
 
     public boolean isLive() {
@@ -232,7 +291,7 @@ public class WebPaymentForm {
     }
 
     public Node createSandboxBar() {
-        SandboxCard[] sandboxCards = result.getSandboxCards();
+        SandboxCard[] sandboxCards = result.sandboxCards();
         if (sandboxCards == null || sandboxCards.length == 0)
             return new Text("No sandbox cards available");
         Button numbersButton = copyButton("Numbers");
@@ -244,17 +303,17 @@ public class WebPaymentForm {
         contextMenu.getItems().setAll(Arrays.stream(sandboxCards)
             .map(card -> {
                 MenuItem menuItem = new MenuItem();
-                menuItem.setText(card.getName());
+                menuItem.setText(card.name());
                 menuItem.setOnAction(e -> {
-                    cardButton.setText(card.getName());
-                    numbersButton.setText(card.getNumbers());
-                    String expirationDate = card.getExpirationDate();
+                    cardButton.setText(card.name());
+                    numbersButton.setText(card.numbers());
+                    String expirationDate = card.expirationDate();
                     if (expirationDate == null) {
                         expirationDate = Numbers.twoDigits(LocalDate.now().getMonth().getValue()) + "/" + ((LocalDate.now().getYear() + 1) % 100);
                     }
                     expirationDateButton.setText(expirationDate);
-                    cvvButton.setText(card.getCvv());
-                    zipButton.setText(card.getZip());
+                    cvvButton.setText(card.cvv());
+                    zipButton.setText(card.zip());
                 });
                 return menuItem;
             }).collect(Collectors.toList()));
@@ -282,16 +341,19 @@ public class WebPaymentForm {
     }
 
     public void pay() {
-        if (!inited || !isUserInteractionAllowed())
+        if (!initialized || !isUserInteractionAllowed())
             throw new IllegalStateException("pay() must be called after the payment form has been initialized and when the user is allowed to interact");
         if (webViewPane.isSeamless()) {
             // We don't show the verification overlay if not seamless, because the overlay will prevent the user to fill
-            // possible the verification form!
+            // the possible verification form!
             showVerificationProcessOverlay();
-        } else // Also we disable the user interaction (was done in seamless mode through showing overlay)
+        } else // Also, we disable the user interaction (was done in seamless mode through showing overlay)
             setUserInteractionAllowed(false);
         try {
             logDebug("Calling modality_submitGatewayPayment() in payment form");
+            Country country = buyerPersonalDetails.getCountry();
+            String countryCode = country == null ? null : country.getIsoAlpha2();
+            String countryName = country == null ? buyerPersonalDetails.getCountryName() : country.getName();
             webViewPane.callWindow("modality_submitGatewayPayment",
                 buyerPersonalDetails.getFirstName(),
                 buyerPersonalDetails.getLastName(),
@@ -300,7 +362,9 @@ public class WebPaymentForm {
                 buyerPersonalDetails.getStreet(),
                 buyerPersonalDetails.getCityName(),
                 buyerPersonalDetails.getAdmin1Name(),
-                buyerPersonalDetails.getCountry().getIsoAlpha2()
+                buyerPersonalDetails.getPostCode(),
+                countryCode,
+                countryName
             );
         } catch (Exception ex) {
             onGatewayBuyerVerificationFailure(ex.getMessage());
@@ -315,7 +379,7 @@ public class WebPaymentForm {
 
     private Future<CancelPaymentResult> cancelPayment(boolean explicitUserCancellation) {
         paymentCancelled = true;
-        return PaymentService.cancelPayment(new CancelPaymentArgument(result.getPaymentPrimaryKey(), explicitUserCancellation))
+        return PaymentService.cancelPayment(new CancelPaymentArgument(result.paymentPrimaryKey(), explicitUserCancellation))
             .onComplete(ar -> allowUserInteraction());
     }
 
@@ -336,7 +400,7 @@ public class WebPaymentForm {
     }
 
     private void onLoadFailure(String error) {
-        logDebug("onLoadFailure called (error = " + error + ")");
+        logError("onLoadFailure called (error = " + error + ")");
         if (onLoadFailure != null) {
             onLoadFailure.accept(error);
         }
@@ -344,71 +408,69 @@ public class WebPaymentForm {
 
     // Callback methods (called back by the payment gateway script)
 
+    public void onGatewayDebugStep(Object debugStep) {
+        this.debugStep = debugStep;
+        debugStepCounter++;
+        logDebug("debugStep = " + debugStep);
+    }
+
     public void onGatewayInitSuccess() {
         logDebug("onGatewayInitSuccess called");
-        inited = true;
+        initialized = true;
         allowUserInteraction();
     }
 
     public void onGatewayInitFailure(String error) {
-        logDebug("onGatewayInitFailure called (error = " + error + ")");
-        inited = true;
+        logError("onGatewayInitFailure called (error = " + error + ")");
+        initialized = true;
         //setUserInteractionAllowed(true);
-        callConsumerOnUiThreadIfSet(onInitFailure, error);
+        callConsumerInUiThreadIfSet(onInitFailure, error);
     }
 
     public void onGatewayCardVerificationFailure(String error) {
-        logDebug("onGatewayCardVerificationFailure called (error = " + error + ")");
+        logError("onGatewayCardVerificationFailure called (error = " + error + ")");
         allowUserInteraction();
     }
 
     public void onGatewayBuyerVerificationFailure(String error) {
-        logDebug("onGatewayBuyerVerificationFailure called (error = " + error + ")");
+        logError("onGatewayBuyerVerificationFailure called (error = " + error + ")");
         allowUserInteraction();
-        callConsumerOnUiThreadIfSet(onVerificationFailure, error);
+        callConsumerInUiThreadIfSet(onVerificationFailure, error);
     }
 
     public void onGatewayPaymentVerificationSuccess(String gatewayCompletePaymentPayload) {
         logDebug("onGatewayPaymentVerificationSuccess called (gatewayCompletePaymentPayload = " + gatewayCompletePaymentPayload + ")");
         paymentCompleted = true;
         showVerificationSuccessOverlay();
-        PaymentService.completePayment(new CompletePaymentArgument(result.getPaymentPrimaryKey(), result.isLive(), result.getGatewayName(), gatewayCompletePaymentPayload))
+        PaymentService.completePayment(new CompletePaymentArgument(result.paymentPrimaryKey(), result.isLive(), result.gatewayName(), gatewayCompletePaymentPayload))
             .onFailure(e -> onModalityCompletePaymentFailure(e.getMessage()))
-            .onSuccess(r -> onModalityCompletePaymentSuccess(r.getPaymentStatus()));
+            .onSuccess(this::onModalityCompletePaymentSuccess);
     }
 
     public void onModalityCompletePaymentFailure(String error) {
-        logDebug("onModalityCompletePaymentFailure called (error = " + error + ")");
+        logError("onModalityCompletePaymentFailure called (error = " + error + ")");
         allowUserInteraction();
-        callConsumerOnUiThreadIfSet(onPaymentFailure, error);
+        callConsumerInUiThreadIfSet(onPaymentFailure, error);
     }
 
 
-    public void onModalityCompletePaymentSuccess(PaymentStatus status) {
-        logDebug("onModalityCompletePaymentSuccess called (status = " + status + ")");
+    public void onModalityCompletePaymentSuccess(CompletePaymentResult result) {
+        logDebug("onModalityCompletePaymentSuccess called (status = " + result.paymentStatus() + ")");
         //setUserInteractionAllowedInUiThread(true);
-        callConsumerOnUiThreadIfSet(onPaymentCompletion, status);
+        callConsumerInUiThreadIfSet(onPaymentCompletion, result);
     }
 
-
-    private static String getHttpServerOrigin() {
-        String origin = evaluateOrNull("${{ HTTP_SERVER_ORIGIN }}");
-        if (origin == null)
-            origin = "https://" + evaluateOrNull("${{ HTTP_SERVER_HOST | BUS_SERVER_HOST | SERVER_HOST }}");
-        return origin;
-    }
-
-    private static String evaluateOrNull(String expression) {
-        String value = ConfigLoader.getRootConfig().get(expression);
-        if (value == expression)
-            value = null;
-        return value;
-    }
-
-    private <T> void callConsumerOnUiThreadIfSet(Consumer<T> consumer, T argument) {
+    private <T> void callConsumerInUiThreadIfSet(Consumer<T> consumer, T argument) {
         if (consumer != null) {
-            Platform.runLater(() -> consumer.accept(argument));
+            UiScheduler.runInUiThread(() -> consumer.accept(argument));
         }
+    }
+
+    private void logError(String message) {
+        if (debugStepCounter > 0)
+            message = message + " [debugStep = " + debugStep + ", debugStepCounter = " + debugStepCounter + "]";
+        ErrorReporter.reportError("[WebPaymentForm] " + message);
+        logDebug(message);
     }
 
     private static void logDebug(String message) {

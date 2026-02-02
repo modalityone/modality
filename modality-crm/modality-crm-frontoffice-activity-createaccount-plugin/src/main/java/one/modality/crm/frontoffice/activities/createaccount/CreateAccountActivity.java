@@ -1,14 +1,13 @@
 package one.modality.crm.frontoffice.activities.createaccount;
 
 
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.extras.panes.GoldenRatioPane;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.ContinueAccountCreationCredentials;
-import dev.webfx.stack.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,6 +20,8 @@ import javafx.scene.text.Text;
 import one.modality.base.client.activity.ModalityButtonFactoryMixin;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.activities.magiclink.MagicLinkI18nKeys;
+
+import static one.modality.crm.frontoffice.activities.createaccount.CreateAccountCssSelectors.*;
 
 /**
  * @author Bruno Salmon
@@ -45,21 +46,22 @@ final class CreateAccountActivity extends ViewDomainActivityBase implements Moda
                 I18n.bindI18nProperties(new Text(), MagicLinkI18nKeys.MagicLinkUnrecognisedError);
             } else {
                 AuthenticationService.authenticate(new ContinueAccountCreationCredentials(token))
+                    .inUiThread()
                     .onFailure(e -> {
                         String technicalMessage = e.getMessage();
                         Console.log("Technical error: " + technicalMessage);
-                        UiScheduler.runInUiThread(() -> accountUI.displayError(e));
+                        accountUI.displayError(e);
                     })
                     .onSuccess(email -> {
                         Person person = updateStore.insertEntity(Person.class);
                         person.setEmail(email.toString());
-                        UiScheduler.runInUiThread(()->accountUI.initialiseUI(person,token));
+                        accountUI.initialiseUI(person,token);
                     });
             }
         }, tokenProperty);
 
         container.getStyleClass().add("login");
-        container.getStyleClass().add("user-account");
+        container.getStyleClass().add(user_account);
         container.setAlignment(Pos.CENTER);
         container.setMaxWidth(Double.MAX_VALUE);
 
@@ -72,7 +74,7 @@ final class CreateAccountActivity extends ViewDomainActivityBase implements Moda
         createAccountBorderPane = accountUI.getView();
         createAccountBorderPane.setMaxWidth(586);
         content.getChildren().add(createAccountBorderPane);
-        createAccountBorderPane.getStyleClass().addAll("login-child","background", "fx-border");
+        createAccountBorderPane.getStyleClass().add("login-child");
         return container;
     }
 

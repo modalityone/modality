@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules>
+            <!-- WebFX extras -->
+            <module>webfx-extras-controlfactory</module>
+
+            <!-- WebFX stack ORM -->
+            <module>webfx-stack-orm-entity-controls</module>
+
+            <!-- Modality modules -->
+            <module>modality-base-client-mainframe-fx</module>
+            <module>modality-crm-backoffice-organization-fx</module>
+        </used-by-source-modules>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.backoffice.activities.roomsetup.EventRoomSetupRouting$EventRoomSetupUiRoute</provider>
+        <provider interface="dev.webfx.stack.routing.uirouter.operations.RouteRequestEmitter">one.modality.event.backoffice.activities.roomsetup.EventRoomSetupRouting$RouteToEventRoomSetupRequestEmitter</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.event.backoffice.activities.roomsetup" prefix="EventRoomSetup">
+        <i18n/>
+        <css/>
+    </java-ui-api>
+
+</project>

@@ -1,42 +1,47 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.ScalePane;
+import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactory;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
+import dev.webfx.extras.util.dialog.DialogCallback;
+import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
 import dev.webfx.stack.authn.AuthenticationRequest;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.UpdatePasswordCredentials;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
-import dev.webfx.stack.ui.controls.button.ButtonFactory;
-import dev.webfx.stack.ui.dialog.DialogCallback;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import dev.webfx.stack.ui.validation.ValidationSupport;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.frontoffice.activities.createaccount.CreateAccountI18nKeys;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+import static one.modality.crm.frontoffice.activities.userprofile.UserProfileCssSelectors.*;
+
+/**
+ * @author David Hello
+ */
 final class ChangePasswordUI implements MaterialFactoryMixin {
 
     private final PasswordField passwordField;
     private final PasswordField newPasswordField;
     private final PasswordField newPasswordRepeatedField;
-    private final VBox changePasswordVBox = new VBox();
-    private final ScalePane container = new ScalePane(changePasswordVBox);
+    private final VBox container = new VBox();
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final Button actionButton;
     private final Button closeButton;
@@ -48,10 +53,14 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
 
     public ChangePasswordUI() {
         Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangePassword)));
+        title.setTextAlignment(TextAlignment.CENTER);
         title.setPadding(new Insets(0, 0, 50, 0));
+        Controls.setupTextWrapping(title, true, false);
 
         Label description = Bootstrap.strong(I18nControls.newLabel(UserProfileI18nKeys.UpdatePasswordDesc));
+        description.setTextAlignment(TextAlignment.CENTER);
         description.setPadding(new Insets(0, 0, 10, 0));
+        Controls.setupTextWrapping(description, true, false);
 
         passwordField = newMaterialPasswordField(UserProfileI18nKeys.CurrentPassword);
         Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.CURRENT_PASSWORD);
@@ -89,39 +98,39 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
             ButtonFactory.resetDefaultButton(actionButton);
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
-                    //First we check if the password entered is the correct
+                    // First, we check if the password entered is the correct
                     Object credentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
-                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    AsyncSpinner.displayButtonSpinner(actionButton);
                     new AuthenticationRequest()
                         .setUserCredentials(credentials)
                         .executeAsync()
-                        .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                        .onFailure(failure -> UiScheduler.runInUiThread(() -> {
+                        .inUiThread()
+                        .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
+                        .onFailure(failure -> {
                             Animations.shake(container);
                             showInfoMessage(UserProfileI18nKeys.IncorrectPassword, Bootstrap.TEXT_DANGER);
-                        }))
+                        })
                         .onSuccess(ignored -> {
                             //Here we send an email
                             //TODO : Change the function when it's ready
                             Object updatePasswordCredentials = new UpdatePasswordCredentials(passwordField.getText().trim(), newPasswordField.getText().trim());
-                            UiScheduler.runInUiThread(() -> {
-                                OperationUtil.turnOnButtonsWaitMode(actionButton);
-                                AuthenticationService.updateCredentials(updatePasswordCredentials)
-                                    .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                                    .onFailure(failure -> UiScheduler.runInUiThread(() -> {
-                                        //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                        showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                        displayCloseButton();
+                            AsyncSpinner.displayButtonSpinner(actionButton);
+                            AuthenticationService.updateCredentials(updatePasswordCredentials)
+                                .inUiThread()
+                                .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
+                                .onFailure(failure -> {
+                                    //  showResultMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                    showInfoMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                    displayCloseButton();
 
-                                        // transitionPane.transitToContent(messageVBox);
-                                    }))
-                                    .onSuccess(s -> UiScheduler.runInUiThread(() -> {
-                                        showResultMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
-                                        showInfoMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
-                                        displayCloseButton();
-                                        // transitionPane.transitToContent(messageVBox);
-                                    }));
-                            });
+                                    // transitionPane.transitToContent(messageVBox);
+                                })
+                                .onSuccess(s -> {
+                                    showResultMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
+                                    showInfoMessage(UserProfileI18nKeys.PasswordSuccessfullyChanged, Bootstrap.TEXT_SUCCESS);
+                                    displayCloseButton();
+                                    // transitionPane.transitToContent(messageVBox);
+                                });
                         });
                 }
             });
@@ -131,8 +140,8 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         infoMessage.setWrapText(true);
         resultMessage.setWrapText(true);
 
-        changePasswordVBox.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton,closeButton);
-        setupModalVBox(changePasswordVBox);
+        container.getChildren().setAll(title, description, passwordField, newPasswordField, newPasswordRepeatedField, infoMessage, actionButton, closeButton);
+        setupModalVBox(container);
 
         closeButton.setOnAction(evt -> {
             callback.closeDialog();
@@ -151,14 +160,14 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
     }
 
     public static void setupModalVBox(VBox vBox) {
-        vBox.setPrefWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
         vBox.setSpacing(20);
         vBox.setAlignment(Pos.TOP_CENTER);
+        vBox.getStyleClass().add(user_profile_modal_window);
         vBox.setPadding(new Insets(60));
-        vBox.getStyleClass().add("user-profile-modal-window");
+        vBox.setMinWidth(300);
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 
@@ -168,25 +177,23 @@ final class ChangePasswordUI implements MaterialFactoryMixin {
         newPasswordRepeatedField.setText("");
         showResultMessage("", "");
         showInfoMessage("", "");
-        closeButton.setVisible(false);
-        closeButton.setManaged(false);
-        actionButton.setVisible(true);
-        actionButton.setManaged(true);
+        Layouts.setManagedAndVisibleProperties(closeButton, false);
+        Layouts.setManagedAndVisibleProperties(actionButton, true);
     }
 
-    public void showResultMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(resultMessage, errorMessageKey);
+    public void showResultMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(resultMessage, errorI18nKey);
         resultMessage.getStyleClass().setAll(cssClass);
     }
 
-    public void showInfoMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(infoMessage, errorMessageKey);
+    public void showInfoMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(infoMessage, errorI18nKey);
         infoMessage.getStyleClass().setAll(cssClass);
         infoMessage.setVisible(true);
     }
 
     /**
-     * This method is used to initialise the parameters for the form validation
+     * This method is used to initialize the parameters for the form validation
      */
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {

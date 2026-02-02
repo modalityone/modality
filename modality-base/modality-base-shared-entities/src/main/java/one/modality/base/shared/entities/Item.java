@@ -2,6 +2,7 @@ package one.modality.base.shared.entities;
 
 import dev.webfx.stack.orm.entity.EntityId;
 import one.modality.base.shared.entities.markers.*;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 
 /**
  * @author Bruno Salmon
@@ -12,15 +13,18 @@ public interface Item extends
     EntityHasLabel,
     EntityHasIcon,
     EntityHasOrd,
+    EntityHasSite,
     HasItemFamilyType {
 
     //// Domain fields
     String family = "family";
     String rateAliasItem = "rateAliasItem";
     String share_mate = "share_mate";
+    String capacity = "capacity";
     String deprecated = "deprecated";
     String imageUrl = "imageUrl";
     String language = "language";
+    String temporal = "temporal";
 
     default void setFamily(Object value) {
         setForeignField(family, value);
@@ -54,6 +58,14 @@ public interface Item extends
         return getBooleanFieldValue(share_mate);
     }
 
+    default void setCapacity(Integer value) {
+        setFieldValue(capacity, value);
+    }
+
+    default Integer getCapacity() {
+        return getIntegerFieldValue(capacity);
+    }
+
     default void setDeprecated(Boolean value) {
         setFieldValue(deprecated, value);
     }
@@ -82,8 +94,24 @@ public interface Item extends
         return getForeignEntity(language);
     }
 
+    default void setTemporal(Boolean value) {
+        setFieldValue(temporal, value);
+    }
 
-    //// Enriched fields and methods
+    /**
+     * Returns whether this item is temporal (date-based) or non-temporal.
+     * Temporal items (like meals, accommodation) have attendance records with dates.
+     * Non-temporal items (like dietary preferences, assisted listening devices)
+     * create only a DocumentLine without any Attendance records.
+     *
+     * @return true if the item is temporal (per-day), false if non-temporal
+     */
+    default Boolean isTemporal() {
+        return getBooleanFieldValue(temporal);
+    }
+
+
+    /// / Enriched fields and methods
 
     @Override
     default KnownItemFamily getItemFamilyType() {

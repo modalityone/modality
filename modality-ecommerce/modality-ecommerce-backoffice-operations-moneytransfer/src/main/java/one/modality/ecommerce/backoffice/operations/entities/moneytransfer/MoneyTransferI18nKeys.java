@@ -3,8 +3,8 @@ package one.modality.ecommerce.backoffice.operations.entities.moneytransfer;
 
 public interface MoneyTransferI18nKeys {
 
-    String AddPayment = "AddPayment";
-    String AddTransfer = "AddTransfer";
-    String DeletePayment = "DeletePayment";
+    Object AddPayment = "AddPayment";
+    Object AddTransfer = "AddTransfer";
+    Object DeletePayment = "DeletePayment";
 
 }

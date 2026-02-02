@@ -9,13 +9,16 @@ import dev.webfx.extras.time.layout.gantt.LocalDateGanttLayout;
 import dev.webfx.extras.time.layout.impl.ChildBounds;
 import dev.webfx.extras.time.window.TimeWindowUtil;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
+import dev.webfx.kit.util.properties.ObservableLists;
+import dev.webfx.platform.util.collection.Collections;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.property.ObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.FontWeight;
@@ -42,15 +45,17 @@ public final class EventsGanttCanvas {
     // Style constants used for drawing bars in the canvas:
     private static final double BAR_HEIGHT = 18;
     private static final double BAR_RADIUS = 10;
-    private static final double BAR_H_SPACING = 2; // Max value, may be reduced when zooming out
+    private static final double BAR_H_SPACING = 2; // Max value - may be reduced when zooming out
     private static final double BAR_V_SPACING = 2;
 
     private final EventsPresentationModel pm = new EventsPresentationModel();
-    // The dated Gantt canvas that already displays dates, weeks, months & years (depending on zoom level)
+    private final ObservableList<Event> allOrganizationEventsInTimeWindow = FXCollections.observableArrayList();
+    // The dated Gantt canvas that already displays dates, weeks, months and years (depending on zoom level)
     private final DatedGanttCanvas datedGanttCanvas = new DatedGanttCanvas()
-        // Activating user interaction (user can move & zoom in/out the time window) and date selection
+        // Activating user interaction (user can move and zoom in/out the time window) and date selection
         .setInteractive(true)
-        .setDateSelectionEnabled(true);
+        .setDateSelectionEnabled(true)
+        .setSmoothHorizontalTranslationEnabled(true);
 
     // The additional layer that will display the events
     private final LocalDateGanttLayout<Event> eventsLayer = new LocalDateGanttLayout<Event>()
@@ -103,9 +108,9 @@ public final class EventsGanttCanvas {
 
     public EventsGanttCanvas() {
         // datedGanttCanvas is registered as the referent in FXGanttTimeWindow for pairing other gantt canvas, so their
-        // horizontal time axis stay aligned with this datedGanttCanvas time axis even if their horizontal origin differs
-        // (like in the accommodation canvas when we show the legend on the left). To allow this pairing, we need to
-        // register its time projector and its canvas as the referent ones.
+        // horizontal time axis stays aligned with this datedGanttCanvas time axis even if their horizontal origin
+        // differs. Ex: in the accommodation canvas when we show the legend on the left. To allow this pairing, we need
+        // to register its time projector and its canvas as the referent ones.
         FXGanttTimeWindow.setTimeProjector(datedGanttCanvas.getTimeProjector());
         FXGanttTimeWindow.setGanttNode(datedGanttCanvas.getCanvas());
 
@@ -120,12 +125,13 @@ public final class EventsGanttCanvas {
 
         // We may have an async issue with the Y positioning of the recurring dates, because getRecurringEventDateY()
         // works only if the recurring event has been loaded and positioned in the gantt canvas before (otherwise we
-        // can't tell yet the date Y position, and we hide it by setting it a negative Y). So we intercept the arrival
-        // of events from the server, and invalidate at this point the vertical layout of all recurring dates.
-        // means we receive events from the server
+        // can't tell the date Y position yet, and we hide it by setting it a negative Y). So we intercept the arrival
+        // of events from the server and invalidate at this point the vertical layout of all recurring dates.
         eventsLayer.getChildren().addListener((InvalidationListener) observable -> {
             recurringEventDatesLayer.invalidateVerticalLayout(); // will force a new computation of recurring dates Y
         });
+        // Also ensuring it has the same height as the events layer
+        recurringEventDatesLayer.heightProperty().bind(eventsLayer.heightProperty());
 
         // The following properties depend on the theme mode (light/dark mode, etc...):
         ThemeRegistry.runNowAndOnModeChange(() -> eventBarDrawer
@@ -134,7 +140,7 @@ public final class EventsGanttCanvas {
 
         // Synchronizing the gantt selection back to selectedEventProperty when it makes sense
         FXProperties.runNowAndOnPropertiesChange(() -> Platform.runLater(() -> {
-            // First we check if the object selected in the gantt is an event
+            // First, we check if the object selected in the gantt is an event
             Event event = eventsLayer.getSelectedChild();
             if (event == null) { // If not, another object that makes sense is a date in a recurring event
                 ScheduledItem scheduledItem = recurringEventDatesLayer.getSelectedChild();
@@ -143,11 +149,25 @@ public final class EventsGanttCanvas {
                     event = scheduledItem.getEvent();
                 }
             }
-            // We apply the event into selectedEventProperty
+            // We apply the event into `selectedEventProperty`
             syncingSelectionFromGantt = true; // internal synchronization (no need to update the gantt selection)
             selectedEventProperty.set(event);
             syncingSelectionFromGantt = false;
         }), eventsLayer.selectedChildProperty(), recurringEventDatesLayer.selectedChildProperty());
+
+        // Filtering the events to display in the events layer based on the gantt visibility
+        FXProperties.runOnPropertiesChange(() -> {
+                GanttVisibility ganttVisibility = FXGanttVisibility.getGanttVisibility();
+                if (!FXGanttVisibility.isShowingEvents()) {
+                    eventsLayer.getChildren().clear();
+                } else {
+                    eventsLayer.getChildren().setAll(Collections.filter(allOrganizationEventsInTimeWindow, event -> switch (ganttVisibility) {
+                        case ONSITE_ACCOMMODATION_EVENTS -> !event.isRecurring() && event.getVenue() != null && event.getVenue().isMain() && !event.getName().toLowerCase().contains("online") && !Entities.samePrimaryKey(event.getTypeId(), 61); // 61 = MKMC Guest Stay (hardcoded for now)
+                        case RECURRING_EVENTS -> event.isRecurring();
+                        default -> true;
+                    }));
+                }
+        }, ObservableLists.versionNumber(allOrganizationEventsInTimeWindow), FXGanttVisibility.ganttVisibilityProperty());
     }
 
     private void drawEvent(Event event, Bounds b, GraphicsContext gc) {
@@ -219,35 +239,33 @@ public final class EventsGanttCanvas {
     private void startLogic(Object mixin) {
         // Loading events to be displayed in the gantt canvas
         ReactiveEntitiesMapper<Event> eventReactiveEntitiesMapper = ReactiveEntitiesMapper.<Event>createPushReactiveChain(mixin)
-            .always("{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem'}")
-            // Stopping querying the server when then gantt visibility is not set to EVENTS
-            .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
+            .always( // language=JSON5
+                "{class: 'Event', alias: 'e', fields: 'name,startDate,endDate,type.recurringItem,venue.main'}")
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=?", o))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("e.organization=$1", o))
             // Restricting events to those appearing in the time window
-            .always(pm.timeWindowStartProperty(), startDate -> where("e.endDate >= ?", startDate))
-            .always(pm.timeWindowEndProperty(), endDate -> where("e.startDate <= ?", endDate))
+            .always(pm.timeWindowStartProperty(), startDate -> where("e.endDate >= $1", startDate))
+            .always(pm.timeWindowEndProperty(), endDate -> where("e.startDate <= $1", endDate))
             // Ordering events in a way that the widest in the time window will be first (=> the smallest events will appear at the bottom)
-            .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, ?),id", startDate))
+            .always(pm.timeWindowStartProperty(), startDate -> DqlStatement.orderBy("greatest(e.startDate, $1),id", startDate))
             // Storing the result directly in the events layer
-            .storeEntitiesInto(eventsLayer.getChildren())
-            .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-eventsGanttCanvas"))
+            .storeEntitiesInto(allOrganizationEventsInTimeWindow)
+            .setResultCacheEntry("modality/event/gantt-canvas/events")
             // We are now ready to start
             .start();
 
-        // Also loading the dates inside the recurring events to be displayed in the gantt canvas
+        // Also, loading the dates inside the recurring events to be displayed in the gantt canvas
         ReactiveEntitiesMapper.<ScheduledItem>createPushReactiveChain(mixin)
-            .always("{class: 'ScheduledItem', alias: 'si', fields: 'date,event'}")
-            // Stopping querying the server when then gantt visibility is not set to EVENTS
-            .ifNotEquals(FXGanttVisibility.ganttVisibilityProperty(), GanttVisibility.EVENTS, null)
+            .always( // language=JSON5
+                "{class: 'ScheduledItem', alias: 'si', fields: 'date,event', where: 'event.type.recurringItem != null'}")
             // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.(organization=? and type.recurringItem != null)", o))
+            .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("si.event.organization=$1", o))
             // Restricting events to those appearing in the time window
-            .always(pm.timeWindowStartProperty(), startDate -> where("si.date >= ?", startDate))
-            .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= ?", endDate))
+            .always(pm.timeWindowStartProperty(), startDate -> where("si.date >= $1", startDate))
+            .always(pm.timeWindowEndProperty(), endDate -> where("si.date <= $1", endDate))
             // Storing the result directly in the events layer
             .storeEntitiesInto(recurringEventDatesLayer.getChildren())
-            //.setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-eventsGanttCanvas"))
+            //.setResultCacheEntry("modality/event/gantt-canvas/scheduled-items")
             .setStore(eventReactiveEntitiesMapper.getStore())
             // We are now ready to start
             .start();

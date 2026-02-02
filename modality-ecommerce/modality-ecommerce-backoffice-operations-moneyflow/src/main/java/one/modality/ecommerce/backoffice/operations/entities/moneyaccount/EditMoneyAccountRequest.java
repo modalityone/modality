@@ -1,12 +1,12 @@
 package one.modality.ecommerce.backoffice.operations.entities.moneyaccount;
 
-import dev.webfx.stack.i18n.HasI18nKey;
-import dev.webfx.stack.i18n.I18nKeys;
-import dev.webfx.stack.ui.operation.HasOperationCode;
-import dev.webfx.stack.ui.operation.HasOperationExecutor;
+import dev.webfx.extras.i18n.HasI18nKey;
+import dev.webfx.extras.i18n.I18nKeys;
+import dev.webfx.extras.operation.HasOperationCode;
+import dev.webfx.extras.operation.HasOperationExecutor;
 import dev.webfx.platform.async.AsyncFunction;
 import javafx.scene.layout.Pane;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.shared.entities.MoneyAccount;
 
 public final class EditMoneyAccountRequest implements HasOperationCode, HasI18nKey,
@@ -29,7 +29,7 @@ public final class EditMoneyAccountRequest implements HasOperationCode, HasI18nK
 
     @Override
     public Object getI18nKey() {
-        return I18nKeys.appendEllipsis(ModalityI18nKeys.Edit);
+        return I18nKeys.appendEllipsis(BaseI18nKeys.Edit);
     }
 
     public MoneyAccount getMoneyAccount() { return moneyAccount; }

@@ -1,0 +1,48 @@
+.scheduled-item-box {
+    --fx-border-style: solid;
+    --fx-border-color: #cccccc;
+    --fx-border-width: 1px;
+}
+
+.scheduled-item-box.date-unselected {
+    --fx-text-fill: #444;
+}
+
+.scheduled-item-box .time {
+    --fx-text-fill: #838788;
+}
+
+.scheduled-item-box.date-unselected {
+    --fx-background-color: transparent;
+}
+
+.scheduled-item-box.date-non-selectable {
+    --fx-background-color: #dddddd;
+}
+
+.scheduled-item-box.date-non-selectable {
+    --fx-border-style: solid;
+    --fx-border-color: #cccccc;
+    --fx-border-width: 1px;
+}
+
+.scheduled-item-box.date-non-selectable,
+.scheduled-item-box.date-non-selectable .time {
+    --fx-text-fill: #aaaaaa;
+}
+
+.scheduled-item-box.date-selected,
+.scheduled-item-box.date-already-booked {
+    --fx-background-color: var(--brand-main-color);
+    --fx-border-style: none;
+}
+
+.scheduled-item-box.date-selected,
+.scheduled-item-box.date-selected .time {
+    --fx-text-fill: white;
+}
+
+.scheduled-item-box.date-already-booked,
+.scheduled-item-box.date-already-booked .time {
+    --fx-text-fill: #eeeeee;
+}

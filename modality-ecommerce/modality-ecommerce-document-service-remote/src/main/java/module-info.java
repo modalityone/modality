@@ -6,6 +6,7 @@ module modality.ecommerce.document.service.remote {
     requires modality.ecommerce.document.service;
     requires modality.ecommerce.document.service.buscall;
     requires webfx.platform.async;
+    requires webfx.platform.util;
     requires webfx.stack.com.bus.call;
 
     // Exported packages

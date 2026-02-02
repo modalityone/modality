@@ -1,0 +1,17 @@
+GlobalSetupMenu:
+  text: "[GlobalSetup]"
+  graphic:
+    svgPath: "m21.6 13.8c-4.32 0-7.8 3.48-7.8 7.8 0 4.32 3.48 7.8 7.8 7.8 4.32 0 7.8-3.48 7.8-7.8 0-4.32-3.48-7.8-7.8-7.8zm15.72 12.36-1.44 3.36 2.52 4.92.36.6-3.48 3.48-5.76-2.76-3.36 1.44-1.68 5.28-.24.72h-4.92l-2.16-6-3.36-1.44-4.92 2.52-.6.36-3.48-3.48 2.64-5.76-1.44-3.36-5.28-1.68-.72-.24v-4.92l6-2.16 1.44-3.36-2.52-4.92-.36-.6 3.48-3.48 5.76 2.64 3.36-1.44 1.68-5.28.24-.72h4.92l2.16 6 3.36 1.44 4.92-2.52.6-.36 3.48 3.48-2.64 5.76 1.44 3.36 5.28 1.68.72.24v4.92z"
+
+# The menus below don't have an existing activity yet. These keys will move to their activities once created.
+OrganizationProfileMenu:
+  text: "Organization Profile"
+MoneyFlowsMenu:
+  text: "Money Flows"
+EventTypesMenu:
+  text: "Event Types"
+SitesMenu:
+  text: "Sites"
+MealsMenu:
+  text: "Meals"
+TransportationSetupMenu: "[TransportationMenu]"

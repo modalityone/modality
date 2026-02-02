@@ -1,11 +1,8 @@
 package one.modality.event.backoffice.events.pm;
 
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
-import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 import dev.webfx.extras.time.window.TimeWindow;
+import javafx.beans.property.*;
+import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 
 import java.time.LocalDate;
 
@@ -26,4 +23,10 @@ public final class EventsPresentationModel extends OrganizationDependentGenericT
     private final ObjectProperty<LocalDate> timeWindowEndProperty = new SimpleObjectProperty<>();
     public ObjectProperty<LocalDate> timeWindowEndProperty() { return timeWindowEndProperty; }
 
+    // Note: this part of the TimeWindow is not used in the pm logic
+    private final DoubleProperty translateOriginXProperty = new SimpleDoubleProperty();
+    @Override
+    public DoubleProperty timeWindowTranslateXProperty() {
+        return translateOriginXProperty;
+    }
 }

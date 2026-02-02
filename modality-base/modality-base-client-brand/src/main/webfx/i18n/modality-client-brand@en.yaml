@@ -5,3 +5,6 @@ frontOfficeBrandNameAndLogo:
 brandMainColor: "#F6782E"
 brandMainBackgroundColor: "#F6782E"
 
+frontOfficeBrandNameAndLogoShort:
+  text: "[frontOfficeBrandNameAndLogo]"
+  graphic: "[frontOfficeBrandNameAndLogo]"

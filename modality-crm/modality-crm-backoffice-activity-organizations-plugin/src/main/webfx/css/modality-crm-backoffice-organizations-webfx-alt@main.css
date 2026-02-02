@@ -1,0 +1,120 @@
+/* Organizations View - Name renderer */
+.organization-name-primary {
+    font-weight: 600;
+    font-size: 13px;
+    color: #0096D6;
+}
+
+.organization-name-secondary {
+    font-size: 11px;
+    color: #6B7280;
+}
+
+/* Organizations View - Location renderer */
+.organization-location-main {
+    font-size: 12px;
+    color: #374151;
+}
+
+.organization-location-secondary {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+/* Organizations View - Contact renderer */
+.organization-contact-icon {
+    font-size: 12px;
+    color: #9CA3AF;
+}
+
+.organization-contact-email {
+    font-size: 12px;
+    color: #0096D6;
+}
+
+.organization-contact-phone {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+/* Organizations View - Status badges */
+.organization-status-active {
+    background-color: #DCFCE7;
+    color: #41BA4D;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 12px;
+}
+
+.organization-status-closed {
+    background-color: #FEE2E2;
+    color: #DC2626;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 12px;
+}
+
+.organization-status-clickable {
+    cursor: pointer;
+}
+
+.organization-status-clickable:hover {
+    opacity: 0.8;
+}
+
+/* Organization Dialog - Section dividers */
+.section-divider-line {
+    /*height: 1px;*/
+    background-color: #E5E7EB;
+}
+
+.section-divider-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #9CA3AF;
+    /*text-transform: uppercase;
+    letter-spacing: 0.05em;*/
+}
+
+/* Organization Dialog - Closed field styling */
+.organization-closed-field {
+    background-color: #FEF2F2;
+    border: 1px solid #FECACA;
+    border-radius: 4px;
+}
+
+.organization-closed-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: #DC2626;
+}
+
+.organization-closed-help {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+/* Modal subtitle */
+.modal-subtitle {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+/* Organizations Grid - white background */
+.organizations-grid {
+    background-color: white;
+}
+
+.organizations-grid .grid-body {
+    background-color: white;
+}
+
+.organizations-grid .grid-body .grid-col {
+    background-color: white;
+}
+
+/* Organization ID label */
+.organization-id-label {
+    font-size: 12px;
+    color: #6B7280;
+}

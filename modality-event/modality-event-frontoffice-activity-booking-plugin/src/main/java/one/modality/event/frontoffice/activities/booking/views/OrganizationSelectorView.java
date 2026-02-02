@@ -1,5 +1,6 @@
 package one.modality.event.frontoffice.activities.booking.views;
 
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import dev.webfx.extras.panes.*;
 import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.extras.util.scene.SceneUtil;
@@ -11,8 +12,6 @@ import dev.webfx.platform.util.Numbers;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -28,7 +27,7 @@ import javafx.scene.shape.SVGPath;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import one.modality.base.client.css.Fonts;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.mainframe.fx.FXMainFrameDialogArea;
 import one.modality.base.frontoffice.utility.browser.BrowserUtil;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
@@ -81,7 +80,8 @@ public final class OrganizationSelectorView {
     }
 
     private Node getOrganizationView() {
-        String organizationJson = "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
+        String organizationJson = // language=JSON5
+            "{class: 'Organization', alias: 'o', where: '!closed and name!=`ISC`', orderBy: 'country.name,name'}";
         if (WebFxKitLauncher.supportsSvgImageFormat())
             organizationJson = organizationJson.replace("}", ", columns: [{expression: '[image(`images/s16/organizations/svg/` + (type=2 ? `kmc` : type=3 ? `kbc` : type=4 ? `branch` : `generic`) + `.svg`),name]'}] }");
         EntityButtonSelector<Organization> organizationButtonSelector = new EntityButtonSelector<>(
@@ -138,7 +138,6 @@ public final class OrganizationSelectorView {
     }
 
     public void onResume() {
-        BrowserUtil.setUiRouter(activityBase.getUiRouter());
         if (UserAgent.isBrowser()) {
             // The issue with the browser is that it completely reloads the iFrame (= HTML mapping for WebView) when
             // reintroduced to the DOM, so the thumb video is appearing with the YouTube play button when the user
@@ -152,7 +151,8 @@ public final class OrganizationSelectorView {
         Organization organization = FXOrganization.getOrganization();
         if (organization != null) {
             organization.onExpressionLoaded("domainName,latitude,longitude,street,cityName,postCode,country.(name,iso_alpha2,latitude,longitude,north,south,east,west),phone,email")
-                .onSuccess(ignored -> Platform.runLater(() -> {
+                .inUiThread()
+                .onSuccess(ignored -> {
                     Integer organizationId = Numbers.toInteger(organization.getPrimaryKey());
                     String imageLink = // Temporarily hardcoded
                         // Manjushri KMC
@@ -238,7 +238,7 @@ public final class OrganizationSelectorView {
                     GeneralUtility.onNodeClickedWithoutScroll(e2 ->
                         BrowserUtil.openExternalBrowser("mailto:" + email), emailLink);
                     FXCountry.setCountry(organization.getCountry());
-                }));
+                });
         }
     }
 
@@ -246,7 +246,7 @@ public final class OrganizationSelectorView {
         worldMapView = new DynamicMapView();
         worldMapView.placeEntityProperty().bind(FXCountry.countryProperty());
 
-        Hyperlink backLink = GeneralUtility.createHyperlink(ModalityI18nKeys.Back, Color.WHITE);
+        Hyperlink backLink = GeneralUtility.createHyperlink(BaseI18nKeys.Back, Color.WHITE);
         GeneralUtility.onNodeClickedWithoutScroll(event -> flipToFrontOrganization(), backLink);
 
         FXProperties.runNowAndOnPropertyChange(country -> {

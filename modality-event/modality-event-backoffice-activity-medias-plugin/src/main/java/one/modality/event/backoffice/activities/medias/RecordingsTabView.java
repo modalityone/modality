@@ -1,5 +1,9 @@
 package one.modality.event.backoffice.activities.medias;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
@@ -7,35 +11,32 @@ import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.util.Strings;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.stack.ui.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.Media;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
@@ -47,12 +48,13 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author David Hello
+ */
 final class RecordingsTabView {
 
     private Event currentEditedEvent;
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private TextField contentExpirationDate;
@@ -153,7 +155,7 @@ final class RecordingsTabView {
         // masterSettings.getChildren().add(offlineManagementHBox);
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.successButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.successButton(I18nControls.newButton(BaseI18nKeys.Save));
         VBox.setMargin(saveButton, new Insets(20, 0, 0, 0));
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         addUpdateStoreHasChangesProperty(hasChangesProperty);
@@ -161,7 +163,7 @@ final class RecordingsTabView {
         saveButton.setOnAction(e -> {
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     //TODO : display a message to say the data has been saved
                     .onSuccess(Console::log);
             }
@@ -184,13 +186,26 @@ final class RecordingsTabView {
             masterSettings.getChildren().add(languageLabel);
 
             entityStore.executeQueryBatch(
-                    new EntityStoreQuery("select distinct item.name, item.code from ScheduledItem  where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by item.name",
-                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                    new EntityStoreQuery("select name, date, programScheduledItem.(startTime, endTime), item.code, programScheduledItem.timeline.startTime, published, programScheduledItem.name, programScheduledItem.timeline.endTime,programScheduledItem.timeline.audioOffered, event, site, expirationDate, available from ScheduledItem where programScheduledItem.event= ? and item.family.code = ? and programScheduledItem.item.family.code = ? order by date",
-                        new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                    new EntityStoreQuery("select url, scheduledItem.programScheduledItem, scheduledItem.item, scheduledItem.item.code ,scheduledItem.date, scheduledItem.published, durationMillis from Media where scheduledItem.event= ? and scheduledItem.item.family.code = ?", new Object[]{currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()}))
-                .onFailure(Console::log)
-                .onSuccess(entityList -> Platform.runLater(() -> {
+                    new EntityStoreQuery("""
+                            select distinct item.(name, code)
+                             from ScheduledItem
+                             where programScheduledItem.event = $1 and item.family.code = $2 and programScheduledItem.item.family.code = $3
+                             order by item.name""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
+                    new EntityStoreQuery("""
+                            select name, date, programScheduledItem.(name, startTime, endTime, timeline.(startTime, endTime, audioOffered)), event, site, item.code, published, expirationDate, available
+                             from ScheduledItem
+                             where programScheduledItem.event = $1 and item.family.code = $2 and programScheduledItem.item.family.code = $3
+                             order by date, programScheduledItem?.timeline?.startTime""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode(), KnownItemFamily.TEACHING.getCode()),
+                    new EntityStoreQuery("""
+                            select url, durationMillis, scheduledItem.(item.code, programScheduledItem, date, published)
+                             from Media
+                             where scheduledItem.(event = $1 and item.family.code = $2)""",
+                        currentEditedEvent, KnownItemFamily.AUDIO_RECORDING.getCode()))
+                .onFailure(Console::error)
+                .inUiThread()
+                .onSuccess(entityList -> {
                     EntityList<ScheduledItem> itemList = entityList[0];
                     EntityList<ScheduledItem> siList = entityList[1];
                     EntityList<Media> mediaList = entityList[2];
@@ -255,17 +270,49 @@ final class RecordingsTabView {
 
                         masterSettings.getChildren().add(languageListVBox);
                     }
-                }));
+                });
             ObservableLists.bindConverted(recordingsSection.getChildren(), workingItems, this::drawLanguageBox);
         }
-        // Layout container (HBox)
-        Separator VSeparator = new Separator();
-        VSeparator.setOrientation(Orientation.VERTICAL);
-        VSeparator.setPadding(new Insets(30));
-        HBox mainLayout = new HBox(10, masterSettings, VSeparator, recordingsSection);
-        BorderPane.setAlignment(mainLayout, Pos.CENTER);
-        /////////////////
-        mainFrame.setCenter(mainLayout);
+
+        // Add CSS classes for styling
+        masterSettings.getStyleClass().add("media-settings-section");
+        recordingsSection.getStyleClass().add("media-settings-section");
+
+        // Set width constraints
+        masterSettings.setMinWidth(350);
+        masterSettings.setMaxWidth(500);
+        recordingsSection.setMinWidth(350);
+        recordingsSection.setMaxWidth(Double.MAX_VALUE);
+
+        // Create responsive container that switches between HBox (wide) and VBox (narrow)
+        MonoPane responsivePane = new MonoPane();
+
+        VBox container = new VBox(responsivePane);
+        container.setPadding(new Insets(20));
+
+        // Use ResponsiveDesign to switch layouts based on width
+        new ResponsiveDesign(container)
+            .addResponsiveLayout(
+                width -> width >= 800,
+                () -> {
+                    // Wide screen: side-by-side with different widths
+                    HBox hBox = new HBox(40, masterSettings, recordingsSection);
+                    hBox.setAlignment(Pos.TOP_LEFT);
+                    HBox.setHgrow(recordingsSection, Priority.ALWAYS);
+                    responsivePane.setContent(hBox);
+                })
+            .addResponsiveLayout(
+                width -> width < 800,
+                () -> {
+                    // Narrow screen: stacked vertically, both full width
+                    VBox vBox = new VBox(20, masterSettings, recordingsSection);
+                    vBox.setAlignment(Pos.TOP_LEFT);
+                    responsivePane.setContent(vBox);
+                })
+            .start();
+
+        mainFrame.setCenter(container);
+        BorderPane.setAlignment(mainFrame, Pos.CENTER);
     }
 
     public void addUpdateStoreHasChangesProperty(BooleanExpression booleanProperty) {
@@ -337,8 +384,10 @@ final class RecordingsTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,audioExpirationDate, repeatedEvent, repeatAudio, repeatVideo")
-                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-                .onFailure((Console::log));
+                .onFailure((Console::error))
+                .inUiThread()
+                .onSuccess(ignored -> drawContainer())
+                ;
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

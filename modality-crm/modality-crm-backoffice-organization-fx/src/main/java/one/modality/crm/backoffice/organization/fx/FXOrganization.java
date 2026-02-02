@@ -1,7 +1,6 @@
 package one.modality.crm.backoffice.organization.fx;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entities;
 import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.EntityStore;
@@ -16,14 +15,14 @@ import java.util.Objects;
  */
 public final class FXOrganization {
 
-    public static final String EXPECTED_FIELDS = "name,type.(code,name),country,language";
+    public static final String EXPECTED_FIELDS = "name,type.(code,name),country,language,teachingsDayTicketItem,globalSite";
 
     private final static ObjectProperty<Organization> organizationProperty = FXProperties.newObjectProperty(() ->
-            FXOrganizationId.setOrganizationId(getOrganizationId()));
+        FXOrganizationId.setOrganizationId(getOrganizationId()));
 
     static {
         FXOrganizationId.init();
-        // Registering "FXOrganization" as possible entity holder for i18n key forwards in Modality (used by KBS to
+        // Registering "FXOrganization" as a possible entity holder for i18n key forwards in Modality (used by KBS to
         // rename "Recurring events" to "STTP" or "GP Classes" depending on the selected organization).
         ModalityI18nProvider.registerEntityHolder("FXOrganization", FXOrganization::getOrganization);
     }
@@ -34,7 +33,7 @@ public final class FXOrganization {
 
     public static EntityStore getOrganizationStore() {
         Organization organization = getOrganization();
-        return organization != null ? organization.getStore() : EntityStore.create(DataSourceModelService.getDefaultDataSourceModel());
+        return organization != null ? organization.getStore() : EntityStore.create();
     }
 
     public static ObjectProperty<Organization> organizationProperty() {
@@ -48,6 +47,11 @@ public final class FXOrganization {
     public static void setOrganization(Organization organization) {
         if (!Objects.equals(organization, getOrganization()))
             organizationProperty.set(organization);
+    }
+
+    public static void setOrganizationOnceExpectedFieldsAreLoaded(Organization organization) {
+        organization.<Organization>onExpressionLoaded(EXPECTED_FIELDS)
+            .onSuccess(FXOrganization::setOrganization);
     }
 
 }

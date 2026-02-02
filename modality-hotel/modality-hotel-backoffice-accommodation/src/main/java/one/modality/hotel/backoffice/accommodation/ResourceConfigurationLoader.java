@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.beans.value.ObservableValue;
@@ -29,7 +28,7 @@ public final class ResourceConfigurationLoader {
     private static ResourceConfigurationLoader INSTANCE;
     private ObservableValue<Boolean> activeProperty;
     public static ResourceConfigurationLoader getOrCreate(AccommodationPresentationModel pm) {
-        // Creating the instance on first call only (assuming the presentation model is identical on subsequent calls)
+        // Creating the instance on the first call only (assuming the presentation model is identical on later calls)
         if (INSTANCE == null)
             INSTANCE = new ResourceConfigurationLoader(pm);
         return INSTANCE;
@@ -55,17 +54,18 @@ public final class ResourceConfigurationLoader {
         if (rem == null) { // first call
             // Loading room types (for when parents are provided ie "All rooms" ticked)
             rem = ReactiveEntitiesMapper.<ResourceConfiguration>createPushReactiveChain(mixin)
-                    .always("{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer'}")
+                    .always( // language=JSON5
+                        "{class: 'ResourceConfiguration', alias: 'rc', fields: 'name,item.name,max,allowsGuest,allowsResident,allowsResidentFamily,allowsSpecialGuest,allowsVolunteer'}")
                     .always(where("endDate is null or !exists(select ResourceConfiguration where resource=rc.resource and startDate > rc.endDate)"))
                     .always(orderBy("item.ord,name"))
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=? and event=null)", o))
-                    // Restricting events to those appearing in the time window
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("resource.site.(organization=$1 and event=null)", o))
+                    // Restricting events to those appearing in the time window // TODO: looks like not implemented?
                     .storeEntitiesInto(resourceConfigurations)
-                    .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-accommodationResourceConfiguration"))
+                    .setResultCacheEntry("modality/hotel/accommodation/resource-configurations")
                     // We are now ready to start
                     .start();
-        } else if (activeProperty != null) // subsequent calls
+        } else if (activeProperty != null) // later calls
             rem.bindActivePropertyTo(activeProperty); // updating the reactive entities mapper active property
     }
 }

@@ -6,9 +6,8 @@ import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.layout.Layouts;
-import dev.webfx.extras.visual.controls.grid.SkinnedVisualGrid;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
-import dev.webfx.stack.i18n.controls.I18nControls;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.dql.DqlStatement;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.IndividualEntityToObjectMapper;
 import dev.webfx.stack.orm.reactive.entities.entities_to_objects.ReactiveObjectsMapper;
@@ -38,21 +37,27 @@ import one.modality.crm.backoffice.organization.fx.FXOrganization;
 import one.modality.event.client.event.fx.FXEvent;
 
 import static dev.webfx.stack.orm.dql.DqlStatement.where;
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
 
 final class RecurringEventAttendanceView {
 
-    private static final String EVENT_COLUMNS = "[" +
-            "{expression: 'state', label: 'Status', renderer: 'eventStateRenderer'}," +
-            "{expression: 'name', label: 'Name'}," +
-            "{expression: 'type', label: 'TypeOfEvent'}," +
-            "{expression: '(select site.name from Timeline where event=e limit 1)', label: 'Location'}," +
-            "{expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}" +
-            "]";
+    private static final String EVENT_COLUMNS = // language=JSON5
+        """
+            [
+                {expression: 'state', label: 'Status', renderer: 'eventStateRenderer'},
+                {expression: 'name', label: 'Name'},
+                {expression: 'type', label: 'TypeOfEvent'},
+                {expression: '(select site.name from Timeline where event=e limit 1)', label: 'Location'},
+                {expression: 'dateIntervalFormat(startDate, endDate)', label: 'Dates'}
+            ]""";
 
-    private static final String BOOKINGS_COLUMNS = "[" + // Note: the starting class is DocumentLine
-           "{expression: 'document.(`#` + ref + ` ` + person_name)'}," +
-           "{expression: 'document', textAlign: 'center', foreignColumns: 'this', renderer: 'confirmRenderer', prefWidth: 70}" +
-           "]";
+    // Note: the starting class is DocumentLine
+    private static final String BOOKINGS_COLUMNS = // language=JSON5
+        """
+            [
+                {expression: 'document.(`#` + ref + ` ` + person_name)'},
+                {expression: 'document', textAlign: 'center', foreignColumns: 'this', renderer: 'confirmRenderer', prefWidth: 70}
+            ]""";
 
     private final RecurringEventsActivity activity;
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
@@ -86,23 +91,25 @@ final class RecurringEventAttendanceView {
         RecurringEventRenderers.registerRenderers();
 
         ReactiveVisualMapper<Event> eventVisualMapper = ReactiveVisualMapper.<Event>createPushReactiveChain(activity)
-                .always("{class: 'Event', alias: 'e', where: 'type.recurringItem != null and kbs3'}")
-                .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=?", o))
-                .setEntityColumns(EVENT_COLUMNS)
-                .visualizeResultInto(eventTable.visualResultProperty())
-                .setVisualSelectionProperty(eventTable.visualSelectionProperty())
-                .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
-                .start();
+            .always( // language=JSON5
+                "{class: 'Event', alias: 'e', where: 'type.recurringItem != null and kbs3'}")
+            .ifNotNullOtherwiseEmpty(FXOrganization.organizationProperty(), o -> DqlStatement.where("organization=$1", o))
+            .setEntityColumns(EVENT_COLUMNS)
+            .visualizeResultInto(eventTable.visualResultProperty())
+            .setVisualSelectionProperty(eventTable.visualSelectionProperty())
+            .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
+            .start();
         eventVisualMapper.requestedSelectedEntityProperty().bindBidirectional(FXEvent.eventProperty());
 
         scheduledItemObjectMapper = ReactiveObjectsMapper.<ScheduledItem, Node>createPushReactiveChain(activity)
-                .always("{class: 'ScheduledItem', alias: 's', fields: 'date', where: 'event.(type.recurringItem != null and kbs3)', orderBy: 'date'}")
-                .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), event -> where("event=?", event))
-                .ifInstanceOf(FXGanttSelection.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("s = ?", si))
-                .setIndividualEntityToObjectMapperFactory(IndividualScheduledItemToBoxMapper::new)
-                .storeMappedObjectsInto(attendancePane.getChildren())
-                .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
-                .start();
+            .always( // language=JSON5
+                "{class: 'ScheduledItem', alias: 's', fields: 'date', where: 'event.(type.recurringItem != null and kbs3)', orderBy: 'date'}")
+            .ifNotNullOtherwiseEmpty(FXEvent.eventProperty(), event -> where("event=$1", event))
+            .ifInstanceOf(FXGanttSelection.ganttSelectedObjectProperty(), ScheduledItem.class, si -> where("s = $1", si))
+            .setIndividualEntityToObjectMapperFactory(IndividualScheduledItemToBoxMapper::new)
+            .storeMappedObjectsInto(attendancePane.getChildren())
+            .bindActivePropertyTo(Bindings.and(activity.activeProperty(), activeProperty))
+            .start();
     }
 
     class IndividualScheduledItemToBoxMapper implements IndividualEntityToObjectMapper<ScheduledItem, Node> {
@@ -119,24 +126,25 @@ final class RecurringEventAttendanceView {
             dateLabel.setFont(Font.font(null, FontWeight.BOLD, 16));
             boxesContainer.setTop(Layouts.setMaxWidthToInfinite(dateLabel));
 
-            VisualGrid linesGrid = new SkinnedVisualGrid();
+            VisualGrid linesGrid = VisualGrid.createVisualGridWithTableLayoutSkin();
             linesGrid.setHeaderVisible(false);
             linesGrid.setFullHeight(true);
             boxesContainer.setCenter(linesGrid);
             BorderPane.setAlignment(linesGrid, Pos.TOP_CENTER);
 
             Label totalCountLabel = I18nControls.newLabel("Total {0}" /* ??? */, linesGrid.rowCountProperty());
-            totalCountLabel.setPadding(new Insets(5,0,0,0));
-            totalCountLabel.getStyleClass().add("booking-total-count");
+            totalCountLabel.setPadding(new Insets(5, 0, 0, 0));
+            totalCountLabel.getStyleClass().add(booking_total_count);
             boxesContainer.setBottom(totalCountLabel);
 
             ReactiveVisualMapper.<DocumentLine>createPushReactiveChain(activity)
-                    .setActiveParent(scheduledItemObjectMapper)
-                    .always("{class: 'DocumentLine', alias: 'dl', fields: 'document.confirmed', orderBy: 'document.person_lastName,document.person_firstName,document.ref'}")
-                    .setEntityColumns(BOOKINGS_COLUMNS)
-                    .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=? and a.scheduledItem=?)", si.getDate(), si))
-                    .visualizeResultInto(linesGrid.visualResultProperty())
-                    .start();
+                .setActiveParent(scheduledItemObjectMapper)
+                .always( // language=JSON5
+                    "{class: 'DocumentLine', alias: 'dl', fields: 'document.confirmed', orderBy: 'document.person_lastName,document.person_firstName,document.ref'}")
+                .setEntityColumns(BOOKINGS_COLUMNS)
+                .ifNotNullOtherwiseEmpty(scheduledItemObjectProperty, si -> where("exists(select Attendance a where a.documentLine=dl and a.date=$1 and a.scheduledItem=$2)", si.getDate(), si))
+                .visualizeResultInto(linesGrid.visualResultProperty())
+                .start();
 
             onEntityChangedOrReplaced(scheduledItem);
         }

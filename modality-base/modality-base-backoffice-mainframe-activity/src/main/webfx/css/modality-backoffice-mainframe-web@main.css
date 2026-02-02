@@ -1,0 +1,4 @@
+/* Applying some blur in the dialog area to focus user on the dialog itself */
+.modality-dialog-area {
+    backdrop-filter: blur(3px);
+}

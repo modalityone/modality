@@ -1,7 +1,7 @@
 package one.modality.ecommerce.backoffice.operations.entities.document.registration;
 
 import dev.webfx.platform.async.Future;
-import one.modality.base.backoffice.operations.entities.generic.DialogExecutorUtil;
+import one.modality.base.client.util.dialog.ModalityDialog;
 import one.modality.base.shared.entities.Document;
 import one.modality.ecommerce.document.service.DocumentService;
 import one.modality.ecommerce.document.service.SubmitDocumentChangesArgument;
@@ -17,13 +17,14 @@ final class ToggleCancelDocumentExecutor {
                 .compose(document -> {
                     boolean cancelled = !document.isCancelled();
                     boolean read = !document.isPassReady();
-                    return DialogExecutorUtil.executeOnUserConfirmation(
+                    return ModalityDialog.showConfirmationDialogForAsyncOperation(
                         "Are you sure you want to " + (cancelled ? "cancel" : "uncancel") + " this booking?"
                         , rq.getParentContainer(),
                         () -> DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
+                            SubmitDocumentChangesArgument.of(
                                 cancelled ? "Cancelled booking" : "Uncancelled booking",
-                                new CancelDocumentEvent(document, cancelled, read))
+                                new CancelDocumentEvent(document, cancelled, read)
+                            )
                         ));
                 });
     }

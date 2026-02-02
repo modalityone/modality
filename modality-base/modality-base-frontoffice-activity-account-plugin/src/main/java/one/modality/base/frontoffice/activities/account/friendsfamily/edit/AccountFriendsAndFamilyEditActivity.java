@@ -1,9 +1,9 @@
 package one.modality.base.frontoffice.activities.account.friendsfamily.edit;
 
 import dev.webfx.extras.util.control.Controls;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.Background;

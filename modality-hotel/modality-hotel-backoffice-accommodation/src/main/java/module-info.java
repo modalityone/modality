@@ -29,7 +29,6 @@ module modality.hotel.backoffice.accommodation {
     requires webfx.kit.util;
     requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.cache.client;
     requires webfx.stack.orm.dql;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.reactive.entities;

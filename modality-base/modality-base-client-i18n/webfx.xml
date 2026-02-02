@@ -9,9 +9,9 @@
     </exported-packages>
 
     <providers>
-        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
-        <provider interface="dev.webfx.stack.i18n.spi.I18nProvider">one.modality.base.client.services.i18n.ModalityI18nProvider</provider>
+        <provider interface="dev.webfx.extras.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToEnglishRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.extras.i18n.operations.ChangeLanguageRequestEmitter">one.modality.base.client.operations.i18n.ChangeLanguageToFrenchRequest$ProvidedEmitter</provider>
+        <provider interface="dev.webfx.extras.i18n.spi.I18nProvider">one.modality.base.client.services.i18n.ModalityI18nProvider</provider>
     </providers>
 
     <dependencies>
@@ -21,6 +21,9 @@
         <plugin-module>modality-base-client-icons</plugin-module>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.base.client.i18n.ModalityI18nKeys"/>
+    <java-ui-api package="one.modality.base.client.i18n" prefix="Base">
+        <i18n/>
+        <css/>
+    </java-ui-api>
 
 </project>

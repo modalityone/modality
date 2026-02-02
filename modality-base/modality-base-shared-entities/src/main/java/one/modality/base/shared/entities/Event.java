@@ -26,15 +26,20 @@ public interface Event extends Entity,
     String startDate = "startDate";
     String endDate = "endDate";
     String openingDate = "openingDate";
+    String bookingProcessStart = "bookingProcessStart";
     String vodExpirationDate = "vodExpirationDate";
     String vodProcessingTimeMinutes = "vodProcessingTimeMinutes";
     String audioExpirationDate = "audioExpirationDate";
+    String audioClosingDate = "audioClosingDate";
     String livestreamUrl = "livestreamUrl";
+    String livestreamMessageLabel = "livestreamMessageLabel";
     String live = "live";
     String feesBottomLabel = "feesBottomLabel";
     String kbs3 = "kbs3";
     String description = "description";
     String shortDescription = "shortDescription";
+    String shortDescriptionLabel = "shortDescriptionLabel";
+    String longDescriptionLabel = "longDescriptionLabel";
     String externalLink = "externalLink";
     String venue = "venue";
     String teachingsDayTicket = "teachingsDayTicket";
@@ -45,6 +50,20 @@ public interface Event extends Entity,
     String repeatedEvent = "repeatedEvent";
     String repeatAudio = "repeatAudio";
     String repeatVideo = "repeatVideo";
+    String timezone = "timezone";
+    String termsUrlEn = "termsUrlEn";
+    String noAccountBooking = "noAccountBooking";
+    String cssClass = "cssClass";
+    String inPersonAllowed = "inPersonAllowed";
+    String onlineAllowed = "onlineAllowed";
+    String vodEnabled = "vodEnabled";
+
+    // Virtual dynamic fields (not persisted in the database) available in PolicyAggregate - loaded/computed by ServerPolicyServiceProvider
+    String secondsToOpeningDateAtLoadingTime = "secondsToOpeningDateAtLoadingTime";
+    String secondsToBookingProcessStartAtLoadingTime = "secondsToBookingProcessStartAtLoadingTime";
+
+    // Virtual dynamic field (not persisted in the database) used for messaging purpose only
+    String queueProgress = "queueProgress";
 
     default void setState(Object value) {
         setFieldValue(state, Strings.stringValue(value));
@@ -100,6 +119,14 @@ public interface Event extends Entity,
         return getLocalDateTimeFieldValue(openingDate);
     }
 
+    default void setBookingProcessStart(LocalDateTime value) {
+        setFieldValue(bookingProcessStart, value);
+    }
+
+    default LocalDateTime getBookingProcessStart() {
+        return getLocalDateTimeFieldValue(bookingProcessStart);
+    }
+
     default void setVodExpirationDate(LocalDateTime value) {
         setFieldValue(vodExpirationDate, value);
     }
@@ -124,12 +151,32 @@ public interface Event extends Entity,
         return getLocalDateTimeFieldValue(audioExpirationDate);
     }
 
+    default void setAudioClosingDate(LocalDateTime value) {
+        setFieldValue(audioClosingDate, value);
+    }
+
+    default LocalDateTime getAudioClosingDate() {
+        return getLocalDateTimeFieldValue(audioClosingDate);
+    }
+
     default void setLivestreamUrl(String value) {
         setFieldValue(livestreamUrl, value);
     }
 
     default String getLivestreamUrl() {
         return getStringFieldValue(livestreamUrl);
+    }
+
+    default void setLivestreamMessageLabel(Object value) {
+        setForeignField(livestreamMessageLabel, value);
+    }
+
+    default EntityId getLivestreamMessageLabelId() {
+        return getForeignEntityId(livestreamMessageLabel);
+    }
+
+    default Label getLivestreamMessageLabel() {
+        return getForeignEntity(livestreamMessageLabel);
     }
 
     default void setLive(Boolean value) {
@@ -174,6 +221,30 @@ public interface Event extends Entity,
 
     default String getShortDescription() {
         return getStringFieldValue(shortDescription);
+    }
+
+    default void setShortDescriptionLabel(Object value) {
+        setForeignField(shortDescriptionLabel, value);
+    }
+
+    default EntityId getShortDescriptionLabelId() {
+        return getForeignEntityId(shortDescriptionLabel);
+    }
+
+    default Label getShortDescriptionLabel() {
+        return getForeignEntity(shortDescriptionLabel);
+    }
+
+    default void setLongDescriptionLabel(Object value) {
+        setForeignField(longDescriptionLabel, value);
+    }
+
+    default EntityId getLongDescriptionLabelId() {
+        return getForeignEntityId(longDescriptionLabel);
+    }
+
+    default Label getLongDescriptionLabel() {
+        return getForeignEntity(longDescriptionLabel);
     }
 
     default void setExternalLink(String value) {
@@ -269,24 +340,72 @@ public interface Event extends Entity,
         return type == null ? null : type.isRecurring();
     }
 
-    default Boolean isOnlineEvent() { // Temporary method while in-person and online events are separated
-        String name = getName();
-        return name == null ? null : name.toLowerCase().contains("online");
+    default void setInPersonAllowed(Boolean value) {
+        setFieldValue(inPersonAllowed, value);
     }
 
-    Clock UK_CLOCK = Clock.system(ZoneId.of("Europe/London"));
-
-    // temporary static method (will be non-static once managed in the event)
-    static Clock getEventClock() {
-        return UK_CLOCK;
+    default Boolean isInPersonAllowed() {
+        return getBooleanFieldValue(inPersonAllowed);
     }
 
-    static LocalDateTime nowInEventTimezone() {
+    default void setOnlineAllowed(Boolean value) {
+        setFieldValue(onlineAllowed, value);
+    }
+
+    default Boolean isOnlineAllowed() {
+        return getBooleanFieldValue(onlineAllowed);
+    }
+
+    default void setVodEnabled(Boolean value) {
+        setFieldValue(vodEnabled, value);
+    }
+
+    default Boolean isVodEnabled() {
+        return getBooleanFieldValue(vodEnabled);
+    }
+
+    default void setTimezone(String value) {
+        setFieldValue(timezone, value);
+    }
+
+    default String getTimezone() {
+        return getStringFieldValue(timezone);
+    }
+
+    ZoneId getEventZoneId(); // requires some logic => implemented in EventImpl
+
+    Clock getEventClock(); // requires some logic => implemented in EventImpl
+
+    default LocalDateTime nowInEventTimezone() {
         return LocalDateTime.now(getEventClock());
     }
 
-    static LocalDate todayInEventTimezone() {
-        return LocalDate.now(getEventClock());
+    default LocalDate todayInEventTimezone() {
+        return nowInEventTimezone().toLocalDate();
+    }
+
+    default void setTermsUrlEn(String value) {
+        setFieldValue(termsUrlEn, value);
+    }
+
+    default String getTermsUrlEn() {
+        return getStringFieldValue(termsUrlEn);
+    }
+
+    default void setNoAccountBooking(Boolean value) {
+        setFieldValue(noAccountBooking, value);
+    }
+
+    default Boolean isNoAccountBooking() {
+        return getBooleanFieldValue(noAccountBooking);
+    }
+
+    default void setCssClass(String value) {
+        setFieldValue(cssClass, value);
+    }
+
+    default String getCssClass() {
+        return getStringFieldValue(cssClass);
     }
 
 }

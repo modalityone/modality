@@ -10,7 +10,10 @@
     <dependencies>
         <used-by-source-modules/>
 
+<!--
+        Unused in production for now
         <plugin-module>modality-event-frontoffice-activity-booking-plugin</plugin-module>
+-->
     </dependencies>
 
 </project>

@@ -11,19 +11,17 @@ module modality.base.backoffice.operations.generic {
     requires modality.base.client.i18n;
     requires modality.base.client.mainframe.fx;
     requires modality.base.shared.entities;
+    requires webfx.extras.exceptions;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
     requires webfx.extras.type;
+    requires webfx.extras.util.dialog;
     requires webfx.platform.async;
-    requires webfx.platform.uischeduler;
-    requires webfx.stack.i18n;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.orm.expression;
     requires webfx.stack.orm.reactive.entities;
-    requires webfx.stack.ui.controls;
-    requires webfx.stack.ui.dialog;
-    requires webfx.stack.ui.exceptions;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.base.backoffice.operations.entities.generic;

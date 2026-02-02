@@ -7,9 +7,9 @@ module modality.base.client.time.theme {
 
     // Direct dependencies modules
     requires javafx.graphics;
+    requires webfx.extras.i18n;
     requires webfx.extras.theme;
     requires webfx.extras.util.color;
-    requires webfx.stack.i18n;
 
     // Exported packages
     exports one.modality.base.client.time.theme;

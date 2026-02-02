@@ -1,7 +1,6 @@
 package one.modality.hotel.backoffice.accommodation;
 
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.stack.cache.client.LocalStorageCache;
 import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMapper;
 import dev.webfx.stack.routing.activity.impl.elementals.activeproperty.HasActiveProperty;
 import javafx.beans.value.ObservableValue;
@@ -53,14 +52,15 @@ public final class TodayScheduledResourceLoader {
         }
         if (rem == null) { // first call
             rem = ReactiveEntitiesMapper.<ScheduledResource>createPushReactiveChain(mixin)
-                    .always("{class: 'ScheduledResource', alias: 'sr', fields: 'max,configuration,(select count(1) from Attendance where present and scheduledResource=sr and !documentLine.cancelled) as booked'}")
+                    .always( // language=JSON5
+                        "{class: 'ScheduledResource', alias: 'sr', fields: 'max,configuration,(select count(1) from Attendance where present and scheduledResource=sr and !documentLine.cancelled) as booked'}")
                     // Returning events for the selected organization only (or returning an empty set if no organization is selected)
-                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=?", o))
+                    .ifNotNullOtherwiseEmpty(pm.organizationIdProperty(), o -> where("configuration.resource.site.organization=$1", o))
                     // Restricting events to those appearing in the time window
-                    .always(FXToday.todayProperty(), today -> where("sr.date = ?", today))
+                    .always(FXToday.todayProperty(), today -> where("sr.date = $1", today))
                     // Storing the result directly in the events layer
                     .storeEntitiesInto(todayScheduledResources)
-                    .setResultCacheEntry(LocalStorageCache.get().getCacheEntry("cache-accommodationTodayScheduledResource"))
+                    .setResultCacheEntry("modality/hotel/accommodation/today-scheduled-resources")
                     // We are now ready to start
                     .start();
         } else if (activeProperty != null) // subsequent calls

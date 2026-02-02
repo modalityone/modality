@@ -7,11 +7,12 @@ import dev.webfx.stack.orm.reactive.entities.dql_to_entities.ReactiveEntitiesMap
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import one.modality.base.shared.entities.Item;
-import one.modality.base.shared.entities.KnownItemFamily;
 import one.modality.base.shared.entities.Site;
 import one.modality.base.shared.entities.SiteItem;
+import one.modality.base.shared.knownitems.KnownItemFamily;
+import one.modality.base.shared.knownitems.KnownItemI18nKeys;
 import one.modality.crm.backoffice.organization.fx.FXOrganization;
-import one.modality.ecommerce.document.service.PolicyAggregate;
+import one.modality.ecommerce.policy.service.PolicyAggregate;
 
 /**
  * @author Bruno Salmon
@@ -23,15 +24,16 @@ final class AudioRecordingPricing extends AbstractItemFamilyPricing {
         ReactiveEntitiesMapper.<Item>createReactiveChain()
             .setDataSourceModel(DataSourceModelService.getDefaultDataSourceModel())
             //.setStore(EntityStore.create(DataSourceModelService.getDefaultDataSourceModel()))
-            .always("{class: 'Item', fields: 'code,name', orderBy: 'ord,id'}")
-            .always(DqlStatement.where("!deprecated and family.code = ?", KnownItemFamily.AUDIO_RECORDING.getCode()))
-            .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = ?", lang))
+            .always( // language=JSON5
+                "{class: 'Item', fields: 'code,name', orderBy: 'ord,id'}")
+            .always(DqlStatement.where("!deprecated and family.code = $1", KnownItemFamily.AUDIO_RECORDING.getCode()))
+            .always(FXOrganization.organizationProperty(), lang -> DqlStatement.where("organization = $1", lang))
             .storeEntitiesInto(ORGANIZATION_RECORDING_ITEMS)
             .start();
     }
 
     public AudioRecordingPricing(PolicyAggregate eventPolicy) {
-        super(KnownItemFamily.AUDIO_RECORDING, EventPricingI18nKeys.AudioRecordings, eventPolicy, false);
+        super(KnownItemFamily.AUDIO_RECORDING, KnownItemI18nKeys.AudioRecordings, eventPolicy, false);
         Site venue = eventPolicy.getEvent().getVenue();
         ObservableLists.bindConverted(availableSiteItems, ORGANIZATION_RECORDING_ITEMS, item -> new SiteItem(venue, item));
     }

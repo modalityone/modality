@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <providers>
+        <provider interface="dev.webfx.stack.routing.uirouter.UiRoute">one.modality.event.frontoffice.activities.book.event.BookEventRouting$BookEventUiRoute</provider>
+    </providers>
+
+    <java-ui-api package="one.modality.event.frontoffice.activities.book" prefix="Book">
+        <i18n/>
+    </java-ui-api>
+
+</project>

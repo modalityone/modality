@@ -4,15 +4,21 @@ module modality.ecommerce.document.service.server {
 
     // Direct dependencies modules
     requires modality.base.shared.entities;
+    requires modality.base.shared.entity.message.sender;
     requires modality.ecommerce.document.service;
+    requires modality.ecommerce.document.service.buscall;
     requires modality.ecommerce.history.server;
     requires webfx.platform.ast;
     requires webfx.platform.async;
+    requires webfx.platform.console;
+    requires webfx.platform.scheduler;
     requires webfx.platform.util;
+    requires webfx.stack.com.bus;
     requires webfx.stack.com.serial;
-    requires webfx.stack.db.query;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
+    requires webfx.stack.push.server;
+    requires webfx.stack.session.state;
 
     // Exported packages
     exports one.modality.ecommerce.document.service.spi.impl.server;

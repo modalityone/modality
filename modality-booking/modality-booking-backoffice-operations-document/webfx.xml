@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+
+    <exported-packages>
+        <source-packages/>
+        <resource-packages/>
+    </exported-packages>
+
+    <dependencies>
+        <used-by-source-modules/>
+    </dependencies>
+
+    <java-ui-api package="one.modality.booking.backoffice.operations.entities.document" prefix="BookingDocument">
+        <i18n/>
+    </java-ui-api>
+
+</project>

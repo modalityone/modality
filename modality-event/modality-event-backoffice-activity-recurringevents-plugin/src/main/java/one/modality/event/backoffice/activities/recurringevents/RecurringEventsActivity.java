@@ -1,7 +1,7 @@
 package one.modality.event.backoffice.activities.recurringevents;
 
 import dev.webfx.stack.orm.domainmodel.activity.viewdomain.impl.ViewDomainActivityBase;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import one.modality.base.backoffice.mainframe.fx.FXEventSelector;
@@ -38,7 +38,7 @@ final class RecurringEventsActivity extends ViewDomainActivityBase implements Bu
     public void onResume() {
         super.onResume();
         FXMainFrameHeaderTabs.setHeaderTabs(headerTabsBar.getTabs());
-        FXGanttVisibility.showEvents();
+        FXGanttVisibility.showRecurringEvents();
         FXEventSelector.showEventSelector();
     }
 

@@ -11,6 +11,8 @@
         <used-by-source-modules/>
     </dependencies>
 
-    <i18n javaKeysClass="one.modality.base.frontoffice.utility.browser.BrowserI18nKeys"/>
+    <java-ui-api package="one.modality.base.frontoffice.utility.browser" prefix="Browser">
+        <i18n/>
+    </java-ui-api>
 
 </project>

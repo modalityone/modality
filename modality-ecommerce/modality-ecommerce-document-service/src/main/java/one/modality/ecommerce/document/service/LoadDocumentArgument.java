@@ -1,50 +1,41 @@
 package one.modality.ecommerce.document.service;
 
+import dev.webfx.stack.orm.entity.Entities;
+
 /**
+ * @param documentPrimaryKey Primary key of the document to load
+ * @param eventPrimaryKey    Primary key of the event to load the document from (if documentPrimaryKey is not provided)
+ * @param personPrimaryKey   Alternatively, the primary key of the person and event. In that case, the document service will load the latest document associated with that person for this event (or null if none is found).
+ * @param accountPrimaryKey
+ * @param historyPrimaryKey  Optional history loading. If not null, it will load the document up to that history. If null, it will load the latest version of the document.
  * @author Bruno Salmon
  */
-public final class LoadDocumentArgument {
 
-    // Primary key of the document to load
-    private final Object documentPrimaryKey;
+public record LoadDocumentArgument(
+    Object documentPrimaryKey,
+    Object eventPrimaryKey,
+    Object personPrimaryKey,
+    Object accountPrimaryKey,
+    Object historyPrimaryKey) {
 
-    // Alternatively, primary key of the person and event. In that case, the document service will load the latest
-    // document associated to that person for this event (or null if none is found).
-    private final Object personPrimaryKey;
-    private final Object eventPrimaryKey;
-
-    // Optional history loading. If not null, it will load the document up to that history. If null, it will load the
-    // latest version of the document.
-    private final Object historyPrimaryKey;
-
-    public LoadDocumentArgument(Object documentPrimaryKey) {
-        this(documentPrimaryKey, null, null, null);
+    public static LoadDocumentArgument ofDocument(Object document) {
+        return ofDocumentFromHistory(document, null);
     }
 
-    public LoadDocumentArgument(Object personPrimaryKey, Object eventPrimaryKey) {
-        this(null, personPrimaryKey, eventPrimaryKey, null);
+    public static LoadDocumentArgument ofDocumentFromHistory(Object document, Object history) {
+        return new LoadDocumentArgument(Entities.getPrimaryKey(document), null, null, null, Entities.getPrimaryKey(history));
     }
 
-    public LoadDocumentArgument(Object documentPrimaryKey, Object personPrimaryKey, Object eventPrimaryKey, Object historyPrimaryKey) {
-        this.documentPrimaryKey = documentPrimaryKey;
-        this.personPrimaryKey = personPrimaryKey;
-        this.eventPrimaryKey = eventPrimaryKey;
-        this.historyPrimaryKey = historyPrimaryKey;
+    public static LoadDocumentArgument ofPerson(Object person, Object event) {
+        return new LoadDocumentArgument(null, Entities.getPrimaryKey(event), Entities.getPrimaryKey(person), null, null);
     }
 
-    public Object getDocumentPrimaryKey() {
-        return documentPrimaryKey;
+    public static LoadDocumentArgument ofAccount(Object account, Object event) {
+        return new LoadDocumentArgument(null, Entities.getPrimaryKey(event), null, Entities.getPrimaryKey(account), null);
     }
 
-    public Object getPersonPrimaryKey() {
-        return personPrimaryKey;
+    public static LoadDocumentArgument ofDocumentOrAccount(Object document, Object account, Object event) {
+        return new LoadDocumentArgument(Entities.getPrimaryKey(document), Entities.getPrimaryKey(event), null, Entities.getPrimaryKey(account), null);
     }
 
-    public Object getEventPrimaryKey() {
-        return eventPrimaryKey;
-    }
-
-    public Object getHistoryPrimaryKey() {
-        return historyPrimaryKey;
-    }
 }

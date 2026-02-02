@@ -12,18 +12,21 @@ import one.modality.ecommerce.document.service.events.AbstractDocumentEvent;
 public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     private final Object eventPrimaryKey;
+    private String personLang;
     // Booking with an account
-    private Object personPrimaryKey;
+    private Person person; // not serialized
+    private Object personPrimaryKey; // serialized
     // Booking as a guest
     private String firstName;
     private String lastName;
     private String email;
-    // Generated information once stored in database
+    // Generated information once stored in the database
     private Integer ref;
 
     public AddDocumentEvent(Document document) {
         super(document);
         eventPrimaryKey = Entities.getPrimaryKey(document.getEvent());
+        personLang = document.getPersonLang();
         personPrimaryKey = Entities.getPrimaryKey(document.getPerson());
         firstName = document.getFirstName();
         lastName = document.getLastName();
@@ -31,9 +34,10 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
         ref = document.getRef();
     }
 
-    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, Object personPrimaryKey, String firstName, String lastName, String email, Integer ref) {
+    public AddDocumentEvent(Object documentPrimaryKey, Object eventPrimaryKey, String personLang, Object personPrimaryKey, String firstName, String lastName, String email, Integer ref) {
         super(documentPrimaryKey);
         this.eventPrimaryKey = eventPrimaryKey;
+        this.personLang = personLang;
         this.personPrimaryKey = personPrimaryKey;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,6 +47,23 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
 
     public Object getEventPrimaryKey() {
         return eventPrimaryKey;
+    }
+
+    public String getPersonLang() {
+        return personLang;
+    }
+
+    public void setPersonLang(String personLang) {
+        this.personLang = personLang;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+        setPersonPrimaryKey(Entities.getPrimaryKey(person));
     }
 
     public Object getPersonPrimaryKey() {
@@ -99,10 +120,11 @@ public final class AddDocumentEvent extends AbstractDocumentEvent {
     public void replayEventOnDocument() {
         super.replayEventOnDocument();
         document.setEvent(isForSubmit() ? getEventPrimaryKey() : entityStore.getOrCreateEntity(Event.class, getEventPrimaryKey()));
-        Object personPrimaryKey = getPersonPrimaryKey();
-        if (personPrimaryKey != null) {
+        document.setPersonLang(personLang);
+        if (person != null)
+            document.setPerson(person);
+        else if (personPrimaryKey != null)
             document.setPerson(isForSubmit() ? personPrimaryKey : entityStore.getOrCreateEntity(Person.class, personPrimaryKey));
-        }
         document.setFirstName(firstName);
         document.setLastName(lastName);
         document.setEmail(email);

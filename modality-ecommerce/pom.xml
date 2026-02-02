@@ -18,7 +18,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>modality-ecommerce-backoffice-activity-bookings-plugin</module>
         <module>modality-ecommerce-backoffice-activity-moneyflows-plugin</module>
         <module>modality-ecommerce-backoffice-activity-statistics-plugin</module>
         <module>modality-ecommerce-backoffice-max-plugin</module>
@@ -29,11 +28,14 @@
         <module>modality-ecommerce-backoffice-operations-moneytransfer</module>
         <module>modality-ecommerce-client-i18n</module>
         <module>modality-ecommerce-client-min-plugin</module>
-        <module>modality-ecommerce-client-workingbooking</module>
         <module>modality-ecommerce-document-service</module>
         <module>modality-ecommerce-document-service-buscall</module>
         <module>modality-ecommerce-document-service-remote</module>
         <module>modality-ecommerce-document-service-server</module>
+        <module>modality-ecommerce-frontoffice-activity-paymentreturn-plugin</module>
+        <module>modality-ecommerce-frontoffice-max-plugin</module>
+        <module>modality-ecommerce-frontoffice-min-plugin</module>
+        <module>modality-ecommerce-frontoffice-order</module>
         <module>modality-ecommerce-history-server</module>
         <module>modality-ecommerce-payment</module>
         <module>modality-ecommerce-payment-buscall</module>
@@ -44,8 +46,13 @@
         <module>modality-ecommerce-payment-server-gateway-authorizedotnet-plugin</module>
         <module>modality-ecommerce-payment-server-gateway-square-plugin</module>
         <module>modality-ecommerce-payment-server-gateway-stripe-plugin</module>
+        <module>modality-ecommerce-policy-service</module>
+        <module>modality-ecommerce-policy-service-buscall</module>
+        <module>modality-ecommerce-policy-service-remote</module>
+        <module>modality-ecommerce-policy-service-server</module>
         <module>modality-ecommerce-server-max-plugin</module>
         <module>modality-ecommerce-server-min-plugin</module>
+        <module>modality-ecommerce-shared-pricecalculator</module>
     </modules>
 
 </project>

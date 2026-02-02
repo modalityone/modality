@@ -7,33 +7,38 @@ import com.stripe.param.PaymentIntentCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import dev.webfx.platform.async.Future;
 import dev.webfx.platform.resource.Resource;
-import one.modality.ecommerce.payment.InitiatePaymentResult;
+import one.modality.ecommerce.payment.PaymentFormType;
 import one.modality.ecommerce.payment.server.gateway.*;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.GatewayInitiatePaymentResult;
-import one.modality.ecommerce.payment.server.gateway.GatewayMakeApiPaymentArgument;
-import one.modality.ecommerce.payment.server.gateway.PaymentGateway;
 
 /**
  * @author Bruno Salmon
  */
-public class StripePaymentGateway implements PaymentGateway {
+public final class StripePaymentGateway implements PaymentGateway {
+
+    private static final String GATEWAY_NAME = "Stripe";
 
     private final static String API_SECRET_KEY = "sk_test_26PHem9AhJZvU623DfE1x4sd";
     private final static String API_PUBLIC_KEY = "pk_test_qblFNYngBkEdjEZ16jxxoWSM";
 
     @Override
     public String getName() {
-        return "Stripe";
+        return GATEWAY_NAME;
     }
 
     @Override
     public Future<GatewayInitiatePaymentResult> initiatePayment(GatewayInitiatePaymentArgument argument) {
+        if (argument.preferredFormType() == PaymentFormType.EMBEDDED)
+            return initiatePaymentEmbedded(argument);
+        return initiatePaymentRedirect(argument);
+    }
+
+    private Future<GatewayInitiatePaymentResult> initiatePaymentEmbedded(GatewayInitiatePaymentArgument argument) {
         try {
             Stripe.apiKey = API_SECRET_KEY;
+            GatewayOrder order = argument.order();
             PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
-                    .setAmount(argument.getAmount())
-                    .setCurrency(argument.getCurrencyCode())
+                    .setAmount(order.amount())
+                    .setCurrency(argument.currencyCode())
                     .setAutomaticPaymentMethods(
                             PaymentIntentCreateParams.AutomaticPaymentMethods.builder().setEnabled(true).build()
                     )
@@ -43,34 +48,31 @@ public class StripePaymentGateway implements PaymentGateway {
                     .replace("{{API_KEY}}", API_PUBLIC_KEY)
                     .replace("{{CLIENT_SECRET}}", clientSecret)
                     .replace("{{RETURN_URL}}", "http://127.0.0.1:8080/checkout/success/");
-            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(argument.isLive(), false, html, null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createEmbeddedContentInitiatePaymentResult(argument.isLive(), false, html, false, null));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
     }
 
-    @Override
-    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
-        return Future.failedFuture("completePayment() not yet implemented for Stripe");
-    }
-
-    public Future<InitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
+    private Future<GatewayInitiatePaymentResult> initiatePaymentRedirect(GatewayInitiatePaymentArgument argument) {
         Stripe.apiKey = API_SECRET_KEY;
         // Extract the following to a 'StripeClient'
         // Assemble the purchase objects
+        GatewayOrder order = argument.order();
         SessionCreateParams.LineItem.PriceData.ProductData productData =
                 SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                        .setName(argument.getProductName())
+                        .setName(order.shortName())
                         .build();
 
         // Create the price data and add the product data to this
         SessionCreateParams.LineItem.PriceData priceData =
                 SessionCreateParams.LineItem.PriceData.builder()
-                        .setCurrency(argument.getCurrencyCode())
-                        .setUnitAmount(argument.getAmount())
+                        .setCurrency(argument.currencyCode())
+                        .setUnitAmount(order.amount())
                         .setProductData(productData)
                         .build();
 
+        // TODO: create
         // Create the line item and add the price data
         SessionCreateParams.LineItem lineItem =
                 SessionCreateParams.LineItem.builder()
@@ -89,14 +91,15 @@ public class StripePaymentGateway implements PaymentGateway {
 
         try {
             Session session = Session.create(params);
-            return Future.succeededFuture(InitiatePaymentResult.createRedirectInitiatePaymentResult(null, argument.isLive(), false, session.getUrl(), "Stripe", null));
+            return Future.succeededFuture(GatewayInitiatePaymentResult.createRedirectInitiatePaymentResult(argument.isLive(), session.getUrl()));
         } catch (Exception e) {
             return Future.failedFuture(e);
         }
     }
 
     @Override
-    public Future<GatewayMakeApiPaymentResult> makeApiPayment(GatewayMakeApiPaymentArgument argument) {
-        return Future.failedFuture("makeApiPayment() not yet implemented for Stripe");
+    public Future<GatewayCompletePaymentResult> completePayment(GatewayCompletePaymentArgument argument) {
+        return Future.failedFuture("completePayment() not yet implemented for Stripe");
     }
+
 }

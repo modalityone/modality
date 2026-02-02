@@ -23,7 +23,7 @@ import one.modality.base.frontoffice.utility.tyler.TextUtility;
  */
 final class OrangeFrame {
 
-    public static VBox createOrangeFrame(String headerI18nKey, Node center, Node bottom) {
+    public static VBox createOrangeFrame(Object headerI18nKey, Node center, Node bottom) {
         AspectRatioPane aspectRatioPane = new AspectRatioPane(16d / 9, center);
         Text headerText = TextUtility.createText(headerI18nKey, Color.WHITE);
         VBox orangeFrame = new VBox(20,

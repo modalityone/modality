@@ -6,7 +6,6 @@
 module modality.ecommerce.payment.server.gateway.square.plugin {
 
     // Direct dependencies modules
-    requires core.interfaces;
     requires io.vertx.core;
     requires io.vertx.web;
     requires modality.base.shared.entities;
@@ -20,8 +19,7 @@ module modality.ecommerce.payment.server.gateway.square.plugin {
     requires webfx.platform.resource;
     requires webfx.platform.util;
     requires webfx.platform.util.http;
-    requires webfx.platform.vertx.common;
-    requires webfx.stack.orm.datasourcemodel.service;
+    requires webfx.platform.util.vertx;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;
 

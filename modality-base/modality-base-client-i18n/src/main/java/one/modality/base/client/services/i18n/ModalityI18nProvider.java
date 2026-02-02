@@ -4,10 +4,10 @@ import dev.webfx.platform.ast.AST;
 import dev.webfx.platform.ast.ReadOnlyAstObject;
 import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.Dictionary;
-import dev.webfx.stack.i18n.TokenKey;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
-import dev.webfx.stack.i18n.spi.impl.ast.AstI18nProvider;
+import dev.webfx.extras.i18n.Dictionary;
+import dev.webfx.extras.i18n.TokenKey;
+import dev.webfx.extras.i18n.spi.impl.I18nSubKey;
+import dev.webfx.extras.i18n.spi.impl.ast.AstI18nProvider;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.HasEntity;
 import javafx.beans.value.ObservableValue;
@@ -23,7 +23,7 @@ import java.util.function.Supplier;
  * 1) possibility to evaluate expressions on entities
  *    Ex: new I18nSubKey("expression: 'Event name: ' + name", myEvent)
  *
- * 2) possibility to forward default i18n keys defined in Modality to other i18n keys defined in final application
+ * 2) possibility to forward default i18n keys defined in Modality to other i18n keys defined in the final application
  *    through configuration. Ex:
  *    ModalityI18nKeyForwards:
  *      RecurringEvents:
@@ -34,7 +34,7 @@ import java.util.function.Supplier;
  */
 public final class ModalityI18nProvider extends AstI18nProvider {
 
-    // Loading possible i18n keys forwards from configuration (empty in Modality but might be overridden in final app).
+    // Loading possible i18n keys forwards from configuration (empty in Modality but might be overridden in the final app).
     private static final ReadOnlyAstObject I18N_KEY_FORWARDS = AST.lookupObject(ConfigLoader.getRootConfig(),
         "modality.base.client.i18n.ModalityI18nKeyForwards");
 
@@ -52,8 +52,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
     @Override
     protected <TK extends Enum<?> & TokenKey> Object getDictionaryTokenValueImpl(Object i18nKey, TK tokenKey, Dictionary dictionary, boolean skipDefaultDictionary, Dictionary originalDictionary, boolean skipMessageKeyInterpretation, boolean skipMessageLoading) {
         Object messageKey = i18nKeyToDictionaryMessageKey(i18nKey);
-        if (messageKey instanceof String) {
-            String stringMessageKey = (String) messageKey;
+        if (messageKey instanceof String stringMessageKey) {
             Entity entity = null;
             String expression = null;
 
@@ -75,7 +74,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
                         String entityHolderName = forward.getString("entity"); // actually refers to the entity holder (ex: FXOrganization)
                         Supplier<Entity> entityGetter = FORWARD_ENTITY_HOLDERS.get(entityHolderName);
                         if (entityGetter == null) {
-                            Console.log("[ModalityI18nProvider] ⚠️ Unknown '" + entityHolderName + "' entity holder for '" + stringMessageKey + "' forward");
+                            Console.warn("[ModalityI18nProvider] Unknown '" + entityHolderName + "' entity holder for '" + stringMessageKey + "' forward");
                         } else {
                             entity = entityGetter.get();
                         }
@@ -85,7 +84,7 @@ public final class ModalityI18nProvider extends AstI18nProvider {
             if (expression != null) {
                 if (entity == null) // could be already set in case of a forward
                     entity = findEntity(i18nKey);
-                // If no entities is found (can happen before data is loaded), we display nothing (displaying the
+                // If no entities are found (can happen before data is loaded), we display nothing (displaying the
                 // expression would look ugly for the final user). This can eventually be commented when not in production.
                 if (entity == null)
                     return null;

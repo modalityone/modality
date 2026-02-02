@@ -1,0 +1,67 @@
+package one.modality.base.shared.entities.util;
+
+import dev.webfx.platform.util.collection.Collections;
+import dev.webfx.stack.orm.entity.Entities;
+import one.modality.base.shared.entities.Attendance;
+import one.modality.base.shared.entities.DocumentLine;
+import one.modality.base.shared.entities.Item;
+import one.modality.base.shared.entities.Site;
+import one.modality.base.shared.knownitems.KnownItemFamily;
+
+import java.util.List;
+import java.util.stream.Stream;
+
+/**
+ * @author Bruno Salmon
+ */
+public final class DocumentLines {
+
+    public static boolean isOfFamily(DocumentLine documentLine, KnownItemFamily family) {
+        return Items.isOfFamily(documentLine, family);
+    }
+
+    public static Stream<DocumentLine> filterFamily(Stream<DocumentLine> documentLines, KnownItemFamily family) {
+        return documentLines.filter(documentLine -> isOfFamily(documentLine, family));
+    }
+
+    public static List<DocumentLine> filterFamily(List<DocumentLine> documentLines, KnownItemFamily family) {
+        return Collections.filter(documentLines, documentLine -> isOfFamily(documentLine, family));
+    }
+
+    public static boolean isOfSiteAndItem(DocumentLine line, Site site, Item item) {
+        return Entities.samePrimaryKey(line.getSite(), site) && Entities.samePrimaryKey(line.getItem(), item);
+    }
+
+
+    public static Stream<DocumentLine> filterOfSiteAndItem(Stream<DocumentLine> documentLines, Site site, Item item) {
+        return documentLines.filter(line -> isOfSiteAndItem(line, site, item));
+    }
+
+    public static List<DocumentLine> filterOfSiteAndItem(List<DocumentLine> documentLines, Site site, Item item) {
+        return Collections.filter(documentLines, documentLine -> isOfSiteAndItem(documentLine, site, item));
+    }
+
+
+    public static List<DocumentLine> fromAttendances(List<Attendance> attendances) {
+        return Collections.map(attendances, Attendance::getDocumentLine);
+    }
+
+    public static boolean isFreeOfCharge(DocumentLine documentLine) {
+        if (documentLine == null)
+            return false;
+        Integer priceCustom = documentLine.getPriceCustom();
+        if (priceCustom != null)
+            return priceCustom == 0;
+        Integer priceDiscount = documentLine.getPriceDiscount();
+        if (priceDiscount != null)
+            return priceDiscount == 100;
+        return false;
+    }
+
+
+    public static boolean sameDocumentLine(DocumentLine line1, DocumentLine line2) {
+        if (Entities.samePrimaryKey(line1, line2))
+            return true;
+        return Entities.samePrimaryKey(line1.getSite(), line2.getSite()) && Entities.samePrimaryKey(line1.getItem(), line2.getItem());
+    }
+}

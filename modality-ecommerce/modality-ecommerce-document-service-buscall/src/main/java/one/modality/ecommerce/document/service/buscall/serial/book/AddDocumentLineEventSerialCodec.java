@@ -14,6 +14,7 @@ public final class AddDocumentLineEventSerialCodec extends AbstractDocumentLineE
 
     private static final String SITE_PRIMARY_KEY = "site";
     private static final String ITEM_PRIMARY_KEY = "item";
+    private static final String ALLOCATE_KEY = "allocate";
 
     public AddDocumentLineEventSerialCodec() {
         super(AddDocumentLineEvent.class, CODEC_ID);
@@ -22,8 +23,9 @@ public final class AddDocumentLineEventSerialCodec extends AbstractDocumentLineE
     @Override
     public void encode(AddDocumentLineEvent o, AstObject serial) {
         super.encode(o, serial);
-        encodeObject(serial, SITE_PRIMARY_KEY, o.getSitePrimaryKey());
-        encodeObject(serial, ITEM_PRIMARY_KEY, o.getItemPrimaryKey());
+        encodeObject( serial, SITE_PRIMARY_KEY, o.getSitePrimaryKey());
+        encodeObject( serial, ITEM_PRIMARY_KEY, o.getItemPrimaryKey());
+        encodeBoolean(serial, ALLOCATE_KEY,     o.isAllocate());
     }
 
     @Override
@@ -32,7 +34,8 @@ public final class AddDocumentLineEventSerialCodec extends AbstractDocumentLineE
                 decodeDocumentPrimaryKey(serial),
                 decodeDocumentLinePrimaryKey(serial),
                 decodeObject(serial, SITE_PRIMARY_KEY),
-                decodeObject(serial, ITEM_PRIMARY_KEY)
+                decodeObject(serial, ITEM_PRIMARY_KEY),
+                decodeBoolean(serial, ALLOCATE_KEY)
         ), serial);
     }
 }

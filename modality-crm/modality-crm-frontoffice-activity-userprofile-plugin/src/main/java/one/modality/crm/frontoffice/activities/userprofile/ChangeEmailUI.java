@@ -1,43 +1,42 @@
 package one.modality.crm.frontoffice.activities.userprofile;
 
-import dev.webfx.extras.panes.ScalePane;
-import dev.webfx.extras.panes.TransitionPane;
+import dev.webfx.extras.controlfactory.MaterialFactoryMixin;
+import dev.webfx.extras.controlfactory.button.ButtonFactory;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.async.AsyncSpinner;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.styles.materialdesign.util.MaterialUtil;
 import dev.webfx.extras.util.animation.Animations;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.control.HtmlInputAutocomplete;
 import dev.webfx.extras.util.layout.Layouts;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
-import dev.webfx.platform.uischeduler.UiScheduler;
 import dev.webfx.platform.windowlocation.WindowLocation;
 import dev.webfx.stack.authn.AuthenticateWithUsernamePasswordCredentials;
 import dev.webfx.stack.authn.AuthenticationService;
 import dev.webfx.stack.authn.InitiateEmailUpdateCredentials;
 import dev.webfx.stack.authn.login.ui.FXLoginContext;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.ui.controls.MaterialFactoryMixin;
-import dev.webfx.stack.ui.controls.button.ButtonFactory;
-import dev.webfx.stack.ui.operation.OperationUtil;
-import dev.webfx.stack.ui.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import one.modality.base.shared.entities.Person;
 import one.modality.crm.shared.services.authn.fx.FXUserPerson;
 
+/**
+ * @author David Hello
+ */
 final class ChangeEmailUI implements MaterialFactoryMixin {
 
     private final PasswordField passwordField;
     private final TextField emailField;
-    private final VBox changeEmailVBox = new VBox();
-    private final TransitionPane transitionPane = new TransitionPane(changeEmailVBox);
-    private final ScalePane container = new ScalePane(transitionPane);
+    private final VBox container = new VBox(20);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final Label infoMessage = Bootstrap.textDanger(new Label());
     private final Button actionButton = Bootstrap.largePrimaryButton(I18nControls.newButton(UserProfileI18nKeys.Confirm));
@@ -45,9 +44,10 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
     private String emailAddress = "";
 
     public ChangeEmailUI() {
-        javafx.scene.control.Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangeEmailAddress)));
-        changeEmailVBox.setPadding(new Insets(20, 0, 0, 0));
+        Label title = Bootstrap.textPrimary(Bootstrap.h2(I18nControls.newLabel(UserProfileI18nKeys.ChangeEmailAddress)));
+        title.setTextAlignment(TextAlignment.CENTER);
         title.setPadding(new Insets(0, 0, 100, 0));
+        Controls.setupTextWrapping(title, true, false);
 
         passwordField = newMaterialPasswordField(UserProfileI18nKeys.CurrentPassword);
         Controls.setHtmlInputAutocomplete(passwordField, HtmlInputAutocomplete.CURRENT_PASSWORD);
@@ -70,53 +70,53 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
             ButtonFactory.resetDefaultButton(actionButton);
             actionButton.setOnAction(e -> {
                 if (validateForm()) {
-                    //First we check if the password entered is the correct
+                    // First, we check if the password entered is the correct
                     Object passwordCheckCredentials = new AuthenticateWithUsernamePasswordCredentials(emailAddress, passwordField.getText().trim());
-                    OperationUtil.turnOnButtonsWaitMode(actionButton);
+                    AsyncSpinner.displayButtonSpinner(actionButton);
                     AuthenticationService.authenticate(passwordCheckCredentials)
-                        .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                        .onFailure(failure -> Platform.runLater(() -> {
+                        .inUiThread()
+                        .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
+                        .onFailure(failure -> {
                             showMessage(UserProfileI18nKeys.IncorrectPassword, Bootstrap.TEXT_DANGER);
                             Animations.shake(container);
-                        }))
+                        })
                         .onSuccess(ignored -> {
                             //Here we send an email
-                            Object emailUpdateCredentials = new InitiateEmailUpdateCredentials(emailField.getText().trim(), WindowLocation.getOrigin(), WindowLocation.getPath(), I18n.getLanguage(), FXLoginContext.getLoginContext());
-                            UiScheduler.runInUiThread(() -> {
-                                OperationUtil.turnOnButtonsWaitMode(actionButton);
-                                AuthenticationService.authenticate(emailUpdateCredentials)
-                                    .onComplete(ar -> UiScheduler.runInUiThread(() -> OperationUtil.turnOffButtonsWaitMode(actionButton)))
-                                    .onFailure(failure -> {
-                                        // callback.notifyUserLoginFailed(failure);
-                                        UiScheduler.runInUiThread(() -> {
-                                            showMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
-                                            actionButton.setDisable(true);
-                                        });
-                                    })
-                                    .onSuccess(s -> UiScheduler.runInUiThread(() -> {
-                                        showMessage(UserProfileI18nKeys.EmailSentForEmailChange, Bootstrap.TEXT_SUCCESS);
-                                        enableUI(false);
-                                    }));
-                            });
+                            Object emailUpdateCredentials = new InitiateEmailUpdateCredentials(emailField.getText().trim(), WindowLocation.getOrigin(), WindowLocation.getPath(), I18n.getLanguage(), false, FXLoginContext.getLoginContext());
+                            AsyncSpinner.displayButtonSpinner(actionButton);
+                            AuthenticationService.authenticate(emailUpdateCredentials)
+                                .inUiThread()
+                                .onComplete(ar -> AsyncSpinner.hideButtonSpinner(actionButton))
+                                .onFailure(failure -> {
+                                    // callback.notifyUserLoginFailed(failure);
+                                    showMessage(failure.getMessage(), Bootstrap.TEXT_DANGER);
+                                    actionButton.setDisable(true);
+                                })
+                                .onSuccess(s -> {
+                                    showMessage(UserProfileI18nKeys.EmailSentForEmailChange, Bootstrap.TEXT_SUCCESS);
+                                    enableUI(false);
+                                });
                         });
                 }
             });
         }, FXUserPerson.userPersonProperty());
 
-        changeEmailVBox.getChildren().setAll(title, passwordField, emailField, infoMessage, actionButton);
-        changeEmailVBox.setMaxWidth(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH);
-        changeEmailVBox.setMaxHeight(UserProfileActivity.MODAL_WINDOWS_MAX_WIDTH + 100);
+        container.getChildren().setAll(
+            title,
+            passwordField,
+            emailField,
+            infoMessage,
+            actionButton);
 
-        changeEmailVBox.setSpacing(20);
-        ChangePasswordUI.setupModalVBox(changeEmailVBox);
+        ChangePasswordUI.setupModalVBox(container);
     }
 
-    public ScalePane getView() {
+    public Region getView() {
         return container;
     }
 
-    private void showMessage(String errorMessageKey, String cssClass) {
-        I18nControls.bindI18nProperties(infoMessage, errorMessageKey);
+    private void showMessage(Object errorI18nKey, String cssClass) {
+        I18nControls.bindI18nProperties(infoMessage, errorI18nKey);
         infoMessage.getStyleClass().setAll(cssClass);
         Layouts.setManagedAndVisibleProperties(infoMessage, true);
     }
@@ -126,13 +126,13 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
     }
 
     /**
-     * This method is used to initialise the parameters for the form validation
+     * This method is used to initialize the parameters for the form validation
      */
     private void initFormValidation() {
         if (validationSupport.isEmpty()) {
             validationSupport.addRequiredInput(passwordField);
             validationSupport.addRequiredInput(emailField);
-            validationSupport.addEmailValidation(emailField,emailField,I18n.i18nTextProperty(UserProfileI18nKeys.EmailFormatIncorrect));
+            validationSupport.addEmailValidation(emailField, emailField, I18n.i18nTextProperty(UserProfileI18nKeys.EmailFormatIncorrect));
         }
     }
 
@@ -148,7 +148,7 @@ final class ChangeEmailUI implements MaterialFactoryMixin {
         hideMessage();
         enableUI(true);
     }
-    
+
     /**
      * We validate the form
      *

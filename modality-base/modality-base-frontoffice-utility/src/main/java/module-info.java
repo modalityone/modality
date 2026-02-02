@@ -15,17 +15,18 @@ module modality.base.frontoffice.utility {
     requires modality.base.client.mainframe.fx;
     requires modality.base.frontoffice.mainframe.fx;
     requires modality.base.shared.entities;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
+    requires webfx.extras.util.dialog;
     requires webfx.extras.util.scene;
     requires webfx.kit.util;
     requires webfx.platform.browser;
     requires webfx.platform.console;
+    requires webfx.platform.uischeduler;
     requires webfx.platform.util;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.entity;
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.dialog;
 
     // Exported packages
     exports one.modality.base.frontoffice.utility.browser;

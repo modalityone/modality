@@ -3,11 +3,13 @@ package one.modality.event.backoffice.activities.recurringevents;
 import dev.webfx.extras.cell.renderer.ValueRendererRegistry;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.i18n.I18n;
+import dev.webfx.extras.i18n.I18n;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Document;
 import one.modality.base.shared.entities.EventState;
+
+import static one.modality.event.backoffice.activities.recurringevents.RecurringEventsCssSelectors.*;
 
 /**
  * @author Bruno Salmon
@@ -30,7 +32,7 @@ final class RecurringEventRenderers {
                     return Bootstrap.textSuccess(toReturn);
                 case CLOSED:
                 case ARCHIVED:
-                case RECONCILIED:
+                case RECONCILED:
                 case RESTRICTED:
                 case FINALISED:
                     return Bootstrap.textSecondary(toReturn);
@@ -54,7 +56,7 @@ final class RecurringEventRenderers {
         ValueRendererRegistry.registerValueRenderer("confirmRenderer", (value, context) -> {
             Document document = (Document) value;
             Text confirmText = I18n.newText(document.isConfirmed() ? "BookingConfirmed" : "BookingUnconfirmed");
-            confirmText.getStyleClass().add(document.isConfirmed() ? "booking-status-confirmed" : "booking-status-unconfirmed");
+            confirmText.getStyleClass().add(document.isConfirmed() ? booking_status_confirmed : booking_status_unconfirmed);
             return confirmText;
         });
 

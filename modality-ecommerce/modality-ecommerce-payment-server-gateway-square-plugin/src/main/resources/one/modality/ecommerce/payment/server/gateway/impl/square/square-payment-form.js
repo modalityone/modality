@@ -1,6 +1,6 @@
 console.log("Starting Modality-Square script");
 
-// Parameters injected by SquarePaymentGateway java class on server-side
+// Parameters injected by SquarePaymentGateway java class on the server side
 const modality_amount = ${modality_amount};
 const modality_currencyCode = "${modality_currencyCode}";
 const modality_seamless = ${modality_seamless};
@@ -9,10 +9,10 @@ const square_appId = '${square_appId}';
 const square_locationId = '${square_locationId}';
 const square_idempotencyKey = window.crypto.randomUUID();
 
-// Parameter injected by WebPaymentForm java class on client-side (to allow JS -> Java callbacks)
+// Parameter injected by WebPaymentForm java class on the client side (to allow JS -> Java callbacks)
 let modality_javaPaymentForm;
 
-let modality_inited;
+let modality_initialized;
 let modality_initError;
 let modality_initNotificationCalled;
 let modality_containerElement;
@@ -24,38 +24,50 @@ const square_cardElementId = 'square-card-container';
 // Variables
 var square_card; // Using 'var' declaration so that we can get the object back when executing the script a second time
 
-// Methods called by WebPaymentForm java class on client-side
+// Methods called by WebPaymentForm java class on the client side
 
 function modality_injectJavaPaymentForm(jpf) {
     console.log("modality_injectJavaPaymentForm() called");
     modality_javaPaymentForm = jpf;
-    if (square_card) { // happens if the customer use the payment form several times on the same session
+    modality_notifyGatewayDebugStep(1);
+    if (square_card) { // happens if the customer uses the payment form several times in the same session
+        modality_notifyGatewayDebugStep(2);
         try { // We destroy the previous card, otherwise attaching the new card won't work
             console.log("Destroying previous card");
             square_card.destroy();
         } catch (e) {
+            modality_notifyGatewayDebugStep(3);
             console.error('Destroying previous card failed', e);
-            modality_notifyGatewayInitFailure('Destroying previous card failed')
+            modality_notifyGatewayInitFailure('Destroying previous card failed: ' + e.message);
             return;
         }
     }
-    if (modality_inited) {
-        if (modality_initError)
+    if (modality_initialized) {
+        if (modality_initError) {
+            modality_notifyGatewayDebugStep(4);
             modality_notifyGatewayInitFailure(modality_initError);
-        else
+        } else {
+            modality_notifyGatewayDebugStep(5);
             modality_notifyGatewayInitSuccess();
+        }
     }
 }
 
-function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, countryCode) {
+function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, postCode, countryCode, countryName) {
     console.log("modality_submitGatewayPayment() called");
     handlePaymentMethodSubmission(firstName, lastName, email, phone, address, city, state, countryCode);
 }
 
-// Methods called by this JS script to call back the Java WebPaymentForm class
+// Methods called by this JS script to call back the Java WebPaymentForm class to notify about the progress in the gateway process
+
+function modality_notifyGatewayDebugStep(debugStep) {
+    if (modality_javaPaymentForm) {
+        modality_javaPaymentForm.onGatewayDebugStep(debugStep);
+    }
+}
 
 function modality_notifyGatewayInitSuccess() {
-    modality_inited = true;
+    modality_initialized = true;
     if (modality_javaPaymentForm) {
         modality_javaPaymentForm.onGatewayInitSuccess();
         modality_initNotificationCalled = true;
@@ -63,7 +75,7 @@ function modality_notifyGatewayInitSuccess() {
 }
 
 function modality_notifyGatewayInitFailure(error) {
-    modality_inited = true;
+    modality_initialized = true;
     modality_initError = error;
     if (modality_javaPaymentForm) {
         modality_javaPaymentForm.onGatewayInitFailure(error);
@@ -196,7 +208,7 @@ import(square_webPaymentsSDKUrl)
                 payments = window.Square.payments(square_appId, square_locationId);
             } catch (e) {
                 console.error('Payments failed', e);
-                modality_notifyGatewayInitFailure('Square payments failed to initialize')
+                modality_notifyGatewayInitFailure('Square payments failed to initialize: ' + e.message);
                 const statusContainer = document.getElementById(
                     'square-payment-status-container',
                 );
@@ -210,7 +222,7 @@ import(square_webPaymentsSDKUrl)
                 square_card = await initializeCard(payments);
             } catch (e) {
                 console.error('Initializing Card failed', e);
-                modality_notifyGatewayInitFailure('Square card initialization failed')
+                modality_notifyGatewayInitFailure('Square card initialization failed: ' + e.message);
                 return;
             }
 
@@ -250,6 +262,10 @@ import(square_webPaymentsSDKUrl)
                 square_idempotencyKey: square_idempotencyKey,
             };
 
+            // Notifying the Java WebPaymentForm that the verification is successful => it will complete the payment on
+            // the server-side, passing it this payload. It will basically call PaymentService.completePayment() - after
+            // the UI informed the user this is happening - which will update the payment state in the database in
+            // dependence on the result of AuthorizePaymentGateway.completePayment() <= will treat the payload
             modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify(paymentCompletionPayload));
         }
 

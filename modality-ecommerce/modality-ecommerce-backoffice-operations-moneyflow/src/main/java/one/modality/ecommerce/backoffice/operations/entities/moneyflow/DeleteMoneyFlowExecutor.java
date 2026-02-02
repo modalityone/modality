@@ -2,8 +2,8 @@ package one.modality.ecommerce.backoffice.operations.entities.moneyflow;
 
 import dev.webfx.platform.async.Future;
 import dev.webfx.stack.orm.entity.UpdateStore;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import javafx.scene.layout.Pane;
 import one.modality.base.shared.entities.MoneyFlow;
 import one.modality.base.shared.entities.triggers.Triggers;

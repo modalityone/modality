@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<body style="min-height: 350px; overflow: hidden; margin: 0; height: 100vh; display: flex; justify-content: center; align-items: center;">
+
+<button id="displayFormButton" style="padding: 10px; font-size: 16px; border-width: 1px; border-radius: 5px; cursor: pointer;"
+        type="button"
+        class="AcceptUI"
+        data-billingAddressOptions='{"show":false, "required":false}'
+        data-acceptUIFormHeaderTxt='${acceptUIFormHeaderTxt}'
+        data-apiLoginID="${apiLoginID}"
+        data-clientKey="${clientKey}"
+        data-responseHandler="responseHandler">
+    Pay with Authorize.net
+</button>
+
+<script type="text/javascript">
+
+    let opaqueData;
+
+    // called back by Authorize.net
+    function responseHandler(response) {
+        let messages = response.messages;
+        if (messages.resultCode === "Error") {
+            let error = "";
+            let message = messages.message;
+            for (let i = 0; i < message.length; i++) {
+                error += message[i].code + ": " + message[i].text;
+            }
+            modality_notifyGatewayCardVerificationFailure(error);
+        } else {
+            // Note: we don't submit the payment form like in Authorize.net HTML example, we call back the Java Modality
+            // WebPaymentForm using the pay() method.
+            opaqueData = response.opaqueData; // capturing the opaque data
+            modality_pay(); // Will call modality_submitGatewayPayment() with buyer personal details to check
+        }
+    }
+
+    // Methods called by WebPaymentForm java class on the client-side
+
+    // Parameter injected by WebPaymentForm java class on the client-side (to allow JS -> Java callbacks)
+    let modality_javaPaymentForm;
+
+    let modality_initialized = true;
+    let modality_initError;
+    let modality_initNotificationCalled;
+
+    // Called at the initialization of WebPaymentForm
+    function modality_injectJavaPaymentForm(jpf, htmlHeaderText, htmlPayButtonText) {
+        modality_javaPaymentForm = jpf;
+        modality_notifyGatewayDebugStep(0);
+        console.log("modality_injectJavaPaymentForm() called");
+        // Changes made on the HTML button are ignored if done after AcceptUI.js is loaded, so we do them before
+        const displayFormButton = document.getElementById("displayFormButton");
+        // If the server had no value for ${acceptUIFormHeaderTxt}, we use the value passed by the client. The reason
+        // the server value is preferred is that it is more specific (it is read from the settings for that particular
+        // money account in the database - ex: Authorize.net - NKT-IKBU), whereas the client value is a generic message
+        // (ex: Please enter your payment information).
+        if (displayFormButton.getAttribute("data-acceptUIFormHeaderTxt") === "")
+            displayFormButton.setAttribute("data-acceptUIFormHeaderTxt", htmlHeaderText);
+        displayFormButton.setAttribute("data-acceptUIFormBtnTxt", htmlPayButtonText);
+        displayFormButton.textContent = htmlPayButtonText;
+        modality_notifyGatewayDebugStep(1);
+        // And then we load AcceptUI.js
+        const script = document.createElement("script");
+        script.src = "${acceptUIJsURL}";
+        script.async = true;
+        script.onerror = () => modality_notifyGatewayInitFailure("Failed to load AcceptUI.js");
+        script.onload = () => {
+            modality_notifyGatewayDebugStep(3);
+            // And notifying Modality that the initialization succeeded
+            modality_notifyGatewayInitSuccess();
+            // Automatically displaying the form once loaded
+            setTimeout(() => displayFormButton.click(), 500); // Without delay, it's not always working
+        };
+        document.head.appendChild(script);
+        modality_notifyGatewayDebugStep(2);
+    }
+
+    // Called by WebPaymentForm.pay() - through the modality_pay() call made in responseHandler()
+    function modality_submitGatewayPayment(firstName, lastName, email, phone, address, city, state, zipCode, countryCode, countryName) {
+        console.log("modality_submitGatewayPayment() called");
+        // As opposed to some other gateways like Square where the buyer verification is done on the client-side, with
+        // Authorize.net it's done on the server-side. So at this stage, we immediately reply that the verification is
+        // successful from the client-side point of view, and we capture the buyer's personal details for the
+        // verification on the server-side.
+        const paymentCompletionPayload = {
+            // Authorize.net fields:
+            anet_dataDescriptor: opaqueData.dataDescriptor,
+            anet_dataValue: opaqueData.dataValue,
+            // Modality fields:
+            modality_firstName: firstName,
+            modality_lastName: lastName,
+            modality_email: email,
+            modality_phone: phone,
+            modality_address: address,
+            modality_city: city,
+            modality_state: state,
+            modality_zipCode: zipCode,
+            modality_country: countryName
+        };
+        // Notifying the Java WebPaymentForm that the verification is successful => it will complete the payment on
+        // the server-side, passing it this payload. It will basically call PaymentService.completePayment() - after
+        // the UI informed the user this is happening - which will update the payment state in the database in
+        // dependence on the result of AuthorizePaymentGateway.completePayment() <= will treat the payload
+        modality_notifyGatewayPaymentVerificationSuccess(JSON.stringify(paymentCompletionPayload));
+    }
+
+    // Methods called by this JS script to call back the Java WebPaymentForm class
+
+    function modality_notifyGatewayDebugStep(debugStep) {
+        if (modality_javaPaymentForm) {
+            modality_javaPaymentForm.onGatewayDebugStep(debugStep);
+        }
+    }
+
+    function modality_notifyGatewayInitSuccess() {
+        modality_initialized = true;
+        if (modality_javaPaymentForm) {
+            modality_javaPaymentForm.onGatewayInitSuccess();
+            modality_initNotificationCalled = true;
+        }
+    }
+
+    function modality_notifyGatewayInitFailure(error) {
+        modality_initialized = true;
+        modality_initError = error;
+        if (modality_javaPaymentForm) {
+            modality_javaPaymentForm.onGatewayInitFailure(error);
+            modality_initNotificationCalled = true;
+        }
+    }
+
+    function modality_notifyGatewayCardVerificationFailure(error) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayCardVerificationFailure(error);
+    }
+
+    // actually never called with Authorize.net
+    function modality_notifyGatewayBuyerVerificationFailure(error) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayBuyerVerificationFailure(error);
+    }
+
+    function modality_notifyGatewayPaymentVerificationSuccess(paymentCompletionPayload) {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.onGatewayPaymentVerificationSuccess(paymentCompletionPayload);
+    }
+
+    function modality_pay() {
+        if (modality_javaPaymentForm)
+            modality_javaPaymentForm.pay();
+    }
+
+</script>
+
+</body>
+</html>

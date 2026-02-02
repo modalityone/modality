@@ -1,0 +1,28 @@
+:root {
+    --fx-event-description-text-color: #444;
+}
+
+.event-title {
+    --fx-text-fill: white;
+}
+
+/* .text-justified */
+.event-description-text {
+    color: var(--fx-event-description-text-color);
+    text-align: justify;
+    line-height: 1.7em;
+}
+
+/* .subtitle-grey */
+.subtitle-grey {
+    --fx-text-fill: grey;
+    font-size: 14px;
+}
+
+.line-total {
+    --fx-background-color: #CCCCCC;
+}
+
+.line-total span {
+    font-weight: bolder;
+}

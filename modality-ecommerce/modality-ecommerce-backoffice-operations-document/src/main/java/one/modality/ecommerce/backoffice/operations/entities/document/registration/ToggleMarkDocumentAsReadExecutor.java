@@ -13,14 +13,15 @@ final class ToggleMarkDocumentAsReadExecutor {
 
     static Future<Void> executeRequest(ToggleMarkDocumentAsReadRequest rq) {
         return rq.getDocument().<Document>onExpressionLoaded("read")
-                .compose(document -> {
-                    boolean read = !document.isRead();
-                    return DocumentService.submitDocumentChanges(
-                            new SubmitDocumentChangesArgument(
-                                    read ? "Marked as read" : "Unmarked as read",
-                                    new MarkDocumentAsReadEvent(document, read))
-                    ).map(x -> null);
-                });
+            .compose(document -> {
+                boolean read = !document.isRead();
+                return DocumentService.submitDocumentChanges(
+                    SubmitDocumentChangesArgument.of(
+                        read ? "Marked as read" : "Unmarked as read",
+                        new MarkDocumentAsReadEvent(document, read)
+                    )
+                ).map(x -> null);
+            });
     }
 
 }

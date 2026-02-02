@@ -14,6 +14,7 @@ module modality.ecommerce.payment.server {
     requires webfx.platform.async;
     requires webfx.platform.console;
     requires webfx.platform.service;
+    requires webfx.platform.util;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.entity;
     requires webfx.stack.session.state;

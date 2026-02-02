@@ -1,40 +1,45 @@
 package one.modality.event.backoffice.activities.medias;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.responsive.ResponsiveDesign;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.extras.util.masterslave.MasterSlaveLinker;
 import dev.webfx.extras.util.masterslave.SlaveEditor;
+import dev.webfx.extras.validation.ValidationSupport;
 import dev.webfx.kit.util.properties.FXProperties;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
-import dev.webfx.stack.orm.domainmodel.DataSourceModel;
 import dev.webfx.stack.orm.entity.*;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.stack.ui.validation.ValidationSupport;
-import javafx.application.Platform;
 import javafx.beans.binding.BooleanExpression;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
 import one.modality.base.client.time.BackOfficeTimeFormats;
 import one.modality.base.client.util.masterslave.ModalitySlaveEditor;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Event;
+import one.modality.base.shared.entities.Media;
+import one.modality.base.shared.entities.ScheduledItem;
 import one.modality.base.shared.entities.markers.EntityHasLocalDate;
+import one.modality.base.shared.knownitems.KnownItem;
+import one.modality.base.shared.knownitems.KnownItemFamily;
 import one.modality.event.client.event.fx.FXEvent;
 
 import java.time.LocalDate;
@@ -45,12 +50,13 @@ import java.time.format.DateTimeParseException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-
+/**
+ * @author David Hello
+ */
 final class VideoTabView {
 
     private final BooleanProperty activeProperty = new SimpleBooleanProperty();
-    private final DataSourceModel dataSourceModel = DataSourceModelService.getDefaultDataSourceModel();
-    private final EntityStore entityStore = EntityStore.create(dataSourceModel);
+    private final EntityStore entityStore = EntityStore.create();
     private final UpdateStore updateStore = UpdateStore.createAbove(entityStore);
     private final ValidationSupport validationSupport = new ValidationSupport();
     private final ObservableList<LocalDate> teachingsDates = FXCollections.observableArrayList();
@@ -168,7 +174,7 @@ final class VideoTabView {
         masterSettings.getChildren().add(contentExpirationTimeTextField);
 
         FXProperties.runOnPropertiesChange(() -> updateVodExpirationDate(currentEvent, dateFormatter, timeFormatter)
-        , contentExpirationTimeTextField.textProperty(), contentExpirationDateTextField.textProperty());
+            , contentExpirationTimeTextField.textProperty(), contentExpirationDateTextField.textProperty());
 
         Label vodAvailableAfterLive = I18nControls.newLabel(MediasI18nKeys.VODAvailableAfter);
         vodAvailableAfterLive.getStyleClass().add(Bootstrap.TEXT_SECONDARY);
@@ -188,7 +194,7 @@ final class VideoTabView {
 
 
         //SAVE BUTTON
-        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
+        Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
         BooleanExpression hasChangesProperty = EntityBindings.hasChangesProperty(updateStore);
         saveButton.disableProperty().bind(hasChangesProperty.not());
         addUpdateStoreHasChangesProperty(hasChangesProperty);
@@ -196,7 +202,7 @@ final class VideoTabView {
         saveButton.setOnAction(e -> {
             if (validationSupport.isValid()) {
                 updateStore.submitChanges()
-                    .onFailure(Console::log)
+                    .onFailure(Console::error)
                     //TODO : display a message to say the data has been saved
                     .onSuccess(Console::log);
             }
@@ -205,29 +211,57 @@ final class VideoTabView {
         masterSettings.getChildren().add(saveButton);
 
 
-        BorderPane individualSettingsHBox;
-        if(currentEditedEvent.getRepeatedEvent()!=null && currentEditedEvent.isRepeatVideo()) {
+        BorderPane individualSettings;
+        if (currentEditedEvent.getRepeatedEvent() != null && currentEditedEvent.isRepeatVideo()) {
             Label seeRepeatableEventLabel = I18nControls.newLabel(MediasI18nKeys.VideoConfigurationDoneInRepeatableEvent, currentEditedEvent.getRepeatedEvent().getName(), Entities.getPrimaryKey(currentEditedEvent.getRepeatedEventId()).toString());
-            seeRepeatableEventLabel.setPadding(new Insets(200,0,0,0));
-            individualSettingsHBox = new BorderPane();
-            individualSettingsHBox.setCenter(seeRepeatableEventLabel);
+            seeRepeatableEventLabel.setPadding(new Insets(200, 0, 0, 0));
+            individualSettings = new BorderPane();
+            individualSettings.setCenter(seeRepeatableEventLabel);
         } else {
-            individualSettingsHBox = buildIndividualLinksContainer();
-            individualSettingsHBox.setPadding(new Insets(20));
-            individualSettingsHBox.setMinWidth(1000);
+            individualSettings = buildIndividualLinksContainer();
+            individualSettings.setPadding(new Insets(20));
         }
 
-        // Layout container (HBox)
-        Separator VSeparator = new Separator();
-        VSeparator.setOrientation(Orientation.VERTICAL);
-        //  VSeparator.setPadding(new Insets(30));
-        HBox mainLayout = new HBox(60, masterSettings, VSeparator, individualSettingsHBox);
+        // Add CSS classes for styling
+        masterSettings.getStyleClass().add("media-settings-section");
+        individualSettings.getStyleClass().add("media-settings-section");
 
-        mainFrame.setCenter(mainLayout);
-        individualSettingsHBox.setMaxWidth(800);
+        // Set width constraints
+        masterSettings.setMinWidth(350);
+        masterSettings.setMaxWidth(500);
+        individualSettings.setMinWidth(350);
+        individualSettings.setMaxWidth(Double.MAX_VALUE);
+
+        // Create responsive container that switches between HBox (wide) and VBox (narrow)
+        MonoPane responsivePane = new MonoPane();
+
+        VBox container = new VBox(responsivePane);
+        container.setPadding(new Insets(20));
+
+        // Use ResponsiveDesign to switch layouts based on width
+        new ResponsiveDesign(container)
+            .addResponsiveLayout(
+                width -> width >= 800,
+                () -> {
+                    // Wide screen: side-by-side with different widths
+                    HBox hBox = new HBox(40, masterSettings, individualSettings);
+                    hBox.setAlignment(Pos.TOP_LEFT);
+                    HBox.setHgrow(individualSettings, Priority.ALWAYS);
+                    responsivePane.setContent(hBox);
+                })
+            .addResponsiveLayout(
+                width -> width < 800,
+                () -> {
+                    // Narrow screen: stacked vertically, both full width
+                    VBox vBox = new VBox(20, masterSettings, individualSettings);
+                    vBox.setAlignment(Pos.TOP_LEFT);
+                    responsivePane.setContent(vBox);
+                })
+            .start();
+
+        mainFrame.setCenter(container);
 
         BorderPane.setAlignment(mainFrame, Pos.CENTER);
-        BorderPane.setAlignment(mainLayout, Pos.CENTER);
     }
 
     private void updateVodExpirationDate(Event currentEvent, DateTimeFormatter dateFormatter, DateTimeFormatter timeFormatter) {
@@ -237,7 +271,7 @@ final class VideoTabView {
             // Combine the date and time to create LocalDateTime
             currentEvent.setVodExpirationDate(LocalDateTime.of(date, time));
         } catch (DateTimeParseException e) {
-            if(Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
+            if (Objects.equals(contentExpirationDateTextField.getText(), "") && Objects.equals(contentExpirationTimeTextField.getText(), ""))
                 currentEvent.setVodExpirationDate(null);
         }
     }
@@ -245,14 +279,15 @@ final class VideoTabView {
     private BorderPane buildIndividualLinksContainer() {
         BorderPane container = new BorderPane();
         entityStore.executeQueryBatch(
-                new EntityStoreQuery("select distinct name,family.code from Item where organization=? and family.code = ? order by name",
-                    new Object[]{currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()}),
-                new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event= ? and item.code = ? and programScheduledItem.item.family.code = ? order by date",
-                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()}),
-                new EntityStoreQuery("select url, scheduledItem.item, scheduledItem.date, scheduledItem.vodDelayed, scheduledItem.published, scheduledItem.item.code from Media where scheduledItem.event= ? and scheduledItem.item.code = ?",
-                    new Object[]{currentEditedEvent, KnownItem.VIDEO.getCode()})
-            ).onFailure(Console::log)
-            .onSuccess(entityList -> Platform.runLater(() -> {
+                new EntityStoreQuery("select distinct name,family.code from Item where organization=$1 and family.code = $2 order by name",
+                    currentEditedEvent.getOrganization(), KnownItem.VIDEO.getCode()),
+                new EntityStoreQuery("select name, programScheduledItem.(startTime, endTime), date, event, site, expirationDate,available, vodDelayed, published, comment, commentLabel, item, item.code, programScheduledItem.name, programScheduledItem.timeline.startTime, programScheduledItem.timeline.endTime from ScheduledItem where programScheduledItem.event = $1 and item.code = $2 and programScheduledItem.item.family.code = $3 order by date",
+                    currentEditedEvent, KnownItem.VIDEO.getCode(), KnownItemFamily.TEACHING.getCode()),
+                new EntityStoreQuery("select url, scheduledItem.(item, item.code, date, vodDelayed, published) from Media where scheduledItem.event = $1 and scheduledItem.item.code = $2 order by id",
+                    currentEditedEvent, KnownItem.VIDEO.getCode())
+            ).onFailure(Console::error)
+            .inUiThread()
+            .onSuccess(entityList -> {
                 //TODO: when we know which Item we use for VOD, we change the code bellow
                 // EntityList<Item> VODItems = entityList[0];
                 EntityList<ScheduledItem> videoSIList = entityList[1];
@@ -269,7 +304,7 @@ final class VideoTabView {
 
                 // Now that the data is ready, update the container
                 container.setCenter(languageLinkManagement.getContainer());
-            }));
+            });
 
         // Return the placeholder container, which will be updated later
         return container;
@@ -315,8 +350,9 @@ final class VideoTabView {
     private void displayEventDetails(Event e) {
         if (e != null)
             e.onExpressionLoaded("organization,vodExpirationDate,livestreamUrl")
-                .onSuccess(ignored -> Platform.runLater(this::drawContainer))
-                .onFailure((Console::log));
+                .onFailure((Console::error))
+                .inUiThread()
+                .onSuccess(ignored -> drawContainer());
     }
 
     //This parameter will allow us to manage the interaction and behaviour of the Panel that display the details of an event and the event selected

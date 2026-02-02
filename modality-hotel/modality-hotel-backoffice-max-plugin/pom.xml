@@ -19,14 +19,28 @@
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-hotel-backoffice-activities-accommodation</artifactId>
+            <artifactId>modality-hotel-backoffice-activity-accommodation-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>one.modality</groupId>
-            <artifactId>modality-hotel-backoffice-activities-household</artifactId>
+            <artifactId>modality-hotel-backoffice-activity-household-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-hotel-backoffice-activity-reception-plugin</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>one.modality</groupId>
+            <artifactId>modality-hotel-backoffice-activity-roomsetup-plugin</artifactId>
             <version>1.0.0-SNAPSHOT</version>
             <scope>runtime</scope>
         </dependency>

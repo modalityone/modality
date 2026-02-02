@@ -1,9 +1,8 @@
 package one.modality.base.frontoffice.activities.account;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
-import dev.webfx.stack.i18n.spi.impl.I18nSubKey;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -19,6 +18,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import one.modality.base.client.brand.Brand;
 import one.modality.base.client.css.Fonts;
+import one.modality.base.client.i18n.I18nEntities;
 import one.modality.base.frontoffice.utility.tyler.GeneralUtility;
 import one.modality.base.frontoffice.utility.tyler.StyleUtility;
 import one.modality.base.frontoffice.utility.tyler.TextUtility;
@@ -37,8 +37,8 @@ public final class BookingView {
 
     private static final String BOOKING_EVENT_REQUIRED_FIELDS = "event.(name,label,image.url,live,startDate,endDate,venue.(name,label,country),organization.country)";
     private static final String BOOKING_PERSON_REQUIRED_FIELDS = "ref,person_firstName,person_lastName";
-    private static final String BOOKING_STATUS_REQUIRED_FIELDS = BookingStatus.BOOKING_REQUIRED_FIELDS;
-    public  static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS + "," + BOOKING_STATUS_REQUIRED_FIELDS;
+    //private static final String BOOKING_STATUS_REQUIRED_FIELDS = BookingStatus.BOOKING_REQUIRED_FIELDS;
+    public  static final String BOOKING_REQUIRED_FIELDS = BOOKING_EVENT_REQUIRED_FIELDS + "," + BOOKING_PERSON_REQUIRED_FIELDS; // + "," + BOOKING_STATUS_REQUIRED_FIELDS;
 
     private final Document booking;
 
@@ -184,8 +184,8 @@ public final class BookingView {
         Event event = booking.getEvent();
         setEvent(event);
 
-        BookingStatus bookingStatus = BookingStatus.ofBooking(booking);
-        I18nControls.bindI18nProperties(statusLabel, bookingStatus.getI18nKey());
+        /*BookingStatus bookingStatus = BookingStatus.ofBooking(booking);
+        I18nControls.bindI18nProperties(statusLabel, bookingStatus.getI18nKey());*/
 
         personLabel.setText(booking.getFullName());
         personLabel.setTextFill(Color.GRAY);
@@ -197,17 +197,17 @@ public final class BookingView {
         paidPriceValue.setText(EventPriceFormatter.formatWithCurrency(booking.getPriceDeposit(), event));
         paidPriceValue.setFill(Color.GRAY);
 
-        if (bookingStatus == BookingStatus.PAYMENT_REQUIRED) {
+        /*if (bookingStatus == BookingStatus.INCOMPLETE) {
             buttons.add(createPaymentButton());
-        }
+        }*/
 
         containerPane.getChildren().addAll(buttons);
     }
 
     public void setEvent(Event event) {
-        I18nControls.bindI18nProperties(eventNameLabel, new I18nSubKey("expression: i18n(this)", event));
-        I18n.bindI18nProperties(eventCentreLocationText, new I18nSubKey("expression: '[At] ' + coalesce(i18n(venue), i18n(organization))", event));
-        I18n.bindI18nProperties(eventCountryLocationText, new I18nSubKey("expression: coalesce(i18n(venue.country), i18n(organization.country))", event));
+        I18nEntities.bindTranslatedEntityToTextProperty(eventNameLabel,   event);
+        I18nEntities.bindExpressionToProperties(eventCentreLocationText,  event, "'[At] ' + coalesce(i18n(venue), i18n(organization))");
+        I18nEntities.bindExpressionToProperties(eventCountryLocationText, event, "coalesce(i18n(venue.country), i18n(organization.country))");
     }
 
     private Button createPaymentButton() {

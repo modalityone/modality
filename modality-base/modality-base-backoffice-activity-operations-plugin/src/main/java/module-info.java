@@ -13,6 +13,8 @@ module modality.base.backoffice.activity.operations.plugin {
     requires modality.base.client.activity;
     requires modality.base.client.mainframe.fx;
     requires modality.base.client.tile;
+    requires webfx.extras.i18n;
+    requires webfx.extras.operation;
     requires webfx.extras.visual.grid;
     requires webfx.platform.windowhistory;
     requires webfx.stack.orm.domainmodel.activity;
@@ -22,7 +24,6 @@ module modality.base.backoffice.activity.operations.plugin {
     requires webfx.stack.orm.reactive.visual;
     requires webfx.stack.routing.router.client;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.operation;
 
     // Exported packages
     exports one.modality.base.backoffice.activities.operations;

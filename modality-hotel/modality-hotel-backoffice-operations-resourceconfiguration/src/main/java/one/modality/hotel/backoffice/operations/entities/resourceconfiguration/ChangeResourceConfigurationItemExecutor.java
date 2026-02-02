@@ -7,9 +7,9 @@ import dev.webfx.stack.orm.entity.EntityId;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.controls.entity.selector.ButtonSelector;
 import dev.webfx.stack.orm.entity.controls.entity.selector.EntityButtonSelector;
-import dev.webfx.stack.ui.controls.button.ButtonFactoryMixin;
-import dev.webfx.stack.ui.controls.dialog.DialogBuilderUtil;
-import dev.webfx.stack.ui.controls.dialog.DialogContent;
+import dev.webfx.extras.controlfactory.button.ButtonFactoryMixin;
+import dev.webfx.extras.util.dialog.builder.DialogBuilderUtil;
+import dev.webfx.extras.util.dialog.builder.DialogContent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import one.modality.base.shared.entities.Item;
@@ -25,8 +25,9 @@ final class ChangeResourceConfigurationItemExecutor {
     private static Future<Void> execute(ResourceConfiguration resourceConfiguration, Pane parentContainer, String itemFamilyCode, EntityId siteId) {
         Promise<Void> promise = Promise.promise();
         DataSourceModel dataSourceModel = resourceConfiguration.getStore().getDataSourceModel();
-        EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>("{class: `Item`, alias: `i`, where: `family.code='" + itemFamilyCode + "' and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")`, orderBy: `ord,id`}", new ButtonFactoryMixin() {
-        }, parentContainer, dataSourceModel);
+        EntityButtonSelector<Item> itemSelector = new EntityButtonSelector<>( // language=JSON5
+            "{class: 'Item', alias: 'i', where: 'family.code=`" + itemFamilyCode + "` and exists(select Option where item=i and site=" + siteId.getPrimaryKey() + ")', orderBy: 'ord,id'}"
+            , new ButtonFactoryMixin() {}, parentContainer, dataSourceModel);
         itemSelector.setShowMode(ButtonSelector.ShowMode.MODAL_DIALOG);
         itemSelector.showDialog();
         itemSelector.setCloseHandler(() -> {

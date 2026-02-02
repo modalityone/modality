@@ -1,0 +1,194 @@
+package one.modality.event.frontoffice.activities.videostreaming;
+
+import dev.webfx.extras.aria.AriaToggleGroup;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import dev.webfx.extras.panes.ColumnsPane;
+import dev.webfx.extras.panes.MonoPane;
+import dev.webfx.extras.styles.bootstrap.Bootstrap;
+import dev.webfx.extras.time.format.LocalizedTime;
+import dev.webfx.kit.util.properties.FXProperties;
+import dev.webfx.platform.util.collection.Collections;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.Labeled;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
+import one.modality.base.client.icons.SvgIcons;
+import one.modality.base.client.time.FrontOfficeTimeFormats;
+import one.modality.event.frontoffice.medias.TimeZoneSwitch;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Objects;
+
+import static one.modality.event.frontoffice.activities.videostreaming.VideoStreamingCssSelectors.*;
+
+/**
+ * @author David Hello
+ * @author Bruno Salmon
+ */
+public class DaySwitcher {
+
+    private static final double DAY_BUTTON_MIN_WIDTH = 150;
+
+    private final MonoPane parentContainer;
+
+    private List<LocalDate> availableDates;
+    private final ObjectProperty<LocalDate> selectedDateProperty = FXProperties.newObjectProperty(this::updateMobileDateLabel);
+    private final Object titleI18nKey;
+
+    // Desktop view
+    private final VBox desktopViewContainer = new VBox(30);
+    private final ColumnsPane dayButtonsColumnsPane = new ColumnsPane();
+    private final AriaToggleGroup<LocalDate> dayToggleGroup = new AriaToggleGroup<>();
+
+    // Mobile view
+    private final VBox mobileViewContainer = new VBox(30);
+    private final Label mobileDateLabel = Bootstrap.h4(new Label());;
+    private final Pane backArrowPane = SvgIcons.createBackArrow2();
+    private final Pane forwardArrowPane = SvgIcons.createForwardArrow2();
+
+    public DaySwitcher(MonoPane container, Object titleI18nKey) {
+        parentContainer = container;
+        this.titleI18nKey = titleI18nKey;
+
+        buildDesktopView();
+        buildMobileView();
+
+        selectedDateProperty.bindBidirectional(dayToggleGroup.firedItemProperty());
+    }
+
+    private void buildDesktopView() {
+        dayButtonsColumnsPane.setHgap(7);
+        dayButtonsColumnsPane.setVgap(15);
+        dayButtonsColumnsPane.setMinColumnWidth(DAY_BUTTON_MIN_WIDTH);
+        dayButtonsColumnsPane.setPadding(new Insets(0, 0, 30, 0));
+
+        if (titleI18nKey != null) {
+            Label titleLabel = Bootstrap.h3(I18nControls.newLabel(titleI18nKey));
+            desktopViewContainer.getChildren().add(titleLabel);
+        }
+        desktopViewContainer.getChildren().addAll(
+            TimeZoneSwitch.getGlobal().createTimezoneSwitchBox(),
+            I18nControls.newLabel(VideoStreamingI18nKeys.SelectTheDayBelow),
+            dayButtonsColumnsPane);
+        desktopViewContainer.setAlignment(Pos.TOP_CENTER);
+    }
+
+    private void buildMobileView() {
+        backArrowPane.setOnMouseClicked(e -> {
+            int index = availableDates.indexOf(getSelectedDate());
+            selectedDateProperty.set(index == -1 ? Collections.last(availableDates) : Collections.get(availableDates, index - 1));
+        });
+
+        forwardArrowPane.setOnMouseClicked(e -> {
+            int index = availableDates.indexOf(getSelectedDate());
+            selectedDateProperty.set(Collections.get(availableDates, index + 1));
+        });
+
+        BorderPane daySelectorPane = new BorderPane();
+        daySelectorPane.setLeft(backArrowPane);
+        daySelectorPane.setCenter(mobileDateLabel);
+        daySelectorPane.setRight(forwardArrowPane);
+        daySelectorPane.getStyleClass().add(program_box);
+        daySelectorPane.setPadding(new Insets(10));
+        Insets arrowMargin = new Insets(0, 5, 0, 5);
+        BorderPane.setMargin(backArrowPane, arrowMargin);
+        BorderPane.setMargin(forwardArrowPane, arrowMargin);
+
+        Hyperlink selectAllDaysLink = I18nControls.newHyperlink(VideoStreamingI18nKeys.ViewAllDays);
+        selectAllDaysLink.setOnAction(e -> selectedDateProperty.set(null));
+
+        mobileViewContainer.getChildren().setAll(
+            daySelectorPane,
+            selectAllDaysLink,
+            TimeZoneSwitch.getGlobal().createTimezoneSwitchBox()
+        );
+        mobileViewContainer.setAlignment(Pos.CENTER);
+    }
+
+    public ObjectProperty<LocalDate> selectedDateProperty() {
+        return selectedDateProperty;
+    }
+
+    public Node getMobileViewContainer() {
+        return mobileViewContainer;
+    }
+
+    public Node getDesktopView() {
+        return desktopViewContainer;
+    }
+
+    public void setAvailableDates(List<LocalDate> availableDates) {
+        // Doing nothing if no changes (this may happen if the dates from the server are still identical to the cached ones)
+        if (Objects.equals(this.availableDates, availableDates))
+            return;
+
+        this.availableDates = availableDates;
+
+        // Memorizing the selected date before clearing it
+        LocalDate selectedDate = getSelectedDate();
+        // Clearing the current buttons
+        dayToggleGroup.clear(); // this also indirectly clears the selected dates (which is why we memorized it)
+        dayButtonsColumnsPane.getChildren().clear();
+        // Rebuilding the buttons based on the new available dates
+        availableDates.forEach(this::createAndAddDateButton);
+        createAndAddDateButton(null); // All-days button
+
+        // Here we resize daysColumnPane
+        int numberOfChild = dayButtonsColumnsPane.getChildren().size();
+        double theoreticalColumnPaneWidth = (DAY_BUTTON_MIN_WIDTH + dayButtonsColumnsPane.getHgap()) * numberOfChild;
+        dayButtonsColumnsPane.maxWidthProperty().bind(
+            Bindings.createDoubleBinding(
+                () -> Math.min(parentContainer.getWidth(), theoreticalColumnPaneWidth),
+                parentContainer.widthProperty()
+            )
+        );
+
+        // Automatically selecting today if today is part of the event
+        if (!availableDates.contains(selectedDate)) {
+            TimeZoneSwitch timeZoneSwitch = TimeZoneSwitch.getGlobal();
+            ZoneId eventZoneId = timeZoneSwitch.getEventZoneId();
+            selectedDate = timeZoneSwitch.isEventLocalTimeSelected() && eventZoneId != null ? LocalDate.now(eventZoneId) : LocalDate.now();
+        }
+
+        setSelectedDate(selectedDate);
+
+        dayToggleGroup.updateButtonsFiredStyleClass();
+    }
+
+    private void createAndAddDateButton(LocalDate date) {
+        ToggleButton dateButton = formatLabeledDate(Bootstrap.button(dayToggleGroup.createItemButton(date)), date, false);
+        dateButton.setMinWidth(DAY_BUTTON_MIN_WIDTH);
+        dayButtonsColumnsPane.getChildren().add(dateButton);
+    }
+
+    private void updateMobileDateLabel() {
+        formatLabeledDate(mobileDateLabel, getSelectedDate(), true);
+    }
+
+    public void setSelectedDate(LocalDate date) {
+        selectedDateProperty.set(availableDates.contains(date) ? date : null);
+    }
+
+    private LocalDate getSelectedDate() {
+        return selectedDateProperty.get();
+    }
+
+    private <T extends Labeled> T formatLabeledDate(T labeled, LocalDate date, boolean mobile) {
+        if (date == null) // All-days
+            I18nControls.bindI18nProperties(labeled, mobile ? VideoStreamingI18nKeys.AllDays : VideoStreamingI18nKeys.ViewAllDays);
+        else
+            labeled.textProperty().bind(LocalizedTime.formatMonthDayProperty(date, FrontOfficeTimeFormats.VIDEO_MONTH_DAY_FORMAT));
+        return labeled;
+    }
+
+}

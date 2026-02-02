@@ -16,6 +16,8 @@ public final class AddMoneyTransferEvent extends AbstractExistingMoneyTransferEv
         super(moneyTransfer);
     }
 
+    // TODO: add spread payment case
+
     @Override
     protected void createMoneyTransfer() {
         if (isForSubmit()) {

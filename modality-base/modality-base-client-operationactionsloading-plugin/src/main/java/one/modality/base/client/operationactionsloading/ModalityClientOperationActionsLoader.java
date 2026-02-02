@@ -1,5 +1,12 @@
 package one.modality.base.client.operationactionsloading;
 
+import dev.webfx.extras.action.Action;
+import dev.webfx.extras.action.ActionFactoryMixin;
+import dev.webfx.extras.exceptions.UserCancellationException;
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.operation.action.OperationAction;
+import dev.webfx.extras.operation.action.OperationActionFactoryMixin;
+import dev.webfx.extras.operation.action.OperationActionRegistry;
 import dev.webfx.extras.util.control.Controls;
 import dev.webfx.platform.boot.spi.ApplicationModuleBooter;
 import dev.webfx.platform.conf.Config;
@@ -7,20 +14,11 @@ import dev.webfx.platform.conf.ConfigLoader;
 import dev.webfx.platform.console.Console;
 import dev.webfx.platform.meta.Meta;
 import dev.webfx.platform.scheduler.Scheduler;
+import dev.webfx.stack.authz.client.binder.AuthorizationBinder;
 import dev.webfx.stack.authz.client.factory.AuthorizationFactory;
-import dev.webfx.stack.cache.client.LocalStorageCache;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.orm.datasourcemodel.service.DataSourceModelService;
 import dev.webfx.stack.orm.entity.Entity;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.routing.router.auth.authz.RouteRequest;
-import dev.webfx.stack.ui.action.Action;
-import dev.webfx.stack.ui.action.ActionFactoryMixin;
-import dev.webfx.stack.ui.exceptions.UserCancellationException;
-import dev.webfx.stack.ui.operation.action.OperationAction;
-import dev.webfx.stack.ui.operation.action.OperationActionFactoryMixin;
-import dev.webfx.stack.ui.operation.action.OperationActionRegistry;
-import javafx.scene.control.ProgressIndicator;
 
 import java.util.List;
 
@@ -28,8 +26,8 @@ import java.util.List;
  * @author Bruno Salmon
  */
 public final class ModalityClientOperationActionsLoader implements ApplicationModuleBooter,
-        OperationActionFactoryMixin,
-        ActionFactoryMixin {
+    OperationActionFactoryMixin,
+    ActionFactoryMixin {
 
     private final static String CONFIG_PATH = "modality.base.client.operationactionsloading";
 
@@ -53,16 +51,22 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         hideUnauthorizedRouteOperationActions = config.getBoolean("hideUnauthorizedRouteOperationActions");
         hideUnauthorizedOtherOperationActions = config.getBoolean("hideUnauthorizedOtherOperationActions");
 
-        EntityStore.create(DataSourceModelService.getDefaultDataSourceModel())
-                .executeCachedQuery(
-                        LocalStorageCache.get().getCacheEntry("cache-clientOperations"), this::registerOperations,
-                        "select code,i18nCode,public from Operation where " + (Meta.isBackoffice() ? "backoffice" : "frontoffice"))
-                .onSuccess(this::registerOperations)
-                .onFailure(cause -> {
-                    Console.log("Failed loading operations", cause);
-                    // Schedule a retry, as the client won't work anyway without a successful load
-                    Scheduler.scheduleDeferred(this::bootModule);
-                });
+        OperationActionRegistry.setAuthorizer(AuthorizationBinder::authorizedOperationProperty);
+
+        String officeType = Meta.isBackoffice() ? "backoffice" : "frontoffice";
+        EntityStore.create()
+            .executeQueryWithCache("modality/base/" + officeType + "-operations",
+                """
+                    select code, i18nCode, public
+                        from Operation
+                        where officeType
+                    """.replace("officeType", officeType))
+            .onFailure(cause -> {
+                Console.error("Failed loading operations", cause);
+                // Schedule a retry, as the client won't work anyway without a successful load
+                Scheduler.scheduleDeferred(this::bootModule);
+            })
+            .onCacheAndOrSuccess(this::registerOperations);
     }
 
     private void registerOperations(List<Entity> operations) {
@@ -73,11 +77,11 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             String operationCode = operation.evaluate("code");
             String i18nCode = operation.getStringFieldValue("i18nCode");
             boolean isPublic = operation.getBooleanFieldValue("public");
-            // Note: if a i18nCode is read from the database, it should be considered as first choice, before the default
+            // Note: if an i18nCode is read from the database, it should be considered as the first choice, before the default
             // i18n key provided by the software (via operation request). This is part of the Modality customization
             // features. This will indeed happen here because ModalityOperationI18nKey implements HasDictionaryMessageKey,
             // and getDictionaryMessageKey() will return that passed i18nCode. However, if no i18nCode is read from
-            // the database (i.e. i18nCode is null or empty), getDictionaryMessageKey() should return the default i18n
+            // the database (i.e., i18nCode is null or empty), getDictionaryMessageKey() should return the default i18n
             // key instead. This can't happen immediately because we don't have an operation request instance at this
             // stage to read that default i18n key. We will do it through setOperationActionGraphicalPropertiesUpdater()
             // below. Until this happens, getDictionaryMessageKey() will return null.
@@ -89,9 +93,9 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 boolean isRoute = operationCode.startsWith("RouteTo");
                 boolean hideUnauthorizedAction = isRoute ? hideUnauthorizedRouteOperationActions : hideUnauthorizedOtherOperationActions;
                 operationGraphicalAction = newAuthAction(
-                        i18nKey,
-                        registry.authorizedOperationActionProperty(operationCode, AuthorizationFactory::isAuthorized),
-                        hideUnauthorizedAction);
+                    i18nKey,
+                    registry.authorizedOperationActionProperty(operationCode, AuthorizationFactory::isAuthorized),
+                    hideUnauthorizedAction);
             }
             operationGraphicalAction.setUserData(i18nKey);
             registry.registerOperationGraphicalAction(operationCode, operationGraphicalAction);
@@ -99,7 +103,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
         // Telling the registry how to update the graphical properties when needed (ex: ToggleCancel actions
         // text needs to be updated to say 'Cancel' or 'Uncancel' on selection change)
         registry.setOperationActionGraphicalPropertiesUpdater(operationAction -> {
-            // Actually since text and graphic properties come from I18n, we just need to inform it about the
+            // Actually, since the text and graphic properties come from I18n, we just need to inform it about the
             // change, and it will refresh all translations, including therefore these graphical properties.
             // The possible expressions used by operations like ToggleCancel will be recomputed through this
             // refresh thanks to the I18n evaluation system.
@@ -118,6 +122,7 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
                 I18n.refreshMessageTokenProperties(i18nKey);
             }
         });
+        registry.setLoaded(true);
     }
 
     static {
@@ -126,16 +131,14 @@ public final class ModalityClientOperationActionsLoader implements ApplicationMo
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            // Don't inline this variable, otherwise the WebFX CLI won't detect the dependency to javafx-controls
-            ProgressIndicator progressIndicator = Controls.createProgressIndicator(16);
-            return progressIndicator;
+            return Controls.createButtonSizeSpinner();
         });
 
         OperationAction.setActionExecutedIconFactory((operationRequest, throwable) -> {
             if (operationRequest instanceof RouteRequest) {
                 return null;
             }
-            String i18nKey;
+            Object i18nKey;
             if (throwable == null) {
                 i18nKey = ModalityOperationI18nKeys.ExecutedSuccessfullyActionIcon;
             } else if (throwable instanceof UserCancellationException) {

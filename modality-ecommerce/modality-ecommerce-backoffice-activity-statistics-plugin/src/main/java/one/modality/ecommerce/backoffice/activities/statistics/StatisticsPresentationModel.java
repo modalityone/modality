@@ -1,7 +1,9 @@
 package one.modality.ecommerce.backoffice.activities.statistics;
 
 import dev.webfx.extras.time.window.TimeWindow;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import one.modality.base.client.activity.organizationdependent.OrganizationDependentGenericTablePresentationModel;
 
@@ -17,4 +19,11 @@ final class StatisticsPresentationModel extends OrganizationDependentGenericTabl
 
     private final ObjectProperty<LocalDate> timeWindowEndProperty = new SimpleObjectProperty<>(LocalDate.now().plusWeeks(3));
     public ObjectProperty<LocalDate> timeWindowEndProperty() { return timeWindowEndProperty; }
+
+    // Note: this part of the TimeWindow is not used in the pm logic
+    private final DoubleProperty translateOriginXProperty = new SimpleDoubleProperty();
+    @Override
+    public DoubleProperty timeWindowTranslateXProperty() {
+        return translateOriginXProperty;
+    }
 }

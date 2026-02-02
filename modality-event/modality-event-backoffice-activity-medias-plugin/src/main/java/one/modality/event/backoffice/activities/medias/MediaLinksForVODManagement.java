@@ -1,21 +1,19 @@
 package one.modality.event.backoffice.activities.medias;
 
+import dev.webfx.extras.i18n.I18n;
+import dev.webfx.extras.i18n.controls.I18nControls;
+import javafx.scene.control.Separator;
 import dev.webfx.extras.panes.MonoPane;
 import dev.webfx.extras.styles.bootstrap.Bootstrap;
 import dev.webfx.extras.switches.Switch;
 import dev.webfx.extras.theme.text.TextTheme;
 import dev.webfx.extras.time.format.LocalizedTime;
-import dev.webfx.extras.util.layout.Layouts;
 import dev.webfx.kit.util.properties.ObservableLists;
 import dev.webfx.platform.console.Console;
-import dev.webfx.stack.i18n.I18n;
-import dev.webfx.stack.i18n.controls.I18nControls;
 import dev.webfx.stack.orm.entity.EntityStore;
 import dev.webfx.stack.orm.entity.UpdateStore;
 import dev.webfx.stack.orm.entity.binding.EntityBindings;
-import dev.webfx.stack.orm.entity.result.EntityChanges;
 import dev.webfx.stack.orm.entity.result.EntityChangesBuilder;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -25,18 +23,22 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-import one.modality.base.client.i18n.ModalityI18nKeys;
+import one.modality.base.client.i18n.BaseI18nKeys;
+import one.modality.base.client.i18n.LabelTextField;
 import one.modality.base.client.icons.SvgIcons;
-import one.modality.base.client.messaging.ModalityMessaging;
+import one.modality.base.shared.entity.message.sender.ModalityEntityMessageSender;
 import one.modality.base.client.time.BackOfficeTimeFormats;
-import one.modality.base.shared.entities.*;
+import one.modality.base.shared.entities.Media;
+import one.modality.base.shared.entities.MediaType;
+import one.modality.base.shared.entities.ScheduledItem;
+import one.modality.base.shared.entities.Timeline;
 import one.modality.base.shared.entities.markers.HasEndTime;
 import one.modality.base.shared.entities.markers.HasStartTime;
+import one.modality.base.shared.knownitems.KnownItem;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -48,6 +50,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author David Hello
+ */
 public class MediaLinksForVODManagement extends MediaLinksManagement {
 
     private static final int URL_TEXT_FIELD_WITH = 600;
@@ -57,11 +62,48 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
     public MediaLinksForVODManagement(EntityStore entityStore, List<LocalDate> teachingsDates, ObservableList<ScheduledItem> scheduledItemsReadFromDatabase, ObservableList<Media> recordingsMediasReadFromDatabase, VideoTabView videoTabView) {
         super(KnownItem.VIDEO.getCode(), entityStore, teachingsDates, scheduledItemsReadFromDatabase, recordingsMediasReadFromDatabase);
         parentVideoTabView = videoTabView;
-        mainContainer.setMinWidth(800);
+        mainContainer.getStyleClass().add("media-form-container");
         VBox teachingDatesVBox = new VBox();
         teachingDatesVBox.setSpacing(30);
         mainContainer.setCenter(teachingDatesVBox);
-        teachingsDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+
+        // Separate dates into future and past
+        LocalDate today = LocalDate.now();
+        List<LocalDate> futureDates = new java.util.ArrayList<>();
+        List<LocalDate> pastDates = new java.util.ArrayList<>();
+
+        for (LocalDate date : teachingsDates) {
+            if (date.isAfter(today) || date.equals(today)) {
+                futureDates.add(date);
+            } else {
+                pastDates.add(date);
+            }
+        }
+
+        // Add Future Sessions section
+        if (!futureDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.FutureSessions));
+            futureDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
+
+        // Add Past Sessions section
+        if (!pastDates.isEmpty()) {
+            teachingDatesVBox.getChildren().add(buildDatesSectionSeparator(MediasI18nKeys.PastSessions));
+            pastDates.forEach(date -> teachingDatesVBox.getChildren().add(computeTeachingDateLine(date)));
+        }
+    }
+
+    protected VBox buildDatesSectionSeparator(Object i18nKey) {
+        VBox separatorBox = new VBox(10);
+        separatorBox.setPadding(new Insets(20, 20, 10, 20));
+
+        Label sectionLabel = I18nControls.newLabel(i18nKey);
+        sectionLabel.getStyleClass().addAll(Bootstrap.H5, Bootstrap.TEXT_SECONDARY);
+
+        Separator separator = new Separator();
+
+        separatorBox.getChildren().addAll(sectionLabel, separator);
+        return separatorBox;
     }
 
     protected BorderPane computeTeachingDateLine(LocalDate date) {
@@ -98,12 +140,36 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
             centerVBox.getChildren().add(separator);
 
             /* The content with the list of the teachings per day and the links **/
-            List<ScheduledItem> filteredListForCurrentDay = scheduledItemsReadFromDatabase.stream()
+            List<ScheduledItem> filteredAndSortedList = scheduledItemsReadFromDatabase.stream()
                 .filter(item -> item.getDate().equals(currentDate)) // Filter by date
-                .sorted(Comparator.comparing(item -> item.getProgramScheduledItem().getTimeline().getStartTime())) // Sort by start date
+                .sorted(Comparator.comparing(item -> {
+                    ScheduledItem programScheduledItem = item.getProgramScheduledItem();
+                    // Priority: first check scheduledItem's own startTime, then timeline's startTime
+                    LocalTime startTime = programScheduledItem.getStartTime();
+                    if (startTime == null) {
+                        Timeline timeline = programScheduledItem.getTimeline();
+                        if (timeline != null) {
+                            startTime = timeline.getStartTime();
+                        }
+                    }
+                    return startTime;
+                }, Comparator.nullsLast(Comparator.naturalOrder()))) // Sort by start date, nulls last
                 .collect(Collectors.toList());
 
-            for (ScheduledItem currentVideoScheduledItem : filteredListForCurrentDay) {
+            for (ScheduledItem currentVideoScheduledItem : filteredAndSortedList) {
+                buildVideoTeachingContainer(currentVideoScheduledItem, centerVBox);
+            }
+
+            container.setBorder(new Border(new BorderStroke(
+                Color.BLACK,
+                BorderStrokeStyle.SOLID,
+                new CornerRadii(3),
+                new BorderWidths(1)
+            )));
+            return container;
+        }
+
+        private void buildVideoTeachingContainer(ScheduledItem currentVideoScheduledItem, VBox centerVBox) {
                 UpdateStore localUpdateStore = UpdateStore.createAbove(entityStore);
                 //We add in the parentView the updateStore.hasChangedProperty so we know if we can or not change the edited event without forgetting the current local changes
                 //made here
@@ -111,23 +177,13 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
 
                 ScheduledItem workingCurrentVideoScheduledItem = localUpdateStore.updateEntity(currentVideoScheduledItem);
                 //First of all, we read the Video ScheduledItems linked to the teachings
-                /* Here we create the line for each teaching **/
-                VBox currentVBox = new VBox();
-
-                currentVBox.setSpacing(15);
+                /* Here we create the container for each teaching **/
+                VBox currentVBox = new VBox(15);
                 currentVBox.setPadding(new Insets(20, 20, 20, 40));
-                currentVBox.setAlignment(Pos.CENTER_LEFT);
 
-                HBox firstLine = new HBox();
-                firstLine.setAlignment(Pos.CENTER_RIGHT);
-                VBox teachingInfoVBox = new VBox();
-                Region firstSpacer = new Region();
-                HBox.setHgrow(firstSpacer, Priority.ALWAYS);
-                firstLine.getChildren().addAll(teachingInfoVBox, firstSpacer);
-
+                // First line: Time - Title
                 String name = workingCurrentVideoScheduledItem.getProgramScheduledItem().getName();
                 if (name == null) name = "Unknown";
-                Label teachingTitle = new Label(name);
                 Timeline timeline = workingCurrentVideoScheduledItem.getProgramScheduledItem().getTimeline();
                 HasStartTime startTimeHolder;
                 HasEndTime endTimeHolder;
@@ -144,25 +200,19 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     LocalizedTime.formatLocalTimeProperty(startTimeHolder.getStartTime(), BackOfficeTimeFormats.MEDIA_TIME_FORMAT),
                     LocalizedTime.formatLocalTimeProperty(endTimeHolder.getEndTime(), BackOfficeTimeFormats.MEDIA_TIME_FORMAT)
                 );
-                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
                 startTimeLabel.getStyleClass().add(Bootstrap.STRONG);
+                Label teachingTitle = new Label(name);
+                teachingTitle.getStyleClass().add(Bootstrap.STRONG);
 
-                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(ModalityI18nKeys.Save));
-                saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
-
-                HBox saveButtonContainer = new HBox(saveButton);
-                saveButtonContainer.setAlignment(Pos.CENTER_RIGHT);
-                saveButtonContainer.setPadding(new Insets(0, 40, 0, 0));
-                firstLine.getChildren().add(saveButtonContainer);
-
-                teachingInfoVBox.getChildren().addAll(teachingTitle, startTimeLabel);
-                currentVBox.getChildren().add(firstLine);
+                HBox titleLine = new HBox(15, startTimeLabel, teachingTitle);
+                titleLine.setAlignment(Pos.CENTER_LEFT);
+                currentVBox.getChildren().add(titleLine);
 
 
+                // Links section with label
                 Label linksLabel = I18nControls.newLabel(MediasI18nKeys.VODLinks);
                 Label noLinkLabel = I18nControls.newLabel(MediasI18nKeys.NoLinkDefinedYet);
-                HBox linkLabelHBox = new HBox(linksLabel, noLinkLabel);
-                linkLabelHBox.setSpacing(10);
+                HBox linkLabelHBox = new HBox(10, linksLabel, noLinkLabel);
                 currentVBox.getChildren().add(linkLabelHBox);
 
                 /* ********LINKS BOX MANAGEMENT ****************** */
@@ -185,7 +235,7 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 Switch publishedSwitch = new Switch();
                 // Bind the children of mediasListVBox to mediaList
                 ObservableLists.bindConverted(mediasListVBox.getChildren(), mediaList, media -> {
-                    HBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore,publishedSwitch);
+                    VBox mediaNode = drawMediaLinkContainer(media, mediaList, localUpdateStore,publishedSwitch);
                     mediaNode.setUserData(media);// Set user data for removal reference
                     return mediaNode;
                 });
@@ -267,13 +317,19 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 });
 
                 HBox publicationInfoHBox = new HBox(VODPublicationDelayeddHBox, spacer, VODPublisheddHBox);
-                publicationInfoHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
+                publicationInfoHBox.getStyleClass().add("publication-info-container");
                 publicationInfoHBox.setPadding(new Insets(20, 0, 0, 0));
                 currentVBox.getChildren().add(publicationInfoHBox);
 
+                // Override name section
                 Label overrideNameLabel = new Label("Override Name");
                 Switch overrideNameSwitch = new Switch();
+                HBox overrideNameHeader = new HBox(15, overrideNameLabel, overrideNameSwitch);
+                overrideNameHeader.setAlignment(Pos.CENTER_LEFT);
+                currentVBox.getChildren().add(overrideNameHeader);
 
+                // Name field (only visible when override is enabled)
+                Label nameLabel = new Label(I18n.getI18nText("Name"));
                 TextField nameTextField = new TextField();
                 nameTextField.setPromptText(I18n.getI18nText("Name"));
                 if (workingCurrentVideoScheduledItem.getName() == null) {
@@ -282,11 +338,13 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     overrideNameSwitch.setSelected(true);
                     nameTextField.setText(workingCurrentVideoScheduledItem.getName());
                 }
-                nameTextField.setPrefWidth(435);
+                nameTextField.getStyleClass().add("media-name-textfield");
+                nameTextField.setMaxWidth(Double.MAX_VALUE);
 
-                // Bind the properties of the TextField to the Switch
-                nameTextField.editableProperty().bind(overrideNameSwitch.selectedProperty());
-                nameTextField.disableProperty().bind(overrideNameSwitch.selectedProperty().not());
+                VBox nameBox = new VBox(8, nameLabel, nameTextField);
+                nameBox.visibleProperty().bind(overrideNameSwitch.selectedProperty());
+                nameBox.managedProperty().bind(nameBox.visibleProperty());
+                currentVBox.getChildren().add(nameBox);
 
                 // Clear the TextField's value when the Switch is turned off
                 overrideNameSwitch.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -305,75 +363,63 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     }
                 });
 
-                HBox overrideLine = new HBox(overrideNameLabel, overrideNameSwitch, nameTextField);
-                overrideLine.setSpacing(10);
-                overrideLine.setAlignment(Pos.CENTER_LEFT);
-                overrideLine.setPadding(new Insets(20, 0, 0, 0));
-                currentVBox.getChildren().add(overrideLine);
-
                 Label commentLabel = I18nControls.newLabel(MediasI18nKeys.VODComment);
                 commentLabel.setPadding(new Insets(10, 0, 0, 0));
                 currentVBox.getChildren().add(commentLabel);
 
-                TextField commentTextField = new TextField();
-                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
-                currentVBox.getChildren().add(commentTextField);
-                commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
-                if (workingCurrentVideoScheduledItem.getComment() != null)
-                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
-                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+//                TextField commentTextField = new TextField();
+//                commentTextField.setPromptText(I18n.getI18nText(MediasI18nKeys.VODPromptComment));
+//                currentVBox.getChildren().add(commentTextField);
+//                commentTextField.setMaxWidth(URL_TEXT_FIELD_WITH);
+//                if (workingCurrentVideoScheduledItem.getComment() != null)
+//                    commentTextField.setText(workingCurrentVideoScheduledItem.getComment());
+//                commentTextField.textProperty().addListener(observable -> workingCurrentVideoScheduledItem.setComment(commentTextField.getText()));
+                LabelTextField commentTextField = new LabelTextField(workingCurrentVideoScheduledItem,"comment","commentLabel",localUpdateStore);
+                commentTextField.getView().getStyleClass().add("publication-info-container");
+                currentVBox.getChildren().add(commentTextField.getView());
 
-                HBox customContentAvailableUntilHBox = new HBox();
-                customContentAvailableUntilHBox.setPadding(new Insets(20, 0, 0, 0));
-                customContentAvailableUntilHBox.setMaxWidth(URL_TEXT_FIELD_WITH);
-
+                // Custom expiration date section
                 Label customExpirationDate = I18nControls.newLabel(MediasI18nKeys.VODCustomExpirationDate);
                 Switch customExpirationDateSwitch = new Switch();
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null) {
                     customExpirationDateSwitch.setSelected(true);
                 }
-                HBox VODCustomExpirationHBox = new HBox(10, customExpirationDate, customExpirationDateSwitch);
-                customContentAvailableUntilHBox.setAlignment(Pos.CENTER_LEFT);
+                HBox VODCustomExpirationHBox = new HBox(15, customExpirationDate, customExpirationDateSwitch);
+                VODCustomExpirationHBox.setAlignment(Pos.CENTER_LEFT);
+                currentVBox.getChildren().add(VODCustomExpirationHBox);
 
-                Region spacer2 = new Region();
-                HBox.setHgrow(spacer2, Priority.SOMETIMES);
-                customContentAvailableUntilHBox.getChildren().addAll(VODCustomExpirationHBox, spacer2);
-
-                HBox rightHBox = new HBox();
-                rightHBox.setAlignment(Pos.CENTER_RIGHT);
-                Layouts.bindManagedAndVisiblePropertiesTo(customExpirationDateSwitch.selectedProperty(), rightHBox);
-
-                Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
-                rightHBox.getChildren().add(contentAvailableUntilLabel);
-
+                // Available until fields (only visible when custom expiration is enabled)
                 DateTimeFormatter dateFormatter = LocalizedTime.dateFormatter(BackOfficeTimeFormats.MEDIA_DATE_FORMAT);
                 DateTimeFormatter timeFormatter = LocalizedTime.timeFormatter(BackOfficeTimeFormats.MEDIA_TIME_FORMAT);
+
+                Label contentAvailableUntilLabel = I18nControls.newLabel(MediasI18nKeys.AvailableUntil);
 
                 TextField availableUntilDateTextField = new TextField();
                 availableUntilDateTextField.setPromptText(LocalDate.of(2027, 10, 25).format(dateFormatter));
                 availableUntilDateTextField.setMaxWidth(100);
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
                     availableUntilDateTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(dateFormatter));
-
-
-                HBox.setMargin(availableUntilDateTextField, new Insets(0, 15, 0, 25));
-                rightHBox.getChildren().add(availableUntilDateTextField);
-                validationSupport.addDateValidation(availableUntilDateTextField, dateFormatter, availableUntilDateTextField, I18n.i18nTextProperty("ValidationDateFormatIncorrect")); // ???
+                validationSupport.addDateValidation(availableUntilDateTextField, dateFormatter, availableUntilDateTextField, I18n.i18nTextProperty("ValidationDateFormatIncorrect"));
 
                 TextField availableUntilTimeTextField = new TextField();
                 availableUntilTimeTextField.setPromptText("18:25");
                 if (workingCurrentVideoScheduledItem.getExpirationDate() != null)
                     availableUntilTimeTextField.setText(workingCurrentVideoScheduledItem.getExpirationDate().format(timeFormatter));
-
                 availableUntilTimeTextField.setMaxWidth(50);
-                rightHBox.getChildren().add(availableUntilTimeTextField);
-                validationSupport.addDateValidation(availableUntilTimeTextField, timeFormatter, availableUntilTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect")); // ???
+                validationSupport.addDateValidation(availableUntilTimeTextField, timeFormatter, availableUntilTimeTextField, I18n.i18nTextProperty("ValidationTimeFormatIncorrect"));
+
+                HBox dateTimeFieldsBox = new HBox(15, availableUntilDateTextField, availableUntilTimeTextField);
+                dateTimeFieldsBox.setAlignment(Pos.CENTER_LEFT);
+
+                VBox availableUntilBox = new VBox(8, contentAvailableUntilLabel, dateTimeFieldsBox);
+                availableUntilBox.visibleProperty().bind(customExpirationDateSwitch.selectedProperty());
+                availableUntilBox.managedProperty().bind(availableUntilBox.visibleProperty());
+                currentVBox.getChildren().add(availableUntilBox);
 
                 availableUntilDateTextField.textProperty().addListener(observable -> {
                     try {
                         LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
                         LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
-                        // Combine the date and time to create LocalDateTime
                         workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                     } catch (DateTimeParseException ignored) {
                     }
@@ -383,13 +429,11 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                     try {
                         LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
                         LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
-                        // Combine the date and time to create LocalDateTime
                         workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                     } catch (DateTimeParseException ignored) {
                     }
                 });
 
-                customContentAvailableUntilHBox.getChildren().add(rightHBox);
                 customExpirationDateSwitch.selectedProperty().addListener(observable -> {
                     if (!customExpirationDateSwitch.selectedProperty().get()) {
                         workingCurrentVideoScheduledItem.setExpirationDate(null);
@@ -397,66 +441,65 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                         try {
                             LocalDate date = LocalDate.parse(availableUntilDateTextField.getText(), dateFormatter);
                             LocalTime time = LocalTime.parse(availableUntilTimeTextField.getText(), timeFormatter);
-                            // Combine the date and time to create LocalDateTime
                             workingCurrentVideoScheduledItem.setExpirationDate(LocalDateTime.of(date, time));
                         } catch (DateTimeParseException ignored) {
                         }
                     }
                 });
 
-                currentVBox.getChildren().add(customContentAvailableUntilHBox);
+                // Save button at the bottom
+                Button saveButton = Bootstrap.largeSuccessButton(I18nControls.newButton(BaseI18nKeys.Save));
+                saveButton.disableProperty().bind(EntityBindings.hasChangesProperty(localUpdateStore).not());
+                HBox saveButtonContainer = new HBox(saveButton);
+                saveButtonContainer.setAlignment(Pos.CENTER_RIGHT);
+                saveButtonContainer.setPadding(new Insets(20, 0, 0, 0));
+                currentVBox.getChildren().add(saveButtonContainer);
 
-                currentVBox.setSpacing(10);
+                // Add the teaching container to the center VBox
                 centerVBox.getChildren().add(currentVBox);
-
-                Separator hSeparator = new Separator();
-                hSeparator.setOrientation(Orientation.HORIZONTAL);
-                hSeparator.setPadding(new Insets(30, 0, 30, 0));
-                centerVBox.getChildren().add(hSeparator);
 
                 //The action on the save button
                 saveButton.setOnAction(e -> {
                     if (validationSupport.isValid()) {
-                        // Capturing the changes made on ScheduledItems.published fields, as they need to be notified to
-                        // the front-office clients (if submit is successful)
-                        EntityChanges changesForFrontOffice = EntityChangesBuilder.create()
-                            .addFilteredEntityChanges(localUpdateStore.getEntityChanges(), ScheduledItem.class, ScheduledItem.published)
-                            .build();
                         localUpdateStore.submitChanges()
-                            .onFailure(Console::log)
-                            .onSuccess(x -> {
-                                Console.log(x);
-                                // Notifying the front-office clients for the possible changes made on ScheduledItems.published
-                                ModalityMessaging.getFrontOfficeEntityMessaging().publishEntityChanges(changesForFrontOffice);
-                                Platform.runLater(this::resetUpdateStoreAndOtherComponents);
+                            .onFailure(Console::error)
+                            .inUiThread()
+                            .onSuccess(result -> {
+                                // Notifying the front-office clients of the possible changes made on ScheduledItems.published
+                                ModalityEntityMessageSender.getFrontOfficeEntityMessageSender().publishEntityChanges(
+                                    EntityChangesBuilder.create()
+                                        .addFilteredEntityChanges(result.getCommittedChanges(), ScheduledItem.class, ScheduledItem.published)
+                                        .build()
+                                );
+                                resetUpdateStoreAndOtherComponents();
                             });
                     }
                 });
 
                 //We submit the changes in the update store to add the child scheduledItem that could have been created
                 if (localUpdateStore.hasChanges()) {
-                    localUpdateStore.submitChanges().onFailure(Console::log)
+                    localUpdateStore.submitChanges().onFailure(Console::error)
                         .onSuccess(Console::log);
                 }
-            }
-            /* ***************** END LINK BOX MANAGEMENT *********************** */
 
-            container.setBorder(new Border(new BorderStroke(
-                Color.BLACK,
-                BorderStrokeStyle.SOLID,
-                new CornerRadii(3),
-                new BorderWidths(1)
-            )));
-            return container;
+                Separator hSeparator = new Separator();
+                hSeparator.setOrientation(Orientation.HORIZONTAL);
+                hSeparator.setPadding(new Insets(30, 0, 30, 0));
+                centerVBox.getChildren().add(hSeparator);
         }
 
-        private HBox drawMediaLinkContainer(Media currentMedia, ObservableList<Media> mediaList, UpdateStore localUpdateStore,Switch publishSwitch) {
-            HBox hBoxToReturn = new HBox();
-            hBoxToReturn.setSpacing(20);
+        private VBox drawMediaLinkContainer(Media currentMedia, ObservableList<Media> mediaList, UpdateStore localUpdateStore,Switch publishSwitch) {
+            VBox vBoxToReturn = new VBox(8);
 
+            // Link label
+            Label linkLabel = new Label(I18n.getI18nText("Link"));
+
+            // Link text field and remove button in HBox
             TextField linkTextField = new TextField();
             linkTextField.promptTextProperty().bind(I18n.i18nTextProperty(MediasI18nKeys.EnterLinkHere));
-            linkTextField.setMinWidth(URL_TEXT_FIELD_WITH);
+            linkTextField.getStyleClass().add("vod-link-textfield");
+            linkTextField.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(linkTextField, Priority.ALWAYS);
             if (currentMedia != null) {
                 linkTextField.setText(currentMedia.getUrl());
             }
@@ -471,18 +514,19 @@ public class MediaLinksForVODManagement extends MediaLinksManagement {
                 publishSwitch.setSelected(isValidURL(newValue));
             });
 
-            hBoxToReturn.getChildren().add(linkTextField);
-
             SVGPath removeIcon = Bootstrap.textDanger(SvgIcons.createMinusPath());
             MonoPane removeButton = SvgIcons.createButtonPane(removeIcon, () -> {
                 localUpdateStore.deleteEntity(currentMedia);
                 mediaList.remove(currentMedia);
             });
 
-            hBoxToReturn.setAlignment(Pos.CENTER_LEFT);
-            hBoxToReturn.getChildren().add(removeButton);
+            HBox linkFieldBox = new HBox(15, linkTextField, removeButton);
+            linkFieldBox.setAlignment(Pos.CENTER_LEFT);
+            linkFieldBox.getStyleClass().add("media-field-row");
 
-            return hBoxToReturn;
+            vBoxToReturn.getChildren().addAll(linkLabel, linkFieldBox);
+
+            return vBoxToReturn;
         }
 
         public boolean isValidURL(String url) {

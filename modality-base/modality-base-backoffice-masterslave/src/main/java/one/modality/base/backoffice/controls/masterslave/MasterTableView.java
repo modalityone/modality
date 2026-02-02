@@ -7,7 +7,7 @@ import javafx.scene.layout.BorderPane;
 import dev.webfx.stack.orm.reactive.dql.statement.conventions.HasLimitProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualResultProperty;
 import dev.webfx.stack.orm.reactive.mapping.entities_to_visual.conventions.HasMasterVisualSelectionProperty;
-import dev.webfx.stack.ui.controls.ControlFactoryMixin;
+import dev.webfx.extras.controlfactory.ControlFactoryMixin;
 import dev.webfx.extras.visual.controls.grid.VisualGrid;
 import dev.webfx.kit.util.properties.FXProperties;
 

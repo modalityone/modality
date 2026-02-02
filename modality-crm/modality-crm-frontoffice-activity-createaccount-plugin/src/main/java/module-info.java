@@ -13,20 +13,21 @@ module modality.crm.frontoffice.activity.createaccount.plugin {
     requires modality.crm.client.activity.login.plugin;
     requires modality.crm.client.activity.magiclink.plugin;
     requires modality.crm.client.i18n;
+    requires webfx.extras.i18n;
+    requires webfx.extras.i18n.controls;
     requires webfx.extras.panes;
     requires webfx.extras.styles.bootstrap;
     requires webfx.extras.styles.materialdesign;
     requires webfx.extras.util.control;
     requires webfx.extras.util.layout;
+    requires webfx.extras.validation;
     requires webfx.kit.launcher;
     requires webfx.kit.util;
     requires webfx.platform.console;
-    requires webfx.platform.uischeduler;
+    requires webfx.platform.util;
     requires webfx.platform.windowhistory;
     requires webfx.stack.authn;
     requires webfx.stack.authn.login.ui.gateway.password.plugin;
-    requires webfx.stack.i18n;
-    requires webfx.stack.i18n.controls;
     requires webfx.stack.orm.datasourcemodel.service;
     requires webfx.stack.orm.domainmodel;
     requires webfx.stack.orm.domainmodel.activity;
@@ -35,7 +36,6 @@ module modality.crm.frontoffice.activity.createaccount.plugin {
     requires webfx.stack.orm.entity.controls;
     requires webfx.stack.routing.router;
     requires webfx.stack.routing.uirouter;
-    requires webfx.stack.ui.validation;
 
     // Exported packages
     exports one.modality.crm.frontoffice.activities.createaccount;

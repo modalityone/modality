@@ -1,0 +1,125 @@
+<html lang="zh" dir="ltr"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>授权请求</title>
+    <style>
+        /* Global Styles */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 20px 0;
+            font-size: 32px;
+            color: #009fe3;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 40px;
+            font-size: 16px;
+            color: #505050;
+        }
+
+        .content h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: normal;
+            color: #606060;
+        }
+
+        .divider {
+            width: 80%;
+            margin: 20px auto;
+            border: 0;
+            border-top: 1px solid #dddddd;
+        }
+
+        .info-box {
+            text-align: left;
+            background-color: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .button-container {
+            margin: 20px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .button {
+            flex: 1;
+            display: inline-block;
+            color: #ffffff;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .button-approve {
+            background-color: #28a745;
+        }
+
+        .button-decline {
+            background-color: #dc3545;
+        }
+
+        .footer {
+            font-size: 12px;
+            color: #aaaaaa;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+
+<body>
+<div class="email-container">
+    <div class="header">授权请求</div>
+
+    <div class="content">
+        <h2>尊敬的 [inviteeName]</h2>
+
+        <p><strong>[inviterName]</strong> ([inviterEmail]) 想要将您添加为其Kadampa Bookings账户的成员。</p>
+
+        <hr class="divider">
+
+        <div class="info-box">
+            <strong>这意味着：</strong><br>
+            • [inviterName] 将能够代表您进行预订<br>
+            • 他们可以查看和管理您的预订<br>
+            • 您可以随时从账户设置中撤销此访问权限
+        </div>
+
+        <p>请选择以下选项之一：</p>
+
+        <div class="button-container">
+            <a href="[approveLink]" style="color:white" class="button button-approve">批准请求</a>
+            <a href="[declineLink]" style="color:white" class="button button-decline">拒绝</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>如果您没有预期收到此请求，请忽略此邮件。<br>无需采取任何行动。</p>
+    </div>
+</div>
+
+</body></html>

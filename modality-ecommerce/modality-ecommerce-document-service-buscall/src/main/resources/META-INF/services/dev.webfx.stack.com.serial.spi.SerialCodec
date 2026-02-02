@@ -2,7 +2,9 @@ one.modality.ecommerce.document.service.buscall.serial.book.AddAttendancesEventS
 one.modality.ecommerce.document.service.buscall.serial.book.AddDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.AddDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.AddMoneyTransferEventSerialCodec
-one.modality.ecommerce.document.service.buscall.serial.book.ApplyFacilityFeeDocumentEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.book.AddRequestEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.book.EditCarersInfoEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.book.ApplyFacilityFeeEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.CancelDocumentEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.book.RemoveAttendancesEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.gateway.UpdateMoneyTransferEventSerialCodec
@@ -10,7 +12,12 @@ one.modality.ecommerce.document.service.buscall.serial.multiplebookings.CancelOt
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.GetBackCancelledMultipleBookingsDepositEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MarkNotMultipleBookingEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.multiplebookings.MergeMultipleBookingsOptionsEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.AllocateDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.documentline.CancelDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.EditShareMateInfoDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.EditShareOwnerInfoDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.LinkMateToOwnerDocumentLineEventSerialCodec
+one.modality.ecommerce.document.service.buscall.serial.registration.documentline.PriceDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.documentline.RemoveDocumentLineEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.moneytransfer.RemoveMoneyTransferEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.registration.FlagDocumentEventSerialCodec
@@ -25,8 +32,6 @@ one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsUn
 one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsUnknownEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.security.MarkDocumentAsVerifiedEventSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.DocumentAggregateSerialCodec
-one.modality.ecommerce.document.service.buscall.serial.LoadPolicyArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.LoadDocumentArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesArgumentSerialCodec
 one.modality.ecommerce.document.service.buscall.serial.SubmitDocumentChangesResultSerialCodec
-one.modality.ecommerce.document.service.buscall.serial.PolicyAggregateSerialCodec
